@@ -1,0 +1,20 @@
+{
+  "name": "studio-agent-use-cases",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/neo4j/studio-agent-use-cases.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/neo4j/studio-agent-use-cases/issues"
+  },
+  "homepage": "https://github.com/neo4j/studio-agent-use-cases#readme"
+}
