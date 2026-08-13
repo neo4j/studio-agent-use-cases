@@ -26,6 +26,19 @@ main -> stage -> prod
 
 Do not make changes directly on `stage` or `prod`. If a problem is found in either environment, apply the fix to `main` and promote it through the same sequence. This keeps all three branches traceable and prevents environment-specific drift.
 
+Add these links to the README:
+- [Promote main to stage](https://github.com/neo4j/studio-agent-use-cases/compare/stage...main?expand=1)
+- [Promote stage to prod](https://github.com/neo4j/studio-agent-use-cases/compare/prod...stage?expand=1)
+
+For each promotion:
+1) Open the relevant link.
+2) Confirm the base and compare branches.
+3) Create the pull request.
+4) Complete validation and approvals.
+5) Select Create a merge commit.
+
+Use merge commits for promotion PRs. Squash or rebase merges can break the ancestry between these long-lived branches and cause later promotions to show previously promoted changes again.
+
 ## Contributing
 
 All contributions must be based on `main` and must land in `main` before they can be promoted.
@@ -66,3 +79,6 @@ https://raw.githubusercontent.com/neo4j/studio-agent-use-cases/<branch>/<path-to
 ```
 
 Replace `<branch>` with `main`, `stage`, or `prod`. For production deployments that must be reproducible, resolve the branch to a commit SHA and record that SHA with the deployment.
+
+## Promotion workflow
+
