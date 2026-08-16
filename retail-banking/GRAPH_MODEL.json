@@ -1,0 +1,112 @@
+{
+  "version": "4.0.0",
+  "nodes": {
+    "n:0": {
+      "label": "Account",
+      "properties": {
+        "accountNumber": { "type": "INTEGER", "nullable": false, "unique": true }
+      },
+      "constraints": {
+        "accountNumber_Account_key": { "type": "KEY", "label": "Account", "properties": ["accountNumber"] }
+      }
+    },
+    "n:1": {
+      "label": "Transaction",
+      "properties": {
+        "transactionId": { "type": "STRING", "nullable": false, "unique": true },
+        "amount": { "type": "FLOAT", "nullable": false },
+        "currency": { "type": "STRING", "nullable": false },
+        "date": { "type": "ZONED DATETIME", "nullable": false }
+      },
+      "constraints": {
+        "transactionId_Transaction_key": { "type": "KEY", "label": "Transaction", "properties": ["transactionId"] }
+      }
+    }
+  },
+  "relationships": {
+    "r:0": {
+      "type": "BENEFITS_TO",
+      "from": { "node": "n:1" },
+      "to": { "node": "n:0" }
+    },
+    "r:1": {
+      "type": "PERFORMS",
+      "from": { "node": "n:0" },
+      "to": { "node": "n:1" }
+    }
+  },
+  "mappings": [
+    {
+      "type": "node",
+      "node": "n:0",
+      "table": "accounts.csv",
+      "keys": ["accountNumber"],
+      "properties": {
+        "accountNumber": { "field": "accountNumber" }
+      }
+    },
+    {
+      "type": "node",
+      "node": "n:1",
+      "table": "transactions.csv",
+      "keys": ["transactionId"],
+      "properties": {
+        "transactionId": { "field": "transactionId" },
+        "amount": { "field": "amount" },
+        "currency": { "field": "currency" },
+        "date": { "field": "date" }
+      }
+    },
+    {
+      "type": "relationship",
+      "relationship": "r:0",
+      "table": "transactions.csv",
+      "from": {
+        "node": "n:1",
+        "properties": { "transactionId": { "field": "transactionId" } }
+      },
+      "to": {
+        "node": "n:0",
+        "properties": { "accountNumber": { "field": "targetAccountNumber" } }
+      }
+    },
+    {
+      "type": "relationship",
+      "relationship": "r:1",
+      "table": "transactions.csv",
+      "from": {
+        "node": "n:0",
+        "properties": { "accountNumber": { "field": "sourceAccountNumber" } }
+      },
+      "to": {
+        "node": "n:1",
+        "properties": { "transactionId": { "field": "transactionId" } }
+      }
+    }
+  ],
+  "tables": {
+    "accounts.csv": {
+      "source": "local",
+      "fields": {
+        "accountNumber": { "name": "accountNumber", "type": "string" }
+      }
+    },
+    "transactions.csv": {
+      "source": "local",
+      "fields": {
+        "transactionId": { "name": "transactionId", "type": "string" },
+        "amount": { "name": "amount", "type": "string" },
+        "currency": { "name": "currency", "type": "string" },
+        "date": { "name": "date", "type": "string" },
+        "sourceAccountNumber": { "name": "sourceAccountNumber", "type": "string" },
+        "targetAccountNumber": { "name": "targetAccountNumber", "type": "string" }
+      }
+    }
+  },
+  "display": {
+    "nodes": {
+      "n:0": { "x": 65, "y": 102 },
+      "n:1": { "x": -65, "y": -102 }
+    }
+  }
+}

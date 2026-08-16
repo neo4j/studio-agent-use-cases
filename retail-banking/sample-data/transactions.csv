@@ -1,0 +1,5 @@
+transactionId,amount,currency,date,sourceAccountNumber,targetAccountNumber
+TXN001,1000.00,gbp,2023-10-24T10:00:00Z,1,2
+TXN002,900.00,gbp,2023-10-25T11:30:00Z,2,3
+TXN003,810.00,gbp,2023-10-26T09:15:00Z,3,4
+TXN004,729.00,gbp,2023-10-27T14:45:00Z,4,1

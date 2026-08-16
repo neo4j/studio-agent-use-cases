@@ -1,0 +1,674 @@
+{
+  "version": "4.0.0",
+  "nodes": {
+    "n:0": {
+      "label": "Geo",
+      "properties": {
+        "name": {
+          "type": "STRING",
+          "nullable": false,
+          "unique": true
+        },
+        "lat": {
+          "type": "FLOAT",
+          "nullable": false
+        },
+        "lon": {
+          "type": "FLOAT",
+          "nullable": false
+        },
+        "region": {
+          "type": "STRING",
+          "nullable": false
+        }
+      },
+      "constraints": {
+        "name_Geo_key": {
+          "type": "KEY",
+          "label": "Geo",
+          "properties": ["name"]
+        }
+      }
+    },
+    "n:1": {
+      "label": "ChargingStation",
+      "properties": {
+        "name": {
+          "type": "STRING",
+          "nullable": false,
+          "unique": true
+        },
+        "lat": {
+          "type": "FLOAT",
+          "nullable": false
+        },
+        "lon": {
+          "type": "FLOAT",
+          "nullable": false
+        },
+        "region": {
+          "type": "STRING",
+          "nullable": false
+        },
+        "operator": {
+          "type": "STRING",
+          "nullable": false
+        },
+        "power_kw": {
+          "type": "FLOAT",
+          "nullable": false
+        }
+      },
+      "constraints": {
+        "name_ChargingStation_key": {
+          "type": "KEY",
+          "label": "ChargingStation",
+          "properties": ["name"]
+        }
+      }
+    },
+    "n:2": {
+      "label": "Car",
+      "properties": {
+        "id": {
+          "type": "STRING",
+          "nullable": false,
+          "unique": true
+        },
+        "model": {
+          "type": "STRING",
+          "nullable": false
+        },
+        "vehicle_class": {
+          "type": "STRING",
+          "nullable": false
+        },
+        "battery_capacity_kwh": {
+          "type": "FLOAT",
+          "nullable": false
+        },
+        "efficiency_kwh_per_km": {
+          "type": "FLOAT",
+          "nullable": false
+        },
+        "max_charge_power_kw": {
+          "type": "FLOAT",
+          "nullable": false
+        },
+        "current_soc_percent": {
+          "type": "FLOAT",
+          "nullable": false
+        }
+      },
+      "constraints": {
+        "id_Car_key": {
+          "type": "KEY",
+          "label": "Car",
+          "properties": ["id"]
+        }
+      }
+    }
+  },
+  "relationships": {
+    "r:0": {
+      "type": "ROAD",
+      "from": {
+        "node": "n:0"
+      },
+      "to": {
+        "node": "n:0"
+      },
+      "properties": {
+        "road_ref": {
+          "type": "STRING",
+          "nullable": false
+        },
+        "road_class": {
+          "type": "STRING",
+          "nullable": false
+        },
+        "distance_km": {
+          "type": "FLOAT",
+          "nullable": false
+        },
+        "free_flow_speed_kph": {
+          "type": "INTEGER",
+          "nullable": false
+        },
+        "peak_speed_kph": {
+          "type": "INTEGER",
+          "nullable": false
+        }
+      }
+    },
+    "r:1": {
+      "type": "ROAD",
+      "from": {
+        "node": "n:0"
+      },
+      "to": {
+        "node": "n:1"
+      },
+      "properties": {
+        "road_ref": {
+          "type": "STRING",
+          "nullable": false
+        },
+        "road_class": {
+          "type": "STRING",
+          "nullable": false
+        },
+        "distance_km": {
+          "type": "FLOAT",
+          "nullable": false
+        },
+        "free_flow_speed_kph": {
+          "type": "INTEGER",
+          "nullable": false
+        },
+        "peak_speed_kph": {
+          "type": "INTEGER",
+          "nullable": false
+        }
+      }
+    },
+    "r:2": {
+      "type": "ROAD",
+      "from": {
+        "node": "n:1"
+      },
+      "to": {
+        "node": "n:0"
+      },
+      "properties": {
+        "road_ref": {
+          "type": "STRING",
+          "nullable": false
+        },
+        "road_class": {
+          "type": "STRING",
+          "nullable": false
+        },
+        "distance_km": {
+          "type": "FLOAT",
+          "nullable": false
+        },
+        "free_flow_speed_kph": {
+          "type": "INTEGER",
+          "nullable": false
+        },
+        "peak_speed_kph": {
+          "type": "INTEGER",
+          "nullable": false
+        }
+      }
+    },
+    "r:3": {
+      "type": "CHARGE",
+      "from": {
+        "node": "n:1"
+      },
+      "to": {
+        "node": "n:1"
+      },
+      "properties": {
+        "tier": {
+          "type": "STRING",
+          "nullable": false
+        },
+        "time_in_minutes": {
+          "type": "INTEGER",
+          "nullable": false
+        },
+        "power_kw": {
+          "type": "FLOAT",
+          "nullable": false
+        }
+      }
+    }
+  },
+  "mappings": [
+    {
+      "type": "node",
+      "node": "n:0",
+      "table": "cities.csv",
+      "keys": ["name"],
+      "properties": {
+        "name": {
+          "field": "name"
+        },
+        "lat": {
+          "field": "lat"
+        },
+        "lon": {
+          "field": "lon"
+        },
+        "region": {
+          "field": "region"
+        }
+      }
+    },
+    {
+      "type": "node",
+      "node": "n:1",
+      "table": "charging-stations.csv",
+      "keys": ["name"],
+      "properties": {
+        "name": {
+          "field": "name"
+        },
+        "lat": {
+          "field": "lat"
+        },
+        "lon": {
+          "field": "lon"
+        },
+        "region": {
+          "field": "region"
+        },
+        "operator": {
+          "field": "operator"
+        },
+        "power_kw": {
+          "field": "power_kw"
+        }
+      }
+    },
+    {
+      "type": "node",
+      "node": "n:2",
+      "table": "cars.csv",
+      "keys": ["id"],
+      "properties": {
+        "id": {
+          "field": "id"
+        },
+        "model": {
+          "field": "model"
+        },
+        "vehicle_class": {
+          "field": "vehicle_class"
+        },
+        "battery_capacity_kwh": {
+          "field": "battery_capacity_kwh"
+        },
+        "efficiency_kwh_per_km": {
+          "field": "efficiency_kwh_per_km"
+        },
+        "max_charge_power_kw": {
+          "field": "max_charge_power_kw"
+        },
+        "current_soc_percent": {
+          "field": "current_soc_percent"
+        }
+      }
+    },
+    {
+      "type": "relationship",
+      "relationship": "r:0",
+      "table": "roads-city-city.csv",
+      "from": {
+        "node": "n:0",
+        "properties": {
+          "name": {
+            "field": "from_name"
+          }
+        }
+      },
+      "to": {
+        "node": "n:0",
+        "properties": {
+          "name": {
+            "field": "to_name"
+          }
+        }
+      },
+      "properties": {
+        "road_ref": {
+          "field": "road_ref"
+        },
+        "road_class": {
+          "field": "road_class"
+        },
+        "distance_km": {
+          "field": "distance_km"
+        },
+        "free_flow_speed_kph": {
+          "field": "free_flow_speed_kph"
+        },
+        "peak_speed_kph": {
+          "field": "peak_speed_kph"
+        }
+      }
+    },
+    {
+      "type": "relationship",
+      "relationship": "r:1",
+      "table": "roads-city-station.csv",
+      "from": {
+        "node": "n:0",
+        "properties": {
+          "name": {
+            "field": "from_name"
+          }
+        }
+      },
+      "to": {
+        "node": "n:1",
+        "properties": {
+          "name": {
+            "field": "to_name"
+          }
+        }
+      },
+      "properties": {
+        "road_ref": {
+          "field": "road_ref"
+        },
+        "road_class": {
+          "field": "road_class"
+        },
+        "distance_km": {
+          "field": "distance_km"
+        },
+        "free_flow_speed_kph": {
+          "field": "free_flow_speed_kph"
+        },
+        "peak_speed_kph": {
+          "field": "peak_speed_kph"
+        }
+      }
+    },
+    {
+      "type": "relationship",
+      "relationship": "r:2",
+      "table": "roads-station-city.csv",
+      "from": {
+        "node": "n:1",
+        "properties": {
+          "name": {
+            "field": "from_name"
+          }
+        }
+      },
+      "to": {
+        "node": "n:0",
+        "properties": {
+          "name": {
+            "field": "to_name"
+          }
+        }
+      },
+      "properties": {
+        "road_ref": {
+          "field": "road_ref"
+        },
+        "road_class": {
+          "field": "road_class"
+        },
+        "distance_km": {
+          "field": "distance_km"
+        },
+        "free_flow_speed_kph": {
+          "field": "free_flow_speed_kph"
+        },
+        "peak_speed_kph": {
+          "field": "peak_speed_kph"
+        }
+      }
+    },
+    {
+      "type": "relationship",
+      "relationship": "r:3",
+      "table": "charges.csv",
+      "from": {
+        "node": "n:1",
+        "properties": {
+          "name": {
+            "field": "station_name"
+          }
+        }
+      },
+      "to": {
+        "node": "n:1",
+        "properties": {
+          "name": {
+            "field": "station_name"
+          }
+        }
+      },
+      "properties": {
+        "tier": {
+          "field": "tier"
+        },
+        "time_in_minutes": {
+          "field": "time_in_minutes"
+        },
+        "power_kw": {
+          "field": "power_kw"
+        }
+      }
+    }
+  ],
+  "tables": {
+    "cities.csv": {
+      "source": "local",
+      "fields": {
+        "name": {
+          "name": "name",
+          "type": "string"
+        },
+        "lat": {
+          "name": "lat",
+          "type": "string"
+        },
+        "lon": {
+          "name": "lon",
+          "type": "string"
+        },
+        "region": {
+          "name": "region",
+          "type": "string"
+        }
+      }
+    },
+    "charging-stations.csv": {
+      "source": "local",
+      "fields": {
+        "name": {
+          "name": "name",
+          "type": "string"
+        },
+        "lat": {
+          "name": "lat",
+          "type": "string"
+        },
+        "lon": {
+          "name": "lon",
+          "type": "string"
+        },
+        "region": {
+          "name": "region",
+          "type": "string"
+        },
+        "operator": {
+          "name": "operator",
+          "type": "string"
+        },
+        "power_kw": {
+          "name": "power_kw",
+          "type": "string"
+        }
+      }
+    },
+    "cars.csv": {
+      "source": "local",
+      "fields": {
+        "id": {
+          "name": "id",
+          "type": "string"
+        },
+        "model": {
+          "name": "model",
+          "type": "string"
+        },
+        "vehicle_class": {
+          "name": "vehicle_class",
+          "type": "string"
+        },
+        "battery_capacity_kwh": {
+          "name": "battery_capacity_kwh",
+          "type": "string"
+        },
+        "efficiency_kwh_per_km": {
+          "name": "efficiency_kwh_per_km",
+          "type": "string"
+        },
+        "max_charge_power_kw": {
+          "name": "max_charge_power_kw",
+          "type": "string"
+        },
+        "current_soc_percent": {
+          "name": "current_soc_percent",
+          "type": "string"
+        }
+      }
+    },
+    "roads-city-city.csv": {
+      "source": "local",
+      "fields": {
+        "from_name": {
+          "name": "from_name",
+          "type": "string"
+        },
+        "to_name": {
+          "name": "to_name",
+          "type": "string"
+        },
+        "road_ref": {
+          "name": "road_ref",
+          "type": "string"
+        },
+        "road_class": {
+          "name": "road_class",
+          "type": "string"
+        },
+        "distance_km": {
+          "name": "distance_km",
+          "type": "string"
+        },
+        "free_flow_speed_kph": {
+          "name": "free_flow_speed_kph",
+          "type": "string"
+        },
+        "peak_speed_kph": {
+          "name": "peak_speed_kph",
+          "type": "string"
+        }
+      }
+    },
+    "roads-city-station.csv": {
+      "source": "local",
+      "fields": {
+        "from_name": {
+          "name": "from_name",
+          "type": "string"
+        },
+        "to_name": {
+          "name": "to_name",
+          "type": "string"
+        },
+        "road_ref": {
+          "name": "road_ref",
+          "type": "string"
+        },
+        "road_class": {
+          "name": "road_class",
+          "type": "string"
+        },
+        "distance_km": {
+          "name": "distance_km",
+          "type": "string"
+        },
+        "free_flow_speed_kph": {
+          "name": "free_flow_speed_kph",
+          "type": "string"
+        },
+        "peak_speed_kph": {
+          "name": "peak_speed_kph",
+          "type": "string"
+        }
+      }
+    },
+    "roads-station-city.csv": {
+      "source": "local",
+      "fields": {
+        "from_name": {
+          "name": "from_name",
+          "type": "string"
+        },
+        "to_name": {
+          "name": "to_name",
+          "type": "string"
+        },
+        "road_ref": {
+          "name": "road_ref",
+          "type": "string"
+        },
+        "road_class": {
+          "name": "road_class",
+          "type": "string"
+        },
+        "distance_km": {
+          "name": "distance_km",
+          "type": "string"
+        },
+        "free_flow_speed_kph": {
+          "name": "free_flow_speed_kph",
+          "type": "string"
+        },
+        "peak_speed_kph": {
+          "name": "peak_speed_kph",
+          "type": "string"
+        }
+      }
+    },
+    "charges.csv": {
+      "source": "local",
+      "fields": {
+        "station_name": {
+          "name": "station_name",
+          "type": "string"
+        },
+        "tier": {
+          "name": "tier",
+          "type": "string"
+        },
+        "time_in_minutes": {
+          "name": "time_in_minutes",
+          "type": "string"
+        },
+        "power_kw": {
+          "name": "power_kw",
+          "type": "string"
+        }
+      }
+    }
+  },
+  "display": {
+    "nodes": {
+      "n:0": {
+        "x": -220,
+        "y": 0
+      },
+      "n:1": {
+        "x": 220,
+        "y": 0
+      },
+      "n:2": {
+        "x": 0,
+        "y": -260
+      }
+    }
+  }
+}

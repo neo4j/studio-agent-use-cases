@@ -1,0 +1,416 @@
+{
+  "version": "4.0.0",
+  "nodes": {
+    "n:0": {
+      "label": "Claimant",
+      "properties": {
+        "name": {
+          "type": "STRING",
+          "nullable": false,
+          "unique": true
+        }
+      },
+      "constraints": {
+        "name_Claimant_key": {
+          "type": "KEY",
+          "label": "Claimant",
+          "properties": ["name"]
+        }
+      }
+    },
+    "n:1": {
+      "label": "MedicalProfessional",
+      "properties": {
+        "name": {
+          "type": "STRING",
+          "nullable": false,
+          "unique": true
+        }
+      },
+      "constraints": {
+        "name_MedicalProfessional_key": {
+          "type": "KEY",
+          "label": "MedicalProfessional",
+          "properties": ["name"]
+        }
+      }
+    },
+    "n:2": {
+      "label": "Claim",
+      "properties": {
+        "claimID": {
+          "type": "STRING",
+          "nullable": false,
+          "unique": true
+        },
+        "date": {
+          "type": "STRING",
+          "nullable": true
+        },
+        "amountClaimed": {
+          "type": "INTEGER",
+          "nullable": false
+        }
+      },
+      "constraints": {
+        "claimID_Claim_key": {
+          "type": "KEY",
+          "label": "Claim",
+          "properties": ["claimID"]
+        }
+      }
+    },
+    "n:3": {
+      "label": "Vehicle",
+      "properties": {
+        "VIN": {
+          "type": "STRING",
+          "nullable": false,
+          "unique": true
+        }
+      },
+      "constraints": {
+        "VIN_Vehicle_key": {
+          "type": "KEY",
+          "label": "Vehicle",
+          "properties": ["VIN"]
+        }
+      }
+    }
+  },
+  "relationships": {
+    "r:0": {
+      "type": "HAS_CLAIM",
+      "from": {
+        "node": "n:0"
+      },
+      "to": {
+        "node": "n:2"
+      }
+    },
+    "r:1": {
+      "type": "TREATED_BY",
+      "from": {
+        "node": "n:2"
+      },
+      "to": {
+        "node": "n:1"
+      }
+    },
+    "r:2": {
+      "type": "OWNS",
+      "from": {
+        "node": "n:0"
+      },
+      "to": {
+        "node": "n:3"
+      }
+    },
+    "r:3": {
+      "type": "INVOLVED_IN",
+      "from": {
+        "node": "n:3"
+      },
+      "to": {
+        "node": "n:2"
+      }
+    },
+    "r:4": {
+      "type": "TREATS",
+      "from": {
+        "node": "n:1"
+      },
+      "to": {
+        "node": "n:0"
+      }
+    }
+  },
+  "mappings": [
+    {
+      "type": "node",
+      "node": "n:0",
+      "table": "claimants.csv",
+      "keys": ["name"],
+      "properties": {
+        "name": {
+          "field": "name"
+        }
+      }
+    },
+    {
+      "type": "node",
+      "node": "n:1",
+      "table": "medical_professionals.csv",
+      "keys": ["name"],
+      "properties": {
+        "name": {
+          "field": "name"
+        }
+      }
+    },
+    {
+      "type": "node",
+      "node": "n:2",
+      "table": "claims.csv",
+      "keys": ["claimID"],
+      "properties": {
+        "claimID": {
+          "field": "claimID"
+        },
+        "date": {
+          "field": "date"
+        },
+        "amountClaimed": {
+          "field": "amountClaimed"
+        }
+      }
+    },
+    {
+      "type": "node",
+      "node": "n:3",
+      "table": "vehicles.csv",
+      "keys": ["VIN"],
+      "properties": {
+        "VIN": {
+          "field": "VIN"
+        }
+      }
+    },
+    {
+      "type": "relationship",
+      "relationship": "r:0",
+      "table": "has_claim.csv",
+      "from": {
+        "node": "n:0",
+        "properties": {
+          "name": {
+            "field": "claimantName"
+          }
+        }
+      },
+      "to": {
+        "node": "n:2",
+        "properties": {
+          "claimID": {
+            "field": "claimID"
+          }
+        }
+      }
+    },
+    {
+      "type": "relationship",
+      "relationship": "r:1",
+      "table": "treated_by.csv",
+      "from": {
+        "node": "n:2",
+        "properties": {
+          "claimID": {
+            "field": "claimID"
+          }
+        }
+      },
+      "to": {
+        "node": "n:1",
+        "properties": {
+          "name": {
+            "field": "medicalProfessionalName"
+          }
+        }
+      }
+    },
+    {
+      "type": "relationship",
+      "relationship": "r:2",
+      "table": "owns.csv",
+      "from": {
+        "node": "n:0",
+        "properties": {
+          "name": {
+            "field": "claimantName"
+          }
+        }
+      },
+      "to": {
+        "node": "n:3",
+        "properties": {
+          "VIN": {
+            "field": "VIN"
+          }
+        }
+      }
+    },
+    {
+      "type": "relationship",
+      "relationship": "r:3",
+      "table": "involved_in.csv",
+      "from": {
+        "node": "n:3",
+        "properties": {
+          "VIN": {
+            "field": "VIN"
+          }
+        }
+      },
+      "to": {
+        "node": "n:2",
+        "properties": {
+          "claimID": {
+            "field": "claimID"
+          }
+        }
+      }
+    },
+    {
+      "type": "relationship",
+      "relationship": "r:4",
+      "table": "treats.csv",
+      "from": {
+        "node": "n:1",
+        "properties": {
+          "name": {
+            "field": "medicalProfessionalName"
+          }
+        }
+      },
+      "to": {
+        "node": "n:0",
+        "properties": {
+          "name": {
+            "field": "claimantName"
+          }
+        }
+      }
+    }
+  ],
+  "tables": {
+    "claimants.csv": {
+      "source": "local",
+      "fields": {
+        "name": {
+          "name": "name",
+          "type": "string"
+        }
+      }
+    },
+    "medical_professionals.csv": {
+      "source": "local",
+      "fields": {
+        "name": {
+          "name": "name",
+          "type": "string"
+        }
+      }
+    },
+    "claims.csv": {
+      "source": "local",
+      "fields": {
+        "claimID": {
+          "name": "claimID",
+          "type": "string"
+        },
+        "date": {
+          "name": "date",
+          "type": "string"
+        },
+        "amountClaimed": {
+          "name": "amountClaimed",
+          "type": "string"
+        }
+      }
+    },
+    "vehicles.csv": {
+      "source": "local",
+      "fields": {
+        "VIN": {
+          "name": "VIN",
+          "type": "string"
+        }
+      }
+    },
+    "has_claim.csv": {
+      "source": "local",
+      "fields": {
+        "claimantName": {
+          "name": "claimantName",
+          "type": "string"
+        },
+        "claimID": {
+          "name": "claimID",
+          "type": "string"
+        }
+      }
+    },
+    "treated_by.csv": {
+      "source": "local",
+      "fields": {
+        "claimID": {
+          "name": "claimID",
+          "type": "string"
+        },
+        "medicalProfessionalName": {
+          "name": "medicalProfessionalName",
+          "type": "string"
+        }
+      }
+    },
+    "owns.csv": {
+      "source": "local",
+      "fields": {
+        "claimantName": {
+          "name": "claimantName",
+          "type": "string"
+        },
+        "VIN": {
+          "name": "VIN",
+          "type": "string"
+        }
+      }
+    },
+    "involved_in.csv": {
+      "source": "local",
+      "fields": {
+        "VIN": {
+          "name": "VIN",
+          "type": "string"
+        },
+        "claimID": {
+          "name": "claimID",
+          "type": "string"
+        }
+      }
+    },
+    "treats.csv": {
+      "source": "local",
+      "fields": {
+        "medicalProfessionalName": {
+          "name": "medicalProfessionalName",
+          "type": "string"
+        },
+        "claimantName": {
+          "name": "claimantName",
+          "type": "string"
+        }
+      }
+    }
+  },
+  "display": {
+    "nodes": {
+      "n:0": {
+        "x": -300,
+        "y": 0
+      },
+      "n:1": {
+        "x": 300,
+        "y": -250
+      },
+      "n:2": {
+        "x": 100,
+        "y": 0
+      },
+      "n:3": {
+        "x": -300,
+        "y": -250
+      }
+    }
+  }
+}
