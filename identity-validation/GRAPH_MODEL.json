@@ -1,0 +1,766 @@
+{
+  "version": "4.0.0",
+  "nodes": {
+    "n:0": {
+      "label": "Identity",
+      "properties": {
+        "identityId": {
+          "type": "STRING",
+          "nullable": false,
+          "unique": true
+        },
+        "sourceSystem": {
+          "type": "STRING",
+          "nullable": false
+        }
+      },
+      "constraints": {
+        "identityId_Identity_key": {
+          "type": "KEY",
+          "label": "Identity",
+          "properties": ["identityId"]
+        }
+      }
+    },
+    "n:1": {
+      "label": "PersonName",
+      "properties": {
+        "fullName": {
+          "type": "STRING",
+          "nullable": false,
+          "unique": true
+        },
+        "firstName": {
+          "type": "STRING",
+          "nullable": true
+        },
+        "lastName": {
+          "type": "STRING",
+          "nullable": true
+        }
+      },
+      "constraints": {
+        "fullName_PersonName_key": {
+          "type": "KEY",
+          "label": "PersonName",
+          "properties": ["fullName"]
+        }
+      }
+    },
+    "n:2": {
+      "label": "Phone",
+      "properties": {
+        "phoneNumber": {
+          "type": "STRING",
+          "nullable": false,
+          "unique": true
+        }
+      },
+      "constraints": {
+        "phoneNumber_Phone_key": {
+          "type": "KEY",
+          "label": "Phone",
+          "properties": ["phoneNumber"]
+        }
+      }
+    },
+    "n:3": {
+      "label": "Email",
+      "properties": {
+        "email": {
+          "type": "STRING",
+          "nullable": false,
+          "unique": true
+        }
+      },
+      "constraints": {
+        "email_Email_key": {
+          "type": "KEY",
+          "label": "Email",
+          "properties": ["email"]
+        }
+      }
+    },
+    "n:4": {
+      "label": "SSN",
+      "properties": {
+        "ssn": {
+          "type": "STRING",
+          "nullable": false,
+          "unique": true
+        }
+      },
+      "constraints": {
+        "ssn_SSN_key": {
+          "type": "KEY",
+          "label": "SSN",
+          "properties": ["ssn"]
+        }
+      }
+    },
+    "n:5": {
+      "label": "Address",
+      "properties": {
+        "addressId": {
+          "type": "STRING",
+          "nullable": false,
+          "unique": true
+        },
+        "address": {
+          "type": "STRING",
+          "nullable": false
+        },
+        "city": {
+          "type": "STRING",
+          "nullable": false
+        },
+        "state": {
+          "type": "STRING",
+          "nullable": false
+        },
+        "zipcode": {
+          "type": "STRING",
+          "nullable": false
+        }
+      },
+      "constraints": {
+        "addressId_Address_key": {
+          "type": "KEY",
+          "label": "Address",
+          "properties": ["addressId"]
+        }
+      }
+    },
+    "n:6": {
+      "label": "DOB",
+      "properties": {
+        "dateHash": {
+          "type": "STRING",
+          "nullable": false,
+          "unique": true
+        },
+        "dob": {
+          "type": "STRING",
+          "nullable": false
+        }
+      },
+      "constraints": {
+        "dateHash_DOB_key": {
+          "type": "KEY",
+          "label": "DOB",
+          "properties": ["dateHash"]
+        }
+      }
+    },
+    "n:7": {
+      "label": "IPAddress",
+      "properties": {
+        "ip": {
+          "type": "STRING",
+          "nullable": false,
+          "unique": true
+        }
+      },
+      "constraints": {
+        "ip_IPAddress_key": {
+          "type": "KEY",
+          "label": "IPAddress",
+          "properties": ["ip"]
+        }
+      }
+    },
+    "n:8": {
+      "label": "Location",
+      "properties": {
+        "locationId": {
+          "type": "STRING",
+          "nullable": false,
+          "unique": true
+        },
+        "latitude": {
+          "type": "FLOAT",
+          "nullable": false
+        },
+        "longitude": {
+          "type": "FLOAT",
+          "nullable": false
+        }
+      },
+      "constraints": {
+        "locationId_Location_key": {
+          "type": "KEY",
+          "label": "Location",
+          "properties": ["locationId"]
+        }
+      }
+    }
+  },
+  "relationships": {
+    "r:0": {
+      "type": "HAS_NAME",
+      "from": {
+        "node": "n:0"
+      },
+      "to": {
+        "node": "n:1"
+      }
+    },
+    "r:1": {
+      "type": "HAS_PHONE",
+      "from": {
+        "node": "n:0"
+      },
+      "to": {
+        "node": "n:2"
+      }
+    },
+    "r:2": {
+      "type": "HAS_EMAIL",
+      "from": {
+        "node": "n:0"
+      },
+      "to": {
+        "node": "n:3"
+      }
+    },
+    "r:3": {
+      "type": "HAS_SSN",
+      "from": {
+        "node": "n:0"
+      },
+      "to": {
+        "node": "n:4"
+      }
+    },
+    "r:4": {
+      "type": "HAS_ADDRESS",
+      "from": {
+        "node": "n:0"
+      },
+      "to": {
+        "node": "n:5"
+      }
+    },
+    "r:5": {
+      "type": "HAS_DOB",
+      "from": {
+        "node": "n:0"
+      },
+      "to": {
+        "node": "n:6"
+      }
+    },
+    "r:6": {
+      "type": "HAS_IP",
+      "from": {
+        "node": "n:0"
+      },
+      "to": {
+        "node": "n:7"
+      }
+    },
+    "r:7": {
+      "type": "GEOCODED_TO",
+      "from": {
+        "node": "n:5"
+      },
+      "to": {
+        "node": "n:8"
+      }
+    }
+  },
+  "mappings": [
+    {
+      "type": "node",
+      "node": "n:0",
+      "table": "identities.csv",
+      "keys": ["identityId"],
+      "properties": {
+        "identityId": {
+          "field": "identityId"
+        },
+        "sourceSystem": {
+          "field": "sourceSystem"
+        }
+      }
+    },
+    {
+      "type": "node",
+      "node": "n:1",
+      "table": "names.csv",
+      "keys": ["fullName"],
+      "properties": {
+        "fullName": {
+          "field": "fullName"
+        },
+        "firstName": {
+          "field": "firstName"
+        },
+        "lastName": {
+          "field": "lastName"
+        }
+      }
+    },
+    {
+      "type": "relationship",
+      "relationship": "r:0",
+      "table": "names.csv",
+      "from": {
+        "node": "n:0",
+        "properties": {
+          "identityId": {
+            "field": "identityId"
+          }
+        }
+      },
+      "to": {
+        "node": "n:1",
+        "properties": {
+          "fullName": {
+            "field": "fullName"
+          }
+        }
+      }
+    },
+    {
+      "type": "node",
+      "node": "n:2",
+      "table": "phones.csv",
+      "keys": ["phoneNumber"],
+      "properties": {
+        "phoneNumber": {
+          "field": "phoneNumber"
+        }
+      }
+    },
+    {
+      "type": "relationship",
+      "relationship": "r:1",
+      "table": "phones.csv",
+      "from": {
+        "node": "n:0",
+        "properties": {
+          "identityId": {
+            "field": "identityId"
+          }
+        }
+      },
+      "to": {
+        "node": "n:2",
+        "properties": {
+          "phoneNumber": {
+            "field": "phoneNumber"
+          }
+        }
+      }
+    },
+    {
+      "type": "node",
+      "node": "n:3",
+      "table": "emails.csv",
+      "keys": ["email"],
+      "properties": {
+        "email": {
+          "field": "email"
+        }
+      }
+    },
+    {
+      "type": "relationship",
+      "relationship": "r:2",
+      "table": "emails.csv",
+      "from": {
+        "node": "n:0",
+        "properties": {
+          "identityId": {
+            "field": "identityId"
+          }
+        }
+      },
+      "to": {
+        "node": "n:3",
+        "properties": {
+          "email": {
+            "field": "email"
+          }
+        }
+      }
+    },
+    {
+      "type": "node",
+      "node": "n:4",
+      "table": "ssns.csv",
+      "keys": ["ssn"],
+      "properties": {
+        "ssn": {
+          "field": "ssn"
+        }
+      }
+    },
+    {
+      "type": "relationship",
+      "relationship": "r:3",
+      "table": "ssns.csv",
+      "from": {
+        "node": "n:0",
+        "properties": {
+          "identityId": {
+            "field": "identityId"
+          }
+        }
+      },
+      "to": {
+        "node": "n:4",
+        "properties": {
+          "ssn": {
+            "field": "ssn"
+          }
+        }
+      }
+    },
+    {
+      "type": "node",
+      "node": "n:5",
+      "table": "addresses.csv",
+      "keys": ["addressId"],
+      "properties": {
+        "addressId": {
+          "field": "addressId"
+        },
+        "address": {
+          "field": "address"
+        },
+        "city": {
+          "field": "city"
+        },
+        "state": {
+          "field": "state"
+        },
+        "zipcode": {
+          "field": "zipcode"
+        }
+      }
+    },
+    {
+      "type": "relationship",
+      "relationship": "r:4",
+      "table": "addresses.csv",
+      "from": {
+        "node": "n:0",
+        "properties": {
+          "identityId": {
+            "field": "identityId"
+          }
+        }
+      },
+      "to": {
+        "node": "n:5",
+        "properties": {
+          "addressId": {
+            "field": "addressId"
+          }
+        }
+      }
+    },
+    {
+      "type": "node",
+      "node": "n:6",
+      "table": "dobs.csv",
+      "keys": ["dateHash"],
+      "properties": {
+        "dateHash": {
+          "field": "dateHash"
+        },
+        "dob": {
+          "field": "dob"
+        }
+      }
+    },
+    {
+      "type": "relationship",
+      "relationship": "r:5",
+      "table": "dobs.csv",
+      "from": {
+        "node": "n:0",
+        "properties": {
+          "identityId": {
+            "field": "identityId"
+          }
+        }
+      },
+      "to": {
+        "node": "n:6",
+        "properties": {
+          "dateHash": {
+            "field": "dateHash"
+          }
+        }
+      }
+    },
+    {
+      "type": "node",
+      "node": "n:7",
+      "table": "ip_addresses.csv",
+      "keys": ["ip"],
+      "properties": {
+        "ip": {
+          "field": "ip"
+        }
+      }
+    },
+    {
+      "type": "relationship",
+      "relationship": "r:6",
+      "table": "ip_addresses.csv",
+      "from": {
+        "node": "n:0",
+        "properties": {
+          "identityId": {
+            "field": "identityId"
+          }
+        }
+      },
+      "to": {
+        "node": "n:7",
+        "properties": {
+          "ip": {
+            "field": "ip"
+          }
+        }
+      }
+    },
+    {
+      "type": "node",
+      "node": "n:8",
+      "table": "locations.csv",
+      "keys": ["locationId"],
+      "properties": {
+        "locationId": {
+          "field": "locationId"
+        },
+        "latitude": {
+          "field": "latitude"
+        },
+        "longitude": {
+          "field": "longitude"
+        }
+      }
+    },
+    {
+      "type": "relationship",
+      "relationship": "r:7",
+      "table": "locations.csv",
+      "from": {
+        "node": "n:5",
+        "properties": {
+          "addressId": {
+            "field": "addressId"
+          }
+        }
+      },
+      "to": {
+        "node": "n:8",
+        "properties": {
+          "locationId": {
+            "field": "locationId"
+          }
+        }
+      }
+    }
+  ],
+  "tables": {
+    "identities.csv": {
+      "source": "local",
+      "fields": {
+        "identityId": {
+          "name": "identityId",
+          "type": "string"
+        },
+        "sourceSystem": {
+          "name": "sourceSystem",
+          "type": "string"
+        }
+      }
+    },
+    "names.csv": {
+      "source": "local",
+      "fields": {
+        "identityId": {
+          "name": "identityId",
+          "type": "string"
+        },
+        "fullName": {
+          "name": "fullName",
+          "type": "string"
+        },
+        "firstName": {
+          "name": "firstName",
+          "type": "string"
+        },
+        "lastName": {
+          "name": "lastName",
+          "type": "string"
+        }
+      }
+    },
+    "phones.csv": {
+      "source": "local",
+      "fields": {
+        "identityId": {
+          "name": "identityId",
+          "type": "string"
+        },
+        "phoneNumber": {
+          "name": "phoneNumber",
+          "type": "string"
+        }
+      }
+    },
+    "emails.csv": {
+      "source": "local",
+      "fields": {
+        "identityId": {
+          "name": "identityId",
+          "type": "string"
+        },
+        "email": {
+          "name": "email",
+          "type": "string"
+        }
+      }
+    },
+    "ssns.csv": {
+      "source": "local",
+      "fields": {
+        "identityId": {
+          "name": "identityId",
+          "type": "string"
+        },
+        "ssn": {
+          "name": "ssn",
+          "type": "string"
+        }
+      }
+    },
+    "addresses.csv": {
+      "source": "local",
+      "fields": {
+        "identityId": {
+          "name": "identityId",
+          "type": "string"
+        },
+        "addressId": {
+          "name": "addressId",
+          "type": "string"
+        },
+        "address": {
+          "name": "address",
+          "type": "string"
+        },
+        "city": {
+          "name": "city",
+          "type": "string"
+        },
+        "state": {
+          "name": "state",
+          "type": "string"
+        },
+        "zipcode": {
+          "name": "zipcode",
+          "type": "string"
+        }
+      }
+    },
+    "dobs.csv": {
+      "source": "local",
+      "fields": {
+        "identityId": {
+          "name": "identityId",
+          "type": "string"
+        },
+        "dob": {
+          "name": "dob",
+          "type": "string"
+        },
+        "dateHash": {
+          "name": "dateHash",
+          "type": "string"
+        }
+      }
+    },
+    "ip_addresses.csv": {
+      "source": "local",
+      "fields": {
+        "identityId": {
+          "name": "identityId",
+          "type": "string"
+        },
+        "ip": {
+          "name": "ip",
+          "type": "string"
+        }
+      }
+    },
+    "locations.csv": {
+      "source": "local",
+      "fields": {
+        "addressId": {
+          "name": "addressId",
+          "type": "string"
+        },
+        "locationId": {
+          "name": "locationId",
+          "type": "string"
+        },
+        "latitude": {
+          "name": "latitude",
+          "type": "string"
+        },
+        "longitude": {
+          "name": "longitude",
+          "type": "string"
+        }
+      }
+    }
+  },
+  "display": {
+    "nodes": {
+      "n:0": {
+        "x": 0,
+        "y": 0
+      },
+      "n:1": {
+        "x": 260,
+        "y": -180
+      },
+      "n:2": {
+        "x": 340,
+        "y": 0
+      },
+      "n:3": {
+        "x": 260,
+        "y": 180
+      },
+      "n:4": {
+        "x": -260,
+        "y": 180
+      },
+      "n:5": {
+        "x": -340,
+        "y": 0
+      },
+      "n:6": {
+        "x": -260,
+        "y": -180
+      },
+      "n:7": {
+        "x": 0,
+        "y": -320
+      },
+      "n:8": {
+        "x": -620,
+        "y": 0
+      }
+    }
+  }
+}
