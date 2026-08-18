@@ -4,106 +4,106 @@
     {
       "skillId": "ev-route-planning",
       "files": {
-        "graph": ["ev-route-planning/GRAPH_MODEL.json"],
+        "graph": "GRAPH_MODEL.json",
         "skill": [
-          "ev-route-planning/sample-data/cars.csv",
-          "ev-route-planning/sample-data/charges.csv",
-          "ev-route-planning/sample-data/charging-stations.csv",
-          "ev-route-planning/sample-data/cities.csv",
-          "ev-route-planning/sample-data/roads-city-city.csv",
-          "ev-route-planning/sample-data/roads-city-station.csv",
-          "ev-route-planning/sample-data/roads-station-city.csv",
-          "ev-route-planning/QUERIES.md"
+          "sample-data/cars.csv",
+          "sample-data/charges.csv",
+          "sample-data/charging-stations.csv",
+          "sample-data/cities.csv",
+          "sample-data/roads-city-city.csv",
+          "sample-data/roads-city-station.csv",
+          "sample-data/roads-station-city.csv",
+          "QUERIES.md"
         ],
-        "markdown": ["ev-route-planning/SKILL.md"]
+        "markdown": "SKILL.md"
       }
     },
     {
       "skillId": "identity-validation",
       "files": {
-        "graph": ["identity-validation/GRAPH_MODEL.json"],
+        "graph": "GRAPH_MODEL.json",
         "skill": [
-          "identity-validation/sample-data/addresses.csv",
-          "identity-validation/sample-data/dobs.csv",
-          "identity-validation/sample-data/emails.csv",
-          "identity-validation/sample-data/identities.csv",
-          "identity-validation/sample-data/ip_addresses.csv",
-          "identity-validation/sample-data/locations.csv",
-          "identity-validation/sample-data/names.csv",
-          "identity-validation/sample-data/phones.csv",
-          "identity-validation/sample-data/ssns.csv",
-          "identity-validation/caveats.md",
-          "identity-validation/graph-model.md",
-          "identity-validation/implementation-guidance.md",
-          "identity-validation/indexes.cypher",
-          "identity-validation/INTRODUCTION.md",
-          "identity-validation/overview.md",
-          "identity-validation/QUERIES.md",
-          "identity-validation/query-patterns.md",
-          "identity-validation/query-templates.md",
-          "identity-validation/resolution-workflow.md",
-          "identity-validation/sample-data.md",
-          "identity-validation/SETUP.md"
+          "sample-data/addresses.csv",
+          "sample-data/dobs.csv",
+          "sample-data/emails.csv",
+          "sample-data/identities.csv",
+          "sample-data/ip_addresses.csv",
+          "sample-data/locations.csv",
+          "sample-data/names.csv",
+          "sample-data/phones.csv",
+          "sample-data/ssns.csv",
+          "caveats.md",
+          "graph-model.md",
+          "implementation-guidance.md",
+          "indexes.cypher",
+          "INTRODUCTION.md",
+          "overview.md",
+          "QUERIES.md",
+          "query-patterns.md",
+          "query-templates.md",
+          "resolution-workflow.md",
+          "sample-data.md",
+          "SETUP.md"
         ],
-        "markdown": ["identity-validation/SKILL.md"]
+        "markdown": "SKILL.md"
       }
     },
     {
       "skillId": "insurance-claims-fraud",
       "files": {
-        "graph": ["insurance-claims-fraud/GRAPH_MODEL.json"],
+        "graph": "GRAPH_MODEL.json",
         "skill": [
-          "insurance-claims-fraud/sample-data/claimants.csv",
-          "insurance-claims-fraud/sample-data/claims.csv",
-          "insurance-claims-fraud/sample-data/has_claim.csv",
-          "insurance-claims-fraud/sample-data/involved_in.csv",
-          "insurance-claims-fraud/sample-data/medical_professionals.csv",
-          "insurance-claims-fraud/sample-data/owns.csv",
-          "insurance-claims-fraud/sample-data/treated_by.csv",
-          "insurance-claims-fraud/sample-data/treats.csv",
-          "insurance-claims-fraud/sample-data/vehicles.csv",
-          "insurance-claims-fraud/INTRODUCTION.md",
-          "insurance-claims-fraud/QUERIES.md"
+          "sample-data/claimants.csv",
+          "sample-data/claims.csv",
+          "sample-data/has_claim.csv",
+          "sample-data/involved_in.csv",
+          "sample-data/medical_professionals.csv",
+          "sample-data/owns.csv",
+          "sample-data/treated_by.csv",
+          "sample-data/treats.csv",
+          "sample-data/vehicles.csv",
+          "INTRODUCTION.md",
+          "QUERIES.md"
         ],
-        "markdown": ["insurance-claims-fraud/SKILL.md"]
+        "markdown": "SKILL.md"
       }
     },
     {
       "skillId": "patient-journey",
       "files": {
-        "graph": ["patient-journey/GRAPH_MODEL.json"],
+        "graph": "GRAPH_MODEL.json",
         "skill": [
-          "patient-journey/sample-data/conditions.csv",
-          "patient-journey/sample-data/drugs.csv",
-          "patient-journey/sample-data/encounters.csv",
-          "patient-journey/sample-data/observations.csv",
-          "patient-journey/sample-data/organisations.csv",
-          "patient-journey/sample-data/patients.csv",
-          "patient-journey/sample-data/providers.csv",
-          "patient-journey/INTRODUCTION.md",
-          "patient-journey/queries.cypher",
-          "patient-journey/QUERIES.md"
+          "sample-data/conditions.csv",
+          "sample-data/drugs.csv",
+          "sample-data/encounters.csv",
+          "sample-data/observations.csv",
+          "sample-data/organisations.csv",
+          "sample-data/patients.csv",
+          "sample-data/providers.csv",
+          "INTRODUCTION.md",
+          "queries.cypher",
+          "QUERIES.md"
         ],
-        "markdown": ["patient-journey/SKILL.md"]
+        "markdown": "SKILL.md"
       }
     },
     {
       "skillId": "retail-banking",
       "files": {
-        "graph": ["retail-banking/GRAPH_MODEL.json"],
+        "graph": "GRAPH_MODEL.json",
         "skill": [
-          "retail-banking/sample-data/accounts.csv",
-          "retail-banking/sample-data/transactions.csv",
-          "retail-banking/caveats.md",
-          "retail-banking/detection-workflow.md",
-          "retail-banking/graph-model.md",
-          "retail-banking/implementation-guidance.md",
-          "retail-banking/INTRODUCTION.md",
-          "retail-banking/overview.md",
-          "retail-banking/query-patterns.md",
-          "retail-banking/query-templates.md"
+          "sample-data/accounts.csv",
+          "sample-data/transactions.csv",
+          "caveats.md",
+          "detection-workflow.md",
+          "graph-model.md",
+          "implementation-guidance.md",
+          "INTRODUCTION.md",
+          "overview.md",
+          "query-patterns.md",
+          "query-templates.md"
         ],
-        "markdown": ["retail-banking/SKILL.md"]
+        "markdown": "SKILL.md"
       }
     }
   ]

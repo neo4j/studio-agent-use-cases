@@ -38,19 +38,54 @@ https://raw.githubusercontent.com/neo4j/studio-agent-use-cases/<ref>/<skill-id>/
 | Branch  | Environment | Purpose                                     |
 | ------- | ----------- | ------------------------------------------- |
 | `main`  | Development | Source of truth for new and updated skills. |
-| `stage` | Staging     | Skills being validated before release.      |
-| `prod`  | Production  | Approved skills available to production.    |
+| `staging` | Staging     | Skills being validated before release.      |
+| `production`  | Production  | Approved skills available to production.    |
 
 Changes move in one direction:
 
 ```text
-main -> stage -> prod
+main -> staging -> production
 ```
 
 1. Develop on a short-lived branch and open a pull request into `main`.
-2. Use [Promote main to stage](https://github.com/neo4j/studio-agent-use-cases/compare/stage...main?expand=1).
+2. Use [Promote main to staging](https://github.com/neo4j/studio-agent-use-cases/compare/staging...main?expand=1).
 3. Validate the skills in staging.
-4. Use [Promote stage to prod](https://github.com/neo4j/studio-agent-use-cases/compare/prod...stage?expand=1).
+4. Use [Promote stage to production](https://github.com/neo4j/studio-agent-use-cases/compare/production...staging?expand=1).
 5. Complete required checks and approvals, then create a merge commit.
 
-Do not commit directly to `stage` or `prod`. Apply fixes to `main` and promote them through the same sequence. Promotion pull requests must use merge commits: squash or rebase merges break ancestry between the long-lived branches and can make later promotions include previously released changes.
+Do not commit directly to `staging` or `production`. Apply fixes to `main` and promote them through the same sequence. Promotion pull requests must use merge commits: squash or rebase merges break ancestry between the long-lived branches and can make later promotions include previously released changes.
+
+## Catalog format
+
+`catalog.json` is the machine-readable index of published skills. Schema version `1` looks like this:
+
+```json
+{
+  "schemaVersion": 1,
+  "skills": [
+    {
+      "skillId": "example-skill",
+      "files": {
+        "graph": "GRAPH_MODEL.json",
+        "markdown": "SKILL.md",
+        "skill": [
+          "INTRODUCTION.md",
+          "QUERIES.md",
+          "sample-data/example.csv"
+        ]
+      }
+    }
+  ]
+}
+```
+
+| Field | Type | Description |
+| ----- | ---- | ----------- |
+| `schemaVersion` | number | Catalog schema version. Currently `1`. |
+| `skills` | array | One entry per skill package in the repository. |
+| `skills[].skillId` | string | Directory name of the skill at the repository root (kebab-case). |
+| `skills[].files.graph` | string | Path to the graph model file, relative to the skill directory. Always `GRAPH_MODEL.json`. |
+| `skills[].files.markdown` | string | Path to the skill card markdown, relative to the skill directory. Always `SKILL.md`. |
+| `skills[].files.skill` | string[] | Remaining supporting files relative to the skill directory, sorted lexicographically. Includes docs, Cypher, and sample CSVs. |
+
+Resolve any path in `files` as `<skillId>/<path>` from the repository root. When adding or updating a skill, keep `catalog.json` in sync with the files that skill actually ships.
