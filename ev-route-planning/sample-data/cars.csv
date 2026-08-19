@@ -1,0 +1,31 @@
+id,model,vehicle_class,battery_capacity_kwh,efficiency_kwh_per_km,max_charge_power_kw,current_soc_percent
+EV-001,Corvia eVan 60,Light Van,60.0,0.24,90.0,38.0
+EV-002,Corvia eVan 75,Light Van,75.0,0.25,110.0,72.0
+EV-003,Corvia eVan 90,Light Van,90.0,0.23,125.0,54.0
+EV-004,Meridian LV-70,Light Van,70.0,0.22,100.0,91.0
+EV-005,Meridian LV-85,Light Van,85.0,0.26,120.0,26.0
+EV-006,Aurex Cargo 65,Light Van,65.0,0.21,90.0,66.0
+EV-007,Corvia eVan 60,Light Van,60.0,0.24,90.0,45.0
+EV-008,Corvia eVan 75,Light Van,75.0,0.25,110.0,83.0
+EV-009,Corvia eVan 90,Light Van,90.0,0.23,125.0,59.0
+EV-010,Meridian LV-70,Light Van,70.0,0.22,100.0,31.0
+EV-011,Meridian LV-85,Light Van,85.0,0.26,120.0,77.0
+EV-012,Aurex Cargo 65,Light Van,65.0,0.21,90.0,48.0
+EV-013,Aurex Estate 77,Fleet Car,77.0,0.17,150.0,95.0
+EV-014,Aurex Estate 100,Fleet Car,100.0,0.16,175.0,62.0
+EV-015,Selene GT 82,Fleet Car,82.0,0.15,150.0,35.0
+EV-016,Selene GT 110,Fleet Car,110.0,0.18,200.0,88.0
+EV-017,Corvia Saloon 75,Fleet Car,75.0,0.14,135.0,51.0
+EV-018,Aurex Estate 77,Fleet Car,77.0,0.17,150.0,69.0
+EV-019,Aurex Estate 100,Fleet Car,100.0,0.16,175.0,42.0
+EV-020,Selene GT 82,Fleet Car,82.0,0.15,150.0,79.0
+EV-021,Selene GT 110,Fleet Car,110.0,0.18,200.0,57.0
+EV-022,Corvia Saloon 75,Fleet Car,75.0,0.14,135.0,33.0
+EV-023,Halden Rigid 200,Rigid Truck,200.0,0.62,250.0,86.0
+EV-024,Halden Rigid 280,Rigid Truck,280.0,0.74,300.0,64.0
+EV-025,Torvald R-240,Rigid Truck,240.0,0.68,250.0,47.0
+EV-026,Torvald R-320,Rigid Truck,320.0,0.82,350.0,92.0
+EV-027,Halden Rigid 200,Rigid Truck,200.0,0.62,250.0,29.0
+EV-028,Halden Rigid 280,Rigid Truck,280.0,0.74,300.0,74.0
+EV-029,Torvald R-240,Rigid Truck,240.0,0.68,250.0,56.0
+EV-030,Torvald R-320,Rigid Truck,320.0,0.82,350.0,81.0

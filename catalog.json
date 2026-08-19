@@ -1,0 +1,110 @@
+{
+  "schemaVersion": 1,
+  "skills": [
+    {
+      "skillId": "ev-route-planning",
+      "files": {
+        "graph": "GRAPH_MODEL.json",
+        "skill": [
+          "sample-data/cars.csv",
+          "sample-data/charges.csv",
+          "sample-data/charging-stations.csv",
+          "sample-data/cities.csv",
+          "sample-data/roads-city-city.csv",
+          "sample-data/roads-city-station.csv",
+          "sample-data/roads-station-city.csv",
+          "QUERIES.md"
+        ],
+        "markdown": "SKILL.md"
+      }
+    },
+    {
+      "skillId": "identity-validation",
+      "files": {
+        "graph": "GRAPH_MODEL.json",
+        "skill": [
+          "sample-data/addresses.csv",
+          "sample-data/dobs.csv",
+          "sample-data/emails.csv",
+          "sample-data/identities.csv",
+          "sample-data/ip_addresses.csv",
+          "sample-data/locations.csv",
+          "sample-data/names.csv",
+          "sample-data/phones.csv",
+          "sample-data/ssns.csv",
+          "caveats.md",
+          "graph-model.md",
+          "implementation-guidance.md",
+          "indexes.cypher",
+          "INTRODUCTION.md",
+          "overview.md",
+          "QUERIES.md",
+          "query-patterns.md",
+          "query-templates.md",
+          "resolution-workflow.md",
+          "sample-data.md",
+          "SETUP.md"
+        ],
+        "markdown": "SKILL.md"
+      }
+    },
+    {
+      "skillId": "insurance-claims-fraud",
+      "files": {
+        "graph": "GRAPH_MODEL.json",
+        "skill": [
+          "sample-data/claimants.csv",
+          "sample-data/claims.csv",
+          "sample-data/has_claim.csv",
+          "sample-data/involved_in.csv",
+          "sample-data/medical_professionals.csv",
+          "sample-data/owns.csv",
+          "sample-data/treated_by.csv",
+          "sample-data/treats.csv",
+          "sample-data/vehicles.csv",
+          "INTRODUCTION.md",
+          "QUERIES.md"
+        ],
+        "markdown": "SKILL.md"
+      }
+    },
+    {
+      "skillId": "patient-journey",
+      "files": {
+        "graph": "GRAPH_MODEL.json",
+        "skill": [
+          "sample-data/conditions.csv",
+          "sample-data/drugs.csv",
+          "sample-data/encounters.csv",
+          "sample-data/observations.csv",
+          "sample-data/organisations.csv",
+          "sample-data/patients.csv",
+          "sample-data/providers.csv",
+          "INTRODUCTION.md",
+          "queries.cypher",
+          "QUERIES.md"
+        ],
+        "markdown": "SKILL.md"
+      }
+    },
+    {
+      "skillId": "retail-banking",
+      "files": {
+        "graph": "GRAPH_MODEL.json",
+        "skill": [
+          "sample-data/accounts.csv",
+          "sample-data/transactions.csv",
+          "caveats.md",
+          "detection-workflow.md",
+          "graph-model.md",
+          "implementation-guidance.md",
+          "INTRODUCTION.md",
+          "overview.md",
+          "query-patterns.md",
+          "query-templates.md"
+        ],
+        "markdown": "SKILL.md"
+      }
+    }
+  ]
+}

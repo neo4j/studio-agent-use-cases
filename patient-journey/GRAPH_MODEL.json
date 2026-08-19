@@ -1,0 +1,400 @@
+{
+  "version": "4.0.0",
+  "nodes": {
+    "n:0": {
+      "label": "Patient",
+      "properties": {
+        "id": { "type": "STRING", "nullable": false, "unique": true },
+        "name": { "type": "STRING", "nullable": false },
+        "birthDate": { "type": "ZONED DATETIME", "nullable": false }
+      },
+      "constraints": {
+        "id_Patient_key": { "type": "KEY", "label": "Patient", "properties": ["id"] }
+      }
+    },
+    "n:1": {
+      "label": "Encounter",
+      "properties": {
+        "id": { "type": "STRING", "nullable": false, "unique": true },
+        "date": { "type": "ZONED DATETIME", "nullable": false },
+        "type": { "type": "STRING", "nullable": false }
+      },
+      "constraints": {
+        "id_Encounter_key": { "type": "KEY", "label": "Encounter", "properties": ["id"] }
+      }
+    },
+    "n:2": {
+      "label": "Observation",
+      "properties": {
+        "id": { "type": "STRING", "nullable": false, "unique": true },
+        "code": { "type": "STRING", "nullable": false },
+        "description": { "type": "STRING", "nullable": false },
+        "value": { "type": "STRING", "nullable": false },
+        "units": { "type": "STRING", "nullable": false }
+      },
+      "constraints": {
+        "id_Observation_key": { "type": "KEY", "label": "Observation", "properties": ["id"] }
+      }
+    },
+    "n:3": {
+      "label": "Condition",
+      "properties": {
+        "code": { "type": "STRING", "nullable": false, "unique": true },
+        "description": { "type": "STRING", "nullable": false }
+      },
+      "constraints": {
+        "code_Condition_key": { "type": "KEY", "label": "Condition", "properties": ["code"] }
+      }
+    },
+    "n:4": {
+      "label": "Drug",
+      "properties": {
+        "code": { "type": "STRING", "nullable": false, "unique": true },
+        "name": { "type": "STRING", "nullable": false }
+      },
+      "constraints": {
+        "code_Drug_key": { "type": "KEY", "label": "Drug", "properties": ["code"] }
+      }
+    },
+    "n:5": {
+      "label": "Provider",
+      "properties": {
+        "id": { "type": "STRING", "nullable": false, "unique": true },
+        "name": { "type": "STRING", "nullable": false }
+      },
+      "constraints": {
+        "id_Provider_key": { "type": "KEY", "label": "Provider", "properties": ["id"] }
+      }
+    },
+    "n:6": {
+      "label": "Speciality",
+      "properties": {
+        "name": { "type": "STRING", "nullable": false, "unique": true }
+      },
+      "constraints": {
+        "name_Speciality_key": { "type": "KEY", "label": "Speciality", "properties": ["name"] }
+      }
+    },
+    "n:7": {
+      "label": "Organisation",
+      "properties": {
+        "id": { "type": "STRING", "nullable": false, "unique": true },
+        "name": { "type": "STRING", "nullable": false },
+        "address": { "type": "STRING", "nullable": true }
+      },
+      "constraints": {
+        "id_Organisation_key": { "type": "KEY", "label": "Organisation", "properties": ["id"] }
+      }
+    }
+  },
+  "relationships": {
+    "r:0": {
+      "type": "HAS_ENCOUNTER",
+      "from": { "node": "n:0" },
+      "to": { "node": "n:1" }
+    },
+    "r:1": {
+      "type": "NEXT",
+      "from": { "node": "n:1" },
+      "to": { "node": "n:1" }
+    },
+    "r:2": {
+      "type": "HAS_OBSERVATION",
+      "from": { "node": "n:1" },
+      "to": { "node": "n:2" }
+    },
+    "r:3": {
+      "type": "DIAGNOSED",
+      "from": { "node": "n:1" },
+      "to": { "node": "n:3" }
+    },
+    "r:4": {
+      "type": "PRESCRIBED",
+      "from": { "node": "n:1" },
+      "to": { "node": "n:4" }
+    },
+    "r:5": {
+      "type": "ATTENDED_BY",
+      "from": { "node": "n:1" },
+      "to": { "node": "n:5" }
+    },
+    "r:6": {
+      "type": "HAS_SPECIALITY",
+      "from": { "node": "n:5" },
+      "to": { "node": "n:6" }
+    },
+    "r:7": {
+      "type": "BELONGS_TO",
+      "from": { "node": "n:5" },
+      "to": { "node": "n:7" }
+    }
+  },
+  "mappings": [
+    {
+      "type": "node",
+      "node": "n:0",
+      "table": "patients.csv",
+      "keys": ["id"],
+      "properties": {
+        "id": { "field": "id" },
+        "name": { "field": "name" },
+        "birthDate": { "field": "birthDate" }
+      }
+    },
+    {
+      "type": "node",
+      "node": "n:1",
+      "table": "encounters.csv",
+      "keys": ["id"],
+      "properties": {
+        "id": { "field": "id" },
+        "date": { "field": "date" },
+        "type": { "field": "type" }
+      }
+    },
+    {
+      "type": "node",
+      "node": "n:2",
+      "table": "observations.csv",
+      "keys": ["id"],
+      "properties": {
+        "id": { "field": "id" },
+        "code": { "field": "code" },
+        "description": { "field": "description" },
+        "value": { "field": "value" },
+        "units": { "field": "units" }
+      }
+    },
+    {
+      "type": "node",
+      "node": "n:3",
+      "table": "conditions.csv",
+      "keys": ["code"],
+      "properties": {
+        "code": { "field": "code" },
+        "description": { "field": "description" }
+      }
+    },
+    {
+      "type": "node",
+      "node": "n:4",
+      "table": "drugs.csv",
+      "keys": ["code"],
+      "properties": {
+        "code": { "field": "code" },
+        "name": { "field": "name" }
+      }
+    },
+    {
+      "type": "node",
+      "node": "n:5",
+      "table": "providers.csv",
+      "keys": ["id"],
+      "properties": {
+        "id": { "field": "id" },
+        "name": { "field": "name" }
+      }
+    },
+    {
+      "type": "node",
+      "node": "n:6",
+      "table": "providers.csv",
+      "keys": ["name"],
+      "properties": {
+        "name": { "field": "speciality" }
+      }
+    },
+    {
+      "type": "node",
+      "node": "n:7",
+      "table": "organisations.csv",
+      "keys": ["id"],
+      "properties": {
+        "id": { "field": "id" },
+        "name": { "field": "name" },
+        "address": { "field": "address" }
+      }
+    },
+    {
+      "type": "relationship",
+      "relationship": "r:0",
+      "table": "encounters.csv",
+      "from": {
+        "node": "n:0",
+        "properties": { "id": { "field": "patientId" } }
+      },
+      "to": {
+        "node": "n:1",
+        "properties": { "id": { "field": "id" } }
+      }
+    },
+    {
+      "type": "relationship",
+      "relationship": "r:1",
+      "table": "encounters.csv",
+      "from": {
+        "node": "n:1",
+        "properties": { "id": { "field": "id" } }
+      },
+      "to": {
+        "node": "n:1",
+        "properties": { "id": { "field": "nextEncounterId" } }
+      }
+    },
+    {
+      "type": "relationship",
+      "relationship": "r:2",
+      "table": "observations.csv",
+      "from": {
+        "node": "n:1",
+        "properties": { "id": { "field": "encounterId" } }
+      },
+      "to": {
+        "node": "n:2",
+        "properties": { "id": { "field": "id" } }
+      }
+    },
+    {
+      "type": "relationship",
+      "relationship": "r:3",
+      "table": "conditions.csv",
+      "from": {
+        "node": "n:1",
+        "properties": { "id": { "field": "encounterId" } }
+      },
+      "to": {
+        "node": "n:3",
+        "properties": { "code": { "field": "code" } }
+      }
+    },
+    {
+      "type": "relationship",
+      "relationship": "r:4",
+      "table": "drugs.csv",
+      "from": {
+        "node": "n:1",
+        "properties": { "id": { "field": "encounterId" } }
+      },
+      "to": {
+        "node": "n:4",
+        "properties": { "code": { "field": "code" } }
+      }
+    },
+    {
+      "type": "relationship",
+      "relationship": "r:5",
+      "table": "encounters.csv",
+      "from": {
+        "node": "n:1",
+        "properties": { "id": { "field": "id" } }
+      },
+      "to": {
+        "node": "n:5",
+        "properties": { "id": { "field": "providerId" } }
+      }
+    },
+    {
+      "type": "relationship",
+      "relationship": "r:6",
+      "table": "providers.csv",
+      "from": {
+        "node": "n:5",
+        "properties": { "id": { "field": "id" } }
+      },
+      "to": {
+        "node": "n:6",
+        "properties": { "name": { "field": "speciality" } }
+      }
+    },
+    {
+      "type": "relationship",
+      "relationship": "r:7",
+      "table": "providers.csv",
+      "from": {
+        "node": "n:5",
+        "properties": { "id": { "field": "id" } }
+      },
+      "to": {
+        "node": "n:7",
+        "properties": { "id": { "field": "organisationId" } }
+      }
+    }
+  ],
+  "tables": {
+    "patients.csv": {
+      "source": "local",
+      "fields": {
+        "id": { "name": "id", "type": "string" },
+        "name": { "name": "name", "type": "string" },
+        "birthDate": { "name": "birthDate", "type": "string" }
+      }
+    },
+    "encounters.csv": {
+      "source": "local",
+      "fields": {
+        "id": { "name": "id", "type": "string" },
+        "patientId": { "name": "patientId", "type": "string" },
+        "providerId": { "name": "providerId", "type": "string" },
+        "date": { "name": "date", "type": "string" },
+        "type": { "name": "type", "type": "string" },
+        "nextEncounterId": { "name": "nextEncounterId", "type": "string" }
+      }
+    },
+    "observations.csv": {
+      "source": "local",
+      "fields": {
+        "id": { "name": "id", "type": "string" },
+        "encounterId": { "name": "encounterId", "type": "string" },
+        "code": { "name": "code", "type": "string" },
+        "description": { "name": "description", "type": "string" },
+        "value": { "name": "value", "type": "string" },
+        "units": { "name": "units", "type": "string" }
+      }
+    },
+    "conditions.csv": {
+      "source": "local",
+      "fields": {
+        "code": { "name": "code", "type": "string" },
+        "description": { "name": "description", "type": "string" },
+        "encounterId": { "name": "encounterId", "type": "string" }
+      }
+    },
+    "drugs.csv": {
+      "source": "local",
+      "fields": {
+        "code": { "name": "code", "type": "string" },
+        "name": { "name": "name", "type": "string" },
+        "encounterId": { "name": "encounterId", "type": "string" }
+      }
+    },
+    "providers.csv": {
+      "source": "local",
+      "fields": {
+        "id": { "name": "id", "type": "string" },
+        "name": { "name": "name", "type": "string" },
+        "speciality": { "name": "speciality", "type": "string" },
+        "organisationId": { "name": "organisationId", "type": "string" }
+      }
+    },
+    "organisations.csv": {
+      "source": "local",
+      "fields": {
+        "id": { "name": "id", "type": "string" },
+        "name": { "name": "name", "type": "string" },
+        "address": { "name": "address", "type": "string" }
+      }
+    }
+  },
+  "display": {
+    "nodes": {
+      "n:0": { "x": -300, "y": 0 },
+      "n:1": { "x": 0, "y": 0 },
+      "n:2": { "x": 150, "y": -150 },
+      "n:3": { "x": 150, "y": 0 },
+      "n:4": { "x": 150, "y": 150 },
+      "n:5": { "x": 0, "y": 200 },
+      "n:6": { "x": 150, "y": 300 },
+      "n:7": { "x": -150, "y": 300 }
+    }
+  }
+}
