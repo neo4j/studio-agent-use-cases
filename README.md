@@ -50,7 +50,7 @@ main -> staging -> production
 1. Develop on a short-lived branch and open a pull request into `main`.
 2. Use [Promote main to staging](https://github.com/neo4j/studio-agent-use-cases/compare/staging...main?expand=1).
 3. Validate the skills in staging.
-4. Use [Promote stage to production](https://github.com/neo4j/studio-agent-use-cases/compare/production...staging?expand=1).
+4. Use [Promote staging to production](https://github.com/neo4j/studio-agent-use-cases/compare/production...staging?expand=1).
 5. Complete required checks and approvals, then create a merge commit.
 
 Do not commit directly to `staging` or `production`. Apply fixes to `main` and promote them through the same sequence. Promotion pull requests must use merge commits: squash or rebase merges break ancestry between the long-lived branches and can make later promotions include previously released changes.
