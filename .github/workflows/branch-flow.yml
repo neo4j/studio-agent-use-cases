@@ -1,0 +1,60 @@
+name: Branch flow
+
+on:
+  pull_request:
+    branches:
+      - main
+      - staging
+      - production
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - edited
+      - ready_for_review
+
+permissions:
+  contents: read
+
+jobs:
+  validate-source:
+    name: Validate promotion source
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check permitted source branch
+        shell: bash
+        env:
+          BASE_BRANCH: ${{ github.event.pull_request.base.ref }}
+          HEAD_BRANCH: ${{ github.event.pull_request.head.ref }}
+          HEAD_REPOSITORY: ${{ github.event.pull_request.head.repo.full_name }}
+          BASE_REPOSITORY: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+
+          fail() {
+            echo "::error::$1"
+            exit 1
+          }
+
+          case "$BASE_BRANCH" in
+            main)
+              case "$HEAD_BRANCH" in
+                main|staging|production)
+                  fail "Pull requests to main must come from a contributor branch."
+                  ;;
+              esac
+              ;;
+
+            staging)
+              [[ "$HEAD_REPOSITORY" == "$BASE_REPOSITORY" &&
+                 "$HEAD_BRANCH" == "main" ]] ||
+                fail "Only this repository's main branch may be promoted to staging."
+              ;;
+
+            production)
+              [[ "$HEAD_REPOSITORY" == "$BASE_REPOSITORY" &&
+                 "$HEAD_BRANCH" == "staging" ]] ||
+                fail "Only this repository's staging branch may be promoted to production."
+              ;;
+          esac
