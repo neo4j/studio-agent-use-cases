@@ -234,7 +234,7 @@ LIMIT $limit;
 
 ## Constraints
 
-The node-key constraints below are created automatically when the sample data is loaded via the Import app from `GRAPH_MODEL.json`. If you seed the graph another way, create them first:
+The node-key constraints below are created automatically when the sample data is loaded via the Import app from `GRAPH_MODEL.json`, which is the only route data takes into the graph. They are listed here as a schema reference and to verify what the import produced:
 
 ```cypher
 // Node-key constraints matching GRAPH_MODEL.json.

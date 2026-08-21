@@ -117,7 +117,7 @@ The counts above are a property of this dataset's random seed, not a guarantee. 
 
 ## Operational Constraints
 
-- Prefer the bundled sample-data Import flow, and confirm the target database and connection before executing anything.
+- Data loads through the bundled sample-data Import flow, which is the only route. Never offer a write-based seed, `LOAD CSV`, or a `CREATE` script instead. Confirm the target database and connection before executing anything.
 - Right after a sample-data import, offer the statements in `SETUP.md` — 3 statements, 1 required, 2 recommended, plus a clearly optional spatial section. Explain each statement's purpose when presenting it, before it runs. If the user declines one, state which queries it affects and that their accuracy can no longer be guaranteed, and repeat that caveat when an affected query is used later. Never recreate node-key constraints after Import — `GRAPH_MODEL.json` already created them.
 - Requires Neo4j 5.x / Cypher 5. `Shared Identifier Fan-out` and `Confidence-Scored Identity Matches` use negated label expressions (`:!Placeholder`).
 - `Descriptor Similarity` and `Weighted Composite Match Score` require APOC (`apoc.text.jaroWinklerDistance`). No other template needs it.

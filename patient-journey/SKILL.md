@@ -38,7 +38,7 @@ End with a clear next step, such as asking whether they'd like to explore the mo
 
 For runnable examples:
 
-- Prefer the bundled `sample-data/` Import flow. Offer any write-based Cypher only after explicit confirmation that database writes are wanted.
+- Data loads through the bundled `sample-data/` Import flow, which is the only route. This package ships no write-based seed; don't offer one, and don't fall back to `LOAD CSV` or a `CREATE` script.
 - Clarify the intended target database and connection before executing anything.
 - `Condition` and `Drug` nodes are shared across patients by standardised code (SNOMED CT / RxNorm); comorbidity queries depend on this. If source data uses local codes, nodes will not merge and cross-patient queries return misleading results.
 - `Observation.value` is stored as a string to hold mixed measurement types; cast with `toFloat(o.value)` for numeric comparisons.

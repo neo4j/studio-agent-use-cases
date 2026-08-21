@@ -41,7 +41,7 @@ End with a clear next step, such as asking whether they'd like to explore the mo
 
 For runnable examples:
 
-- Prefer the bundled `sample-data/` Import flow. Importing is sufficient — **no post-import setup is required**, so do not improvise indexes, constraints, or labels after Import. The queries use only the three labels the import creates; the write-based appendix in `QUERIES.md` is not setup.
+- Data loads through the bundled `sample-data/` Import flow, which is the only route. Never offer a write-based seed, `LOAD CSV`, or a `CREATE` script instead. Importing is sufficient — **no post-import setup is required**, so do not improvise indexes, constraints, or labels after Import. The queries use only the three labels the import creates; the write-based appendix in `QUERIES.md` is not setup.
 - Clarify the intended target database and connection before executing anything.
 - `Geo` and `ChargingStation` share **no** label; graph spec 4.0.0 declares one primary label per node. Any traversal meaning "any location" must use `(:Geo|ChargingStation)`. A bare `(x:Geo)` is valid Cypher that returns rows while silently excluding all 100 charging stations, producing routes that never charge.
 - `ROAD` is stored once per segment. Always traverse it undirected as `-[:ROAD]-`, never `-[:ROAD]->`, and never create reverse edges.
@@ -49,7 +49,7 @@ For runnable examples:
 - `allReduce` and `REPEATABLE ELEMENTS` need Cypher 25 on Neo4j 2025.08+; the rest of `QUERIES.md` runs on Neo4j 5.x. Confirm the version before offering the stateful templates.
 - Quantifier bounds like `{1,14}` are literals — Cypher rejects a parameter inside `{1,n}`. When a route query returns nothing, suspect the hop bound before the energy model.
 - Inside the stateful accumulator, clamp state of charge at `$maxSoc` and cap delivered power at the vehicle's `max_charge_power_kw`. Omitting either produces routes the fleet cannot drive.
-- Offer the write-based appendix in `QUERIES.md` only after explicit confirmation that database writes are wanted. It is not setup, and running it breaks two of the bundled queries.
+- The appendix in `QUERIES.md` is a label and index workaround on an already-imported graph, not a data seed and not setup. Offer it only after explicit confirmation that database writes are wanted, and say that running it breaks two of the bundled queries.
 
 ## Response Shape
 
