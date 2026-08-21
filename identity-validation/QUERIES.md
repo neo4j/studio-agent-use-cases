@@ -403,10 +403,10 @@ RETURN path;
 
 ## Constraints
 
-The node-key constraints below are created automatically when the sample data is loaded via the Import app from `GRAPH_MODEL.json` — do **not** recreate them (or `UNIQUE` variants of them) on an imported database. If you seed the graph another way, create them first:
+The node-key constraints below are created automatically when the sample data is loaded via the Import app from `GRAPH_MODEL.json`, which is the only route data takes into the graph. They are listed here as a schema reference and to verify what the import produced — do **not** recreate them, or `UNIQUE` variants of them, on an imported database:
 
 ```cypher
-// Node-key constraints matching GRAPH_MODEL.json. For non-Import loads only.
+// Node-key constraints matching GRAPH_MODEL.json. Schema reference; Import creates these.
 CREATE CONSTRAINT identityId_Identity_key IF NOT EXISTS
   FOR (i:Identity) REQUIRE i.identityId IS NODE KEY;
 CREATE CONSTRAINT fullName_PersonName_key IF NOT EXISTS

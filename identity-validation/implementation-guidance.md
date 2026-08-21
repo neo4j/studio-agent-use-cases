@@ -12,13 +12,13 @@
 8. Never run fuzzy or descriptor scoring as a blind population-wide scan. Always block on a real shared identifier first. This isn't optional at real scale: an unblocked scan's false-positive rate grows with population size, while a blocked scan's candidate set grows only with the number of genuine near-matches.
 9. Create constraints and indexes for every attribute node's key property — **required**, not optional, once the graph reaches meaningful size. Without a backing index, `MERGE` on an attribute value label-scans every existing node of that type to check for a duplicate; at thousands of nodes that turns a fast load into a slow one. Create them before loading data, not after.
 
-The sample-data Import flow creates the nine key constraints itself from `GRAPH_MODEL.json` — never recreate them on an imported database. The fulltext index is not created by Import; it is the required statement of `SETUP.md` and `Near-Duplicate SSN` fails without it. Constraints for non-Import loads are at the end of `QUERIES.md`.
+The sample-data Import flow creates the nine key constraints itself from `GRAPH_MODEL.json` — never recreate them on an imported database. The fulltext index is not created by Import; it is the required statement of `SETUP.md` and `Near-Duplicate SSN` fails without it. The constraints are listed at the end of `QUERIES.md` as a schema reference.
 
 ## Loading data
 
-Prefer the bundled sample-data Import flow. Every CSV under `sample-data/` resolves from `GRAPH_MODEL.json`, so the assistant can preview the model and load it directly.
+Load through the bundled sample-data Import flow. Every CSV under `sample-data/` resolves from `GRAPH_MODEL.json`, so the assistant can preview the model and load it directly.
 
-This package deliberately ships no write-based data seed. An earlier version included a self-contained `demo-seed.cypher` that recreated all 500 profiles via `UNWIND` over embedded row lists; at roughly 3,600 lines and 250KB it exceeded the format's 50,000-character limit for a single supporting file. If you need a Cypher-only path — a locked-down environment with no import access, for instance — generate the seed from the CSVs and keep it outside the use-case folder, or seed a smaller subset. Whichever route you take, create the constraints first and load via batched `UNWIND` statements rather than one `MERGE` per row.
+Import is the only route. Cypher-based loading was removed from the package format and the assistant's feature set, so this package ships no write-based data seed and none should be reintroduced. An earlier version included a self-contained `demo-seed.cypher` that recreated all 500 profiles via `UNWIND` over embedded row lists; at roughly 3,600 lines and 250KB it also exceeded the format's 50,000-character limit for a single supporting file.
 
 ## Geocoding in a real deployment
 
