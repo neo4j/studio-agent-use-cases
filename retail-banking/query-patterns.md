@@ -1,4 +1,4 @@
-Use `resources/query-templates.md` for runnable Cypher.
+Use `QUERIES.md` for runnable Cypher with expected results; `query-templates.md` holds the same query text without commentary.
 
 Template usage:
 

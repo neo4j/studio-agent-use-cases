@@ -6,17 +6,24 @@
 // optional section at the end. Confirm the target database and connection before
 // running it.
 //
-// The sample-data Import flow creates the KEY constraints itself from
-// GRAPH_MODEL.json, so on a freshly imported database the constraint statements
-// below are no-ops (each is IF NOT EXISTS). Run them when you are loading data
-// some other way, or to verify the expected schema is in place.
+// SUPERSEDED BY SETUP.md. Offer the statements in SETUP.md after an import;
+// this file is kept as a schema reference and is not the setup route.
 //
-// The two index statements in section 2 are NOT created by Import and are
-// required by specific query templates.
+// Import is the only route data takes into the graph, and it creates the KEY
+// constraints itself from GRAPH_MODEL.json. Section 1 below therefore must NOT
+// be run on an imported database: it declares IS UNIQUE variants, and a UNIQUE
+// constraint conflicts with the KEY constraint Import already created. Read
+// section 1 to understand the intended schema, and verify the real one with
+// SHOW CONSTRAINTS instead of recreating it.
+//
+// The fulltext index in section 2 is NOT created by Import and is genuinely
+// required by the "Near-Duplicate SSN" query template — it is the required
+// statement of SETUP.md, which is where it should be offered from.
 // ============================================================================
 
 // ---------------------------------------------------------------------------
-// 1. Node key constraints
+// 1. Node key constraints — REFERENCE ONLY. Do not run these; Import creates
+//    equivalent KEY constraints and these IS UNIQUE variants will conflict.
 //
 // Every node is keyed on exactly one property, which is what the Import flow
 // requires. Address and Location have naturally composite identities, so each
@@ -26,8 +33,10 @@
 //   an index to look up rather than a label scan. Without a backing index, a
 //   MERGE on an attribute value scans every existing node of that label; fine at
 //   a handful of rows, genuinely slow at hundreds of thousands.
-// Prerequisites: none. Create these BEFORE loading data, not after.
-// Expected: 9 constraints exist afterwards. Verify with SHOW CONSTRAINTS.
+// Prerequisites: none — and nothing to do. Import creates these as KEY
+//   constraints from GRAPH_MODEL.json before it loads a single row.
+// Expected: 9 key constraints already exist after an import. Verify with
+//   SHOW CONSTRAINTS rather than running anything below.
 // ---------------------------------------------------------------------------
 
 CREATE CONSTRAINT identity_id_unique IF NOT EXISTS

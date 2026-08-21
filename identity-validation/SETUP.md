@@ -7,7 +7,7 @@ Rules for the agent:
 - Present each statement with its purpose **before** running it — the explanation accompanies the approval request, never follows the result.
 - Every statement writes (schema or labels), so confirm the target database and connection first.
 - If the user declines a statement, tell them which queries are affected (listed per statement below) and that you can no longer guarantee those queries will run or return accurate results. Repeat that caveat whenever an affected query comes up later in the conversation.
-- Do **not** create node-key constraints here. The Import flow creates them from `GRAPH_MODEL.json`; recreating them — or `UNIQUE` variants of them — is at best redundant and at worst rejected as conflicting with the existing `KEY` constraints. Constraints for non-Import loads are documented at the end of `QUERIES.md`.
+- Do **not** create node-key constraints here. The Import flow creates them from `GRAPH_MODEL.json`; recreating them — or `UNIQUE` variants of them — is at best redundant and at worst rejected as conflicting with the existing `KEY` constraints. The constraints are listed at the end of `QUERIES.md` as a schema reference only.
 
 ## 1. Required — fulltext index for fuzzy SSN matching
 
