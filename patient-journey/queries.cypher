@@ -2,8 +2,8 @@
 //
 // Prerequisites for every query below:
 //   - Neo4j 5.x, Cypher 5. No APOC or GDS required.
-//   - The graph is loaded either via the bundled sample-data Import (GRAPH_MODEL.json)
-//     or via demo-seed.cypher. Both produce identical nodes, relationships, and property types.
+//   - The graph is loaded via the bundled sample-data Import (GRAPH_MODEL.json), which is
+//     the only supported loading route.
 //   - KEY constraints from GRAPH_MODEL.json ensure Patient.id, Encounter.id, Observation.id,
 //     Condition.code, Drug.code, Provider.id, Speciality.name, and Organisation.id are unique,
 //     so every anchored lookup below is an index seek rather than a label scan.

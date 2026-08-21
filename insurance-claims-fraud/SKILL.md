@@ -50,7 +50,7 @@ importing data.
 
 ## Operational Constraints
 
-- Prefer the bundled `sample-data/` Import flow. No post-import setup is required — do not improvise indexes or constraints after Import.
+- Data loads through the bundled `sample-data/` Import flow, which is the only route. Never offer a write-based seed, `LOAD CSV`, or a `CREATE` script instead. No post-import setup is required — do not improvise indexes or constraints after Import.
 - The Graph Data Science queries in `QUERIES.md` require the GDS library and are unproven; flag that before running.
 - Thresholds in the queries (claim count, total amount) are illustrative parameters; tune per portfolio.
 
