@@ -3,9 +3,9 @@ name: ev-route-planning
 description: Plan electric vehicle routes across a logistics network with Neo4j — battery state-of-charge, charging stops, time-of-day travel, and Cypher 25 stateful path patterns across cities, charging stations, roads, and fleet vehicles.
 metadata:
   neo4j-card-title: EV Route Planning
-  neo4j-card-category: Manufacturing & Supply Chain
+  neo4j-card-category: Supply Chain
   neo4j-card-description: Plan electric vehicle routes across logistics networks with battery, charging and time constraints modeled as a connected graph.
-  neo4j-icon-category: supply-chain
+  neo4j-card-icon: TruckIconOutline
 ---
 
 # EV Route Planning

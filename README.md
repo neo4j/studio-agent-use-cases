@@ -13,7 +13,7 @@ This public repository hosts the versioned skill packages used by Neo4j Studio A
 │   └── ...supporting files and sample-data/
 ```
 
-`catalog.json` contains directory of file. It declares `schemaVersion: 1`; each entry contains a `skillId`, a `category`, an `icon`, and the complete, sorted list of files relative to that skill's repository-root directory.
+`catalog.json` contains directory of file. It declares `schemaVersion: 1`; each entry contains a `skillId` and the complete, sorted list of files relative to that skill's repository-root directory.
 
 Every skill must have:
 
@@ -21,6 +21,31 @@ Every skill must have:
 - a non-empty `SKILL.md` body and the required Neo4j card metadata;
 - a parseable `GRAPH_MODEL.json`; and
 - every sample CSV referenced by the graph model, with the fields that model uses.
+
+## SKILL.md frontmatter
+
+Each `SKILL.md` starts with YAML frontmatter. Use-case display fields live under `metadata`:
+
+```yaml
+---
+name: example-skill
+description: One-line description of what this skill helps with.
+metadata:
+  neo4j-card-title: Example Skill
+  neo4j-card-category: General
+  neo4j-card-description: Short card summary shown in Studio Agent.
+  neo4j-card-icon: CubeIconOutline
+---
+```
+
+| Field | Description |
+| ----- | ----------- |
+| `name` | Skill id. Must match the skill directory name (kebab-case). |
+| `description` | Skill description used by the agent. |
+| `metadata.neo4j-card-title` | Display title on the use-case card. |
+| `metadata.neo4j-card-category` | Display category used to group related use cases (for example `General`, `Supply Chain`, `Healthcare & Life Sciences`). |
+| `metadata.neo4j-card-description` | Short summary shown on the use-case card. |
+| `metadata.neo4j-card-icon` | Icon component name from `@neo4j-ndl/react/icons` (for example `CubeIconOutline`, `TruckIconOutline`). |
 
 ## Raw files
 
@@ -65,8 +90,6 @@ Do not commit directly to `staging` or `production`. Apply fixes to `main` and p
   "skills": [
     {
       "skillId": "example-skill",
-      "category": "General",
-      "icon": "CubeIconOutline",
       "files": {
         "graph": "GRAPH_MODEL.json",
         "markdown": "SKILL.md",
@@ -86,8 +109,6 @@ Do not commit directly to `staging` or `production`. Apply fixes to `main` and p
 | `schemaVersion` | number | Catalog schema version. Currently `1`. |
 | `skills` | array | One entry per skill package in the repository. |
 | `skills[].skillId` | string | Directory name of the skill at the repository root (kebab-case). |
-| `skills[].category` | string | Display category used to group related use cases (for example `General`, `Supply Chain`, `Healthcare & Life Sciences`). |
-| `skills[].icon` | string | Icon component name from `@neo4j-ndl/react/icons` (for example `CubeIconOutline`, `TruckIconOutline`). |
 | `skills[].files.graph` | string | Path to the graph model file, relative to the skill directory. Always `GRAPH_MODEL.json`. |
 | `skills[].files.markdown` | string | Path to the skill card markdown, relative to the skill directory. Always `SKILL.md`. |
 | `skills[].files.skill` | string[] | Remaining supporting files relative to the skill directory, sorted lexicographically. Includes docs, Cypher, and sample CSVs. |

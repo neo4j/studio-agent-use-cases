@@ -3,8 +3,6 @@
   "skills": [
     {
       "skillId": "ev-route-planning",
-      "category": "Supply Chain",
-      "icon": "TruckIconOutline",
       "files": {
         "graph": "GRAPH_MODEL.json",
         "skill": [
@@ -22,8 +20,6 @@
     },
     {
       "skillId": "identity-validation",
-      "category": "General",
-      "icon": "CubeIconOutline",
       "files": {
         "graph": "GRAPH_MODEL.json",
         "skill": [
@@ -54,8 +50,6 @@
     },
     {
       "skillId": "insurance-claims-fraud",
-      "category": "Real-time risk detection",
-      "icon": "FingerPrintIconOutline",
       "files": {
         "graph": "GRAPH_MODEL.json",
         "skill": [
@@ -76,8 +70,6 @@
     },
     {
       "skillId": "patient-journey",
-      "category": "Healthcare & Life Sciences",
-      "icon": "HeartIconOutline",
       "files": {
         "graph": "GRAPH_MODEL.json",
         "skill": [
@@ -97,8 +89,6 @@
     },
     {
       "skillId": "retail-banking",
-      "category": "Real-time risk detection",
-      "icon": "FingerPrintIconOutline",
       "files": {
         "graph": "GRAPH_MODEL.json",
         "skill": [
