@@ -5,7 +5,7 @@ metadata:
   neo4j-card-title: Identity Validation
   neo4j-card-category: General
   neo4j-card-description: Resolve one person across systems and channels, and surface near-duplicate identifiers that signal synthetic identity fraud.
-  neo4j-icon-category: general
+  neo4j-card-icon: CubeIconOutline
 ---
 
 # Identity Graph

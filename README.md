@@ -22,6 +22,31 @@ Every skill must have:
 - a parseable `GRAPH_MODEL.json`; and
 - every sample CSV referenced by the graph model, with the fields that model uses.
 
+## SKILL.md frontmatter
+
+Each `SKILL.md` starts with YAML frontmatter. Use-case display fields live under `metadata`:
+
+```yaml
+---
+name: example-skill
+description: One-line description of what this skill helps with.
+metadata:
+  neo4j-card-title: Example Skill
+  neo4j-card-category: General
+  neo4j-card-description: Short card summary shown in Studio Agent.
+  neo4j-card-icon: CubeIconOutline
+---
+```
+
+| Field | Description |
+| ----- | ----------- |
+| `name` | Skill id. Must match the skill directory name (kebab-case). |
+| `description` | Skill description used by the agent. |
+| `metadata.neo4j-card-title` | Display title on the use-case card. |
+| `metadata.neo4j-card-category` | Display category used to group related use cases (for example `General`, `Supply Chain`, `Healthcare & Life Sciences`). |
+| `metadata.neo4j-card-description` | Short summary shown on the use-case card. |
+| `metadata.neo4j-card-icon` | Icon component name from `@neo4j-ndl/react/icons` (for example `CubeIconOutline`, `TruckIconOutline`). |
+
 ## Raw files
 
 The catalog and skill files are available through GitHub's raw-content endpoint:
