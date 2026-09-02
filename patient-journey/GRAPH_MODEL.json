@@ -134,7 +134,7 @@
       "type": "node",
       "node": "n:0",
       "table": "patients.csv",
-      "keys": ["id"],
+      "key": ["id"],
       "properties": {
         "id": { "field": "id" },
         "name": { "field": "name" },
@@ -145,7 +145,7 @@
       "type": "node",
       "node": "n:1",
       "table": "encounters.csv",
-      "keys": ["id"],
+      "key": ["id"],
       "properties": {
         "id": { "field": "id" },
         "date": { "field": "date" },
@@ -156,7 +156,7 @@
       "type": "node",
       "node": "n:2",
       "table": "observations.csv",
-      "keys": ["id"],
+      "key": ["id"],
       "properties": {
         "id": { "field": "id" },
         "code": { "field": "code" },
@@ -169,7 +169,7 @@
       "type": "node",
       "node": "n:3",
       "table": "conditions.csv",
-      "keys": ["code"],
+      "key": ["code"],
       "properties": {
         "code": { "field": "code" },
         "description": { "field": "description" }
@@ -179,7 +179,7 @@
       "type": "node",
       "node": "n:4",
       "table": "drugs.csv",
-      "keys": ["code"],
+      "key": ["code"],
       "properties": {
         "code": { "field": "code" },
         "name": { "field": "name" }
@@ -189,7 +189,7 @@
       "type": "node",
       "node": "n:5",
       "table": "providers.csv",
-      "keys": ["id"],
+      "key": ["id"],
       "properties": {
         "id": { "field": "id" },
         "name": { "field": "name" }
@@ -199,7 +199,7 @@
       "type": "node",
       "node": "n:6",
       "table": "providers.csv",
-      "keys": ["name"],
+      "key": ["name"],
       "properties": {
         "name": { "field": "speciality" }
       }
@@ -208,7 +208,7 @@
       "type": "node",
       "node": "n:7",
       "table": "organisations.csv",
-      "keys": ["id"],
+      "key": ["id"],
       "properties": {
         "id": { "field": "id" },
         "name": { "field": "name" },
