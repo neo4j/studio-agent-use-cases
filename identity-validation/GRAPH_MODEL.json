@@ -274,7 +274,7 @@
       "type": "node",
       "node": "n:0",
       "table": "identities.csv",
-      "keys": ["identityId"],
+      "key": ["identityId"],
       "properties": {
         "identityId": {
           "field": "identityId"
@@ -288,7 +288,7 @@
       "type": "node",
       "node": "n:1",
       "table": "names.csv",
-      "keys": ["fullName"],
+      "key": ["fullName"],
       "properties": {
         "fullName": {
           "field": "fullName"
@@ -326,7 +326,7 @@
       "type": "node",
       "node": "n:2",
       "table": "phones.csv",
-      "keys": ["phoneNumber"],
+      "key": ["phoneNumber"],
       "properties": {
         "phoneNumber": {
           "field": "phoneNumber"
@@ -358,7 +358,7 @@
       "type": "node",
       "node": "n:3",
       "table": "emails.csv",
-      "keys": ["email"],
+      "key": ["email"],
       "properties": {
         "email": {
           "field": "email"
@@ -390,7 +390,7 @@
       "type": "node",
       "node": "n:4",
       "table": "ssns.csv",
-      "keys": ["ssn"],
+      "key": ["ssn"],
       "properties": {
         "ssn": {
           "field": "ssn"
@@ -422,7 +422,7 @@
       "type": "node",
       "node": "n:5",
       "table": "addresses.csv",
-      "keys": ["addressId"],
+      "key": ["addressId"],
       "properties": {
         "addressId": {
           "field": "addressId"
@@ -466,7 +466,7 @@
       "type": "node",
       "node": "n:6",
       "table": "dobs.csv",
-      "keys": ["dateHash"],
+      "key": ["dateHash"],
       "properties": {
         "dateHash": {
           "field": "dateHash"
@@ -501,7 +501,7 @@
       "type": "node",
       "node": "n:7",
       "table": "ip_addresses.csv",
-      "keys": ["ip"],
+      "key": ["ip"],
       "properties": {
         "ip": {
           "field": "ip"
@@ -533,7 +533,7 @@
       "type": "node",
       "node": "n:8",
       "table": "locations.csv",
-      "keys": ["locationId"],
+      "key": ["locationId"],
       "properties": {
         "locationId": {
           "field": "locationId"
