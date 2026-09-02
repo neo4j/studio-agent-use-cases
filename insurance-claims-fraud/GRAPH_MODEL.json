@@ -130,7 +130,7 @@
       "type": "node",
       "node": "n:0",
       "table": "claimants.csv",
-      "keys": ["name"],
+      "key": ["name"],
       "properties": {
         "name": {
           "field": "name"
@@ -141,7 +141,7 @@
       "type": "node",
       "node": "n:1",
       "table": "medical_professionals.csv",
-      "keys": ["name"],
+      "key": ["name"],
       "properties": {
         "name": {
           "field": "name"
@@ -152,7 +152,7 @@
       "type": "node",
       "node": "n:2",
       "table": "claims.csv",
-      "keys": ["claimID"],
+      "key": ["claimID"],
       "properties": {
         "claimID": {
           "field": "claimID"
@@ -169,7 +169,7 @@
       "type": "node",
       "node": "n:3",
       "table": "vehicles.csv",
-      "keys": ["VIN"],
+      "key": ["VIN"],
       "properties": {
         "VIN": {
           "field": "VIN"
