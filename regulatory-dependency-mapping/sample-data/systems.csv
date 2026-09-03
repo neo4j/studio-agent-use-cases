@@ -1,0 +1,46 @@
+systemId,name,hostingModel,tier
+SYS-001,Group Regulatory Data Hub,private-cloud,1
+SYS-002,Reference Data Master,on-premise,1
+SYS-003,Market Data Gateway,vendor-saas,2
+SYS-004,Equities Order Management,on-premise,1
+SYS-005,Fixed Income Trading Platform,on-premise,1
+SYS-006,Position Keeping Engine,private-cloud,1
+SYS-007,Collateral Management,vendor-saas,2
+SYS-008,Trade Repository Connector,public-cloud,2
+SYS-009,Regulatory Reporting Engine,private-cloud,1
+SYS-010,Client Static Data Store,on-premise,2
+SYS-011,KYC Case Manager,vendor-saas,2
+SYS-012,Transaction Monitoring,private-cloud,1
+SYS-013,Liquidity Forecasting,public-cloud,2
+SYS-014,Capital Calculation Engine,private-cloud,1
+SYS-015,General Ledger,on-premise,1
+SYS-016,Data Warehouse,private-cloud,2
+SYS-017,Document Archive,public-cloud,3
+SYS-018,Voice Recording Platform,vendor-saas,2
+SYS-019,Trade Surveillance,private-cloud,2
+SYS-020,Best Execution Analytics,public-cloud,3
+SYS-021,Client Reporting Portal,public-cloud,2
+SYS-022,Identity and Access Management,private-cloud,1
+SYS-023,Incident Management,vendor-saas,3
+SYS-024,Change Management,vendor-saas,3
+SYS-025,Vendor Risk Register,vendor-saas,3
+SYS-026,Model Risk Inventory,public-cloud,3
+SYS-027,Stress Testing Platform,private-cloud,2
+SYS-028,Counterparty Credit Engine,on-premise,1
+SYS-029,Clearing Interface,on-premise,1
+SYS-030,Settlement Engine,on-premise,1
+SYS-031,Corporate Actions Processor,vendor-saas,2
+SYS-032,Cash Management,private-cloud,2
+SYS-033,Payments Gateway,public-cloud,1
+SYS-034,Sanctions Screening,vendor-saas,1
+SYS-035,Books and Records Store,on-premise,1
+SYS-036,Risk Aggregation Layer,private-cloud,1
+SYS-037,Scheduling and Orchestration,private-cloud,2
+SYS-038,Message Broker,on-premise,1
+SYS-039,Entitlements Service,private-cloud,2
+SYS-040,Audit Log Service,public-cloud,2
+SYS-041,Notification Service,public-cloud,3
+SYS-042,Data Quality Engine,private-cloud,2
+SYS-043,Recovery Orchestrator,private-cloud,2
+SYS-044,Third-Party Connectivity Hub,vendor-saas,2
+SYS-045,Regulatory Change Tracker,vendor-saas,3
