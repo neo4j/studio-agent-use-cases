@@ -6,19 +6,11 @@
       "properties": {
         "identityId": {
           "type": "STRING",
-          "nullable": false,
-          "unique": true
+          "key": true
         },
         "sourceSystem": {
           "type": "STRING",
           "nullable": false
-        }
-      },
-      "constraints": {
-        "identityId_Identity_key": {
-          "type": "KEY",
-          "label": "Identity",
-          "properties": ["identityId"]
         }
       }
     },
@@ -27,8 +19,7 @@
       "properties": {
         "fullName": {
           "type": "STRING",
-          "nullable": false,
-          "unique": true
+          "key": true
         },
         "firstName": {
           "type": "STRING",
@@ -38,13 +29,6 @@
           "type": "STRING",
           "nullable": true
         }
-      },
-      "constraints": {
-        "fullName_PersonName_key": {
-          "type": "KEY",
-          "label": "PersonName",
-          "properties": ["fullName"]
-        }
       }
     },
     "n:2": {
@@ -52,15 +36,7 @@
       "properties": {
         "phoneNumber": {
           "type": "STRING",
-          "nullable": false,
-          "unique": true
-        }
-      },
-      "constraints": {
-        "phoneNumber_Phone_key": {
-          "type": "KEY",
-          "label": "Phone",
-          "properties": ["phoneNumber"]
+          "key": true
         }
       }
     },
@@ -69,15 +45,7 @@
       "properties": {
         "email": {
           "type": "STRING",
-          "nullable": false,
-          "unique": true
-        }
-      },
-      "constraints": {
-        "email_Email_key": {
-          "type": "KEY",
-          "label": "Email",
-          "properties": ["email"]
+          "key": true
         }
       }
     },
@@ -86,15 +54,7 @@
       "properties": {
         "ssn": {
           "type": "STRING",
-          "nullable": false,
-          "unique": true
-        }
-      },
-      "constraints": {
-        "ssn_SSN_key": {
-          "type": "KEY",
-          "label": "SSN",
-          "properties": ["ssn"]
+          "key": true
         }
       }
     },
@@ -103,8 +63,7 @@
       "properties": {
         "addressId": {
           "type": "STRING",
-          "nullable": false,
-          "unique": true
+          "key": true
         },
         "address": {
           "type": "STRING",
@@ -122,13 +81,6 @@
           "type": "STRING",
           "nullable": false
         }
-      },
-      "constraints": {
-        "addressId_Address_key": {
-          "type": "KEY",
-          "label": "Address",
-          "properties": ["addressId"]
-        }
       }
     },
     "n:6": {
@@ -136,19 +88,11 @@
       "properties": {
         "dateHash": {
           "type": "STRING",
-          "nullable": false,
-          "unique": true
+          "key": true
         },
         "dob": {
           "type": "STRING",
           "nullable": false
-        }
-      },
-      "constraints": {
-        "dateHash_DOB_key": {
-          "type": "KEY",
-          "label": "DOB",
-          "properties": ["dateHash"]
         }
       }
     },
@@ -157,15 +101,7 @@
       "properties": {
         "ip": {
           "type": "STRING",
-          "nullable": false,
-          "unique": true
-        }
-      },
-      "constraints": {
-        "ip_IPAddress_key": {
-          "type": "KEY",
-          "label": "IPAddress",
-          "properties": ["ip"]
+          "key": true
         }
       }
     },
@@ -174,8 +110,7 @@
       "properties": {
         "locationId": {
           "type": "STRING",
-          "nullable": false,
-          "unique": true
+          "key": true
         },
         "latitude": {
           "type": "FLOAT",
@@ -184,13 +119,6 @@
         "longitude": {
           "type": "FLOAT",
           "nullable": false
-        }
-      },
-      "constraints": {
-        "locationId_Location_key": {
-          "type": "KEY",
-          "label": "Location",
-          "properties": ["locationId"]
         }
       }
     }

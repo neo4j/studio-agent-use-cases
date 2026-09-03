@@ -4,22 +4,16 @@
     "n:0": {
       "label": "Account",
       "properties": {
-        "accountNumber": { "type": "INTEGER", "nullable": false, "unique": true }
-      },
-      "constraints": {
-        "accountNumber_Account_key": { "type": "KEY", "label": "Account", "properties": ["accountNumber"] }
+        "accountNumber": { "type": "INTEGER", "key": true }
       }
     },
     "n:1": {
       "label": "Transaction",
       "properties": {
-        "transactionId": { "type": "STRING", "nullable": false, "unique": true },
+        "transactionId": { "type": "STRING", "key": true },
         "amount": { "type": "FLOAT", "nullable": false },
         "currency": { "type": "STRING", "nullable": false },
         "date": { "type": "ZONED DATETIME", "nullable": false }
-      },
-      "constraints": {
-        "transactionId_Transaction_key": { "type": "KEY", "label": "Transaction", "properties": ["transactionId"] }
       }
     }
   },
