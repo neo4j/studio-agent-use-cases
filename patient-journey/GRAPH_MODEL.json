@@ -4,86 +4,62 @@
     "n:0": {
       "label": "Patient",
       "properties": {
-        "id": { "type": "STRING", "nullable": false, "unique": true },
+        "id": { "type": "STRING", "key": true },
         "name": { "type": "STRING", "nullable": false },
         "birthDate": { "type": "ZONED DATETIME", "nullable": false }
-      },
-      "constraints": {
-        "id_Patient_key": { "type": "KEY", "label": "Patient", "properties": ["id"] }
       }
     },
     "n:1": {
       "label": "Encounter",
       "properties": {
-        "id": { "type": "STRING", "nullable": false, "unique": true },
+        "id": { "type": "STRING", "key": true },
         "date": { "type": "ZONED DATETIME", "nullable": false },
         "type": { "type": "STRING", "nullable": false }
-      },
-      "constraints": {
-        "id_Encounter_key": { "type": "KEY", "label": "Encounter", "properties": ["id"] }
       }
     },
     "n:2": {
       "label": "Observation",
       "properties": {
-        "id": { "type": "STRING", "nullable": false, "unique": true },
+        "id": { "type": "STRING", "key": true },
         "code": { "type": "STRING", "nullable": false },
         "description": { "type": "STRING", "nullable": false },
         "value": { "type": "STRING", "nullable": false },
         "units": { "type": "STRING", "nullable": false }
-      },
-      "constraints": {
-        "id_Observation_key": { "type": "KEY", "label": "Observation", "properties": ["id"] }
       }
     },
     "n:3": {
       "label": "Condition",
       "properties": {
-        "code": { "type": "STRING", "nullable": false, "unique": true },
+        "code": { "type": "STRING", "key": true },
         "description": { "type": "STRING", "nullable": false }
-      },
-      "constraints": {
-        "code_Condition_key": { "type": "KEY", "label": "Condition", "properties": ["code"] }
       }
     },
     "n:4": {
       "label": "Drug",
       "properties": {
-        "code": { "type": "STRING", "nullable": false, "unique": true },
+        "code": { "type": "STRING", "key": true },
         "name": { "type": "STRING", "nullable": false }
-      },
-      "constraints": {
-        "code_Drug_key": { "type": "KEY", "label": "Drug", "properties": ["code"] }
       }
     },
     "n:5": {
       "label": "Provider",
       "properties": {
-        "id": { "type": "STRING", "nullable": false, "unique": true },
+        "id": { "type": "STRING", "key": true },
         "name": { "type": "STRING", "nullable": false }
-      },
-      "constraints": {
-        "id_Provider_key": { "type": "KEY", "label": "Provider", "properties": ["id"] }
       }
     },
     "n:6": {
       "label": "Speciality",
       "properties": {
-        "name": { "type": "STRING", "nullable": false, "unique": true }
-      },
-      "constraints": {
-        "name_Speciality_key": { "type": "KEY", "label": "Speciality", "properties": ["name"] }
+        "name": { "type": "STRING", "key": true }
       }
     },
     "n:7": {
       "label": "Organisation",
       "properties": {
-        "id": { "type": "STRING", "nullable": false, "unique": true },
+        "id": { "type": "STRING", "key": true },
         "name": { "type": "STRING", "nullable": false },
         "address": { "type": "STRING", "nullable": true }
-      },
-      "constraints": {
-        "id_Organisation_key": { "type": "KEY", "label": "Organisation", "properties": ["id"] }
       }
     }
   },

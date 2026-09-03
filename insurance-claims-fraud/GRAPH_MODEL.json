@@ -6,15 +6,7 @@
       "properties": {
         "name": {
           "type": "STRING",
-          "nullable": false,
-          "unique": true
-        }
-      },
-      "constraints": {
-        "name_Claimant_key": {
-          "type": "KEY",
-          "label": "Claimant",
-          "properties": ["name"]
+          "key": true
         }
       }
     },
@@ -23,15 +15,7 @@
       "properties": {
         "name": {
           "type": "STRING",
-          "nullable": false,
-          "unique": true
-        }
-      },
-      "constraints": {
-        "name_MedicalProfessional_key": {
-          "type": "KEY",
-          "label": "MedicalProfessional",
-          "properties": ["name"]
+          "key": true
         }
       }
     },
@@ -40,8 +24,7 @@
       "properties": {
         "claimID": {
           "type": "STRING",
-          "nullable": false,
-          "unique": true
+          "key": true
         },
         "date": {
           "type": "STRING",
@@ -51,13 +34,6 @@
           "type": "INTEGER",
           "nullable": false
         }
-      },
-      "constraints": {
-        "claimID_Claim_key": {
-          "type": "KEY",
-          "label": "Claim",
-          "properties": ["claimID"]
-        }
       }
     },
     "n:3": {
@@ -65,15 +41,7 @@
       "properties": {
         "VIN": {
           "type": "STRING",
-          "nullable": false,
-          "unique": true
-        }
-      },
-      "constraints": {
-        "VIN_Vehicle_key": {
-          "type": "KEY",
-          "label": "Vehicle",
-          "properties": ["VIN"]
+          "key": true
         }
       }
     }
