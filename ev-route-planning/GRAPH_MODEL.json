@@ -6,8 +6,7 @@
       "properties": {
         "name": {
           "type": "STRING",
-          "nullable": false,
-          "unique": true
+          "key": true
         },
         "lat": {
           "type": "FLOAT",
@@ -21,13 +20,6 @@
           "type": "STRING",
           "nullable": false
         }
-      },
-      "constraints": {
-        "name_Geo_key": {
-          "type": "KEY",
-          "label": "Geo",
-          "properties": ["name"]
-        }
       }
     },
     "n:1": {
@@ -35,8 +27,7 @@
       "properties": {
         "name": {
           "type": "STRING",
-          "nullable": false,
-          "unique": true
+          "key": true
         },
         "lat": {
           "type": "FLOAT",
@@ -58,13 +49,6 @@
           "type": "FLOAT",
           "nullable": false
         }
-      },
-      "constraints": {
-        "name_ChargingStation_key": {
-          "type": "KEY",
-          "label": "ChargingStation",
-          "properties": ["name"]
-        }
       }
     },
     "n:2": {
@@ -72,8 +56,7 @@
       "properties": {
         "id": {
           "type": "STRING",
-          "nullable": false,
-          "unique": true
+          "key": true
         },
         "model": {
           "type": "STRING",
@@ -98,13 +81,6 @@
         "current_soc_percent": {
           "type": "FLOAT",
           "nullable": false
-        }
-      },
-      "constraints": {
-        "id_Car_key": {
-          "type": "KEY",
-          "label": "Car",
-          "properties": ["id"]
         }
       }
     }
