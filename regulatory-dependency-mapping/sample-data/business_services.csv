@@ -1,0 +1,31 @@
+serviceId,name,criticality,impactToleranceHours,ownerUnitId
+SVC-001,Equity order execution,important-business-service,4,BU-008
+SVC-002,Fixed income order execution,important-business-service,4,BU-009
+SVC-003,Client trade confirmation,important-business-service,6,BU-005
+SVC-004,Regulatory transaction reporting,important-business-service,12,BU-007
+SVC-005,Client money reconciliation,important-business-service,8,BU-001
+SVC-006,Collateral call processing,important-business-service,8,BU-001
+SVC-007,Client onboarding,material,48,BU-010
+SVC-008,Periodic client reporting,material,72,BU-005
+SVC-009,Trade surveillance,material,24,BU-004
+SVC-010,Sanctions screening,important-business-service,2,BU-004
+SVC-011,Payments processing,important-business-service,4,BU-001
+SVC-012,Settlement processing,important-business-service,6,BU-005
+SVC-013,Corporate actions processing,material,24,BU-005
+SVC-014,Capital adequacy calculation,material,24,BU-002
+SVC-015,Liquidity monitoring,important-business-service,12,BU-001
+SVC-016,ICARA production,material,168,BU-002
+SVC-017,Best execution monitoring,material,72,BU-005
+SVC-018,Client categorisation,standard,120,BU-010
+SVC-019,Books and records retention,material,72,BU-011
+SVC-020,Incident notification,important-business-service,4,BU-012
+SVC-021,Third-party oversight,material,168,BU-012
+SVC-022,Access recertification,standard,168,BU-006
+SVC-023,Model validation,standard,336,BU-002
+SVC-024,Stress testing,material,168,BU-002
+SVC-025,Counterparty credit assessment,material,24,BU-002
+SVC-026,Clearing submission,important-business-service,4,BU-005
+SVC-027,Reference data distribution,important-business-service,6,BU-006
+SVC-028,Market data distribution,important-business-service,2,BU-006
+SVC-029,Regulatory change assessment,standard,336,BU-003
+SVC-030,Complaints handling,standard,168,BU-003

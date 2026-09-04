@@ -1,0 +1,13 @@
+unitId,name,smfReference
+BU-001,Group Treasury,SMF2
+BU-002,Prudential Risk,SMF4
+BU-003,Compliance Advisory,SMF16
+BU-004,Financial Crime,SMF17
+BU-005,Markets Operations,SMF24
+BU-006,Technology Services,SMF24
+BU-007,Regulatory Reporting,SMF2
+BU-008,Equities Trading,SMF29
+BU-009,Fixed Income Trading,SMF29
+BU-010,Client Onboarding,SMF16
+BU-011,Internal Audit,SMF5
+BU-012,Operational Resilience,SMF24

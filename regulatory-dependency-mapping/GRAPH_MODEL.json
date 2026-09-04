@@ -1,0 +1,828 @@
+{
+  "version": "4.0.0",
+  "name": "Regulatory Dependency Mapping",
+  "description": "Connects a regulator's handbook structure to the obligations, controls, systems, business services and accountable owners a firm has put in place against it. Answers which parts of the business a regulatory change reaches, where control coverage is incomplete, and which shared systems concentrate compliance risk.",
+  "nodes": {
+    "Standard": {
+      "label": "Standard",
+      "description": "A named regulatory standard, handbook or sourcebook published by a supervisory authority — the highest level of the regulatory hierarchy, e.g. a prudential sourcebook. Sections hang beneath it.",
+      "properties": {
+        "id": {
+          "type": "STRING",
+          "description": "Short identifier for the standard as the regulator publishes it, e.g. the sourcebook code. Expected to be the prefix that section identifiers are built from.",
+          "key": true,
+          "extensions": {
+            "sample": { "type": "String", "value": "COBS" }
+          }
+        },
+        "title": {
+          "type": "STRING",
+          "description": "Full published title of the standard.",
+          "mustExist": true,
+          "extensions": {
+            "sample": { "type": "String", "value": "Conduct of Business Sourcebook" }
+          }
+        },
+        "regulator": {
+          "type": "STRING",
+          "description": "Short code of the supervisory authority that issues and maintains the standard, as the firm records it in its regulatory inventory (e.g. a national conduct or prudential regulator's abbreviation).",
+          "extensions": {
+            "sample": { "type": "String", "value": "FCA" }
+          }
+        },
+        "jurisdiction": {
+          "type": "STRING",
+          "description": "Code of the jurisdiction whose law or rulebook gives the standard force, using the firm's own jurisdiction coding (ISO 3166 alpha-2 country codes or supranational codes such as EU).",
+          "extensions": {
+            "sample": { "type": "String", "value": "UK" }
+          }
+        }
+      }
+    },
+    "Section": {
+      "label": "Section",
+      "description": "A single addressable unit of regulatory text — a chapter, section or subsection of a standard. Sections form the hierarchy of a handbook and are the level at which regulatory change is tracked and obligations are attributed.",
+      "properties": {
+        "id": {
+          "type": "STRING",
+          "description": "Section identifier exactly as cited by the regulator, including the standard prefix, e.g. a sourcebook code followed by chapter and section numbers. Expected to be unique across all standards.",
+          "key": true,
+          "extensions": {
+            "sample": { "type": "String", "value": "COBS 2.1" }
+          }
+        },
+        "title": {
+          "type": "STRING",
+          "description": "Long heading of the section as published, conventionally including the section identifier.",
+          "mustExist": true,
+          "extensions": {
+            "sample": { "type": "String", "value": "COBS 2.1 Reporting timetable" }
+          }
+        },
+        "lastUpdated": {
+          "type": "DATE",
+          "description": "Date on which the section's current text took effect in the handbook — the in-force date of the latest amendment, not the date the amendment was announced or published. Calendar date only; ISO 8601 (YYYY-MM-DD). This is the property regulatory-change analysis filters on.",
+          "mustExist": true,
+          "extensions": {
+            "sample": { "type": "String", "value": "2021-10-29" }
+          }
+        }
+      }
+    },
+    "Obligation": {
+      "label": "Obligation",
+      "description": "A discrete compliance requirement the firm has extracted from a section of regulatory text and holds itself to. One section may yield several obligations; each obligation traces back to exactly one section.",
+      "properties": {
+        "id": {
+          "type": "STRING",
+          "description": "Firm-assigned identifier for the obligation in its compliance register. Expected to be stable across handbook revisions.",
+          "key": true,
+          "extensions": {
+            "sample": { "type": "String", "value": "OBL-045" }
+          }
+        },
+        "title": {
+          "type": "STRING",
+          "description": "One-line statement of what the firm must do, phrased as an action.",
+          "mustExist": true,
+          "extensions": {
+            "sample": { "type": "String", "value": "Maintain third-party ICT concentration risk" }
+          }
+        },
+        "category": {
+          "type": "STRING",
+          "description": "Compliance theme the obligation belongs to, from the firm's own taxonomy. This model's vocabulary is capital-adequacy, reporting, governance, conduct, disclosure, operational-resilience, record-keeping.",
+          "extensions": {
+            "sample": { "type": "String", "value": "operational-resilience" }
+          }
+        },
+        "reportingFrequency": {
+          "type": "STRING",
+          "description": "How often the obligation falls due, from the vocabulary ongoing, daily, monthly, quarterly, annual, event-driven. 'ongoing' means a continuous standard rather than a periodic submission.",
+          "extensions": {
+            "sample": { "type": "String", "value": "daily" }
+          }
+        },
+        "inherentRiskScore": {
+          "type": "INTEGER",
+          "description": "Risk of breaching this obligation assessed before any control is taken into account, on a 1-5 scale where 5 is the highest inherent risk. Inherent, not residual — a well-controlled obligation keeps a high score.",
+          "extensions": {
+            "sample": { "type": "String", "value": "2" }
+          }
+        }
+      }
+    },
+    "Control": {
+      "label": "Control",
+      "description": "A procedure, check or automated safeguard the firm operates to satisfy one or more obligations. Controls are the layer at which compliance is actually evidenced and tested.",
+      "properties": {
+        "id": {
+          "type": "STRING",
+          "description": "Firm-assigned identifier for the control in its control inventory.",
+          "key": true,
+          "extensions": {
+            "sample": { "type": "String", "value": "CTL-068" }
+          }
+        },
+        "name": {
+          "type": "STRING",
+          "description": "Short descriptive name of the control as it appears in the control inventory.",
+          "mustExist": true,
+          "extensions": {
+            "sample": { "type": "String", "value": "Data quality gate" }
+          }
+        },
+        "controlType": {
+          "type": "STRING",
+          "description": "Point in the risk lifecycle at which the control acts, from the vocabulary preventive (stops the failure), detective (finds it after the fact), corrective (remediates it).",
+          "extensions": {
+            "sample": { "type": "String", "value": "corrective" }
+          }
+        },
+        "automationLevel": {
+          "type": "STRING",
+          "description": "Degree of human involvement in operating the control, from the vocabulary manual, semi-automated, automated. A manual control may still be recorded against a system used to evidence it.",
+          "extensions": {
+            "sample": { "type": "String", "value": "semi-automated" }
+          }
+        },
+        "lastTestedDate": {
+          "type": "DATE",
+          "description": "Date the control was last tested for operating effectiveness by a second or third line function. Calendar date only; ISO 8601 (YYYY-MM-DD). Not the date the control last ran.",
+          "mustExist": true,
+          "extensions": {
+            "sample": { "type": "String", "value": "2025-05-14" }
+          }
+        },
+        "effectivenessScore": {
+          "type": "INTEGER",
+          "description": "Assessed operating effectiveness at the last test, on a 1-5 scale where 5 is most effective. Reflects the assessment at lastTestedDate and does not decay on its own.",
+          "extensions": {
+            "sample": { "type": "String", "value": "3" }
+          }
+        }
+      }
+    },
+    "BusinessService": {
+      "label": "BusinessService",
+      "description": "A service the firm delivers to clients or to the market, of the kind an operational-resilience framework identifies and sets an impact tolerance for. The point at which regulatory change becomes a business consequence.",
+      "properties": {
+        "id": {
+          "type": "STRING",
+          "description": "Firm-assigned identifier for the business service in its service catalogue.",
+          "key": true,
+          "extensions": {
+            "sample": { "type": "String", "value": "SVC-018" }
+          }
+        },
+        "name": {
+          "type": "STRING",
+          "description": "Business-facing name of the service as the firm's service catalogue records it.",
+          "mustExist": true,
+          "extensions": {
+            "sample": { "type": "String", "value": "Client categorisation" }
+          }
+        },
+        "criticality": {
+          "type": "STRING",
+          "description": "Resilience classification of the service, from the vocabulary important-business-service (formally designated, with a board-approved impact tolerance), material, standard.",
+          "extensions": {
+            "sample": { "type": "String", "value": "standard" }
+          }
+        },
+        "impactToleranceHours": {
+          "type": "INTEGER",
+          "description": "Maximum tolerable duration of disruption to this service, in whole hours measured from the onset of disruption rather than from its detection. Lower means less tolerant.",
+          "extensions": {
+            "sample": { "type": "String", "value": "120" }
+          }
+        }
+      }
+    },
+    "System": {
+      "label": "System",
+      "description": "An application, platform or infrastructure component that business services run on and that controls are implemented in. Systems depend on other systems, so a failure here propagates.",
+      "properties": {
+        "id": {
+          "type": "STRING",
+          "description": "Firm-assigned identifier for the system in its configuration management database or application inventory.",
+          "key": true,
+          "extensions": {
+            "sample": { "type": "String", "value": "SYS-024" }
+          }
+        },
+        "name": {
+          "type": "STRING",
+          "description": "Name of the system as recorded in the application inventory.",
+          "mustExist": true,
+          "extensions": {
+            "sample": { "type": "String", "value": "Change Management" }
+          }
+        },
+        "hostingModel": {
+          "type": "STRING",
+          "description": "Where the system runs and who operates it, from the vocabulary on-premise, private-cloud, public-cloud, vendor-saas. Relevant to third-party and ICT concentration analysis.",
+          "extensions": {
+            "sample": { "type": "String", "value": "vendor-saas" }
+          }
+        },
+        "tier": {
+          "type": "INTEGER",
+          "description": "Criticality tier from the firm's IT service management scheme, on a 1-3 scale where 1 is the most critical. Note this runs opposite to the 1-5 risk and effectiveness scales elsewhere in the model.",
+          "extensions": {
+            "sample": { "type": "String", "value": "3" }
+          }
+        }
+      }
+    },
+    "BusinessUnit": {
+      "label": "BusinessUnit",
+      "description": "An organisational function that holds accountability for obligations and for business services — the answer to 'who has to act' when a regulation changes.",
+      "properties": {
+        "id": {
+          "type": "STRING",
+          "description": "Firm-assigned identifier for the business unit or function.",
+          "key": true,
+          "extensions": {
+            "sample": { "type": "String", "value": "BU-005" }
+          }
+        },
+        "name": {
+          "type": "STRING",
+          "description": "Name of the business unit or function as the firm's organisational register records it.",
+          "mustExist": true,
+          "extensions": {
+            "sample": { "type": "String", "value": "Markets Operations" }
+          }
+        },
+        "smfReference": {
+          "type": "STRING",
+          "description": "Reference to the senior management function accountable for this unit under the applicable individual-accountability regime, in the regulator's own notation. Several units may share one reference where one senior manager covers them all.",
+          "extensions": {
+            "sample": { "type": "String", "value": "SMF24" }
+          }
+        }
+      }
+    }
+  },
+  "relationships": {
+    "sectionInStandard": {
+      "type": "DEPENDS_ON",
+      "description": "Places a top-level section directly beneath the standard that publishes it. Only sections at the top of a handbook's hierarchy carry this; deeper sections reach the standard through their parent section instead.",
+      "from": { "node": "Section" },
+      "to": { "node": "Standard" },
+      "extensions": {
+        "cardinality": {
+          "type": "Map",
+          "value": {
+            "outMin": { "type": "Long", "value": 0 },
+            "outMax": { "type": "Long", "value": 1 },
+            "inMin": { "type": "Long", "value": 1 },
+            "inMax": { "type": "String", "value": "many" }
+          }
+        }
+      }
+    },
+    "sectionInSection": {
+      "type": "DEPENDS_ON",
+      "description": "Places a section beneath its immediate parent section in the handbook hierarchy, read child to parent. Chaining these from a top-level section reconstructs the full depth of a handbook.",
+      "from": { "node": "Section" },
+      "to": { "node": "Section" },
+      "extensions": {
+        "cardinality": {
+          "type": "Map",
+          "value": {
+            "outMin": { "type": "Long", "value": 0 },
+            "outMax": { "type": "Long", "value": 1 },
+            "inMin": { "type": "Long", "value": 0 },
+            "inMax": { "type": "String", "value": "many" }
+          }
+        }
+      }
+    },
+    "serviceOnSystem": {
+      "type": "DEPENDS_ON",
+      "description": "States that the business service cannot be delivered without the system. Direct dependencies only; indirect ones are reached by continuing through the system-to-system chain.",
+      "from": { "node": "BusinessService" },
+      "to": { "node": "System" },
+      "extensions": {
+        "cardinality": {
+          "type": "Map",
+          "value": {
+            "outMin": { "type": "Long", "value": 1 },
+            "outMax": { "type": "String", "value": "many" },
+            "inMin": { "type": "Long", "value": 0 },
+            "inMax": { "type": "String", "value": "many" }
+          }
+        }
+      }
+    },
+    "systemOnSystem": {
+      "type": "DEPENDS_ON",
+      "description": "States that the from system requires the to system to function — the to system is upstream. Expected to be acyclic so that dependency chains terminate.",
+      "from": { "node": "System" },
+      "to": { "node": "System" }
+    },
+    "sectionRelated": {
+      "type": "RELATED",
+      "description": "Records a cross-reference made by the citing (from) section to the cited (to) section, so that a change to the cited text is known to reach the citing text.",
+      "from": { "node": "Section" },
+      "to": { "node": "Section" },
+      "properties": {
+        "subsection": {
+          "type": "STRING",
+          "description": "The specific rule within the cited (to) section that the citing section refers to, in the regulator's own rule notation. Where a section is cited as a whole this is expected to be the section identifier itself.",
+          "extensions": {
+            "sample": { "type": "String", "value": "EMIR 2.1.5R" }
+          }
+        }
+      }
+    },
+    "obligationFromSection": {
+      "type": "DERIVED_FROM",
+      "description": "Traces the obligation back to the single section of regulatory text it was extracted from. This is the join that turns a handbook change into a compliance impact.",
+      "from": { "node": "Obligation" },
+      "to": { "node": "Section" },
+      "extensions": {
+        "cardinality": {
+          "type": "Map",
+          "value": {
+            "outMin": { "type": "Long", "value": 1 },
+            "outMax": { "type": "Long", "value": 1 },
+            "inMin": { "type": "Long", "value": 0 },
+            "inMax": { "type": "String", "value": "many" }
+          }
+        }
+      }
+    },
+    "controlSatisfiesObligation": {
+      "type": "SATISFIES",
+      "description": "States that the control contributes to meeting the obligation, and by how much. An obligation with no incoming SATISFIES is uncontrolled, which is a meaningful finding rather than missing data.",
+      "from": { "node": "Control" },
+      "to": { "node": "Obligation" },
+      "properties": {
+        "coveragePercent": {
+          "type": "INTEGER",
+          "description": "Assessed share of the obligation's requirements this control addresses, as a whole number from 1 to 100. Coverage contributed by all controls on one obligation is expected to sum to at most 100, so a sum below 100 is a residual gap.",
+          "mustExist": true,
+          "extensions": {
+            "sample": { "type": "String", "value": "45" }
+          }
+        }
+      },
+      "extensions": {
+        "cardinality": {
+          "type": "Map",
+          "value": {
+            "outMin": { "type": "Long", "value": 0 },
+            "outMax": { "type": "String", "value": "many" },
+            "inMin": { "type": "Long", "value": 0 },
+            "inMax": { "type": "String", "value": "many" }
+          }
+        }
+      }
+    },
+    "serviceGovernedByObligation": {
+      "type": "GOVERNED_BY",
+      "description": "States that the business service falls within the scope of the obligation, so a change to the obligation changes how the service must be run.",
+      "from": { "node": "BusinessService" },
+      "to": { "node": "Obligation" }
+    },
+    "controlOnSystem": {
+      "type": "IMPLEMENTED_BY",
+      "description": "Names the system the control is operated in or evidenced from. A control with no such link is operated entirely outside the application estate.",
+      "from": { "node": "Control" },
+      "to": { "node": "System" },
+      "extensions": {
+        "cardinality": {
+          "type": "Map",
+          "value": {
+            "outMin": { "type": "Long", "value": 0 },
+            "outMax": { "type": "Long", "value": 1 },
+            "inMin": { "type": "Long", "value": 0 },
+            "inMax": { "type": "String", "value": "many" }
+          }
+        }
+      }
+    },
+    "unitAccountableForService": {
+      "type": "ACCOUNTABLE_FOR",
+      "description": "Names the business unit answerable for running the business service. Exactly one unit is accountable for each service, whatever the number of units involved in delivering it.",
+      "from": { "node": "BusinessUnit" },
+      "to": { "node": "BusinessService" },
+      "extensions": {
+        "cardinality": {
+          "type": "Map",
+          "value": {
+            "outMin": { "type": "Long", "value": 0 },
+            "outMax": { "type": "String", "value": "many" },
+            "inMin": { "type": "Long", "value": 1 },
+            "inMax": { "type": "Long", "value": 1 }
+          }
+        }
+      }
+    },
+    "unitAccountableForObligation": {
+      "type": "ACCOUNTABLE_FOR",
+      "description": "Names the business unit answerable for meeting the obligation. Distinct from accountability for a service: the unit that owns an obligation is often not the unit that runs the services the obligation governs.",
+      "from": { "node": "BusinessUnit" },
+      "to": { "node": "Obligation" },
+      "extensions": {
+        "cardinality": {
+          "type": "Map",
+          "value": {
+            "outMin": { "type": "Long", "value": 0 },
+            "outMax": { "type": "String", "value": "many" },
+            "inMin": { "type": "Long", "value": 1 },
+            "inMax": { "type": "Long", "value": 1 }
+          }
+        }
+      }
+    }
+  },
+  "tables": {
+    "standards.csv": {
+      "source": "local",
+      "fields": {
+        "standardId": { "type": "string" },
+        "title": { "type": "string" },
+        "regulator": { "type": "string" },
+        "jurisdiction": { "type": "string" }
+      }
+    },
+    "sections.csv": {
+      "source": "local",
+      "fields": {
+        "sectionId": { "type": "string" },
+        "title": { "type": "string" },
+        "lastUpdated": { "type": "string" },
+        "standardId": { "type": "string" },
+        "parentSectionId": { "type": "string" }
+      }
+    },
+    "section_references.csv": {
+      "source": "local",
+      "fields": {
+        "citingSectionId": { "type": "string" },
+        "citedSectionId": { "type": "string" },
+        "subsection": { "type": "string" }
+      }
+    },
+    "obligations.csv": {
+      "source": "local",
+      "fields": {
+        "obligationId": { "type": "string" },
+        "title": { "type": "string" },
+        "category": { "type": "string" },
+        "reportingFrequency": { "type": "string" },
+        "inherentRiskScore": { "type": "string" },
+        "sectionId": { "type": "string" },
+        "accountableUnitId": { "type": "string" }
+      }
+    },
+    "controls.csv": {
+      "source": "local",
+      "fields": {
+        "controlId": { "type": "string" },
+        "name": { "type": "string" },
+        "controlType": { "type": "string" },
+        "automationLevel": { "type": "string" },
+        "lastTestedDate": { "type": "string" },
+        "effectivenessScore": { "type": "string" },
+        "systemId": { "type": "string" }
+      }
+    },
+    "control_obligation.csv": {
+      "source": "local",
+      "fields": {
+        "controlId": { "type": "string" },
+        "obligationId": { "type": "string" },
+        "coveragePercent": { "type": "string" }
+      }
+    },
+    "business_services.csv": {
+      "source": "local",
+      "fields": {
+        "serviceId": { "type": "string" },
+        "name": { "type": "string" },
+        "criticality": { "type": "string" },
+        "impactToleranceHours": { "type": "string" },
+        "ownerUnitId": { "type": "string" }
+      }
+    },
+    "service_obligation.csv": {
+      "source": "local",
+      "fields": {
+        "serviceId": { "type": "string" },
+        "obligationId": { "type": "string" }
+      }
+    },
+    "service_system.csv": {
+      "source": "local",
+      "fields": {
+        "serviceId": { "type": "string" },
+        "systemId": { "type": "string" }
+      }
+    },
+    "systems.csv": {
+      "source": "local",
+      "fields": {
+        "systemId": { "type": "string" },
+        "name": { "type": "string" },
+        "hostingModel": { "type": "string" },
+        "tier": { "type": "string" }
+      }
+    },
+    "system_dependencies.csv": {
+      "source": "local",
+      "fields": {
+        "systemId": { "type": "string" },
+        "upstreamSystemId": { "type": "string" }
+      }
+    },
+    "business_units.csv": {
+      "source": "local",
+      "fields": {
+        "unitId": { "type": "string" },
+        "name": { "type": "string" },
+        "smfReference": { "type": "string" }
+      }
+    }
+  },
+  "mappings": [
+    {
+      "type": "NodeMapping",
+      "node": "Standard",
+      "table": "standards.csv",
+      "mode": "MERGE",
+      "key": ["id"],
+      "properties": {
+        "id": { "field": "standardId" },
+        "title": { "field": "title" },
+        "regulator": { "field": "regulator" },
+        "jurisdiction": { "field": "jurisdiction" }
+      }
+    },
+    {
+      "type": "NodeMapping",
+      "node": "Section",
+      "table": "sections.csv",
+      "mode": "MERGE",
+      "key": ["id"],
+      "properties": {
+        "id": { "field": "sectionId" },
+        "title": { "field": "title" },
+        "lastUpdated": { "field": "lastUpdated" }
+      }
+    },
+    {
+      "type": "NodeMapping",
+      "node": "Obligation",
+      "table": "obligations.csv",
+      "mode": "MERGE",
+      "key": ["id"],
+      "properties": {
+        "id": { "field": "obligationId" },
+        "title": { "field": "title" },
+        "category": { "field": "category" },
+        "reportingFrequency": { "field": "reportingFrequency" },
+        "inherentRiskScore": { "field": "inherentRiskScore" }
+      }
+    },
+    {
+      "type": "NodeMapping",
+      "node": "Control",
+      "table": "controls.csv",
+      "mode": "MERGE",
+      "key": ["id"],
+      "properties": {
+        "id": { "field": "controlId" },
+        "name": { "field": "name" },
+        "controlType": { "field": "controlType" },
+        "automationLevel": { "field": "automationLevel" },
+        "lastTestedDate": { "field": "lastTestedDate" },
+        "effectivenessScore": { "field": "effectivenessScore" }
+      }
+    },
+    {
+      "type": "NodeMapping",
+      "node": "BusinessService",
+      "table": "business_services.csv",
+      "mode": "MERGE",
+      "key": ["id"],
+      "properties": {
+        "id": { "field": "serviceId" },
+        "name": { "field": "name" },
+        "criticality": { "field": "criticality" },
+        "impactToleranceHours": { "field": "impactToleranceHours" }
+      }
+    },
+    {
+      "type": "NodeMapping",
+      "node": "System",
+      "table": "systems.csv",
+      "mode": "MERGE",
+      "key": ["id"],
+      "properties": {
+        "id": { "field": "systemId" },
+        "name": { "field": "name" },
+        "hostingModel": { "field": "hostingModel" },
+        "tier": { "field": "tier" }
+      }
+    },
+    {
+      "type": "NodeMapping",
+      "node": "BusinessUnit",
+      "table": "business_units.csv",
+      "mode": "MERGE",
+      "key": ["id"],
+      "properties": {
+        "id": { "field": "unitId" },
+        "name": { "field": "name" },
+        "smfReference": { "field": "smfReference" }
+      }
+    },
+    {
+      "type": "RelationshipMapping",
+      "relationship": "sectionInStandard",
+      "table": "sections.csv",
+      "mode": "MERGE",
+      "key": [],
+      "from": {
+        "node": "Section",
+        "properties": { "id": { "field": "sectionId" } }
+      },
+      "to": {
+        "node": "Standard",
+        "properties": { "id": { "field": "standardId" } }
+      }
+    },
+    {
+      "type": "RelationshipMapping",
+      "relationship": "sectionInSection",
+      "table": "sections.csv",
+      "mode": "MERGE",
+      "key": [],
+      "from": {
+        "node": "Section",
+        "properties": { "id": { "field": "sectionId" } }
+      },
+      "to": {
+        "node": "Section",
+        "properties": { "id": { "field": "parentSectionId" } }
+      }
+    },
+    {
+      "type": "RelationshipMapping",
+      "relationship": "sectionRelated",
+      "table": "section_references.csv",
+      "mode": "MERGE",
+      "key": [],
+      "from": {
+        "node": "Section",
+        "properties": { "id": { "field": "citingSectionId" } }
+      },
+      "to": {
+        "node": "Section",
+        "properties": { "id": { "field": "citedSectionId" } }
+      },
+      "properties": {
+        "subsection": { "field": "subsection" }
+      }
+    },
+    {
+      "type": "RelationshipMapping",
+      "relationship": "obligationFromSection",
+      "table": "obligations.csv",
+      "mode": "MERGE",
+      "key": [],
+      "from": {
+        "node": "Obligation",
+        "properties": { "id": { "field": "obligationId" } }
+      },
+      "to": {
+        "node": "Section",
+        "properties": { "id": { "field": "sectionId" } }
+      }
+    },
+    {
+      "type": "RelationshipMapping",
+      "relationship": "unitAccountableForObligation",
+      "table": "obligations.csv",
+      "mode": "MERGE",
+      "key": [],
+      "from": {
+        "node": "BusinessUnit",
+        "properties": { "id": { "field": "accountableUnitId" } }
+      },
+      "to": {
+        "node": "Obligation",
+        "properties": { "id": { "field": "obligationId" } }
+      }
+    },
+    {
+      "type": "RelationshipMapping",
+      "relationship": "controlOnSystem",
+      "table": "controls.csv",
+      "mode": "MERGE",
+      "key": [],
+      "from": {
+        "node": "Control",
+        "properties": { "id": { "field": "controlId" } }
+      },
+      "to": {
+        "node": "System",
+        "properties": { "id": { "field": "systemId" } }
+      }
+    },
+    {
+      "type": "RelationshipMapping",
+      "relationship": "controlSatisfiesObligation",
+      "table": "control_obligation.csv",
+      "mode": "MERGE",
+      "key": [],
+      "from": {
+        "node": "Control",
+        "properties": { "id": { "field": "controlId" } }
+      },
+      "to": {
+        "node": "Obligation",
+        "properties": { "id": { "field": "obligationId" } }
+      },
+      "properties": {
+        "coveragePercent": { "field": "coveragePercent" }
+      }
+    },
+    {
+      "type": "RelationshipMapping",
+      "relationship": "unitAccountableForService",
+      "table": "business_services.csv",
+      "mode": "MERGE",
+      "key": [],
+      "from": {
+        "node": "BusinessUnit",
+        "properties": { "id": { "field": "ownerUnitId" } }
+      },
+      "to": {
+        "node": "BusinessService",
+        "properties": { "id": { "field": "serviceId" } }
+      }
+    },
+    {
+      "type": "RelationshipMapping",
+      "relationship": "serviceGovernedByObligation",
+      "table": "service_obligation.csv",
+      "mode": "MERGE",
+      "key": [],
+      "from": {
+        "node": "BusinessService",
+        "properties": { "id": { "field": "serviceId" } }
+      },
+      "to": {
+        "node": "Obligation",
+        "properties": { "id": { "field": "obligationId" } }
+      }
+    },
+    {
+      "type": "RelationshipMapping",
+      "relationship": "serviceOnSystem",
+      "table": "service_system.csv",
+      "mode": "MERGE",
+      "key": [],
+      "from": {
+        "node": "BusinessService",
+        "properties": { "id": { "field": "serviceId" } }
+      },
+      "to": {
+        "node": "System",
+        "properties": { "id": { "field": "systemId" } }
+      }
+    },
+    {
+      "type": "RelationshipMapping",
+      "relationship": "systemOnSystem",
+      "table": "system_dependencies.csv",
+      "mode": "MERGE",
+      "key": [],
+      "from": {
+        "node": "System",
+        "properties": { "id": { "field": "systemId" } }
+      },
+      "to": {
+        "node": "System",
+        "properties": { "id": { "field": "upstreamSystemId" } }
+      }
+    }
+  ],
+  "display": {
+    "nodes": {
+      "Standard": { "x": -520, "y": 0 },
+      "Section": { "x": -280, "y": 0 },
+      "Obligation": { "x": 0, "y": 0 },
+      "BusinessUnit": { "x": 0, "y": -240 },
+      "Control": { "x": 260, "y": -140 },
+      "BusinessService": { "x": 0, "y": 240 },
+      "System": { "x": 380, "y": 120 }
+    }
+  }
+}

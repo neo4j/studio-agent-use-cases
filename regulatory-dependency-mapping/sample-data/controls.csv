@@ -1,0 +1,119 @@
+controlId,name,controlType,automationLevel,lastTestedDate,effectivenessScore,systemId
+CTL-001,Daily reconciliation (regulatory data hub),detective,automated,2026-08-04,5,SYS-001
+CTL-002,Four-eyes review (regulatory data hub),detective,automated,2026-04-24,5,SYS-001
+CTL-003,Automated threshold alert (regulatory data hub),preventive,automated,2025-11-10,4,SYS-001
+CTL-004,Exception report review (regulatory data hub),preventive,automated,2026-02-08,3,SYS-001
+CTL-005,Pre-trade limit check (regulatory data hub),corrective,automated,2026-03-27,5,SYS-001
+CTL-006,Post-trade validation (regulatory data hub),corrective,automated,2026-06-22,3,SYS-001
+CTL-007,Quarterly attestation (regulatory data hub),detective,automated,2026-06-23,5,SYS-001
+CTL-008,Segregation of duties check (regulatory data hub),detective,automated,2026-04-13,3,SYS-001
+CTL-009,Data quality gate (regulatory data hub),detective,automated,2025-10-12,3,SYS-001
+CTL-010,Access recertification (regulatory data hub),preventive,automated,2026-05-13,5,SYS-001
+CTL-011,Vendor due diligence review (regulatory data hub),preventive,automated,2026-01-24,3,SYS-001
+CTL-012,Scenario test (regulatory data hub),corrective,automated,2026-05-11,3,SYS-001
+CTL-013,Regulatory submission sign-off (regulatory data hub),corrective,automated,2026-03-05,4,SYS-001
+CTL-014,Retention policy enforcement (regulatory data hub),corrective,automated,2025-12-17,3,SYS-001
+CTL-015,Exception report review,preventive,semi-automated,2023-11-15,1,SYS-017
+CTL-016,Pre-trade limit check,corrective,semi-automated,2024-09-30,2,SYS-031
+CTL-017,Post-trade validation,detective,automated,2023-03-23,3,SYS-036
+CTL-018,Quarterly attestation,corrective,automated,2023-06-28,3,SYS-035
+CTL-019,Segregation of duties check,preventive,semi-automated,2025-01-21,2,SYS-014
+CTL-020,Data quality gate,preventive,semi-automated,2024-06-30,2,SYS-016
+CTL-021,Access recertification,detective,semi-automated,2025-01-28,3,
+CTL-022,Vendor due diligence review,preventive,automated,2024-07-03,1,SYS-032
+CTL-023,Scenario test,preventive,automated,2023-06-20,2,SYS-030
+CTL-024,Regulatory submission sign-off,preventive,semi-automated,2023-06-23,2,SYS-003
+CTL-025,Retention policy enforcement,preventive,manual,2024-06-29,3,SYS-001
+CTL-026,Quarterly attestation,preventive,semi-automated,2026-01-30,2,SYS-009
+CTL-027,Segregation of duties check,detective,semi-automated,2025-07-22,5,SYS-021
+CTL-028,Data quality gate,corrective,automated,2025-10-15,3,SYS-027
+CTL-029,Access recertification,preventive,automated,2025-07-14,2,SYS-005
+CTL-030,Vendor due diligence review,preventive,automated,2025-05-12,3,SYS-009
+CTL-031,Scenario test,preventive,manual,2025-10-17,3,SYS-009
+CTL-032,Regulatory submission sign-off,detective,automated,2026-04-04,4,SYS-036
+CTL-033,Retention policy enforcement,corrective,automated,2025-11-04,5,SYS-011
+CTL-034,Escalation and notification workflow,detective,automated,2025-11-14,5,SYS-040
+CTL-035,Independent model review,preventive,automated,2025-10-04,2,SYS-029
+CTL-036,Sampling-based assurance test,preventive,manual,2026-04-23,4,SYS-007
+CTL-037,Reference data validation,preventive,manual,2026-05-31,5,SYS-037
+CTL-038,Board-level oversight review,detective,semi-automated,2026-04-01,3,SYS-024
+CTL-039,Automated completeness check,preventive,manual,2026-05-14,2,SYS-009
+CTL-040,Daily reconciliation,preventive,automated,2025-11-19,5,SYS-031
+CTL-041,Four-eyes review,preventive,manual,2025-09-23,4,SYS-017
+CTL-042,Automated threshold alert,detective,semi-automated,2025-08-30,2,SYS-041
+CTL-043,Exception report review,detective,automated,2025-11-10,2,SYS-006
+CTL-044,Pre-trade limit check,detective,semi-automated,2026-02-21,4,SYS-008
+CTL-045,Post-trade validation,detective,automated,2025-10-10,4,SYS-034
+CTL-046,Quarterly attestation,preventive,automated,2025-06-01,5,SYS-024
+CTL-047,Segregation of duties check,preventive,automated,2026-08-03,2,SYS-016
+CTL-048,Data quality gate,corrective,automated,2025-05-15,5,SYS-015
+CTL-049,Access recertification,preventive,manual,2026-06-05,3,SYS-019
+CTL-050,Vendor due diligence review,detective,semi-automated,2026-01-30,3,SYS-016
+CTL-051,Scenario test,preventive,manual,2026-01-20,5,SYS-001
+CTL-052,Regulatory submission sign-off,detective,semi-automated,2026-01-20,5,SYS-002
+CTL-053,Retention policy enforcement,corrective,automated,2025-06-14,5,SYS-036
+CTL-054,Escalation and notification workflow,corrective,automated,2025-07-07,5,SYS-021
+CTL-055,Independent model review,detective,automated,2026-05-10,2,
+CTL-056,Sampling-based assurance test,corrective,manual,2026-04-16,3,SYS-016
+CTL-057,Reference data validation,preventive,automated,2025-11-17,4,SYS-043
+CTL-058,Board-level oversight review,detective,automated,2025-08-22,3,SYS-042
+CTL-059,Automated completeness check,corrective,semi-automated,2026-01-20,4,SYS-024
+CTL-060,Daily reconciliation,preventive,manual,2026-02-10,5,SYS-030
+CTL-061,Four-eyes review,corrective,semi-automated,2026-08-16,5,SYS-011
+CTL-062,Automated threshold alert,preventive,automated,2026-05-06,3,SYS-031
+CTL-063,Exception report review,corrective,automated,2026-08-04,5,SYS-013
+CTL-064,Pre-trade limit check,preventive,manual,2026-04-28,4,SYS-008
+CTL-065,Post-trade validation,detective,semi-automated,2025-05-05,2,SYS-037
+CTL-066,Quarterly attestation,corrective,automated,2025-11-16,4,SYS-026
+CTL-067,Segregation of duties check,preventive,manual,2026-05-07,2,SYS-010
+CTL-068,Data quality gate,corrective,semi-automated,2025-05-14,3,
+CTL-069,Access recertification,detective,manual,2026-01-11,4,SYS-016
+CTL-070,Vendor due diligence review,detective,automated,2026-07-17,4,SYS-013
+CTL-071,Scenario test,preventive,manual,2025-12-17,5,SYS-003
+CTL-072,Regulatory submission sign-off,corrective,automated,2025-11-29,3,SYS-008
+CTL-073,Retention policy enforcement,preventive,manual,2026-04-15,2,SYS-003
+CTL-074,Escalation and notification workflow,corrective,automated,2026-06-28,4,SYS-006
+CTL-075,Independent model review,detective,automated,2025-04-01,2,SYS-005
+CTL-076,Sampling-based assurance test,corrective,automated,2026-02-06,3,SYS-028
+CTL-077,Reference data validation,preventive,manual,2025-11-25,5,SYS-029
+CTL-078,Board-level oversight review,detective,automated,2026-08-17,3,SYS-029
+CTL-079,Automated completeness check,corrective,automated,2025-11-23,5,SYS-028
+CTL-080,Daily reconciliation,corrective,semi-automated,2025-11-03,5,SYS-011
+CTL-081,Four-eyes review,corrective,automated,2025-07-21,3,SYS-015
+CTL-082,Automated threshold alert,detective,semi-automated,2025-10-21,5,SYS-044
+CTL-083,Exception report review,detective,semi-automated,2025-12-12,5,SYS-042
+CTL-084,Pre-trade limit check,corrective,automated,2026-08-10,4,SYS-028
+CTL-085,Post-trade validation,corrective,automated,2025-11-04,2,SYS-016
+CTL-086,Quarterly attestation,detective,manual,2026-04-29,4,SYS-001
+CTL-087,Segregation of duties check,corrective,automated,2026-05-23,2,SYS-037
+CTL-088,Data quality gate,detective,semi-automated,2026-07-27,4,SYS-009
+CTL-089,Access recertification,preventive,manual,2026-02-04,4,
+CTL-090,Vendor due diligence review,preventive,semi-automated,2026-05-20,5,SYS-018
+CTL-091,Scenario test,detective,manual,2025-09-19,2,SYS-035
+CTL-092,Regulatory submission sign-off,corrective,semi-automated,2025-04-05,4,SYS-014
+CTL-093,Retention policy enforcement,corrective,manual,2026-07-05,5,SYS-014
+CTL-094,Escalation and notification workflow,preventive,automated,2025-04-18,3,SYS-019
+CTL-095,Independent model review,corrective,manual,2026-04-25,3,SYS-006
+CTL-096,Sampling-based assurance test,corrective,semi-automated,2026-05-29,3,SYS-038
+CTL-097,Reference data validation,preventive,automated,2025-04-29,5,SYS-013
+CTL-098,Board-level oversight review,preventive,automated,2025-06-21,3,SYS-041
+CTL-099,Automated completeness check,preventive,semi-automated,2025-12-24,4,SYS-040
+CTL-100,Daily reconciliation,detective,manual,2025-05-04,5,SYS-016
+CTL-101,Four-eyes review,corrective,manual,2025-10-06,3,SYS-025
+CTL-102,Automated threshold alert,preventive,manual,2025-10-17,5,SYS-012
+CTL-103,Exception report review,corrective,automated,2026-01-13,4,SYS-041
+CTL-104,Pre-trade limit check,detective,automated,2025-09-08,5,SYS-033
+CTL-105,Post-trade validation,detective,automated,2025-08-02,3,SYS-025
+CTL-106,Quarterly attestation,corrective,manual,2026-05-17,5,SYS-029
+CTL-107,Segregation of duties check,corrective,semi-automated,2026-04-19,4,SYS-009
+CTL-108,Data quality gate,corrective,semi-automated,2026-08-21,4,SYS-002
+CTL-109,Access recertification,preventive,automated,2025-11-14,5,SYS-025
+CTL-110,Vendor due diligence review,corrective,manual,2025-07-30,3,SYS-026
+CTL-111,Scenario test,detective,semi-automated,2026-04-24,2,SYS-035
+CTL-112,Regulatory submission sign-off,preventive,automated,2026-04-01,5,
+CTL-113,Retention policy enforcement,preventive,semi-automated,2026-05-23,3,SYS-045
+CTL-114,Escalation and notification workflow,corrective,semi-automated,2026-02-19,4,SYS-013
+CTL-115,Independent model review,preventive,manual,2025-06-09,4,SYS-010
+CTL-116,Sampling-based assurance test,detective,semi-automated,2025-05-16,4,SYS-025
+CTL-117,Reference data validation,preventive,automated,2025-05-11,4,SYS-011
+CTL-118,Board-level oversight review,preventive,manual,2026-05-02,3,SYS-012

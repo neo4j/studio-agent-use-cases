@@ -1,0 +1,135 @@
+sectionId,title,lastUpdated,standardId,parentSectionId
+MIFIDPRU 1,MIFIDPRU 1 Application and purpose,2021-03-13,MIFIDPRU,
+MIFIDPRU 1.1,MIFIDPRU 1.1 Governance and oversight,2024-10-30,,MIFIDPRU 1
+MIFIDPRU 1.1.1,MIFIDPRU 1.1.1 Governance and oversight — detailed provisions,2022-09-28,,MIFIDPRU 1.1
+MIFIDPRU 1.2,MIFIDPRU 1.2 Documentation and evidence,2021-11-26,,MIFIDPRU 1
+MIFIDPRU 1.3,MIFIDPRU 1.3 Systems and controls,2024-05-25,,MIFIDPRU 1
+MIFIDPRU 2,MIFIDPRU 2 Own funds,2023-09-16,MIFIDPRU,
+MIFIDPRU 2.1,MIFIDPRU 2.1 Reporting timetable,2023-07-08,,MIFIDPRU 2
+MIFIDPRU 2.2,MIFIDPRU 2.2 Exemptions and transitional provisions,2021-06-12,,MIFIDPRU 2
+MIFIDPRU 2.2.1,MIFIDPRU 2.2.1 Exemptions and transitional provisions — detailed provisions,2025-02-27,,MIFIDPRU 2.2
+MIFIDPRU 3,MIFIDPRU 3 Own funds requirement,2021-12-28,MIFIDPRU,
+MIFIDPRU 3.1,MIFIDPRU 3.1 Application,2022-08-14,,MIFIDPRU 3
+MIFIDPRU 3.2,MIFIDPRU 3.2 General requirements,2021-12-09,,MIFIDPRU 3
+MIFIDPRU 4,MIFIDPRU 4 K-factor requirement,2024-01-14,MIFIDPRU,
+MIFIDPRU 4.1,MIFIDPRU 4.1 Notification and permissions,2022-02-22,,MIFIDPRU 4
+MIFIDPRU 4.2,MIFIDPRU 4.2 Governance and oversight,2024-11-14,,MIFIDPRU 4
+MIFIDPRU 5,MIFIDPRU 5 Concentration risk,2020-10-04,MIFIDPRU,
+MIFIDPRU 5.1,MIFIDPRU 5.1 Systems and controls,2025-01-17,,MIFIDPRU 5
+MIFIDPRU 5.2,MIFIDPRU 5.2 Reporting timetable,2025-07-26,,MIFIDPRU 5
+MIFIDPRU 6,MIFIDPRU 6 Liquidity,2022-03-16,MIFIDPRU,
+MIFIDPRU 6.1,MIFIDPRU 6.1 Group application,2021-12-20,,MIFIDPRU 6
+MIFIDPRU 6.2,MIFIDPRU 6.2 Application,2026-02-23,,MIFIDPRU 6
+MIFIDPRU 6.3,MIFIDPRU 6.3 General requirements,2025-08-05,,MIFIDPRU 6
+MIFIDPRU 7,MIFIDPRU 7 Risk management and ICARA,2024-08-01,MIFIDPRU,
+MIFIDPRU 7.1,MIFIDPRU 7.1 Calculation and measurement,2024-12-19,,MIFIDPRU 7
+MIFIDPRU 7.2,MIFIDPRU 7.2 Notification and permissions,2023-05-12,,MIFIDPRU 7
+MIFIDPRU 7.2.1,MIFIDPRU 7.2.1 Notification and permissions — detailed provisions,2025-04-17,,MIFIDPRU 7.2
+MIFIDPRU 8,MIFIDPRU 8 Regulatory reporting,2023-04-07,MIFIDPRU,
+MIFIDPRU 8.1,MIFIDPRU 8.1 Documentation and evidence,2021-06-19,,MIFIDPRU 8
+MIFIDPRU 8.1.1,MIFIDPRU 8.1.1 Documentation and evidence — detailed provisions,2025-03-06,,MIFIDPRU 8.1
+MIFIDPRU 8.2,MIFIDPRU 8.2 Systems and controls,2023-12-03,,MIFIDPRU 8
+MIFIDPRU 8.3,MIFIDPRU 8.3 Reporting timetable,2022-12-03,,MIFIDPRU 8
+MIFIDPRU 8.4,MIFIDPRU 8.4 Exemptions and transitional provisions,2023-09-14,,MIFIDPRU 8
+SYSC 1,SYSC 1 General organisational requirements,2020-12-24,SYSC,
+SYSC 1.1,SYSC 1.1 Governance and oversight,2022-04-08,,SYSC 1
+SYSC 1.2,SYSC 1.2 Documentation and evidence,2022-12-31,,SYSC 1
+SYSC 1.3,SYSC 1.3 Systems and controls,2022-12-14,,SYSC 1
+SYSC 1.4,SYSC 1.4 Reporting timetable,2021-09-29,,SYSC 1
+SYSC 2,SYSC 2 Senior management responsibilities,2022-05-03,SYSC,
+SYSC 2.1,SYSC 2.1 Reporting timetable,2022-07-11,,SYSC 2
+SYSC 2.2,SYSC 2.2 Exemptions and transitional provisions,2024-06-01,,SYSC 2
+SYSC 3,"SYSC 3 Compliance, internal audit and financial crime",2020-11-19,SYSC,
+SYSC 3.1,SYSC 3.1 Application,2023-02-17,,SYSC 3
+SYSC 3.2,SYSC 3.2 General requirements,2025-02-23,,SYSC 3
+SYSC 3.3,SYSC 3.3 Calculation and measurement,2023-08-03,,SYSC 3
+SYSC 3.3.1,SYSC 3.3.1 Calculation and measurement — detailed provisions,2023-10-09,,SYSC 3.3
+SYSC 3.4,SYSC 3.4 Notification and permissions,2023-04-02,,SYSC 3
+SYSC 4,SYSC 4 Outsourcing and third parties,2020-09-07,SYSC,
+SYSC 4.1,SYSC 4.1 Notification and permissions,2025-06-02,,SYSC 4
+SYSC 4.2,SYSC 4.2 Governance and oversight,2026-01-05,,SYSC 4
+SYSC 5,SYSC 5 Operational resilience,2023-04-15,SYSC,
+SYSC 5.1,SYSC 5.1 Systems and controls,2021-07-04,,SYSC 5
+SYSC 5.1.1,SYSC 5.1.1 Systems and controls — detailed provisions,2025-01-29,,SYSC 5.1
+SYSC 5.2,SYSC 5.2 Reporting timetable,2024-05-21,,SYSC 5
+SYSC 5.2.1,SYSC 5.2.1 Reporting timetable — detailed provisions,2022-11-08,,SYSC 5.2
+SYSC 5.3,SYSC 5.3 Exemptions and transitional provisions,2022-12-05,,SYSC 5
+SYSC 5.3.1,SYSC 5.3.1 Exemptions and transitional provisions — detailed provisions,2025-12-08,,SYSC 5.3
+SYSC 6,SYSC 6 Record-keeping and governance,2025-07-22,SYSC,
+SYSC 6.1,SYSC 6.1 Group application,2024-06-04,,SYSC 6
+SYSC 6.2,SYSC 6.2 Application,2023-03-13,,SYSC 6
+COBS 1,COBS 1 Application and general provisions,2021-02-19,COBS,
+COBS 1.1,COBS 1.1 Governance and oversight,2025-10-25,,COBS 1
+COBS 1.2,COBS 1.2 Documentation and evidence,2025-06-20,,COBS 1
+COBS 1.3,COBS 1.3 Systems and controls,2025-10-14,,COBS 1
+COBS 1.4,COBS 1.4 Reporting timetable,2024-05-01,,COBS 1
+COBS 2,COBS 2 Client categorisation,2022-11-25,COBS,
+COBS 2.1,COBS 2.1 Reporting timetable,2021-10-29,,COBS 2
+COBS 2.2,COBS 2.2 Exemptions and transitional provisions,2025-12-31,,COBS 2
+COBS 2.3,COBS 2.3 Group application,2023-07-25,,COBS 2
+COBS 3,COBS 3 Communicating with clients,2022-02-20,COBS,
+COBS 3.1,COBS 3.1 Application,2023-02-19,,COBS 3
+COBS 3.1.1,COBS 3.1.1 Application — detailed provisions,2025-04-16,,COBS 3.1
+COBS 3.2,COBS 3.2 General requirements,2023-05-29,,COBS 3
+COBS 3.3,COBS 3.3 Calculation and measurement,2025-04-14,,COBS 3
+COBS 3.4,COBS 3.4 Notification and permissions,2021-08-13,,COBS 3
+COBS 4,COBS 4 Dealing and managing,2021-03-30,COBS,
+COBS 4.1,COBS 4.1 Notification and permissions,2021-05-07,,COBS 4
+COBS 4.2,COBS 4.2 Governance and oversight,2025-08-07,,COBS 4
+COBS 5,COBS 5 Reporting to clients,2023-12-08,COBS,
+COBS 5.1,COBS 5.1 Systems and controls,2025-07-05,,COBS 5
+COBS 5.2,COBS 5.2 Reporting timetable,2026-03-07,,COBS 5
+COBS 5.3,COBS 5.3 Exemptions and transitional provisions,2023-01-28,,COBS 5
+COBS 5.4,COBS 5.4 Group application,2025-11-27,,COBS 5
+EMIR 1,EMIR 1 Scope and definitions,2024-01-23,EMIR,
+EMIR 1.1,EMIR 1.1 Governance and oversight,2025-11-29,,EMIR 1
+EMIR 1.2,EMIR 1.2 Documentation and evidence,2021-05-18,,EMIR 1
+EMIR 1.2.1,EMIR 1.2.1 Documentation and evidence — detailed provisions,2023-06-11,,EMIR 1.2
+EMIR 1.3,EMIR 1.3 Systems and controls,2021-12-11,,EMIR 1
+EMIR 1.4,EMIR 1.4 Reporting timetable,2025-01-13,,EMIR 1
+EMIR 2,EMIR 2 Clearing obligation,2023-02-27,EMIR,
+EMIR 2.1,EMIR 2.1 Reporting timetable,2025-06-28,,EMIR 2
+EMIR 2.2,EMIR 2.2 Exemptions and transitional provisions,2022-02-15,,EMIR 2
+EMIR 3,EMIR 3 Risk mitigation techniques,2023-08-30,EMIR,
+EMIR 3.1,EMIR 3.1 Application,2021-05-22,,EMIR 3
+EMIR 3.2,EMIR 3.2 General requirements,2022-08-22,,EMIR 3
+EMIR 4,EMIR 4 Trade reporting,2024-07-20,EMIR,
+EMIR 4.1,EMIR 4.1 Notification and permissions,2025-10-17,,EMIR 4
+EMIR 4.1.1,EMIR 4.1.1 Notification and permissions — detailed provisions,2024-09-27,,EMIR 4.1
+EMIR 4.2,EMIR 4.2 Governance and oversight,2021-08-07,,EMIR 4
+EMIR 4.3,EMIR 4.3 Documentation and evidence,2024-04-03,,EMIR 4
+EMIR 5,EMIR 5 Central counterparty requirements,2022-05-23,EMIR,
+EMIR 5.1,EMIR 5.1 Systems and controls,2024-03-18,,EMIR 5
+EMIR 5.2,EMIR 5.2 Reporting timetable,2022-08-16,,EMIR 5
+EMIR 5.3,EMIR 5.3 Exemptions and transitional provisions,2026-04-15,,EMIR 5
+EMIR 5.4,EMIR 5.4 Group application,2025-07-29,,EMIR 5
+EMIR 5.4.1,EMIR 5.4.1 Group application — detailed provisions,2025-04-20,,EMIR 5.4
+DORA 1,DORA 1 ICT risk management framework,2024-12-13,DORA,
+DORA 1.1,DORA 1.1 Governance and oversight,2023-11-19,,DORA 1
+DORA 1.2,DORA 1.2 Documentation and evidence,2021-08-11,,DORA 1
+DORA 1.3,DORA 1.3 Systems and controls,2023-10-22,,DORA 1
+DORA 1.4,DORA 1.4 Reporting timetable,2025-09-17,,DORA 1
+DORA 2,DORA 2 ICT incident reporting,2023-09-20,DORA,
+DORA 2.1,DORA 2.1 Reporting timetable,2023-09-25,,DORA 2
+DORA 2.2,DORA 2.2 Exemptions and transitional provisions,2022-06-23,,DORA 2
+DORA 2.2.1,DORA 2.2.1 Exemptions and transitional provisions — detailed provisions,2023-09-28,,DORA 2.2
+DORA 2.3,DORA 2.3 Group application,2023-07-07,,DORA 2
+DORA 2.4,DORA 2.4 Application,2022-08-15,,DORA 2
+DORA 3,DORA 3 Digital operational resilience testing,2022-12-19,DORA,
+DORA 3.1,DORA 3.1 Application,2026-05-05,,DORA 3
+DORA 3.1.1,DORA 3.1.1 Application — detailed provisions,2023-07-09,,DORA 3.1
+DORA 3.2,DORA 3.2 General requirements,2025-02-02,,DORA 3
+DORA 3.2.1,DORA 3.2.1 General requirements — detailed provisions,2023-10-06,,DORA 3.2
+DORA 4,DORA 4 ICT third-party risk,2024-07-17,DORA,
+DORA 4.1,DORA 4.1 Notification and permissions,2021-12-25,,DORA 4
+DORA 4.2,DORA 4.2 Governance and oversight,2025-09-17,,DORA 4
+DORA 4.3,DORA 4.3 Documentation and evidence,2021-05-20,,DORA 4
+DORA 4.4,DORA 4.4 Systems and controls,2023-06-08,,DORA 4
+DORA 5,DORA 5 Information sharing and oversight,2021-12-04,DORA,
+DORA 5.1,DORA 5.1 Systems and controls,2022-04-16,,DORA 5
+DORA 5.2,DORA 5.2 Reporting timetable,2022-07-13,,DORA 5
+DORA 5.3,DORA 5.3 Exemptions and transitional provisions,2022-02-14,,DORA 5
+DORA 5.4,DORA 5.4 Group application,2022-06-17,,DORA 5
+MIFIDPRU 4.12,MIFIDPRU 4.12 K-DTF daily trading flow requirement,2026-07-15,,MIFIDPRU 4
+MIFIDPRU 4.12.1,MIFIDPRU 4.12.1 Measurement of daily trading flow,2026-07-15,,MIFIDPRU 4.12
+MIFIDPRU 4.12.2,MIFIDPRU 4.12.2 Averaging and reporting periods,2026-06-02,,MIFIDPRU 4.12
