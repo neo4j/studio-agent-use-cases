@@ -5,8 +5,6 @@ metadata:
   neo4j-card-title: Regulatory Dependency Mapping
   neo4j-card-category: Financial Services
   neo4j-card-description: Trace a regulatory change through cross-referenced handbook sections to the obligations, controls, systems, services and owners it actually reaches.
-  neo4j-icon-category: risk-detection
-  neo4j-graph-spec-version: 4.0.0-alpha.25
 ---
 
 # Regulatory Dependency Mapping

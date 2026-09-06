@@ -5,7 +5,6 @@ metadata:
   neo4j-card-title: Patient Journey
   neo4j-card-category: Healthcare & Life Sciences
   neo4j-card-description: Map longitudinal care pathways and discover comorbidities across a connected clinical graph.
-  neo4j-card-icon: HeartIconOutline
 ---
 
 # Patient Journey

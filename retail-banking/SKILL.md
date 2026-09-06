@@ -3,9 +3,8 @@ name: retail-banking
 description: Detect retail banking transaction fraud rings with graph models, Neo4j schema design, and Cypher query patterns for ring, chronology, and amount-decay checks.
 metadata:
   neo4j-card-title: Retail Banking
-  neo4j-card-category: Real-time risk detection
+  neo4j-card-category: Cybersecurity
   neo4j-card-description: Spot suspicious entities and hidden paths in real time, and surface coordinated behavior across accounts and devices.
-  neo4j-card-icon: FingerPrintIconOutline
 ---
 
 # Transaction Fraud Ring
