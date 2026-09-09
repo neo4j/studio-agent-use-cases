@@ -3,7 +3,7 @@ name: regulatory-dependency-mapping
 description: Investment banking regulatory compliance and change management. Models a regulator's handbook as a graph — standards, the hierarchy of sections beneath them, and the cross-references sections make to one another — so that the dependencies between rules become queryable. Use for regulatory change impact assessment (which other text does this amendment reach), identifying which sections are most expensive to change, sweeping for sections whose text has recently taken effect, prioritising a change backlog by how heavily the changed text is cited, and finding where one sourcebook depends on another. Provides a graph model, import-ready synthetic sample data, and Cypher for hierarchy traversal, citation analysis, blast-radius impact assessment, and optional GDS PageRank and connected-component analytics over the citation graph.
 metadata:
   neo4j-card-title: Regulatory Dependency Mapping
-  neo4j-card-category: Investment Banking
+  neo4j-card-category: Financial Services
   neo4j-card-description: Trace a regulatory change through cross-referenced handbook sections to every other rule it reaches.
 ---
 
