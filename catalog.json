@@ -64,20 +64,10 @@
       "files": {
         "graph": "GRAPH_MODEL.json",
         "skill": [
-          "sample-data/business_services.csv",
-          "sample-data/business_units.csv",
-          "sample-data/control_obligation.csv",
-          "sample-data/controls.csv",
-          "sample-data/obligations.csv",
           "sample-data/section_references.csv",
           "sample-data/sections.csv",
-          "sample-data/service_obligation.csv",
-          "sample-data/service_system.csv",
           "sample-data/standards.csv",
-          "sample-data/system_dependencies.csv",
-          "sample-data/systems.csv",
           "QUERIES.md",
-          "SETUP.md",
           "TESTS.md"
         ],
         "markdown": "SKILL.md"
