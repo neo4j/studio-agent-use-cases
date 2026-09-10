@@ -67,25 +67,25 @@
     "standards.csv": {
       "source": "local",
       "fields": {
-        "standardId": { "type": "string" }
+        "standardId": { "name": "standardId", "type": "string" }
       }
     },
     "sections.csv": {
       "source": "local",
       "fields": {
-        "sectionId": { "type": "string" },
-        "title": { "type": "string" },
-        "lastUpdated": { "type": "string" },
-        "standardId": { "type": "string" },
-        "parentSectionId": { "type": "string" }
+        "sectionId": { "name": "sectionId", "type": "string" },
+        "title": { "name": "title", "type": "string" },
+        "lastUpdated": { "name": "lastUpdated", "type": "string" },
+        "standardId": { "name": "standardId", "type": "string" },
+        "parentSectionId": { "name": "parentSectionId", "type": "string" }
       }
     },
     "section_references.csv": {
       "source": "local",
       "fields": {
-        "citingSectionId": { "type": "string" },
-        "citedSectionId": { "type": "string" },
-        "subsection": { "type": "string" }
+        "citingSectionId": { "name": "citingSectionId", "type": "string" },
+        "citedSectionId": { "name": "citedSectionId", "type": "string" },
+        "subsection": { "name": "subsection", "type": "string" }
       }
     }
   },
