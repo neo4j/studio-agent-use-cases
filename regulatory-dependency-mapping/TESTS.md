@@ -138,9 +138,8 @@ shaped. Do not tighten them around properties of the generator:
   silently *drop* such a section rather than label it, which is equally
   unexercised. Second, a section carrying both a standard and a parent would
   emit duplicate rows from the queries that do not aggregate over the standard
-  walk (hierarchy, blast radius, cross-standard citations); the model's
-  cardinality forbids two parents but not "both", so only SKILL.md prose rules
-  it out.
+  walk (hierarchy, blast radius, cross-standard citations); nothing in the
+  model forbids a section carrying both, so only SKILL.md prose rules it out.
 - **No self-citations, no duplicate citation pairs**, and every rule reference
   is prefixed by the identifier of the section it points into.
 - **All cycling is confined to the signal-B clique.** Those five sections form

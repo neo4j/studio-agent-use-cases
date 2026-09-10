@@ -9,11 +9,8 @@
       "properties": {
         "id": {
           "type": "STRING",
-          "description": "Short identifier for the standard as the regulator publishes it, typically the sourcebook code. Expected to be the prefix from which section identifiers in this standard are built.",
-          "key": true,
-          "extensions": {
-            "sample": { "type": "String", "value": "MIFIDPRU" }
-          }
+          "description": "Short identifier for the standard as the regulator publishes it, typically the sourcebook code, for example MIFIDPRU. Expected to be the prefix from which section identifiers in this standard are built.",
+          "key": true
         }
       }
     },
@@ -23,27 +20,18 @@
       "properties": {
         "id": {
           "type": "STRING",
-          "description": "Section identifier exactly as the regulator cites it, including the standard prefix — for example a sourcebook code followed by chapter and section numbers. Expected to be unique across every standard, not merely within one.",
-          "key": true,
-          "extensions": {
-            "sample": { "type": "String", "value": "COBS 4.2" }
-          }
+          "description": "Section identifier exactly as the regulator cites it, including the standard prefix — a sourcebook code followed by chapter and section numbers, for example COBS 4.2. Expected to be unique across every standard, not merely within one.",
+          "key": true
         },
         "title": {
           "type": "STRING",
-          "description": "Long heading of the section as published, conventionally repeating the section identifier before the heading text.",
-          "mustExist": true,
-          "extensions": {
-            "sample": { "type": "String", "value": "COBS 4.2 Reporting timetable" }
-          }
+          "description": "Long heading of the section as published, conventionally repeating the section identifier before the heading text, for example COBS 4.2 Reporting timetable.",
+          "mustExist": true
         },
         "lastUpdated": {
           "type": "DATE",
           "description": "Date on which the section's current text took effect in the handbook — the in-force date of the most recent amendment, not the date that amendment was announced or published. Calendar date only, ISO 8601 (YYYY-MM-DD). This is the property regulatory-change analysis filters on.",
-          "mustExist": true,
-          "extensions": {
-            "sample": { "type": "String", "value": "2024-08-09" }
-          }
+          "mustExist": true
         }
       }
     }
@@ -53,35 +41,13 @@
       "type": "DEPENDS_ON",
       "description": "Places a top-level section directly beneath the standard that publishes it. Only sections at the top of a handbook's hierarchy carry this; deeper sections reach their standard through their parent section instead.",
       "from": { "node": "Section" },
-      "to": { "node": "Standard" },
-      "extensions": {
-        "cardinality": {
-          "type": "Map",
-          "value": {
-            "outMin": { "type": "Long", "value": 0 },
-            "outMax": { "type": "Long", "value": 1 },
-            "inMin": { "type": "Long", "value": 1 },
-            "inMax": { "type": "String", "value": "many" }
-          }
-        }
-      }
+      "to": { "node": "Standard" }
     },
     "sectionInSection": {
       "type": "DEPENDS_ON",
       "description": "Places a section beneath its immediate parent section in the handbook hierarchy, read child to parent. Chaining these from a top-level section reconstructs the full depth of a handbook.",
       "from": { "node": "Section" },
-      "to": { "node": "Section" },
-      "extensions": {
-        "cardinality": {
-          "type": "Map",
-          "value": {
-            "outMin": { "type": "Long", "value": 0 },
-            "outMax": { "type": "Long", "value": 1 },
-            "inMin": { "type": "Long", "value": 0 },
-            "inMax": { "type": "String", "value": "many" }
-          }
-        }
-      }
+      "to": { "node": "Section" }
     },
     "sectionRelated": {
       "type": "RELATED",
@@ -91,11 +57,8 @@
       "properties": {
         "subsection": {
           "type": "STRING",
-          "description": "The specific rule within the cited (to) section that the citing section refers to, in the regulator's own rule notation. Where a section is cited as a whole this is expected to be the cited section's own identifier.",
-          "mustExist": true,
-          "extensions": {
-            "sample": { "type": "String", "value": "COBS 3.1.1.5R" }
-          }
+          "description": "The specific rule within the cited (to) section that the citing section refers to, in the regulator's own rule notation, for example COBS 3.1.1.5R. Where a section is cited as a whole this is expected to be the cited section's own identifier.",
+          "mustExist": true
         }
       }
     }
