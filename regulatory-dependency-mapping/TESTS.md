@@ -1,165 +1,157 @@
 # Test oracle — regulatory-dependency-mapping
 
-Authoring-side only. The runtime never loads this file and the consuming
-agent must never see it: every figure below is a fact about the bundled
-synthetic CSVs, and would be a false claim about a user's own data.
+Authoring-side only. The runtime never loads this file and the consuming agent
+must never see it: every figure below is a fact about the bundled synthetic
+CSVs and would be a false claim about a user's own handbook.
 
 ## How to run
 
-1. Use a **disposable database**. The steps below import data and, optionally,
-   create indexes and GDS projections.
-2. Import the bundled `sample-data/` CSVs through the Import flow driven by
+1. Use a **disposable database**. The GDS queries create an in-memory
+   projection; everything else is read-only.
+2. Import the three `sample-data/` CSVs through the Import flow driven by
    `GRAPH_MODEL.json`. Do not seed with `LOAD CSV` or a `CREATE` script — the
-   mappings and the node-key constraints come from the model, and a hand-rolled
+   mappings and node-key constraints come from the model, and a hand-rolled
    load will not reproduce them.
-3. Confirm the schema with `SHOW CONSTRAINTS`: seven node-key constraints, one
-   per label, all on `id`.
-4. `SETUP.md`'s two range indexes are **optional** — every query below returns
-   the same rows without them. Run them only if testing at scale.
-5. The four GDS queries additionally need the GDS plugin 2.x, and the
-   projection query must run before the PageRank and WCC queries.
+3. Confirm the schema with `SHOW CONSTRAINTS`: two node-key constraints,
+   `Standard.id` and `Section.id`.
+4. There is no `SETUP.md`. No query depends on schema the Import flow does not
+   create, and none needs an index to be correct at this size.
+5. The four GDS queries need the GDS plugin 2.x, and the projection query must
+   run before the PageRank and WCC queries.
 
 ### Status of this oracle
 
 **No query in `QUERIES.md` has been executed against a live Neo4j database.**
-The authoring environment had no Neo4j instance available and could not obtain
-one (`dist.neo4j.org` is outside the network allowlist). Each query therefore
-carries `TODO(review): unproven query` in its annotation block, and each
-section below records what was verified instead:
+The authoring environment had no Neo4j instance and could not obtain one
+(`dist.neo4j.org` is outside the network allowlist). Every query therefore
+carries `TODO(review): unproven query` in its annotation block. What *was*
+verified:
 
-- **Syntax** — all fourteen query blocks parse cleanly under the Neo4j Cypher
+- **Syntax** — all eleven query blocks parse cleanly under the Neo4j Cypher
   grammar in `@neo4j-cypher/editor-support`. That grammar predates Neo4j 5, so
-  a clean parse proves the queries use no syntax the parser knows to be
-  invalid; it does not prove Neo4j 5 semantics. The same parser rejects all
-  schema DDL, including `SHOW CONSTRAINTS`, so the constraint block at the end
-  of `QUERIES.md` was checked by eye.
-- **Schema agreement** — every label, relationship type, direction and property
-  referenced in `QUERIES.md` was checked mechanically against
-  `GRAPH_MODEL.json`: no unknown names, and every one of the seven labels and
-  seven relationship types is used by at least one query. Five properties are
-  defined but never queried — `Standard.title`, `Obligation.reportingFrequency`,
-  `Control.controlType`, `BusinessService.impactToleranceHours` and
-  `BusinessUnit.smfReference`. They are there because the model doubles as an
-  import template, but a curator should decide whether each earns its place.
+  a clean parse shows the queries use nothing the parser knows to be invalid;
+  it does not prove Neo4j 5 semantics. The same parser rejects all schema DDL,
+  including `SHOW CONSTRAINTS`, so the constraint block at the end of
+  `QUERIES.md` was reviewed by eye.
+- **Schema agreement** — every label, relationship type, direction and
+  property in `QUERIES.md` was checked mechanically against
+  `GRAPH_MODEL.json`. No unknown names, and every label, relationship type and
+  property in the model is referenced by at least one query.
+- **Bounds** — every literal variable-length bound is acknowledged in its
+  query's `@usage`, counted correctly there, and no query offers a
+  parameterised depth. Every query that can emit `'(unresolved)'` says so in
+  its `@returns`. Both were rechecked mechanically after an earlier draft
+  miscounted the blast-radius query's bounds and omitted the most-cited
+  query's entirely.
 - **Results** — the Observed figures below come from an independent Python
   re-implementation of each query's semantics over the same CSVs
-  (`observe.py` in the authoring workspace), run on **2026-09-03** against
-  data version `seed=20260903`. They are the numbers a correct execution
-  should produce, not numbers a database produced.
+  (`../_authoring/observe.py`), run on **2026-09-09** against data version
+  `seed=20260909`. They are the numbers a correct execution should produce,
+  not numbers a database produced.
 
-The first job when curating this package is to stand up a disposable Neo4j 5
-instance with GDS, run all fourteen queries, confirm each Invariant, refresh
-the Observed figures, and delete the `TODO(review): unproven query` lines.
-
-`TODO(review):` the two-hop cross-reference bound in the blast-radius query is
-a domain judgement that this sample is too sparsely cross-referenced to test —
-see that query's Sensitivity note. Validate it against a real handbook, or
-seed a deeper citation chain so the trade-off becomes measurable here.
+First curation step: stand up a disposable Neo4j 5 instance with GDS, run all
+eleven queries, confirm each Invariant, refresh the Observed figures, and
+delete the `TODO(review): unproven query` lines.
 
 ## Sample-data profile
 
-Synthetic. Generated by `gen_data.py` with `seed=20260903` and a reference
-date of 2026-09-03. Section identifiers, titles and rule references imitate
-the shape of published FCA and EU handbook material; none of it is real
-regulatory text, and no obligation, control, system or organisational
-structure describes any actual firm.
+Synthetic, generated by `../_authoring/gen_data.py` with `seed=20260909` and a
+reference date of 2026-09-09. Standard codes, section identifiers, titles and
+rule references imitate the shape of published FCA handbook material; none of
+it is real regulatory text.
 
 ### Row counts
 
-| Label | Rows | | Relationship (from → to) | Rows |
-| --- | ---: | --- | --- | ---: |
-| `Standard` | 5 | | `DEPENDS_ON` Section → Standard | 29 |
-| `Section` | 134 | | `DEPENDS_ON` Section → Section | 105 |
-| `Obligation` | 90 | | `DEPENDS_ON` BusinessService → System | 68 |
-| `Control` | 118 | | `DEPENDS_ON` System → System | 54 |
-| `BusinessService` | 30 | | `RELATED` Section → Section | 71 |
-| `System` | 45 | | `DERIVED_FROM` Obligation → Section | 90 |
-| `BusinessUnit` | 12 | | `SATISFIES` Control → Obligation | 133 |
-| | | | `GOVERNED_BY` BusinessService → Obligation | 82 |
-| | | | `IMPLEMENTED_BY` Control → System | 113 |
-| | | | `ACCOUNTABLE_FOR` BusinessUnit → Obligation | 90 |
-| | | | `ACCOUNTABLE_FOR` BusinessUnit → BusinessService | 30 |
+| Label / relationship | Rows |
+| --- | ---: |
+| `Standard` | 3 |
+| `Section` | 137 |
+| `DEPENDS_ON` Section → Standard | 26 |
+| `DEPENDS_ON` Section → Section | 111 |
+| `RELATED` Section → Section | 85 |
 
-Standards: MIFIDPRU (35 sections, 21 obligations), SYSC (27 / 18),
-COBS (23 / 17), EMIR (23 / 16), DORA (26 / 18). MIFIDPRU, SYSC and COBS are
-`jurisdiction: UK`, regulator `FCA`; EMIR and DORA are `EU` / `ESMA`. The
-hierarchy is three levels deep in every standard: 29 chapters, 88 subsections,
-17 third-level sections.
+Three standards, all FCA sourcebooks: MIFIDPRU (48 sections), SYSC (49), COBS
+(40). The hierarchy is at most three levels deep — 26 chapters, 81
+subsections, 30 third-level sections — so most branches stop at two. In-force
+dates run 2020-05-03 to 2026-07-15.
 
-Distributions worth knowing:
-
-- **Coverage**: 82 obligations at exactly 100, 5 partially covered, 3 with no
-  control at all.
-- **Control testing** (against 2026-09-03): 84 tested within 12 months, 23 at
-  12–18 months, 11 beyond 18 months.
-- **Services**: 14 important-business-service, 11 material, 5 standard.
-- **Systems by tier**: 18 tier 1, 19 tier 2, 8 tier 3.
-- **Inbound citations**: 92 sections cited by nobody, 29 cited once, 6 twice,
-  5 four times, 2 five times.
-- **Sections with an in-force date inside 90 days of 2026-09-03**: 2.
+Citation distribution, by inbound count: 90 sections cited by nothing, 30
+cited once, 7 twice, 3 three times, 5 four times, 1 five times, 1 seven times.
+47 sections have at least one inbound citation.
 
 ### Deliberately seeded signals
 
-**A — change cascade.** `MIFIDPRU 4.12` (K-DTF daily trading flow) has an
-in-force date of 2026-07-15, two child sections (`MIFIDPRU 4.12.1`, same date;
-`MIFIDPRU 4.12.2`, 2026-06-02), and is cited by exactly four sections drawn
-from four different standards: `MIFIDPRU 4.1`, `MIFIDPRU 7.2`, `SYSC 4.1`,
-`COBS 4.2`. The three sections yield `OBL-001`, `OBL-002`, `OBL-003`, owned by
-`BU-002` and `BU-007`, governing `SVC-001`, `SVC-002` and `SVC-014`. It is the
-only recent change in the data, so it is what the change queries surface.
+**A — the expensive change.** `MIFIDPRU 4.12` ("K-DTF daily trading flow
+requirement") has an in-force date of 2026-07-15 and one child,
+`MIFIDPRU 4.12.1` (2026-06-30). Five sections were seeded to cite it —
+`MIFIDPRU 4.1`, `MIFIDPRU 9.2`, `MIFIDPRU 7.1`, `SYSC 7.3`, `COBS 11.2` — two
+of them from other standards; background citation brought the total to seven,
+the highest in the data. It has no outbound citations at all, so it is
+unambiguously load-bearing rather than dependent. It is the only substantial
+recent change, so it is what every change query surfaces.
 
-**B — coverage gaps.** Eight obligations fall short of 100% assessed coverage.
-Three have no control at all (`OBL-020`, `OBL-041`, `OBL-063`); five are
-partially covered (`OBL-002` at 60, `OBL-011` at 45, `OBL-030` at 70,
-`OBL-055` at 25, `OBL-072` at 80). `OBL-002` sits inside signal A, so the
-coverage query and the blast-radius query intersect on it deliberately.
+**B — the mutual cluster.** The five `SYSC 15A` operational-resilience
+subsections cite each other in both directions, twenty edges in all. This is
+the densest neighbourhood in the citation graph and produces all ten of the
+mutually-citing pairs in the data.
 
-**C — concentration.** `SYS-001` (Group Regulatory Data Hub) carries controls
-for 20 obligations spanning all five standards, twice the next system's 10,
-and 12 business services depend on it directly. Nine further systems name it
-as an upstream dependency.
+**C — cross-standard citations.** Background citation is generated
+**within-standard only**, so every cross-standard citation is deliberate: six
+seeded pairs, three incidental ones, plus three that arrive with signals A and
+D. Twelve in total, covering all six ordered pairs of the three standards.
+This is the single most important generator choice in the package — an earlier
+draft drew background citations uniformly at random, which made two-thirds of
+all citations cross-standard and rendered the cross-standard query meaningless.
 
-**D — cross-standard overlap.** Nine controls satisfy obligations tracing back
-to more than one standard: four span three standards (`CTL-003`, `CTL-005`,
-`CTL-030`, `CTL-090` — the seeded set), five span two (`CTL-001`, `CTL-004`,
-`CTL-055`, `CTL-073`, `CTL-083`, which arose from the background generator).
-The remaining 109 controls are scoped to a single standard, because each
-background control is assigned a home standard and drawn on only for
-obligations within it.
-
-**E — deep dependency chain.** `SVC-001` reaches `SYS-001` at exactly four
-hops from the service: `SVC-001` → `SYS-004` → `SYS-003` → `SYS-002` →
-`SYS-001`. This is the longest chain in the data. The query's `*1..4` bound is
-measured from the *entry* system rather than the service, so it uses only
-three of its four hops here and has one to spare — the bound was not tightened
-to the seed, and a curator could reasonably set it to `*1..3`.
-
-**F — stale controls.** Eleven controls (`CTL-015` … `CTL-025`) were last
-tested more than 18 months before 2026-09-03. Six of them satisfy no
-obligation at all, which exercises the orphan-control case.
-
-**G — cross-reference cluster.** The five `SYSC 5` operational-resilience
-sections cross-reference each other in both directions (20 edges), producing
-the densest neighbourhood in the citation graph and the top of both centrality
-rankings.
+**D — the citation chain.** `COBS 16A.2` → `COBS 11.4` → `SYSC 7.3` →
+`MIFIDPRU 4.12`, a three-link inbound chain terminating at the changed
+section. It exists so the blast-radius bound genuinely changes the answer
+rather than saturating at one hop.
 
 ### Deliberate background noise
 
-None of the queries is a clean detector on this data, by design:
+- Background citation fires for roughly 30% of subsections; with the seeded
+  signals on top, 41 of the 81 second-level subsections make at least one
+  citation, most of them exactly one. So signal A's citers are not the only
+  inbound edges, and the blast radius picks up sections nobody seeded.
+- Chapter and section in-force dates are spread across roughly six years, so
+  the change sweep has a realistic tail rather than a clean break.
 
-- 51 background cross-references are scattered across subsections at ~28%
-  probability, so signal A's citers are not the only inbound edges and the
-  blast radius picks up unseeded sections.
-- Background systems have 0–2 random upstreams drawn from earlier index
-  positions (which is what keeps the dependency graph acyclic), so short
-  chains exist everywhere and signal E is a matter of depth, not of being the
-  only chain.
-- 31 controls satisfy no obligation. Real control inventories carry unmapped
-  controls, and it keeps the overdue-testing query from reading as a clean
-  list of urgent work.
-- Every obligation outside signal B reaches exactly 100 assessed coverage via
-  one to three controls, so the coverage query's threshold has a hard floor
-  rather than a gradient.
+### What the sample does not exercise
+
+Several invariants below hold only because of how this data happens to be
+shaped. Do not tighten them around properties of the generator:
+
+- **No bound is ever exceeded, so truncation is never demonstrated.** The
+  hierarchy is at most three levels deep and every walk up to a `Standard` is
+  bounded at four hops, so those bounds are never reached. The blast-radius
+  citation bound of three *is* reached exactly — three citers sit at hop three
+  — but nothing lies beyond it. The silent-truncation behaviour the `@usage`
+  notes warn about is real and is **not demonstrated anywhere in this data**;
+  a curator wanting to see it must add a deeper handbook or a longer citation
+  chain.
+- **No section is detached, and none carries both a standard and a parent.**
+  Two behaviours therefore go untested. First, the `'(unresolved)'` branch in
+  the change sweep, blast radius, most-cited and prioritisation queries is
+  never taken — and the three queries that walk to a `Standard` with a
+  non-optional `MATCH` (cross-standard citations, PageRank, WCC) would
+  silently *drop* such a section rather than label it, which is equally
+  unexercised. Second, a section carrying both a standard and a parent would
+  emit duplicate rows from the queries that do not aggregate over the standard
+  walk (hierarchy, blast radius, cross-standard citations); nothing in the
+  model forbids a section carrying both, so only SKILL.md prose rules it out.
+- **No self-citations, no duplicate citation pairs**, and every rule reference
+  is prefixed by the identifier of the section it points into.
+- **All cycling is confined to the signal-B clique.** Those five sections form
+  a complete directed graph — all twenty edges present — containing 10 two-,
+  20 three-, 30 four- and 24 five-cycles. There is no directed cycle anywhere
+  else in the citation graph. The blast-radius traversal is therefore
+  exercised hard against cycling, but only from a `SYSC 15A` starting section;
+  run it from one on first curation, because no other starting point tests
+  that path at all.
+- **All three standards come from one regulator.** The model carries no
+  regulator or jurisdiction property, so nothing is lost, but "cross-standard"
+  here never means "cross-regulator".
 
 ## Explore a standard's section hierarchy
 
@@ -167,218 +159,152 @@ None of the queries is a clean detector on this data, by design:
 
 **Invariant** — returns every section belonging to the named standard, exactly
 once each, with `depth` 1 for chapters, 2 for subsections and 3 for
-third-level sections. No section of another standard appears. Summing rows
-across all five standards equals the `Section` row count, because the seeded
-hierarchy attaches every section to exactly one standard.
+third-level sections. No section of another standard appears. Summed across
+the three standards the row count equals the `Section` total, because every
+section attaches to exactly one standard.
 
-**Observed** (2026-09-03, seed 20260903; re-implementation, not executed) — MIFIDPRU 35 rows (8 at depth 1, 21
-at 2, 6 at 3); SYSC 27 (6 / 17 / 4); COBS 23 (5 / 17 / 1); EMIR 23 (5 / 15 /
-3); DORA 26 (5 / 18 / 3). Total 134.
+**Observed** (2026-09-09, seed 20260909; re-implementation, not executed) —
+MIFIDPRU 48 rows (9 at depth 1, 28 at 2, 11 at 3); SYSC 49 (9 / 29 / 11);
+COBS 40 (8 / 24 / 8). Total 137, matching the `Section` count exactly.
 
-**Sensitivity** — the bound is a literal, not a parameter. At `*1..2` the
-third-level sections disappear (17 rows lost across the five standards); at
-`*1..8` nothing changes, because the data is three deep.
+**Sensitivity** — the bound is a literal. At `*1..2` the third-level sections
+disappear: 37 / 38 / 32 rows, 30 sections lost with nothing in the result
+saying so. At `*1..8` nothing changes, because the data is three deep. This
+query is the cheapest way to detect that truncation — compare its row count
+against `MATCH (s:Section) RETURN count(s)`.
 
 ## Cross-references into and out of a section
 
 **Parameters** — `sectionId: 'MIFIDPRU 4.12'`.
 
-**Invariant** — returns all four signal-A citers as `cited by` rows, each
-carrying a `subsection` rule reference that begins with the cited section's
-own identifier, plus every outbound citation the section makes. No row for a
-section that neither cites nor is cited by it.
+**Invariant** — returns all five seeded signal-A citers as `cited by` rows,
+each carrying a rule reference prefixed with the cited section's own
+identifier, plus any background citers. `MIFIDPRU 4.12` has no outbound
+citations, so no `cites` row appears for it. For a section in the signal-B
+cluster, every neighbour appears twice, once in each direction.
 
-**Observed** (2026-09-03, seed 20260903; re-implementation, not executed) — 6 rows. Four `cited by`:
-`COBS 4.2` (`MIFIDPRU 4.12.5R`), `MIFIDPRU 4.1` (`MIFIDPRU 4.12.2R`),
-`MIFIDPRU 7.2` (`MIFIDPRU 4.12.3R`), `SYSC 4.1` (`MIFIDPRU 4.12.4R`). Two
-`cites`: `DORA 2.2` (`DORA 2.2.9R`), `DORA 2.2.1` (`DORA 2.2.1.3R`) — both
-background noise, not seeded.
+**Observed** (2026-09-09, seed 20260909; re-implementation, not executed) —
+`MIFIDPRU 4.12`: 7 rows, all `cited by` — `COBS 11.2`, `MIFIDPRU 1.2.1`,
+`MIFIDPRU 4.1`, `MIFIDPRU 6.2`, `MIFIDPRU 7.1`, `MIFIDPRU 9.2`, `SYSC 7.3`.
+Two of the seven (`MIFIDPRU 1.2.1`, `MIFIDPRU 6.2`) are background, not
+seeded. `SYSC 15A.1`: 9 rows, the mutual cluster. `COBS 3.2`: 1 row — the
+ordinary case.
 
-For a second case, `SYSC 5.1` (signal G) returns 9 rows: 5 inbound, 4
-outbound, all within the `SYSC 5` cluster.
+**Sensitivity** — none; the query has no threshold and no bound. A section
+identifier that does not exist returns zero rows rather than an error, which
+is indistinguishable from a section with no cross-references. That ambiguity
+is called out in `@usage` and is worth a curator's judgement: an
+`OPTIONAL MATCH` variant would separate the two cases at the cost of a
+messier result shape.
 
-**Sensitivity** — a section identifier that does not exist returns zero rows
-rather than an error, so a typo is indistinguishable from an unreferenced
-section. Worth a note when curating: an `OPTIONAL MATCH`-based variant that
-returns the section with empty reference lists would distinguish the two, at
-the cost of a more complicated result shape.
-
-## Sections changed since a date and the obligations they drive
+## Sections changed since a date
 
 **Parameters** — `changedSince: '2026-06-01'`.
 
-**Invariant** — returns exactly the signal-A sections and nothing else at this
-cutoff, each with the standard it belongs to and the obligations derived from
-it, newest first. Every returned section resolves to exactly one standard.
+**Invariant** — returns exactly the signal-A sections at this cutoff and
+nothing else, newest first, each resolving to its standard. Every row's
+`inboundCitations` matches the citation count for that section. No row shows
+`'(unresolved)'`, because no section in this data is detached.
 
-**Observed** (2026-09-03, seed 20260903; re-implementation, not executed) — 3 rows:
-`MIFIDPRU 4.12.1` (2026-07-15, 1 obligation, BU-002),
-`MIFIDPRU 4.12` (2026-07-15, 1 obligation, BU-002),
-`MIFIDPRU 4.12.2` (2026-06-02, 1 obligation, BU-007).
+**Observed** (2026-09-09, seed 20260909; re-implementation, not executed) —
+2 rows: `MIFIDPRU 4.12` (2026-07-15, 7 inbound citations) and
+`MIFIDPRU 4.12.1` (2026-06-30, 0 inbound).
 
-**Sensitivity** — 3 rows at 2026-06-01, 6 at 2026-03-03, 17 at 2025-09-03, 42
-at 2024-09-03. The signal is clean only inside about a three-month window;
-beyond that the background in-force dates dominate, which is realistic and
-worth leaving alone.
+**Sensitivity** — 2 rows at 2026-06-01, 4 at 2026-03-09, 14 at 2025-09-09, 41
+at 2024-09-09. The seeded signal is clean only inside roughly a three-month
+window; past that the background in-force dates take over, which is realistic
+and deliberately left alone. Note that the `@params` guidance ships no date at
+all — it tells the reader to use their own review cycle — so none of these
+figures is baked into the package.
 
-## Change-impact blast radius for a section
+## Change blast radius for a section
 
 **Parameters** — `sectionId: 'MIFIDPRU 4.12'`.
 
-**Invariant** — the affected set contains the section, both its children, and
-all four signal-A citers; every seeded obligation (`OBL-001`, `OBL-002`,
-`OBL-003`) appears; `SVC-001` and `SVC-002` appear among the important
-business services; every row names an accountable unit, since accountability
-for an obligation is mandatory in the model. The affected set is a superset of
-the descendants-only set and a subset of the whole handbook.
+**Invariant** — the affected set contains the section and its child as
+`changed text`, all five seeded citers as `cites changed text`, and the full
+signal-D chain (`SYSC 7.3` at one hop, `COBS 11.4` at two, `COBS 16A.2` at
+three). It spans more than one standard. The affected set is a strict superset
+of the section-plus-descendants set, and every member appears exactly once
+however many citation paths reach it.
 
-**Observed** (2026-09-03, seed 20260903; re-implementation, not executed) — 9 affected sections
-(`MIFIDPRU 4.12`, `4.12.1`, `4.12.2`, `4.1`, `4.2`, `7.2`, `SYSC 4.1`,
-`COBS 4.2`, `COBS 1.3`), 8 obligations, 8 business services of which 3 are
-important business services (`SVC-001`, `SVC-002`, `SVC-027`), 5 accountable
-units, 8 result rows. `MIFIDPRU 4.2` and `COBS 1.3` arrive at the second
-cross-reference hop; the rest at the first.
+**Observed** (2026-09-09, seed 20260909; re-implementation, not executed) —
+15 sections: 2 `changed text`, 13 `cites changed text`, spanning all three
+standards. By citation hop: 7 at one hop, 3 at two, 3 at three.
 
-For `SYSC 5.1`: 7 affected sections, 4 obligations, 4 rows.
+**Sensitivity** — affected-section counts by citation bound: 2 at zero hops
+(the section and its child alone), 9 at one, 12 at two, 15 at three, and 15 at
+four and beyond. The neighbourhood closes at three hops, which is where the
+shipped bound sits — so on this data the bound is exactly sufficient and never
+truncates. That is a property of a 137-section sample with a deliberately
+three-link chain, **not** evidence that three hops is right for a real
+handbook. The `@usage` note deliberately frames the bound as a trade-off to be
+tested rather than a safe default, and a curator should confirm the growth
+curve against a real citation graph before treating three as settled.
 
-**Sensitivity** — affected-section counts by cross-reference hop: 3 at zero
-hops (descendants only), 7 at one, 9 at two, and 9 at three and beyond. The
-citation neighbourhood around `MIFIDPRU 4.12` is closed at two hops, so this
-data does **not** demonstrate the fan-out the `@usage` note warns about. Be
-straight about that when curating: the bound of two is a domain judgement
-about real citation graphs, not a value tuned against these CSVs, and the
-sample is too sparsely cross-referenced to test it. Either validate the bound
-against a real handbook, or seed a deliberately deep citation chain so the
-trade-off becomes visible here.
-
-## Obligations with incomplete control coverage
-
-**Parameters** — `minCoveragePercent: 100`.
-
-**Invariant** — returns exactly the eight signal-B obligations and no other;
-the three uncontrolled ones show `controlCount` 0 and `assessedCoverage` 0;
-the five partial ones show their seeded coverage. No obligation with summed
-coverage of 100 appears. Ordering puts the highest inherent risk first.
-
-**Observed** (2026-09-03, seed 20260903; re-implementation, not executed) — 8 rows, in order:
-`OBL-072` (80, risk 5), `OBL-041` (0, risk 4), `OBL-063` (0, risk 4),
-`OBL-055` (25, risk 4), `OBL-002` (60, risk 4), `OBL-020` (0, risk 3),
-`OBL-011` (45, risk 3), `OBL-030` (70, risk 1).
-
-**Sensitivity** — 8 rows at 100, 7 at 80, 5 at 60, 5 at 50, 3 at 25. Because
-every non-signal obligation sits at exactly 100, the result is flat between
-80 and 100 and there is no gradient to tune against. On real data the
-distribution would be continuous and lower thresholds would behave as
-triage; the shipped starting value of 100 is justified by the definition of a
-gap rather than by this data, and holds either way.
-
-## Systems that concentrate compliance dependency
-
-**Parameters** — `minObligations: 1` (the whole distribution).
-
-**Invariant** — `SYS-001` ranks first with a clear margin over the second
-system, reaches all five standards, and shows the highest dependent-service
-count. Every system returned has at least one control implemented in it that
-satisfies at least one obligation; systems carrying only unmapped controls do
-not appear.
-
-**Observed** (2026-09-03, seed 20260903; re-implementation, not executed) — 34 systems returned at
-`minObligations: 1`. Top five: `SYS-001` (12 controls, 20 obligations, 5
-standards, 12 dependent services), `SYS-016` (6 / 10 / 3 / 1), `SYS-009`
-(5 / 7 / 5 / 1), `SYS-013` (4 / 6 / 4 / 1), `SYS-011` (4 / 5 / 4 / 0).
-
-**Sensitivity** — 34 rows at 1, 21 at 3, 6 at 5, 2 at 8, 2 at 10, 1 at 15, 1
-at 20. The ranking flattens sharply after the top two, which is what the
-`@usage` procedure ("set the threshold just above the point where the ranking
-flattens") is describing; on this data that lands around 8. No fixed value is
-shipped, deliberately — 8 is an artefact of a 45-system estate.
-
-## Controls satisfying obligations across more than one standard
-
-**Parameters** — none.
-
-**Invariant** — every control listed satisfies obligations tracing to two or
-more distinct standards, and the four seeded three-standard controls
-(`CTL-003`, `CTL-005`, `CTL-030`, `CTL-090`) rank above every two-standard
-control. Controls scoped to a single standard never appear. Every returned
-`standards` list has no duplicates.
-
-**Observed** (2026-09-03, seed 20260903; re-implementation, not executed) — 9 of 118 controls, 4 spanning three
-standards and 5 spanning two. In order: `CTL-003` (COBS/EMIR/SYSC, 4
-obligations), `CTL-005` (COBS/DORA/EMIR, 3), `CTL-030` (DORA/EMIR/MIFIDPRU,
-3), `CTL-090` (COBS/MIFIDPRU/SYSC, 3), then `CTL-001` (MIFIDPRU/SYSC, 5),
-`CTL-055`, `CTL-004`, `CTL-073`, `CTL-083`.
-
-**Sensitivity** — none; the query has no threshold. Note that an earlier data
-generation, before controls were given a home standard, produced 28
-cross-standard controls out of 118 — enough noise to make the query
-meaningless. The home-standard scoping in `gen_data.py` is what makes this a
-signal, and regenerating without it will silently break the invariant.
-
-## Upstream system dependencies for a business service
-
-**Parameters** — `serviceId: 'SVC-001'`.
-
-**Invariant** — returns the full signal-E chain with `SYS-001` at exactly four
-hops, each system once, at its shortest distance from the service. `SYS-001`
-shows the highest shared-service count of any system in the result. No system
-appears at more than one hop count, and no row counts the traced service itself
-among the services sharing a system.
-
-**Observed** (2026-09-03, seed 20260903; re-implementation, not executed) — 6 systems: hop 1 `SYS-004`
-(tier 1, on-premise, shared 2) and `SYS-040` (tier 2, public-cloud, shared 4);
-hop 2 `SYS-003` (tier 2, vendor-saas, shared 3) and `SYS-007` (tier 2,
-vendor-saas, shared 0); hop 3 `SYS-002` (tier 1, on-premise, shared 2); hop 4
-`SYS-001` (tier 1, private-cloud, shared 12). These counts predate the
-`WHERE other <> service` fix, so the two hop-1 systems `SVC-001` itself depends
-on should each now read one lower — `SYS-004` 1 and `SYS-040` 3. Confirm on
-the first live run.
-
-For `SVC-004`: 6 systems, maximum depth 2 — a wide but shallow footprint,
-useful as the contrasting case.
-
-**Sensitivity** — at `*1..2` the chain stops at `SYS-002` and `SYS-001` is
-lost, which is the failure mode the bound exists to avoid; at `*1..8` nothing
-changes, because four hops is the deepest chain in the data.
-
-## Controls overdue for testing, weighted by obligation risk
-
-**Parameters** — `staleBefore: '2025-03-03'` (18 months before the reference
-date).
-
-**Invariant** — returns exactly the eleven signal-F controls; the five that
-satisfy obligations sort above the six that satisfy none; `monthsSinceTest` is
-positive for every row and consistent with `lastTestedDate`. A control tested
-on or after the cutoff never appears.
-
-**Observed** (2026-09-03, seed 20260903; re-implementation, not executed) — 11 rows. Ordered: `CTL-023`
-(2023-06-20, risk 5), `CTL-018` (2023-06-28, risk 5), `CTL-020` (2024-06-30,
-2 obligations, risk 4), `CTL-017` (2023-03-23, risk 2), `CTL-021` (2025-01-28,
-risk 2), then the six orphans `CTL-024`, `CTL-015`, `CTL-025`, `CTL-022`,
-`CTL-016`, `CTL-019`.
-
-**Sensitivity** — 11 rows at 18 months, 34 at 12 months, 76 at 6 months. The
-12-month cutoff the `@params` guidance suggests returns roughly a third of the
-inventory here, which is a realistic backlog size and not a tuned figure —
-the guidance is a policy-cycle argument that holds independently of this data.
-
-## Most-referenced sections by inbound citation count
+## Most-cited sections by inbound citation count
 
 **Parameters** — `limit: 20`.
 
-**Invariant** — the `SYSC 5` cluster sections (signal G) occupy the top of the
-ranking, and `MIFIDPRU 4.12` (signal A, 4 inbound) appears within the top ten.
-Sections with no inbound citation are absent rather than returned with zero.
-`sampleRuleReferences` holds at most five entries.
+**Invariant** — `MIFIDPRU 4.12` ranks first, clear of the field, with zero
+outbound citations. The signal-B cluster sections occupy much of the rest of
+the top, each showing both inbound and outbound counts. Sections with no
+inbound citation are absent rather than returned with a zero.
 
-**Observed** (2026-09-03, seed 20260903; re-implementation, not executed) — 42 sections have at least one
-inbound citation, so `limit: 20` truncates. Top seven: `SYSC 5.1.1` (5),
-`SYSC 5.1` (5), `DORA 2.2.1` (4), `MIFIDPRU 4.12` (4), `SYSC 5.2.1` (4),
-`SYSC 5` (4), `SYSC 5.2` (4). Everything below is at 2 or 1.
+**Observed** (2026-09-09, seed 20260909; re-implementation, not executed) —
+47 sections have at least one inbound citation, so `limit: 20` truncates the
+result. Top seven: `MIFIDPRU 4.12` (7 in, 0 out), `SYSC 15A.1` (5 in, 4 out),
+`SYSC 15A.1.1` (4 in, 6 out), `SYSC 15A.2` (4 in, 6 out), `SYSC 15A.3` (4 in,
+4 out), `SYSC 15A.3.1` (4 in, 4 out), `SYSC 8.3` (4 in, 0 out).
 
-**Sensitivity** — at `limit: 7` the result is exactly the sections with 4 or
-more inbound citations, which is the natural break in this data; at
-`limit: 42` every cited section is returned. Raising it past 42 adds nothing.
+**Sensitivity** — at `limit: 7` the result is exactly the sections with four or
+more inbound citations, which is the natural break here; at `limit: 47` every
+cited section is returned and raising it further adds nothing. The shipped
+starting value of 20 is a readability argument, not a fit to this
+distribution.
+
+## Citations that cross standards
+
+**Parameters** — none.
+
+**Invariant** — returns every citation whose two ends resolve to different
+standards, and only those. All six seeded cross-standard pairs appear. No
+within-standard citation appears. Every row's rule reference is prefixed by
+the cited section's identifier.
+
+**Observed** (2026-09-09, seed 20260909; re-implementation, not executed) —
+12 rows, covering all six ordered pairs of the three standards: COBS→MIFIDPRU
+(2), COBS→SYSC (4), MIFIDPRU→COBS (1), MIFIDPRU→SYSC (1), SYSC→COBS (2),
+SYSC→MIFIDPRU (2). Two of them (`COBS 11.2`→`MIFIDPRU 4.12` and
+`SYSC 7.3`→`MIFIDPRU 4.12`) are also signal A.
+
+**Sensitivity** — no threshold to tune. The number that matters is the
+denominator: 12 of 85 citations cross a standard, about 14%. That ratio is
+entirely a generator choice — see signal C. An earlier draft that drew
+background citations uniformly produced roughly 65% cross-standard, at which
+point the query returns most of the graph and tells you nothing. If anyone
+regenerates the data, check this ratio before trusting the query.
+
+## Recently changed sections that are heavily cited
+
+**Parameters** — `changedSince: '2025-09-09'`, `minInboundCitations: 2`.
+
+**Invariant** — `MIFIDPRU 4.12` ranks first and is the only row whose citing
+standards number more than one. Every row satisfies both conditions
+independently — recent enough and cited enough — and the result is a subset of
+what the change sweep returns at the same date.
+
+**Observed** (2026-09-09, seed 20260909; re-implementation, not executed) —
+4 rows: `MIFIDPRU 4.12` (2026-07-15, 7 citations, 3 citing standards),
+`SYSC 15A.3` (2025-10-26, 4 citations, 1 standard), `COBS 11.4` (2026-02-17,
+3 citations, 1 standard), `MIFIDPRU 8.1` (2025-12-17, 2 citations, 1
+standard).
+
+**Sensitivity** — row counts by (date, threshold): 2026-06-01 gives 1 at every
+threshold from 1 to 3; 2025-09-09 gives 7 / 4 / 3; 2024-09-09 gives 19 / 9 /
+6. The shipped starting threshold of 2 halves the 2025-09-09 result, which is
+the behaviour the `@params` note describes — but that note argues from what
+the number means, not from these figures, and holds on any handbook.
 
 ## GDS — Project the section cross-reference graph
 
@@ -386,79 +312,80 @@ more inbound citations, which is the natural break in this data; at
 
 **Invariant** — projects every `Section` node, including the majority that
 carry no cross-reference, and only `RELATED` relationships. `nodeCount` equals
-the `Section` row count and `relationshipCount` equals the `RELATED` row count.
+the `Section` row count; `relationshipCount` equals the `RELATED` row count.
 
-**Observed** — not executed. GDS was unavailable in the authoring environment.
-From the CSVs, a correct run should report `nodeCount: 134` and
-`relationshipCount: 71` for the projection `regulatorySections`.
+**Observed** — not executed; GDS was unavailable in the authoring environment.
+From the CSVs a correct run should report `graphName: 'regulatorySections'`,
+`nodeCount: 137`, `relationshipCount: 85`.
 
-**Sensitivity** — running it twice without dropping fails with a name
-conflict, which is why the drop query exists.
+**Sensitivity** — running it twice without dropping fails on a name conflict,
+which is why the drop query exists.
 
 ## GDS — Rank section influence with PageRank
 
 **Parameters** — `limit: 20`.
 
-**Invariant** — the `SYSC 5` cluster and `MIFIDPRU 4.12` rank near the top;
-sections with no inbound citations share the minimum score and rank last;
-scores are positive and non-increasing down the result — ties are expected,
-both from symmetric citation structure and from `round(score, 4)`. The ranking
-should broadly agree with the inbound-count query at the top while differing
-in the middle, since PageRank weights citations by the citing section's own
-score.
+**Invariant** — `MIFIDPRU 4.12` ranks first, consistent with its citation
+count. The ranking must **not** simply reproduce the inbound-count order: at
+least one section with few inbound citations should rank above sections with
+more, because it is cited by heavily-cited text. Sections nothing cites share
+the floor score and rank last. Ties are expected.
 
 **Observed** — not executed; no GDS available. An independent power iteration
 over the same graph (damping 0.85, 20 iterations, sinks not redistributed)
-gives this order: `SYSC 5.1.1` (0.9484), `DORA 2.2.1` (0.8996), `SYSC 5.1`
-(0.8625), `SYSC 5.2.1` (0.8394), `SYSC 5` (0.8100), `SYSC 5.2` (0.8100),
-`MIFIDPRU 4.12` (0.7588), `DORA 2.2` (0.5904). **Treat the scores as
-indicative only** — GDS initialises and normalises differently and will not
-reproduce these numbers. The *ranking* is the part worth checking, and note
-that `DORA 2.2.1` rises above `SYSC 5.1` here despite having fewer inbound
-citations, which is exactly the PageRank-versus-degree difference the query's
-`@usage` claims.
-
-**Sensitivity** — not measured. When curating, compare the GDS ranking against
-the inbound-count query's top 20 and confirm they diverge in the middle; if
-they are identical, the projection has probably picked up the wrong
+gives: `MIFIDPRU 4.12` 1.1362 (7 inbound), `SYSC 8.3` 0.8991 (4),
+`SYSC 15A.1` 0.7350 (5), `MIFIDPRU 1.2` 0.6785 (**1 inbound**),
+`SYSC 15A.1.1` 0.6689 (4), `SYSC 15A.2` 0.6689 (4), `SYSC 15A.3` 0.6298 (4),
+`SYSC 15A.3.1` 0.6298 (4). **Treat the scores as indicative only** — GDS
+initialises and normalises differently and will not reproduce these numbers.
+The ranking is the part to check, and two rows carry the invariant:
+`MIFIDPRU 1.2` reaches fourth on a single inbound citation, and `SYSC 8.3`
+with four outranks `SYSC 15A.1` with five. Those inversions are precisely the
+PageRank-versus-degree difference the query's `@usage` claims, and if they are
+absent from a live run the projection has probably picked up the wrong
 relationship type.
+
+**Sensitivity** — not measured. When curating, diff this ranking against the
+inbound-count query's top 20; identical orderings mean something is wrong.
 
 ## GDS — Group cross-referencing sections into communities
 
 **Parameters** — `minCommunitySize: 2`.
 
-**Invariant** — the signal-G `SYSC 5` sections all fall in one component;
-`MIFIDPRU 4.12` shares a component with its four citers; every component
-returned has at least two members, and components spanning more than one
-standard exist. The member counts across all components, including the
-singletons filtered out, sum to the `Section` row count.
+**Invariant** — the signal-B `SYSC 15A` sections all fall in one component, as
+do `MIFIDPRU 4.12` and its citers. At least one component spans more than one
+standard. Every component returned has two or more members, and the member
+counts across all components — including the singletons filtered out — sum to
+the `Section` total.
 
 **Observed** — not executed; no GDS available. Connected components are a
 plain graph fact independent of the algorithm, so they were computed directly
-from the CSVs: **80 components, 65 of them singletons**. At
-`minCommunitySize: 2`, 15 components are returned — sizes 14, 13, 8, 4, 4, 4,
-4, 3, 3, 2, 2, 2, 2, 2, 2. The largest (14 members) spans COBS, DORA,
-MIFIDPRU and SYSC and contains both signal A and the `DORA 2.2` cluster; the
-third-largest (8 members) spans all five standards.
+from the CSVs: **72 components, 62 of them singletons**. At
+`minCommunitySize: 2`, 10 components are returned, sized 49, 6, 4, 4, 2, 2, 2,
+2, 2, 2. The largest holds 49 sections and spans all three standards.
 
-**Sensitivity** — 15 components at `minCommunitySize: 2`, 9 at 3, 7 at 4, 3 at
-5, 3 at 8. The 65 singletons are the sections nothing cites, which is why the
-starting value of 2 matters.
+**Sensitivity** — 10 components at `minCommunitySize: 2`, 4 at 3, 4 at 4, 2 at
+5, 2 at 6, 1 at 7. Note the shape of this result: a single component of 49
+against nine of six or fewer. Twelve cross-standard citations are enough to
+fuse most of the connected graph into one blob, which is exactly the
+degenerate case the query's `@usage` warns about — and it is visible here, so
+this one *is* exercised by the sample. Treat the giant component as a prompt
+to find the bridging citations, not as a meaningful grouping.
 
 ## GDS — Drop the section projection
 
 **Parameters** — none.
 
 **Invariant** — removes the named projection; a subsequent projection query
-succeeds where it would otherwise fail on a name conflict. Does not change any
-stored node or relationship, so every non-GDS query returns identical results
-before and after.
+then succeeds where it would otherwise fail on a name conflict. Does not
+change any stored node or relationship, so every non-GDS query returns
+identical results before and after.
 
 **Observed** — not executed; no GDS available. A correct run should report
-`graphName: 'regulatorySections'` and `nodeCount: 134`.
+`graphName: 'regulatorySections'` and `nodeCount: 137`.
 
 **Sensitivity** — dropping a projection that does not exist raises an error
-rather than succeeding silently. When curating, decide whether the package
-should ship `gds.graph.drop('regulatorySections', false)` instead, which
-returns null rather than failing; the strict form was chosen so that a
-mistyped projection name is not silently swallowed.
+rather than passing silently. That is deliberate, and stated in `@usage`; a
+curator who would rather it were tolerant can use
+`gds.graph.drop('regulatorySections', false)`, which returns an empty result
+instead of raising.
