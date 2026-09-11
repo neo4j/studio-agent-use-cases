@@ -60,6 +60,20 @@
       }
     },
     {
+      "skillId": "regulatory-dependency-mapping",
+      "files": {
+        "graph": "GRAPH_MODEL.json",
+        "skill": [
+          "sample-data/section_references.csv",
+          "sample-data/sections.csv",
+          "sample-data/standards.csv",
+          "QUERIES.md",
+          "TESTS.md"
+        ],
+        "markdown": "SKILL.md"
+      }
+    },
+    {
       "skillId": "identity-validation",
       "files": {
         "graph": "GRAPH_MODEL.json",

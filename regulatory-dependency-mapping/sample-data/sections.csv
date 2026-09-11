@@ -1,0 +1,138 @@
+sectionId,title,lastUpdated,standardId,parentSectionId
+MIFIDPRU 1,MIFIDPRU 1 Application and purpose,2025-02-01,MIFIDPRU,
+MIFIDPRU 1.1,MIFIDPRU 1.1 Purpose,2025-05-19,,MIFIDPRU 1
+MIFIDPRU 1.2,MIFIDPRU 1.2 Notification requirements,2023-03-28,,MIFIDPRU 1
+MIFIDPRU 1.2.1,MIFIDPRU 1.2.1 Notification requirements — detailed provisions,2026-03-17,,MIFIDPRU 1.2
+MIFIDPRU 2,"MIFIDPRU 2 Systems, governance and risk management",2023-12-22,MIFIDPRU,
+MIFIDPRU 2.1,MIFIDPRU 2.1 Record-keeping,2022-04-30,,MIFIDPRU 2
+MIFIDPRU 2.1.1,MIFIDPRU 2.1.1 Record-keeping — detailed provisions,2022-06-26,,MIFIDPRU 2.1
+MIFIDPRU 2.2,MIFIDPRU 2.2 Group application,2021-07-14,,MIFIDPRU 2
+MIFIDPRU 2.3,MIFIDPRU 2.3 Reporting timetable,2023-08-20,,MIFIDPRU 2
+MIFIDPRU 2.4,MIFIDPRU 2.4 General requirements,2023-09-28,,MIFIDPRU 2
+MIFIDPRU 3,MIFIDPRU 3 Own funds,2024-09-14,MIFIDPRU,
+MIFIDPRU 3.1,MIFIDPRU 3.1 Application,2024-03-31,,MIFIDPRU 3
+MIFIDPRU 3.2,MIFIDPRU 3.2 Purpose,2023-11-04,,MIFIDPRU 3
+MIFIDPRU 3.2.1,MIFIDPRU 3.2.1 Purpose — detailed provisions,2023-06-27,,MIFIDPRU 3.2
+MIFIDPRU 3.3,MIFIDPRU 3.3 Governance and oversight,2021-04-13,,MIFIDPRU 3
+MIFIDPRU 4,MIFIDPRU 4 Own funds requirements,2022-05-15,MIFIDPRU,
+MIFIDPRU 4.1,MIFIDPRU 4.1 Governance and oversight,2024-04-01,,MIFIDPRU 4
+MIFIDPRU 4.2,MIFIDPRU 4.2 Exemptions,2023-08-19,,MIFIDPRU 4
+MIFIDPRU 5,MIFIDPRU 5 Concentration risk,2020-09-18,MIFIDPRU,
+MIFIDPRU 5.1,MIFIDPRU 5.1 Transitional provisions,2023-07-16,,MIFIDPRU 5
+MIFIDPRU 5.1.1,MIFIDPRU 5.1.1 Transitional provisions — detailed provisions,2022-08-17,,MIFIDPRU 5.1
+MIFIDPRU 5.2,MIFIDPRU 5.2 Reporting timetable,2024-12-05,,MIFIDPRU 5
+MIFIDPRU 5.2.1,MIFIDPRU 5.2.1 Reporting timetable — detailed provisions,2025-12-09,,MIFIDPRU 5.2
+MIFIDPRU 5.3,MIFIDPRU 5.3 Purpose,2023-09-24,,MIFIDPRU 5
+MIFIDPRU 5.4,MIFIDPRU 5.4 Notification requirements,2022-11-02,,MIFIDPRU 5
+MIFIDPRU 6,MIFIDPRU 6 Liquidity,2021-03-28,MIFIDPRU,
+MIFIDPRU 6.1,MIFIDPRU 6.1 Calculation,2026-03-25,,MIFIDPRU 6
+MIFIDPRU 6.1.1,MIFIDPRU 6.1.1 Calculation — detailed provisions,2022-04-30,,MIFIDPRU 6.1
+MIFIDPRU 6.2,MIFIDPRU 6.2 Record-keeping,2025-07-13,,MIFIDPRU 6
+MIFIDPRU 6.3,MIFIDPRU 6.3 Transitional provisions,2021-08-01,,MIFIDPRU 6
+MIFIDPRU 6.3.1,MIFIDPRU 6.3.1 Transitional provisions — detailed provisions,2026-01-28,,MIFIDPRU 6.3
+MIFIDPRU 6.4,MIFIDPRU 6.4 Reporting timetable,2025-04-11,,MIFIDPRU 6
+MIFIDPRU 6.4.1,MIFIDPRU 6.4.1 Reporting timetable — detailed provisions,2023-06-23,,MIFIDPRU 6.4
+MIFIDPRU 7,MIFIDPRU 7 Risk management and the ICARA process,2022-12-02,MIFIDPRU,
+MIFIDPRU 7.1,MIFIDPRU 7.1 Reporting timetable,2023-11-05,,MIFIDPRU 7
+MIFIDPRU 7.2,MIFIDPRU 7.2 General requirements,2021-03-05,,MIFIDPRU 7
+MIFIDPRU 8,MIFIDPRU 8 Disclosure,2023-07-17,MIFIDPRU,
+MIFIDPRU 8.1,MIFIDPRU 8.1 Purpose,2025-12-17,,MIFIDPRU 8
+MIFIDPRU 8.1.1,MIFIDPRU 8.1.1 Purpose — detailed provisions,2024-07-09,,MIFIDPRU 8.1
+MIFIDPRU 8.2,MIFIDPRU 8.2 Governance and oversight,2024-09-13,,MIFIDPRU 8
+MIFIDPRU 8.3,MIFIDPRU 8.3 Exemptions,2024-05-15,,MIFIDPRU 8
+MIFIDPRU 9,MIFIDPRU 9 Regulatory reporting,2024-06-11,MIFIDPRU,
+MIFIDPRU 9.1,MIFIDPRU 9.1 Exemptions,2025-04-04,,MIFIDPRU 9
+MIFIDPRU 9.2,MIFIDPRU 9.2 Group application,2023-06-01,,MIFIDPRU 9
+MIFIDPRU 9.3,MIFIDPRU 9.3 Reporting timetable,2021-04-01,,MIFIDPRU 9
+MIFIDPRU 9.3.1,MIFIDPRU 9.3.1 Reporting timetable — detailed provisions,2024-07-30,,MIFIDPRU 9.3
+SYSC 1,SYSC 1 Application and purpose,2024-04-08,SYSC,
+SYSC 1.1,SYSC 1.1 Application,2023-08-11,,SYSC 1
+SYSC 1.1.1,SYSC 1.1.1 Application — detailed provisions,2023-04-06,,SYSC 1.1
+SYSC 1.2,SYSC 1.2 Calculation,2022-12-04,,SYSC 1
+SYSC 1.3,SYSC 1.3 Governance and oversight,2024-03-17,,SYSC 1
+SYSC 1.3.1,SYSC 1.3.1 Governance and oversight — detailed provisions,2025-02-12,,SYSC 1.3
+SYSC 1.4,SYSC 1.4 Transitional provisions,2025-07-24,,SYSC 1
+SYSC 4,SYSC 4 General organisational requirements,2023-05-27,SYSC,
+SYSC 4.1,SYSC 4.1 Exemptions,2025-05-26,,SYSC 4
+SYSC 4.2,SYSC 4.2 Group application,2022-01-08,,SYSC 4
+SYSC 4.3,SYSC 4.3 Reporting timetable,2024-06-08,,SYSC 4
+SYSC 5,"SYSC 5 Employees, agents and other relevant persons",2020-12-01,SYSC,
+SYSC 5.1,SYSC 5.1 Reporting timetable,2022-07-22,,SYSC 5
+SYSC 5.2,SYSC 5.2 General requirements,2024-10-14,,SYSC 5
+SYSC 6,"SYSC 6 Compliance, internal audit and financial crime",2022-09-11,SYSC,
+SYSC 6.1,SYSC 6.1 Purpose,2021-03-01,,SYSC 6
+SYSC 6.1.1,SYSC 6.1.1 Purpose — detailed provisions,2023-10-16,,SYSC 6.1
+SYSC 6.2,SYSC 6.2 Governance and oversight,2023-07-15,,SYSC 6
+SYSC 6.2.1,SYSC 6.2.1 Governance and oversight — detailed provisions,2025-08-17,,SYSC 6.2
+SYSC 6.3,SYSC 6.3 Transitional provisions,2022-09-26,,SYSC 6
+SYSC 6.3.1,SYSC 6.3.1 Transitional provisions — detailed provisions,2024-09-28,,SYSC 6.3
+SYSC 6.4,SYSC 6.4 Reporting timetable,2023-02-16,,SYSC 6
+SYSC 6.4.1,SYSC 6.4.1 Reporting timetable — detailed provisions,2024-04-01,,SYSC 6.4
+SYSC 7,SYSC 7 Risk control,2024-07-08,SYSC,
+SYSC 7.1,SYSC 7.1 Reporting timetable,2023-08-03,,SYSC 7
+SYSC 7.2,SYSC 7.2 General requirements,2023-07-02,,SYSC 7
+SYSC 7.2.1,SYSC 7.2.1 General requirements — detailed provisions,2025-03-05,,SYSC 7.2
+SYSC 7.3,SYSC 7.3 Notification requirements,2023-12-15,,SYSC 7
+SYSC 7.4,SYSC 7.4 Record-keeping,2021-07-21,,SYSC 7
+SYSC 8,SYSC 8 Outsourcing and third party arrangements,2021-10-04,SYSC,
+SYSC 8.1,SYSC 8.1 Governance and oversight,2021-07-30,,SYSC 8
+SYSC 8.2,SYSC 8.2 Exemptions,2022-04-13,,SYSC 8
+SYSC 8.2.1,SYSC 8.2.1 Exemptions — detailed provisions,2025-06-19,,SYSC 8.2
+SYSC 8.3,SYSC 8.3 Guidance on interpretation,2021-12-12,,SYSC 8
+SYSC 15A,SYSC 15A Operational resilience,2023-01-10,SYSC,
+SYSC 15A.1,SYSC 15A.1 Guidance on interpretation,2022-12-26,,SYSC 15A
+SYSC 15A.1.1,SYSC 15A.1.1 Guidance on interpretation — detailed provisions,2025-06-28,,SYSC 15A.1
+SYSC 15A.2,SYSC 15A.2 General requirements,2022-07-30,,SYSC 15A
+SYSC 15A.3,SYSC 15A.3 Calculation,2025-10-26,,SYSC 15A
+SYSC 15A.3.1,SYSC 15A.3.1 Calculation — detailed provisions,2023-09-10,,SYSC 15A.3
+SYSC 18,SYSC 18 Whistleblowing,2024-06-25,SYSC,
+SYSC 18.1,SYSC 18.1 Notification requirements,2022-01-19,,SYSC 18
+SYSC 18.2,SYSC 18.2 Record-keeping,2024-02-09,,SYSC 18
+SYSC 18.3,SYSC 18.3 Transitional provisions,2022-03-15,,SYSC 18
+SYSC 19G,SYSC 19G Remuneration codes,2023-11-23,SYSC,
+SYSC 19G.1,SYSC 19G.1 Transitional provisions,2024-10-08,,SYSC 19G
+SYSC 19G.2,SYSC 19G.2 Guidance on interpretation,2026-02-02,,SYSC 19G
+SYSC 19G.2.1,SYSC 19G.2.1 Guidance on interpretation — detailed provisions,2025-01-14,,SYSC 19G.2
+SYSC 19G.3,SYSC 19G.3 General requirements,2021-06-07,,SYSC 19G
+COBS 2,COBS 2 Conduct of business obligations,2023-06-01,COBS,
+COBS 2.1,COBS 2.1 General requirements,2021-10-18,,COBS 2
+COBS 2.2,COBS 2.2 Calculation,2025-12-03,,COBS 2
+COBS 2.2.1,COBS 2.2.1 Calculation — detailed provisions,2023-07-12,,COBS 2.2
+COBS 3,COBS 3 Client categorisation,2020-05-03,COBS,
+COBS 3.1,COBS 3.1 Governance and oversight,2025-07-24,,COBS 3
+COBS 3.1.1,COBS 3.1.1 Governance and oversight — detailed provisions,2025-04-09,,COBS 3.1
+COBS 3.2,COBS 3.2 Transitional provisions,2024-04-27,,COBS 3
+COBS 4,COBS 4 Communicating with clients,2025-07-09,COBS,
+COBS 4.1,COBS 4.1 Group application,2025-12-11,,COBS 4
+COBS 4.2,COBS 4.2 Reporting timetable,2024-08-09,,COBS 4
+COBS 4.3,COBS 4.3 General requirements,2022-11-13,,COBS 4
+COBS 4.4,COBS 4.4 Calculation,2025-12-05,,COBS 4
+COBS 6,COBS 6 Information about the firm and its services,2023-06-28,COBS,
+COBS 6.1,COBS 6.1 Purpose,2024-06-08,,COBS 6
+COBS 6.1.1,COBS 6.1.1 Purpose — detailed provisions,2024-10-24,,COBS 6.1
+COBS 6.2,COBS 6.2 Governance and oversight,2022-12-09,,COBS 6
+COBS 6.3,COBS 6.3 Exemptions,2025-10-09,,COBS 6
+COBS 9A,COBS 9A Suitability,2020-11-13,COBS,
+COBS 9A.1,COBS 9A.1 Exemptions,2023-07-17,,COBS 9A
+COBS 9A.2,COBS 9A.2 Group application,2025-02-07,,COBS 9A
+COBS 9A.2.1,COBS 9A.2.1 Group application — detailed provisions,2025-03-22,,COBS 9A.2
+COBS 9A.3,COBS 9A.3 Application,2024-03-05,,COBS 9A
+COBS 9A.4,COBS 9A.4 Purpose,2023-12-10,,COBS 9A
+COBS 10A,COBS 10A Appropriateness,2022-02-01,COBS,
+COBS 10A.1,COBS 10A.1 General requirements,2023-05-30,,COBS 10A
+COBS 10A.1.1,COBS 10A.1.1 General requirements — detailed provisions,2023-10-29,,COBS 10A.1
+COBS 10A.2,COBS 10A.2 Notification requirements,2024-10-11,,COBS 10A
+COBS 11,COBS 11 Dealing and managing,2022-06-15,COBS,
+COBS 11.1,COBS 11.1 Governance and oversight,2021-04-10,,COBS 11
+COBS 11.1.1,COBS 11.1.1 Governance and oversight — detailed provisions,2022-08-25,,COBS 11.1
+COBS 11.2,COBS 11.2 Transitional provisions,2021-06-10,,COBS 11
+COBS 11.3,COBS 11.3 Guidance on interpretation,2023-08-25,,COBS 11
+COBS 11.4,COBS 11.4 Application,2026-02-17,,COBS 11
+COBS 11.4.1,COBS 11.4.1 Application — detailed provisions,2024-01-02,,COBS 11.4
+COBS 16A,COBS 16A Reporting to clients,2023-05-28,COBS,
+COBS 16A.1,COBS 16A.1 Application,2025-02-16,,COBS 16A
+COBS 16A.1.1,COBS 16A.1.1 Application — detailed provisions,2022-08-27,,COBS 16A.1
+COBS 16A.2,COBS 16A.2 Calculation,2023-05-09,,COBS 16A
+COBS 16A.3,COBS 16A.3 Governance and oversight,2024-02-10,,COBS 16A
+MIFIDPRU 4.12,MIFIDPRU 4.12 K-DTF daily trading flow requirement,2026-07-15,,MIFIDPRU 4
+MIFIDPRU 4.12.1,MIFIDPRU 4.12.1 Measurement of daily trading flow,2026-06-30,,MIFIDPRU 4.12
