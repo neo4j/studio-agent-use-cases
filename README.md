@@ -34,7 +34,6 @@ metadata:
   neo4j-card-title: Example Skill
   neo4j-card-category: General
   neo4j-card-description: Short card summary shown in Studio Agent.
-  neo4j-card-icon: CubeIconOutline
 ---
 ```
 
@@ -43,9 +42,8 @@ metadata:
 | `name` | Skill id. Must match the skill directory name (kebab-case). |
 | `description` | Skill description used by the agent. |
 | `metadata.neo4j-card-title` | Display title on the use-case card. |
-| `metadata.neo4j-card-category` | Display category used to group related use cases (for example `General`, `Supply Chain`, `Healthcare & Life Sciences`). |
+| `metadata.neo4j-card-category` | Display category used to group related use cases (for example `Financial Services`, `Insurance`, `Healthcare & Life Sciences`, `Manufacturing`, `Cybersecurity`, `Industry Agnostic`). |
 | `metadata.neo4j-card-description` | Short summary shown on the use-case card. |
-| `metadata.neo4j-card-icon` | Icon component name from `@neo4j-ndl/react/icons` (for example `CubeIconOutline`, `TruckIconOutline`). |
 
 ## Raw files
 
