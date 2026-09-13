@@ -2,7 +2,7 @@
 
 Run these checks on a generated or edited package before handing it off. Let `<package-path>` be the package folder. Do not rely on a successful build alone: malformed packages are caught and skipped by the registry, so a broken package fails silently by never appearing.
 
-Work through sections 1–6 (including 3b, 5a, 5b and 5c) and collect every finding — don't stop at the first failure. Then report and resolve findings with the user as described in section 7, and write the handoff described in section 8.
+Work through sections 1–6 (including 3b, 5a, 5b, 5c and 5d) and collect every finding — don't stop at the first failure. Then report and resolve findings with the user as described in section 7, and write the handoff described in section 8.
 
 Two failure modes dominate. The first is **inconsistency** between model, data, and queries. The second, since the TESTS.md split, is **sample-data leakage**: concrete detail about the bundled rows appearing in a file the consuming agent reads, where it becomes a false claim about the user's data. Section 5a checks for it mechanically.
 
@@ -14,6 +14,7 @@ Required:
 <package-path>/SKILL.md
 <package-path>/GRAPH_MODEL.json
 <package-path>/QUERIES.md
+<package-path>/human_description.md  # required in every package
 <package-path>/sample-data/**/*.csv   # optional at the format level; present in any working demo
 <package-path>/TESTS.md               # required whenever sample-data CSVs resolve
 ```
@@ -23,28 +24,36 @@ Confirm:
 - All required files exist and are non-empty, and every CSV referenced by GRAPH_MODEL.json sits below `sample-data/` (at any depth — nested subdirectories are legal).
 - There is no `INTRODUCTION.md` — introduction guidance lives inside SKILL.md.
 - `TESTS.md` exists whenever the package bundles sample data. A package with resolving CSVs and no TESTS.md has no test oracle and cannot be verified — blocker. A package with no CSVs at all is a model template rather than a working demo; TESTS.md is then not required, and that should be a deliberate choice the handoff names.
-- `TESTS.md` is **not** indexed in SKILL.md's Supporting files table, and no agent-facing file instructs the agent to read it. Any mention is worth reviewing; an instruction to load it defeats the split and is a blocker.
+- `human_description.md` exists, spelled exactly so — lower-case, underscore, `.md`. It is required whether or not the package bundles sample data. Missing is a blocker; a variant spelling is a blocker, because the runtime resolves it by name. Its content is checked in section 5d.
+- `TESTS.md` and `human_description.md` are **not** indexed in SKILL.md's Supporting files table, and no agent-facing file instructs the agent to read either. Any mention is worth reviewing; an instruction to load one defeats the split and is a blocker.
 - The folder name (`skillId`) is kebab-case and stable.
-- Supporting files beyond the required set use only `.md` or `.cypher`, and each is indexed in SKILL.md with a stated purpose so the agent knows when to load it. An unindexed supporting file is a warning: index it, fold it in, or remove it. `TESTS.md` is the sole exemption.
-- Readable files stay under ~50,000 characters. This is guidance, not an enforced limit — exceeding it is a *warning*, not a blocker — but note that larger files consume more of the consuming agent's context and increase the need for a more powerful model. Report any file over the target with its size and whether annotations, queries, or prose drove the growth, so the user can decide. **`TESTS.md` and the sample-data CSVs are exempt** — neither reaches the consuming agent, so size costs nothing there. A large TESTS.md is not a finding; a large QUERIES.md usually means material that belongs in TESTS.md has not moved.
+- Supporting files beyond the required set use only `.md` or `.cypher`, and each is indexed in SKILL.md with a stated purpose so the agent knows when to load it. An unindexed supporting file is a warning: index it, fold it in, or remove it. `TESTS.md` and `human_description.md` are the only exemptions.
+- Readable files stay under ~50,000 characters. This is guidance, not an enforced limit — exceeding it is a *warning*, not a blocker — but note that larger files consume more of the consuming agent's context and increase the need for a more powerful model. Report any file over the target with its size and whether annotations, queries, or prose drove the growth, so the user can decide. **`TESTS.md`, `human_description.md` and the sample-data CSVs are exempt** — none reaches the consuming agent, so size costs nothing there. A large TESTS.md is not a finding; a large QUERIES.md usually means material that belongs in TESTS.md has not moved. `human_description.md` has its own length guidance in 5d, which is about the reader, not the context window.
 - Paths use forward slashes with no absolute, URL, backslash, empty, `.` or `..` segments.
 - No file references a bundled file that does not exist.
 
 ```bash
 P="<package-path>"
 
-for f in SKILL.md GRAPH_MODEL.json QUERIES.md; do test -s "$P/$f" || echo "MISSING: $f"; done
+for f in SKILL.md GRAPH_MODEL.json QUERIES.md human_description.md; do
+  test -s "$P/$f" || echo "MISSING: $f"
+done
+
+# Variant spellings of human_description.md — the runtime resolves it by name.
+find "$P" -maxdepth 1 -iname 'human*desc*' ! -name 'human_description.md' \
+  | grep . && echo "BLOCKER: human_description.md is misnamed"
 
 # Sample data at any depth below sample-data/ requires a TESTS.md.
 find "$P/sample-data" -name '*.csv' 2>/dev/null | grep -q . \
   && { test -s "$P/TESTS.md" || echo "BLOCKER: sample data present, TESTS.md missing"; }
 
-# Agent-facing files: any mention of TESTS.md is worth a look; an instruction to
-# read it is a blocker. Reviewed by eye — the grep only finds candidates.
-AGENT_FACING=$(find "$P" -maxdepth 1 -name '*.md' ! -name 'TESTS.md')
-rg -n 'TESTS\.md' $AGENT_FACING | tee /tmp/tests-mentions.txt
-rg -ni 'read|load|see|consult|refer|open' /tmp/tests-mentions.txt \
-  && echo "BLOCKER: an agent-facing file instructs the agent to read TESTS.md"
+# Agent-facing files: any mention of TESTS.md or human_description.md is worth a
+# look; an instruction to read one is a blocker. Reviewed by eye — the grep only
+# finds candidates.
+AGENT_FACING=$(find "$P" -maxdepth 1 -name '*.md' ! -name 'TESTS.md' ! -name 'human_description.md')
+rg -n 'TESTS\.md|human_description\.md' $AGENT_FACING | tee /tmp/reserved-mentions.txt
+rg -ni 'read|load|see|consult|refer|open' /tmp/reserved-mentions.txt \
+  && echo "BLOCKER: an agent-facing file instructs the agent to read a reserved file"
 
 rg -n "TODO\(review\)" "$P"
 wc -c "$P"/*.md "$P"/GRAPH_MODEL.json
@@ -326,7 +335,7 @@ The mechanical version: pull the identifier-shaped tokens out of the CSVs and gr
 
 ```bash
 P="<package-path>"
-AGENT_FACING=$(find "$P" -maxdepth 1 -name '*.md' ! -name 'TESTS.md')
+AGENT_FACING=$(find "$P" -maxdepth 1 -name '*.md' ! -name 'TESTS.md' ! -name 'human_description.md')
 
 # Every field of every CSV, at any depth, stripped of CRs and quotes.
 # Adapt the identifier pattern to this package's own key format.
@@ -368,6 +377,8 @@ one of the things that can be imported. Both say the sample exists and what it i
 Neither may quantify it, name anything in it, or imply the reader's database contains it.
 
 A leak is a blocker where it makes a factual claim (counts, identifiers, statistics) and a warning where it is merely a stale framing.
+
+`human_description.md` is excluded from the scan above because it is held to a stricter rule and checked separately in 5d: it may not mention the sample data at all, in any terms, so the two expected hit classes above do not apply to it.
 
 ## 5b. Post-import setup checks
 
@@ -429,6 +440,102 @@ awk -v skip="$T_SKIP" '
 ' "$P/TESTS.md"
 ```
 
+## 5d. human_description.md checks
+
+The only file in the package written for a human reader, and the only one nothing downstream verifies — no schema rejects it, no query fails against it, no agent reads it back. Check it by eye as well as by grep, and say in the handoff that it still needs a human read.
+
+**Structure**
+
+- An `#` heading whose text matches `metadata.neo4j-card-title` in SKILL.md, followed by a one- or two-sentence lead.
+- Exactly two `##` sections, titled `Overview` and `Ontology`, in that order. A third `##` section is a finding — the structure is fixed so every package's page reads the same way.
+- Overview covers the industry and, in a table, the problem statements against what the reference ontology makes answerable.
+- Ontology opens with a short orienting paragraph, then carries tables for entities, properties, relationships, and relationship properties. The last is omitted entirely when no relationship carries a property — an empty table or an "N/A" row is a finding.
+- Small paragraphs, bullet summaries, and tables throughout. A paragraph running past roughly six lines is a finding in this file.
+
+**Completeness against the model** — the check that matters most, because a reader uses these tables to decide whether the ontology fits their data:
+
+- Every node label in GRAPH_MODEL.json appears in the entities table.
+- Every node property appears in the properties table, with its graph type.
+- Every relationship entry appears in the relationships table. Where one relationship type joins more than one pair of nodes, **each pair has its own row** with its own meaning — one row per type is a finding, since the type name alone does not distinguish them.
+- Every relationship property appears, with its graph type.
+- No table names anything the model does not define.
+- Meanings agree with the model's `description` annotations — plain-Englished and shortened, never contradicted, and never restated with a different unit, scope or direction. This is the same consistency rule as section 6's, applied to a file a customer may read.
+
+**Terminology**
+
+- The file calls the model the **reference ontology**. `graph model`, `graph data model`, `data model` and `schema` must not appear as names for it — blocker, this being the one file where the term is deliberately different.
+- No other file in the package has been renamed. If SKILL.md, QUERIES.md, TESTS.md or GRAPH_MODEL.json now says "reference ontology", the change has been propagated beyond its intended scope — a finding, and revert it. `GRAPH_MODEL.json` keeps its filename.
+
+**Exclusions** — none of the following may appear:
+
+- Filenames or paths of any kind: `GRAPH_MODEL.json`, `QUERIES.md`, `SKILL.md`, `TESTS.md`, `SETUP.md`, `sample-data/`.
+- Cypher, JSON, or any fenced code block. Inline code formatting on label, relationship and property names is expected and fine.
+- Any mention of the sample data, in any terms — counts, seeded entities, or a general "bundled synthetic dataset". Stricter than 5a: the file is about the industry and the ontology, and the data is out of scope.
+- Instructions addressed to an agent: "the agent can help you", response shapes, operational constraints, "when the user first opens this package".
+
+**Length** — aim for a page a reader gets through in two or three minutes, roughly 400–900 words outside the Ontology tables. Over that is a warning, and usually means the file is explaining Neo4j rather than the domain.
+
+```bash
+P="<package-path>"
+H="$P/human_description.md"
+
+# Section structure: expect exactly "## Overview" then "## Ontology".
+rg -N '^## ' "$H"
+
+# H1 must match the card title in SKILL.md's frontmatter.
+rg -N -m1 '^# ' "$H"
+rg -N 'neo4j-card-title:' "$P/SKILL.md"
+
+# Banned terminology for the model itself.
+rg -ni 'graph model|graph data model|data model|\bschema\b' "$H" \
+  && echo "BLOCKER: human_description.md must say reference ontology"
+
+# The rename must not have spread to any other file.
+rg -ni 'reference ontology' "$P" --glob '!human_description.md' \
+  && echo "FINDING: reference ontology used outside human_description.md"
+
+# Filenames, paths, and code blocks.
+rg -n 'GRAPH_MODEL\.json|QUERIES\.md|SKILL\.md|TESTS\.md|SETUP\.md|sample-data|\.csv' "$H" \
+  && echo "FINDING: human_description.md names a package file"
+rg -n '^```' "$H" && echo "FINDING: code block in human_description.md"
+
+# Any mention of the sample data at all.
+rg -ni 'sample|synthetic|seeded|bundled|dataset|row' "$H" \
+  && echo "FINDING: human_description.md refers to the bundled data"
+
+# Agent-directed language.
+rg -ni 'the agent|the user first opens|response shape|operational constraint' "$H" \
+  && echo "FINDING: agent-directed language in human_description.md"
+
+# Every label and relationship type in the model appears in the file.
+python3 - "$P" <<'PY'
+import json, re, sys, pathlib
+p = pathlib.Path(sys.argv[1])
+m = json.loads((p / "GRAPH_MODEL.json").read_text())
+h = (p / "human_description.md").read_text()
+for label, node in m.get("nodes", {}).items():
+    if node.get("label", label) not in h:
+        print(f"FINDING: node {node.get('label', label)} missing from human_description.md")
+    for prop in node.get("properties", {}):
+        if not re.search(rf"\b{re.escape(prop)}\b", h):
+            print(f"FINDING: property {label}.{prop} missing from human_description.md")
+for key, rel in m.get("relationships", {}).items():
+    if rel["type"] not in h:
+        print(f"FINDING: relationship {rel['type']} missing from human_description.md")
+    for prop in rel.get("properties", {}):
+        if not re.search(rf"\b{re.escape(prop)}\b", h):
+            print(f"FINDING: relationship property {rel['type']}.{prop} missing")
+types = [r["type"] for r in m.get("relationships", {}).values()]
+for t in set(types):
+    if types.count(t) > 1:
+        print(f"CHECK BY EYE: {t} joins {types.count(t)} node pairs — expect that many rows")
+PY
+
+wc -w "$H"
+```
+
+The greps over-report by design. `schema` may appear legitimately in a domain sense, `row` inside an unrelated word, a label name may coincide with ordinary prose. Read each hit rather than acting on the count — and read the whole file once straight through, which is the only check that catches a page that is accurate and still unreadable.
+
 ## 6. SKILL.md content checks
 
 - The body is terse and agent-facing, with no duplicated runnable queries.
@@ -451,7 +558,7 @@ awk -v skip="$T_SKIP" '
 
 Validation findings are decisions for the user, not silent patches. After completing sections 1–6:
 
-1. **Classify** each finding: *blocker* (package would be rejected, fails schema validation, declares a spec version other than the bundle's pin or none at all, a query fails or violates its invariant, or an agent-facing file makes a false claim about the user's data) or *warning* (works but weakens quality — vague description, untuned threshold, unproven query, oversized agent-facing file).
+1. **Classify** each finding: *blocker* (package would be rejected, fails schema validation, declares a spec version other than the bundle's pin or none at all, a query fails or violates its invariant, an agent-facing file makes a false claim about the user's data, `human_description.md` is missing or misnamed, or it calls the model anything but the reference ontology) or *warning* (works but weakens quality — vague description, untuned threshold, unproven query, oversized agent-facing file).
 2. **Report** them together in one summary. For each finding give: the file and location, what's wrong, why it matters, and a concrete proposed fix. Where more than one fix is reasonable, present the options with a recommendation rather than choosing silently.
 3. **Ask** before applying fixes that change meaning — schema changes, description changes, data regeneration, threshold changes, renames. Mechanical corrections (a typo'd field name that must match a CSV header, invalid JSON syntax, a stray row count that belongs in TESTS.md) may be fixed directly and reported.
 4. **Re-run** the affected checks after fixes, and repeat until no blockers remain.
@@ -487,5 +594,6 @@ The handoff summary must name:
 - For queries that were executed: whether each satisfied its TESTS.md invariant, and whether observed figures were refreshed.
 - Every remaining `TODO(review):` with its path — calling out `inferred description` items the user has not yet confirmed.
 - Any query not executed against sample data, cross-checked against TESTS.md's list of the same.
-- Any agent-facing file over the ~50,000-character guidance size, with what drove it. (TESTS.md and CSVs are exempt and need no mention.)
+- Any agent-facing file over the ~50,000-character guidance size, with what drove it. (TESTS.md, human_description.md and the CSVs are exempt and need no mention.)
+- That `human_description.md` covers every node, relationship and property the model defines, and that **it still needs a human read** — nothing downstream validates its prose, so the handoff must say so rather than implying the automated checks cleared it.
 - Any assumption that still requires domain-owner review.
