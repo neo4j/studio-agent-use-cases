@@ -9,19 +9,20 @@ Use this reference when creating a use-case folder. The folder name becomes `ski
 ├── SKILL.md                    # required
 ├── GRAPH_MODEL.json            # required
 ├── QUERIES.md                  # required for packages — runnable Cypher
+├── human_description.md        # required — the package explained to a person; rendered as HTML, never loaded
 ├── TESTS.md                    # required when sample data is bundled — authoring-side only, never loaded
 ├── SETUP.md                    # optional — post-import statements the queries depend on
 └── sample-data/                # optional, but the required location for bundled CSV data
     └── *.csv
 ```
 
-Sample data is optional at the format level — `GRAPH_MODEL.json` is required either way — but a use case that bundles none also has nothing to test, and is a model template rather than a working demo. `TESTS.md` is required exactly when sample data is present.
+Sample data is optional at the format level — `GRAPH_MODEL.json` is required either way — but a use case that bundles none also has nothing to test, and is a model template rather than a working demo. `TESTS.md` is required exactly when sample data is present. `human_description.md` is required in both cases.
 
 If the use case bundles sample CSVs for Import, every CSV must be below `sample-data/`.
 
-There is no `INTRODUCTION.md`. The agent introduces the package from guidance inside SKILL.md (an "Introducing this package" section), not from a canned document.
+There is no `INTRODUCTION.md`. The agent introduces the package from guidance inside SKILL.md (an "Introducing this package" section), not from a canned document. `human_description.md` does not reinstate it: it is read by people, not agents, and is never the script for a spoken introduction.
 
-`TESTS.md` is a reserved filename with a special contract — see [TESTS.md](#testsmd) below. It is the only file in the package the runtime deliberately ignores.
+`TESTS.md` and `human_description.md` are reserved filenames with special contracts — see [TESTS.md](#testsmd) and [human_description.md](#human_descriptionmd) below. They are the two files in the package the runtime deliberately keeps away from the agent, for opposite reasons: one is too specific to the bundled data to be safe, the other is written for a human reader and would be pure context cost.
 
 ## Identity and metadata
 
@@ -207,6 +208,30 @@ Each query section states:
 
 Separating invariant from observed is the point of the file. A package whose oracle is nothing but row counts breaks the first time anyone regenerates the CSVs, and the breakage looks like a query fault.
 
+## `human_description.md`
+
+The package explained to a person: clean Markdown, rendered as HTML in a UI, read by a human being deciding whether this package addresses their problem. No agent reads it at any point.
+
+It exists because every other file in the package is written for a machine or for the engineer maintaining it. A reader arriving at a catalog card has nowhere to go for the plain-language account — what the industry is, what the problem is, and what the ontology actually holds — and the frontmatter blurb is one sentence.
+
+Contract:
+
+- **Reserved filename**, lower-case with an underscore, at the package root. Runtimes implementing this format must not load it into the agent's context and must not surface it to the agent.
+- **Required**, whether or not the package bundles sample data. A model template still needs explaining.
+- **Exempt from the supporting-file rule.** Like `TESTS.md`, it must not be indexed in `SKILL.md` — the agent should never load it.
+- **Exempt from the file-size guidance**, for the same reason, though it has a practical length of its own: a page a reader gets through in two or three minutes.
+- **Reference ontology.** This file, and only this file, calls the model the *reference ontology*. `SKILL.md`, `QUERIES.md`, `GRAPH_MODEL.json`, `TESTS.md` and this document continue to say graph model, and `GRAPH_MODEL.json` keeps its filename. The divergence is deliberate and scoped to one file.
+- **No filenames, no Cypher, no JSON, no agent instructions, and no sample data** — not counts, not seeded entities, not a general mention. The reader sees a rendered page, not a directory, and the bundled data is out of scope for it. This is stricter than the rule on `SKILL.md`, which permits a general mention of the sample.
+
+Structure — an `#` heading carrying the card title, a one- or two-sentence lead, then exactly two `##` sections:
+
+- **Overview** — the industry in a few short paragraphs, then the problem statements and what the reference ontology makes answerable, as a table.
+- **Ontology** — a short paragraph on the shape of it, then a table each for entities, properties, relationships, and relationship properties (the last omitted when no relationship carries one).
+
+The Ontology tables must cover every node, relationship and property the model defines, with meanings drawn from the model's own `description` annotations and plain-Englished, never contradicted. Where one relationship type joins more than one pair of nodes, each pair gets its own row. The trailing `` e.g. `...` `` sample values in the model's property descriptions are dropped: they are sample data.
+
+Favour small paragraphs, bullet summaries, and tables throughout. The create-solution-package skill defines the full authoring rules and carries a template.
+
 ## `GRAPH_MODEL.json`
 
 Use [GRAPH_SPEC_FORMAT.md](GRAPH_SPEC_FORMAT.md) for the complete field-by-field format. Its authority is `graph-spec.schema.json`, bundled with the create-solution-package skill, which sets `additionalProperties: false` at every level — off-schema keys fail validation. That bundled file is the only schema a package is ever validated against; nothing is fetched over the network.
@@ -387,6 +412,7 @@ In a runtime that implements this format, adding a valid folder to its configure
 
 - `SKILL.md` and `GRAPH_MODEL.json` are loaded eagerly.
 - `TESTS.md` is never loaded, at any point, by any path.
+- `human_description.md` is never loaded into the agent's context either. It is available to the UI for rendering, and to it alone.
 - An invalid use case is logged and skipped rather than necessarily failing the build.
 
 The active agent receives the use case's `SKILL.md` body.

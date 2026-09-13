@@ -1,6 +1,6 @@
 ---
 name: create-solution-package
-description: Build a Neo4j industry solution package — a graph model (graph spec JSON), sample CSV data with import mappings, proven Cypher queries, and agent guidance — for Aura's onboarding agent. Use whenever a user wants to create, draft, scaffold, rebuild, or review a solution package, industry use case, or vertical quick start, e.g. "make a package like insurance-claims-fraud for telecoms". The output is a starting point for human curation, not a finished product.
+description: Build a Neo4j industry solution package — a graph model (graph spec JSON), sample CSV data with import mappings, proven Cypher queries, agent guidance, and a human-readable description of the package — for Aura's onboarding agent. Use whenever a user wants to create, draft, scaffold, rebuild, or review a solution package, industry use case, or vertical quick start, e.g. "make a package like insurance-claims-fraud for telecoms". The output is a starting point for human curation, not a finished product.
 ---
 
 # Create a Solution Package
@@ -15,36 +15,39 @@ Companion skills: [GRAPH_SPEC_FORMAT.md](GRAPH_SPEC_FORMAT.md) is the contract f
 
 ## Who reads what
 
-This is the constraint that shapes every decision below. A package has two audiences and they need opposite things.
+This is the constraint that shapes every decision below. A package has three audiences and they need different things.
 
 **The consuming agent** receives SKILL.md's body directly in its instruction prompt and loads QUERIES.md when it needs Cypher. Everything it reads costs context, and everything it reads it may repeat to a user whose data is not yours. It needs the model's meaning, the query patterns, and honest caveats — stated so they stay true whatever data is in the database.
 
 **The curating engineer**, and any agent verifying the package, needs the opposite: concrete row counts, the exact composition of the seeded rings, what happens at other thresholds, which query returned what on which day. All of that is real work product and none of it belongs anywhere the consuming agent can read it, because on the user's own data it is not merely useless but wrong.
 
-TESTS.md is where the second audience is served. Keep the line clean and most authoring questions answer themselves.
+**The person evaluating the package** — someone reading a rendered page in a UI, deciding whether this is the package for their problem — needs neither. They need the industry, the problem, and what the ontology represents, in prose and tables they can scan. No Cypher, no JSON, no filenames, no agent instructions.
+
+TESTS.md serves the second audience; `human_description.md` serves the third. Keep the lines clean and most authoring questions answer themselves.
 
 ## Package structure
 
-Six parts, five of them required. Keep packages this small where possible — experience shows it is usually sufficient.
+Seven parts, six of them required. Keep packages this small where possible — experience shows it is usually sufficient.
 
 ```text
-<package-name>/          # kebab-case; the folder name becomes the skillId
-├── SKILL.md             # agent guidance: frontmatter + body (see below)
-├── GRAPH_MODEL.json     # graph spec per GRAPH_SPEC_FORMAT.md
-├── QUERIES.md           # runnable Cypher with @-annotation blocks
-├── TESTS.md             # expected results on the sample data — never loaded by the runtime
-├── SETUP.md             # optional — post-import statements the queries depend on
+<package-name>/            # kebab-case; the folder name becomes the skillId
+├── SKILL.md               # agent guidance: frontmatter + body (see below)
+├── GRAPH_MODEL.json       # graph spec per GRAPH_SPEC_FORMAT.md
+├── QUERIES.md             # runnable Cypher with @-annotation blocks
+├── human_description.md   # the package explained to a person — rendered as HTML in a UI, never read by an agent
+├── TESTS.md               # expected results on the sample data — never loaded by the runtime
+├── SETUP.md               # optional — post-import statements the queries depend on
 └── sample-data/
-    └── *.csv            # one CSV per table in GRAPH_MODEL.json
+    └── *.csv              # one CSV per table in GRAPH_MODEL.json
 ```
 
-A package with no sample data is a model template, not a working demo, and needs no TESTS.md. Assume you are building the working demo unless the user says otherwise.
+A package with no sample data is a model template, not a working demo, and needs no TESTS.md. Assume you are building the working demo unless the user says otherwise. `human_description.md` is required either way — a model template still needs explaining to a person.
 
-There is no INTRODUCTION.md. The agent introduces the package from guidance inside SKILL.md (see the template below), not from a canned document.
+There is no INTRODUCTION.md. The agent introduces the package from guidance inside SKILL.md (see the template below), not from a canned document. `human_description.md` is not that document and is not a substitute for it: no agent ever reads it, and it is never the script for a spoken introduction. It is a page a person reads with their eyes, in a UI, possibly before any agent is involved at all.
 
 Complex packages may add supporting files (`.md` or `.cypher` only) when they are justified in explaining the package to the agent and how to use it effectively — for example a multi-step workflow, detailed model rationale, or honest caveats that would bloat SKILL.md (see `identity-validation` for a worked example). Each one must earn its place: add it only when the content is too large or too specialised for SKILL.md or QUERIES.md, and index every one in a "Supporting files" table in SKILL.md stating when the agent should load it. Simple packages need none. Keep each readable file under ~50,000 characters as a working target — this is guidance, not an enforced limit, but larger files consume more of the consuming agent's context and increase the need for a more powerful model, so justify any file that exceeds it and note it in the handoff. Paths must be relative with forward slashes.
 
-`TESTS.md` and the sample-data CSVs are exempt from both rules: neither is indexed in SKILL.md, and neither counts against the size target, because neither reaches the consuming agent.
+`TESTS.md`, `human_description.md` and the sample-data CSVs are exempt from both rules: none of them is indexed in SKILL.md, and none counts against the size target, because none reaches the consuming agent. `human_description.md` has a length constraint of its own — a reader's patience rather than a context window. See step 7.
 
 ## Identity and metadata
 
@@ -314,10 +317,91 @@ Validation approach
 
 Notes on the introduction guidance: it is direction, not a script — trust the agent to phrase it. Include a real model-image URL as an extra bullet only if one exists; never fabricate one. Keep the whole section under ten lines. Note that it describes the sample data in general terms only — the introduction is spoken to a user who may be about to import something else entirely.
 
-**Do not index TESTS.md in SKILL.md.** Every other non-required file gets a Supporting files entry; TESTS.md deliberately does not, because the agent must never load it.
+**Do not index TESTS.md or human_description.md in SKILL.md.** Every other non-required file gets a Supporting files entry; these two deliberately do not, because the agent must never load either.
+
+### 7. human_description.md
+
+The package explained to a person, in clean Markdown, rendered as HTML in a UI. No agent reads it. Write it last, because it restates in plain language what the preceding six steps settled — and writing it is a useful check on whether the package actually makes sense.
+
+Its reader is evaluating, not operating: someone who has landed on this package and wants to know what industry it is for, what problem it solves, and what the ontology holds. They may never open the folder. Write for the screen — short paragraphs, bullet summaries, and tables, with no wall of prose anywhere in the file.
+
+**This file calls the model the reference ontology.** It is the first and, for now, the only place that term is used. Do not write "graph model", "graph data model", "schema", or "data model" anywhere in it, and do not rename anything else: SKILL.md, QUERIES.md, GRAPH_MODEL.json, TESTS.md and the rest keep their current wording and their current filenames. This is a deliberate single-file change, not the start of a sweep — do not "helpfully" propagate it.
+
+Four rules on content:
+
+- **No filenames, no Cypher, no JSON.** Never name `GRAPH_MODEL.json`, `QUERIES.md`, `SKILL.md`, `sample-data/`, or any other file. The reader is looking at a rendered page, not a directory listing. Describe what the ontology contains; don't point at where it lives.
+- **No sample data, at all.** Not counts, not seeded entities, not "the bundled synthetic dataset". The file describes the industry and the ontology; the data is out of scope. This is a stricter rule than SKILL.md's, which permits a general mention.
+- **No agent instructions.** No "the agent can help you with", no response shapes, no operational constraints. Nothing in this file addresses a machine.
+- **Plain professional language.** Someone in the industry should recognise their own vocabulary; someone outside it should still follow. Expand a term of art on first use.
+
+Structure — exactly these two `##` sections, in this order, under an `#` heading that is the card title:
+
+````markdown
+# <Card title — the same wording as metadata.neo4j-card-title>
+
+<One or two sentences: what this package is for. This is the line a reader
+skims first, so make it the value statement, not a preamble.>
+
+## Overview
+
+### <The industry>
+
+<Two or three short paragraphs, or a paragraph and a bullet list. Who works
+in this domain, what they are responsible for, and what makes the work hard.
+Ground it in the industry, not in Neo4j.>
+
+### What it helps with
+
+<One or two sentences framing the problems, then a table.>
+
+| Problem | How the reference ontology helps |
+| ------- | -------------------------------- |
+| <A problem stated the way a practitioner would state it> | <What becomes answerable once the domain is modelled this way> |
+
+## Ontology
+
+<Two or three sentences: what the reference ontology represents and how its
+pieces hang together — the shape of it, in words, before the tables.>
+
+### Entities
+
+| Entity | What it represents |
+| ------ | ------------------ |
+| <Label> | <Plain-language meaning, from the model's own description> |
+
+### Properties
+
+| Entity | Property | Type | What it holds |
+| ------ | -------- | ---- | ------------- |
+| <Label> | <property> | <Type> | <Meaning, including unit, encoding or scope where the model states one> |
+
+### Relationships
+
+| Relationship | Direction | What it means |
+| ------------ | --------- | ------------- |
+| <TYPE> | <Label> → <Label> | <Meaning in the from→to direction, and its multiplicity> |
+
+### Relationship properties
+
+| Relationship | Property | Type | What it holds |
+| ------------ | -------- | ---- | ------------- |
+| <TYPE> | <property> | <Type> | <Meaning> |
+````
+
+Notes on the tables:
+
+- **The descriptions come from `description` annotations in the model** — they are the authoritative meaning and this file must not contradict them. Shorten and plain-English them for a reader; never restate them with a different unit, scope or direction. Drop the trailing `` e.g. `...` `` sample values: they are sample data.
+- **Every node, relationship and property in the model appears.** Completeness is the point of the Ontology section — a reader deciding whether the ontology fits their data needs the whole of it, and a table that omits a property is worse than no table.
+- **Where one relationship type is used between more than one pair of nodes, give each pair its own row** with its own meaning. The type name alone is not the distinction; the direction column is.
+- Omit the **Relationship properties** table entirely when no relationship carries a property. Never leave an empty table or an "N/A" row.
+- Use the published label and relationship-type names as they appear in the graph, in code formatting. They are what the reader will see in the browser.
+
+Aim for something a reader gets through in two or three minutes — roughly 400 to 900 words for a typical package, the Ontology tables aside, which are as long as the ontology is. A `human_description.md` that runs long is usually explaining Neo4j rather than the domain.
 
 ## Validate and hand off
 
 Run [VALIDATION.md](VALIDATION.md) in full. Inconsistency between model, data, and queries is the most common failure — and annotations widen that check: descriptions, sample values, query annotations, and CSVs must all tell the same story. The second most common failure is now sample-data detail leaking into a file the consuming agent reads; check QUERIES.md and SKILL.md for it specifically.
 
-Your handoff summary must list every remaining `TODO(review):` with its path (including `inferred description` items the user hasn't confirmed), every query not executed against sample data, whether the model validated against the bundled schema and was accepted by the destination runtime, the graph spec version the package declares, and any assumption that needs domain-owner review.
+Your handoff summary must list every remaining `TODO(review):` with its path (including `inferred description` items the user hasn't confirmed), every query not executed against sample data, whether the model validated against the bundled schema and was accepted by the destination runtime, the graph spec version the package declares, whether `human_description.md` covers every node, relationship and property in the model, and any assumption that needs domain-owner review.
+
+`human_description.md` is the one part of the package nothing downstream verifies — no schema rejects it, no query fails against it, and no agent ever reads it back. Say plainly in the handoff that it needs a human read before the package ships.
