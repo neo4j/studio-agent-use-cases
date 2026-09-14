@@ -1,0 +1,14 @@
+configGroupId,category,optionProperty,description
+CG-WHEELSET,wheelset,wheelSize,Wheel size choice; both wheels take the same size
+CG-GEARING,gearing,gearSystem,"Cassette choice, fixing the number of rear sprockets"
+CG-SHIFTER,shifter,gearSystem,"Shifter choice, matched to the cassette"
+CG-DERAILLEUR,derailleur,gearSystem,"Rear derailleur choice, matched to the cassette"
+CG-FRAME,frame-material,material,Frame material choice
+CG-FINISH,finish,color,Paint finish choice for the frame
+CG-CALIPER,caliper,brakeType,Brake caliper choice
+CG-RIM-26,rim,material,Rim material choice for the 26 inch wheel
+CG-RIM-275,rim,material,Rim material choice for the 27.5 inch wheel
+CG-RIM-29,rim,material,Rim material choice for the 29 inch wheel
+CG-TIRE-26,tire,pattern,Tire tread choice for the 26 inch wheel
+CG-TIRE-275,tire,pattern,Tire tread choice for the 27.5 inch wheel
+CG-TIRE-29,tire,pattern,Tire tread choice for the 29 inch wheel

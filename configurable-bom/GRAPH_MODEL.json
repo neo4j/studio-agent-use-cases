@@ -1,0 +1,571 @@
+{
+  "version": "4.0.0",
+  "name": "Configurable Bill of Materials",
+  "description": "Models a configurable product as a tree of assemblies, fixed parts and explicit configuration decisions, so that a single variant can be resolved from the superset by applying allow and deny constraints, scoring the branches that remain, and costing the result.",
+  "nodes": {
+    "Product": {
+      "label": "Product",
+      "description": "A configurable end product whose bill of materials is not fixed until a variant is resolved. The root of the configurable structure and the anchor every resolution query starts from.",
+      "properties": {
+        "productId": {
+          "type": "STRING",
+          "description": "Unique identifier for the product in the engineering catalog. Expected to be stable across revisions of the configurable structure. e.g. `MB1`.",
+          "key": true
+        },
+        "description": {
+          "type": "STRING",
+          "description": "Human-readable name or specification of the product, as an engineer would recognise it on a drawing or in a catalog.",
+          "mustExist": true
+        }
+      }
+    },
+    "Assembly": {
+      "label": "Assembly",
+      "description": "A reusable sub-assembly that groups fixed parts and further configuration decisions. An assembly may sit directly beneath the product, or be offered as one of the options of a configuration group — in which case selecting it also brings in every decision nested beneath it.",
+      "properties": {
+        "assemblyId": {
+          "type": "STRING",
+          "description": "Unique identifier for the assembly in the engineering catalog. Expected to be stable across revisions. e.g. `A-DRIVETRAIN`.",
+          "key": true
+        },
+        "description": {
+          "type": "STRING",
+          "description": "Human-readable name or specification of the assembly, as an engineer would recognise it on a drawing or in a catalog.",
+          "mustExist": true
+        },
+        "wheelSize": {
+          "type": "STRING",
+          "description": "Option attribute. Nominal wheel diameter in inches, written as a decimal string so that constraint allow and deny lists match it by exact string equality. Set only on assemblies that are offered as options of a configuration group whose optionProperty is wheelSize; absent on every other assembly. e.g. `27.5`."
+        }
+      }
+    },
+    "ConfigGroup": {
+      "label": "ConfigGroup",
+      "description": "A single configuration decision: a named set of interchangeable options, exactly one of which is chosen for any given variant. Configuration groups are where constraints are applied during resolution, and an unresolved group is what makes a variant incomplete.",
+      "properties": {
+        "configGroupId": {
+          "type": "STRING",
+          "description": "Unique identifier for the configuration group in the engineering catalog. Expected to be stable across revisions. e.g. `CG-CALIPER`.",
+          "key": true
+        },
+        "category": {
+          "type": "STRING",
+          "description": "The decision category this group represents, encoded as a lower-case hyphenated token. Constraints are matched to configuration groups by this value, so it is the scoping key of the whole constraint mechanism: two groups sharing a category are governed by the same constraint entry. e.g. `caliper`.",
+          "mustExist": true
+        },
+        "optionProperty": {
+          "type": "STRING",
+          "description": "The name of the property, carried by each of this group's option nodes, whose value distinguishes the options from one another. Written exactly as the graph property name so it can be used to read the value off an option node. Documents what a constraint on this category should filter on; the resolution query itself takes property names from its constraint parameter rather than from here. e.g. `brakeType`.",
+          "mustExist": true
+        },
+        "description": {
+          "type": "STRING",
+          "description": "Human-readable explanation of the decision this group represents, phrased as a configurator would present it to whoever is specifying the product.",
+          "mustExist": true
+        }
+      }
+    },
+    "Part": {
+      "label": "Part",
+      "description": "A procured or manufactured component that is not decomposed further in this model. Parts are the leaves of a resolved bill of materials and the only nodes that carry cost and weight, so every rollup is a sum over the parts a variant reaches.",
+      "properties": {
+        "partId": {
+          "type": "STRING",
+          "description": "Unique identifier for the part in the engineering catalog. Expected to be stable across revisions. e.g. `P-CHAIN`.",
+          "key": true
+        },
+        "description": {
+          "type": "STRING",
+          "description": "Human-readable name or specification of the part, as an engineer would recognise it on a drawing or in a catalog.",
+          "mustExist": true
+        },
+        "cost": {
+          "type": "FLOAT",
+          "description": "Purchase cost of one unit of the part, in the catalog's base currency. Per unit, not per assembly: a rollup multiplies this by the quantities on the path from the product down to the part. e.g. `24.0`.",
+          "mustExist": true
+        },
+        "weight": {
+          "type": "FLOAT",
+          "description": "Mass of one unit of the part in kilograms. Per unit, not per assembly: a rollup multiplies this by the quantities on the path from the product down to the part. e.g. `0.28`.",
+          "mustExist": true
+        },
+        "material": {
+          "type": "STRING",
+          "description": "Option attribute. The material the part is made from, as a catalog term matched by exact string equality in constraint allow and deny lists. Set only on parts offered as options of a configuration group whose optionProperty is material; absent on every other part. e.g. `Alloy`."
+        },
+        "pattern": {
+          "type": "STRING",
+          "description": "Option attribute. The tread pattern of a tire, as a catalog term matched by exact string equality in constraint allow and deny lists. Set only on parts offered as options of a configuration group whose optionProperty is pattern; absent on every other part. e.g. `Trail`."
+        },
+        "gearSystem": {
+          "type": "STRING",
+          "description": "Option attribute. The gearing standard a drivetrain component belongs to, as a catalog term matched by exact string equality in constraint allow and deny lists. Components sharing a value are compatible with one another, which is how one constraint keeps cassette, shifter and derailleur in step. Set only on parts offered as options of a configuration group whose optionProperty is gearSystem; absent on every other part. e.g. `9-Speed`."
+        },
+        "color": {
+          "type": "STRING",
+          "description": "Option attribute. The finish colour of the part, as a catalog term matched by exact string equality in constraint allow and deny lists. Set only on parts offered as options of a configuration group whose optionProperty is color; absent on every other part. e.g. `Black`."
+        },
+        "brakeType": {
+          "type": "STRING",
+          "description": "Option attribute. The braking technology the part implements, as a catalog term matched by exact string equality in constraint allow and deny lists. Set only on parts offered as options of a configuration group whose optionProperty is brakeType; absent on every other part. e.g. `Hydraulic Disc`."
+        }
+      }
+    }
+  },
+  "relationships": {
+    "productRequiresAssembly": {
+      "type": "REQUIRES",
+      "description": "States that building the product requires the given sub-assembly, in the quantity carried on the relationship. A product may require many assemblies, or none; the same assembly may be required by more than one product.",
+      "from": { "node": "Product" },
+      "to": { "node": "Assembly" },
+      "properties": {
+        "qty": {
+          "type": "INTEGER",
+          "description": "Number of the required assembly needed per one of the product. Multiplied along the path when costing or weighing a resolved variant. e.g. `1`.",
+          "mustExist": true
+        },
+        "note": {
+          "type": "STRING",
+          "description": "Free-text engineering note explaining why the requirement exists or how the quantity was arrived at. Not read by any query."
+        }
+      }
+    },
+    "productRequiresConfigGroup": {
+      "type": "REQUIRES",
+      "description": "States that a configuration decision must be made at product level before the bill of materials is complete, and that the chosen option is needed in the quantity carried on the relationship. A product may require many configuration groups, or none; in this model each configuration group is required by exactly one product or assembly.",
+      "from": { "node": "Product" },
+      "to": { "node": "ConfigGroup" },
+      "properties": {
+        "qty": {
+          "type": "INTEGER",
+          "description": "Number of the chosen option needed per one of the product. Multiplied along the path when costing or weighing a resolved variant. e.g. `2`.",
+          "mustExist": true
+        },
+        "note": {
+          "type": "STRING",
+          "description": "Free-text engineering note explaining why the decision exists or how the quantity was arrived at. Not read by any query."
+        }
+      }
+    },
+    "assemblyRequiresConfigGroup": {
+      "type": "REQUIRES",
+      "description": "States that a configuration decision must be made within the assembly before it is complete, and that the chosen option is needed in the quantity carried on the relationship. An assembly may require many configuration groups, or none; in this model each configuration group is required by exactly one product or assembly.",
+      "from": { "node": "Assembly" },
+      "to": { "node": "ConfigGroup" },
+      "properties": {
+        "qty": {
+          "type": "INTEGER",
+          "description": "Number of the chosen option needed per one of the assembly. Multiplied along the path when costing or weighing a resolved variant. e.g. `2`.",
+          "mustExist": true
+        },
+        "note": {
+          "type": "STRING",
+          "description": "Free-text engineering note explaining why the decision exists or how the quantity was arrived at. Not read by any query."
+        }
+      }
+    },
+    "assemblyHasPart": {
+      "type": "HAS_PART",
+      "description": "Attaches a part that is always present in the assembly, in the quantity carried on the relationship — a component with no configuration decision attached to it, so it appears in every variant that reaches the assembly. An assembly may have many such parts, or none; the same part may be used by more than one assembly.",
+      "from": { "node": "Assembly" },
+      "to": { "node": "Part" },
+      "properties": {
+        "qty": {
+          "type": "INTEGER",
+          "description": "Number of the part needed per one of the assembly. Multiplied along the path when costing or weighing a resolved variant. e.g. `2`.",
+          "mustExist": true
+        }
+      }
+    },
+    "configGroupHasOptionPart": {
+      "type": "HAS_OPTION",
+      "description": "Offers a part as one of the interchangeable options of the configuration group. A configuration group offers two or more options, of which resolution keeps exactly one; a part offered as an option is offered by exactly one configuration group. Carries no quantity — how many are needed is stated on the REQUIRES relationship into the group.",
+      "from": { "node": "ConfigGroup" },
+      "to": { "node": "Part" }
+    },
+    "configGroupHasOptionAssembly": {
+      "type": "HAS_OPTION",
+      "description": "Offers a whole sub-assembly as one of the interchangeable options of the configuration group, so that choosing it also brings in every configuration decision nested beneath it. A configuration group offers two or more options, of which resolution keeps exactly one; an assembly offered as an option is offered by exactly one configuration group. Carries no quantity — how many are needed is stated on the REQUIRES relationship into the group.",
+      "from": { "node": "ConfigGroup" },
+      "to": { "node": "Assembly" }
+    },
+    "resolvedProductAssembly": {
+      "type": "RESOLVED_LINK",
+      "description": "Records that, for one named variant, the product's requirement for this assembly was selected and survived pruning. Written by the resolution queries and never imported: it does not exist until a variant is resolved, and is removed when that variant is cleared. At most one such link per variant between the same product and assembly.",
+      "from": { "node": "Product" },
+      "to": { "node": "Assembly" },
+      "properties": {
+        "idVariant": {
+          "type": "STRING",
+          "description": "Identifier of the resolved variant this link belongs to, supplied as a parameter when the variant is resolved. Scopes every resolution query to one configuration so that several variants can coexist in the same graph."
+        },
+        "relType": {
+          "type": "STRING",
+          "description": "The type of the structural relationship this link was resolved from, copied verbatim at resolution time: REQUIRES, HAS_PART or HAS_OPTION. Lets a resolved bill of materials be read back without re-traversing the configurable structure."
+        },
+        "qty": {
+          "type": "INTEGER",
+          "description": "Quantity copied from the structural relationship this link was resolved from, per one of the source node. Absent where the source relationship carried none, so rollups treat a missing value as one."
+        }
+      }
+    },
+    "resolvedProductConfigGroup": {
+      "type": "RESOLVED_LINK",
+      "description": "Records that, for one named variant, the product-level configuration decision was reached and at least one option below it survived constraint filtering. Written by the resolution queries and never imported. More than one such link per variant indicates a decision that constraints left open and scoring has yet to prune.",
+      "from": { "node": "Product" },
+      "to": { "node": "ConfigGroup" },
+      "properties": {
+        "idVariant": {
+          "type": "STRING",
+          "description": "Identifier of the resolved variant this link belongs to, supplied as a parameter when the variant is resolved. Scopes every resolution query to one configuration so that several variants can coexist in the same graph."
+        },
+        "relType": {
+          "type": "STRING",
+          "description": "The type of the structural relationship this link was resolved from, copied verbatim at resolution time: REQUIRES, HAS_PART or HAS_OPTION. Lets a resolved bill of materials be read back without re-traversing the configurable structure."
+        },
+        "qty": {
+          "type": "INTEGER",
+          "description": "Quantity copied from the structural relationship this link was resolved from, per one of the source node. Absent where the source relationship carried none, so rollups treat a missing value as one."
+        }
+      }
+    },
+    "resolvedAssemblyConfigGroup": {
+      "type": "RESOLVED_LINK",
+      "description": "Records that, for one named variant, a configuration decision nested inside the assembly was reached and at least one option below it survived constraint filtering. Written by the resolution queries and never imported. More than one such link per variant indicates a decision that constraints left open and scoring has yet to prune.",
+      "from": { "node": "Assembly" },
+      "to": { "node": "ConfigGroup" },
+      "properties": {
+        "idVariant": {
+          "type": "STRING",
+          "description": "Identifier of the resolved variant this link belongs to, supplied as a parameter when the variant is resolved. Scopes every resolution query to one configuration so that several variants can coexist in the same graph."
+        },
+        "relType": {
+          "type": "STRING",
+          "description": "The type of the structural relationship this link was resolved from, copied verbatim at resolution time: REQUIRES, HAS_PART or HAS_OPTION. Lets a resolved bill of materials be read back without re-traversing the configurable structure."
+        },
+        "qty": {
+          "type": "INTEGER",
+          "description": "Quantity copied from the structural relationship this link was resolved from, per one of the source node. Absent where the source relationship carried none, so rollups treat a missing value as one."
+        }
+      }
+    },
+    "resolvedAssemblyPart": {
+      "type": "RESOLVED_LINK",
+      "description": "Records that, for one named variant, a fixed part of the assembly is present in the resolved bill of materials. Written by the resolution queries and never imported. At most one such link per variant between the same assembly and part.",
+      "from": { "node": "Assembly" },
+      "to": { "node": "Part" },
+      "properties": {
+        "idVariant": {
+          "type": "STRING",
+          "description": "Identifier of the resolved variant this link belongs to, supplied as a parameter when the variant is resolved. Scopes every resolution query to one configuration so that several variants can coexist in the same graph."
+        },
+        "relType": {
+          "type": "STRING",
+          "description": "The type of the structural relationship this link was resolved from, copied verbatim at resolution time: REQUIRES, HAS_PART or HAS_OPTION. Lets a resolved bill of materials be read back without re-traversing the configurable structure."
+        },
+        "qty": {
+          "type": "INTEGER",
+          "description": "Quantity copied from the structural relationship this link was resolved from, per one of the source node. Absent where the source relationship carried none, so rollups treat a missing value as one."
+        }
+      }
+    },
+    "resolvedConfigGroupPart": {
+      "type": "RESOLVED_LINK",
+      "description": "Records that, for one named variant, this part is a surviving option of the configuration group. Written by the resolution queries and never imported. Exactly one such link per variant is a made decision; more than one is a decision still open to scoring; none at all is a decision the constraints could not satisfy.",
+      "from": { "node": "ConfigGroup" },
+      "to": { "node": "Part" },
+      "properties": {
+        "idVariant": {
+          "type": "STRING",
+          "description": "Identifier of the resolved variant this link belongs to, supplied as a parameter when the variant is resolved. Scopes every resolution query to one configuration so that several variants can coexist in the same graph."
+        },
+        "relType": {
+          "type": "STRING",
+          "description": "The type of the structural relationship this link was resolved from, copied verbatim at resolution time: REQUIRES, HAS_PART or HAS_OPTION. Lets a resolved bill of materials be read back without re-traversing the configurable structure."
+        },
+        "qty": {
+          "type": "INTEGER",
+          "description": "Quantity copied from the structural relationship this link was resolved from, per one of the source node. Absent where the source relationship carried none, so rollups treat a missing value as one."
+        }
+      }
+    },
+    "resolvedConfigGroupAssembly": {
+      "type": "RESOLVED_LINK",
+      "description": "Records that, for one named variant, this sub-assembly is a surviving option of the configuration group, bringing every decision nested beneath it into the variant. Written by the resolution queries and never imported. Exactly one such link per variant is a made decision; more than one is a decision still open to scoring; none at all is a decision the constraints could not satisfy.",
+      "from": { "node": "ConfigGroup" },
+      "to": { "node": "Assembly" },
+      "properties": {
+        "idVariant": {
+          "type": "STRING",
+          "description": "Identifier of the resolved variant this link belongs to, supplied as a parameter when the variant is resolved. Scopes every resolution query to one configuration so that several variants can coexist in the same graph."
+        },
+        "relType": {
+          "type": "STRING",
+          "description": "The type of the structural relationship this link was resolved from, copied verbatim at resolution time: REQUIRES, HAS_PART or HAS_OPTION. Lets a resolved bill of materials be read back without re-traversing the configurable structure."
+        },
+        "qty": {
+          "type": "INTEGER",
+          "description": "Quantity copied from the structural relationship this link was resolved from, per one of the source node. Absent where the source relationship carried none, so rollups treat a missing value as one."
+        }
+      }
+    }
+  },
+  "tables": {
+    "products.csv": {
+      "source": "local",
+      "fields": {
+        "productId": { "name": "productId", "type": "string" },
+        "description": { "name": "description", "type": "string" }
+      }
+    },
+    "assemblies.csv": {
+      "source": "local",
+      "fields": {
+        "assemblyId": { "name": "assemblyId", "type": "string" },
+        "description": { "name": "description", "type": "string" },
+        "wheelSize": { "name": "wheelSize", "type": "string" }
+      }
+    },
+    "config_groups.csv": {
+      "source": "local",
+      "fields": {
+        "configGroupId": { "name": "configGroupId", "type": "string" },
+        "category": { "name": "category", "type": "string" },
+        "optionProperty": { "name": "optionProperty", "type": "string" },
+        "description": { "name": "description", "type": "string" }
+      }
+    },
+    "parts.csv": {
+      "source": "local",
+      "fields": {
+        "partId": { "name": "partId", "type": "string" },
+        "description": { "name": "description", "type": "string" },
+        "cost": { "name": "cost", "type": "string" },
+        "weight": { "name": "weight", "type": "string" },
+        "material": { "name": "material", "type": "string" },
+        "pattern": { "name": "pattern", "type": "string" },
+        "gearSystem": { "name": "gearSystem", "type": "string" },
+        "color": { "name": "color", "type": "string" },
+        "brakeType": { "name": "brakeType", "type": "string" }
+      }
+    },
+    "product_requires_assembly.csv": {
+      "source": "local",
+      "fields": {
+        "productId": { "name": "productId", "type": "string" },
+        "assemblyId": { "name": "assemblyId", "type": "string" },
+        "qty": { "name": "qty", "type": "string" },
+        "note": { "name": "note", "type": "string" }
+      }
+    },
+    "product_requires_config_group.csv": {
+      "source": "local",
+      "fields": {
+        "productId": { "name": "productId", "type": "string" },
+        "configGroupId": { "name": "configGroupId", "type": "string" },
+        "qty": { "name": "qty", "type": "string" },
+        "note": { "name": "note", "type": "string" }
+      }
+    },
+    "assembly_requires_config_group.csv": {
+      "source": "local",
+      "fields": {
+        "assemblyId": { "name": "assemblyId", "type": "string" },
+        "configGroupId": { "name": "configGroupId", "type": "string" },
+        "qty": { "name": "qty", "type": "string" },
+        "note": { "name": "note", "type": "string" }
+      }
+    },
+    "assembly_has_part.csv": {
+      "source": "local",
+      "fields": {
+        "assemblyId": { "name": "assemblyId", "type": "string" },
+        "partId": { "name": "partId", "type": "string" },
+        "qty": { "name": "qty", "type": "string" }
+      }
+    },
+    "config_group_has_option_part.csv": {
+      "source": "local",
+      "fields": {
+        "configGroupId": { "name": "configGroupId", "type": "string" },
+        "partId": { "name": "partId", "type": "string" }
+      }
+    },
+    "config_group_has_option_assembly.csv": {
+      "source": "local",
+      "fields": {
+        "configGroupId": { "name": "configGroupId", "type": "string" },
+        "assemblyId": { "name": "assemblyId", "type": "string" }
+      }
+    }
+  },
+  "mappings": [
+    {
+      "type": "NodeMapping",
+      "node": "Product",
+      "table": "products.csv",
+      "mode": "MERGE",
+      "key": ["productId"],
+      "properties": {
+        "productId": { "field": "productId" },
+        "description": { "field": "description" }
+      }
+    },
+    {
+      "type": "NodeMapping",
+      "node": "Assembly",
+      "table": "assemblies.csv",
+      "mode": "MERGE",
+      "key": ["assemblyId"],
+      "properties": {
+        "assemblyId": { "field": "assemblyId" },
+        "description": { "field": "description" },
+        "wheelSize": { "field": "wheelSize" }
+      }
+    },
+    {
+      "type": "NodeMapping",
+      "node": "ConfigGroup",
+      "table": "config_groups.csv",
+      "mode": "MERGE",
+      "key": ["configGroupId"],
+      "properties": {
+        "configGroupId": { "field": "configGroupId" },
+        "category": { "field": "category" },
+        "optionProperty": { "field": "optionProperty" },
+        "description": { "field": "description" }
+      }
+    },
+    {
+      "type": "NodeMapping",
+      "node": "Part",
+      "table": "parts.csv",
+      "mode": "MERGE",
+      "key": ["partId"],
+      "properties": {
+        "partId": { "field": "partId" },
+        "description": { "field": "description" },
+        "cost": { "field": "cost" },
+        "weight": { "field": "weight" },
+        "material": { "field": "material" },
+        "pattern": { "field": "pattern" },
+        "gearSystem": { "field": "gearSystem" },
+        "color": { "field": "color" },
+        "brakeType": { "field": "brakeType" }
+      }
+    },
+    {
+      "type": "RelationshipMapping",
+      "relationship": "productRequiresAssembly",
+      "table": "product_requires_assembly.csv",
+      "mode": "MERGE",
+      "key": [],
+      "from": {
+        "node": "Product",
+        "properties": { "productId": { "field": "productId" } }
+      },
+      "to": {
+        "node": "Assembly",
+        "properties": { "assemblyId": { "field": "assemblyId" } }
+      },
+      "properties": {
+        "qty": { "field": "qty" },
+        "note": { "field": "note" }
+      }
+    },
+    {
+      "type": "RelationshipMapping",
+      "relationship": "productRequiresConfigGroup",
+      "table": "product_requires_config_group.csv",
+      "mode": "MERGE",
+      "key": [],
+      "from": {
+        "node": "Product",
+        "properties": { "productId": { "field": "productId" } }
+      },
+      "to": {
+        "node": "ConfigGroup",
+        "properties": { "configGroupId": { "field": "configGroupId" } }
+      },
+      "properties": {
+        "qty": { "field": "qty" },
+        "note": { "field": "note" }
+      }
+    },
+    {
+      "type": "RelationshipMapping",
+      "relationship": "assemblyRequiresConfigGroup",
+      "table": "assembly_requires_config_group.csv",
+      "mode": "MERGE",
+      "key": [],
+      "from": {
+        "node": "Assembly",
+        "properties": { "assemblyId": { "field": "assemblyId" } }
+      },
+      "to": {
+        "node": "ConfigGroup",
+        "properties": { "configGroupId": { "field": "configGroupId" } }
+      },
+      "properties": {
+        "qty": { "field": "qty" },
+        "note": { "field": "note" }
+      }
+    },
+    {
+      "type": "RelationshipMapping",
+      "relationship": "assemblyHasPart",
+      "table": "assembly_has_part.csv",
+      "mode": "MERGE",
+      "key": [],
+      "from": {
+        "node": "Assembly",
+        "properties": { "assemblyId": { "field": "assemblyId" } }
+      },
+      "to": {
+        "node": "Part",
+        "properties": { "partId": { "field": "partId" } }
+      },
+      "properties": {
+        "qty": { "field": "qty" }
+      }
+    },
+    {
+      "type": "RelationshipMapping",
+      "relationship": "configGroupHasOptionPart",
+      "table": "config_group_has_option_part.csv",
+      "mode": "MERGE",
+      "key": [],
+      "from": {
+        "node": "ConfigGroup",
+        "properties": { "configGroupId": { "field": "configGroupId" } }
+      },
+      "to": {
+        "node": "Part",
+        "properties": { "partId": { "field": "partId" } }
+      }
+    },
+    {
+      "type": "RelationshipMapping",
+      "relationship": "configGroupHasOptionAssembly",
+      "table": "config_group_has_option_assembly.csv",
+      "mode": "MERGE",
+      "key": [],
+      "from": {
+        "node": "ConfigGroup",
+        "properties": { "configGroupId": { "field": "configGroupId" } }
+      },
+      "to": {
+        "node": "Assembly",
+        "properties": { "assemblyId": { "field": "assemblyId" } }
+      }
+    }
+  ],
+  "display": {
+    "nodes": {
+      "Product": { "x": -320, "y": -140 },
+      "Assembly": { "x": -110, "y": 140 },
+      "ConfigGroup": { "x": 110, "y": -140 },
+      "Part": { "x": 320, "y": 140 }
+    }
+  }
+}

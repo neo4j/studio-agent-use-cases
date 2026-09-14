@@ -74,6 +74,29 @@
       }
     },
     {
+      "skillId": "configurable-bom",
+      "files": {
+        "graph": "GRAPH_MODEL.json",
+        "skill": [
+          "sample-data/assemblies.csv",
+          "sample-data/assembly_has_part.csv",
+          "sample-data/assembly_requires_config_group.csv",
+          "sample-data/config_group_has_option_assembly.csv",
+          "sample-data/config_group_has_option_part.csv",
+          "sample-data/config_groups.csv",
+          "sample-data/parts.csv",
+          "sample-data/product_requires_assembly.csv",
+          "sample-data/product_requires_config_group.csv",
+          "sample-data/products.csv",
+          "human_description.md",
+          "QUERIES.md",
+          "SETUP.md",
+          "TESTS.md"
+        ],
+        "markdown": "SKILL.md"
+      }
+    },
+    {
       "skillId": "identity-validation",
       "files": {
         "graph": "GRAPH_MODEL.json",
