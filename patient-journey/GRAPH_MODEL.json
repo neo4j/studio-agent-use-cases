@@ -1,106 +1,208 @@
 {
   "version": "4.0.0",
+  "name": "Patient Journey",
+  "description": "Models a patient's history as a connected clinical record: encounters in sequence, and the observations taken, conditions diagnosed and drugs prescribed at each one, together with the providers and organisations that delivered the care. Answers what one patient's pathway looked like over time, and which conditions and treatments recur together across a population.",
   "nodes": {
     "n:0": {
       "label": "Patient",
+      "description": "A person receiving care, and the anchor of a longitudinal record. Every clinical fact in the model reaches a patient through an encounter rather than attaching to the patient directly, so that when something was recorded is never lost.",
       "properties": {
-        "id": { "type": "STRING", "key": true },
-        "name": { "type": "STRING", "nullable": false },
-        "birthDate": { "type": "ZONED DATETIME", "nullable": false }
+        "id": {
+          "type": "STRING",
+          "description": "Stable identifier for the patient in the source system, expected to be opaque rather than derived from any identifying detail. e.g. `fd65a941-3fa1-337f-28e2-6c9d3922c1af`.",
+          "key": true
+        },
+        "name": {
+          "type": "STRING",
+          "description": "Display name of the patient as held by the source system. Not an identifier — distinct patients may share a name, so it is expected never to be used for matching. e.g. `Gerardo Covarrubias`.",
+          "nullable": false
+        },
+        "birthDate": {
+          "type": "ZONED DATETIME",
+          "description": "Date of birth, as an ISO 8601 zoned datetime. Only the calendar date carries meaning; the time and zone are an artefact of importing a date into a temporal type and should not be read as a time of birth. e.g. `1951-09-13T00:00:00Z`.",
+          "nullable": false
+        }
       }
     },
     "n:1": {
       "label": "Encounter",
+      "description": "A single episode of care — one visit, admission or consultation. The pivot of the whole model: observations, diagnoses, prescriptions and the attending provider all hang off the encounter, which is what gives every clinical fact a date and a context.",
       "properties": {
-        "id": { "type": "STRING", "key": true },
-        "date": { "type": "ZONED DATETIME", "nullable": false },
-        "type": { "type": "STRING", "nullable": false }
+        "id": {
+          "type": "STRING",
+          "description": "Stable identifier for the encounter in the source system. e.g. `512815bc-0b5c-bac3-ec59-9eb9fc945312`.",
+          "key": true
+        },
+        "date": {
+          "type": "ZONED DATETIME",
+          "description": "Date the encounter took place, as an ISO 8601 zoned datetime. Only the calendar date carries meaning; the time and zone are an artefact of importing a date into a temporal type. Ordering on this is what reconstructs a pathway. e.g. `2005-05-26T00:00:00Z`.",
+          "nullable": false
+        },
+        "type": {
+          "type": "STRING",
+          "description": "Class of encounter, as a lower-case keyword from the source system's own small vocabulary rather than a coded terminology value. e.g. `wellness`.",
+          "nullable": false
+        }
       }
     },
     "n:2": {
       "label": "Observation",
+      "description": "A single measurement or test result recorded at an encounter — a vital sign or a lab value. Each observation belongs to exactly one encounter and is never shared between patients, which is what distinguishes it from a condition or a drug.",
       "properties": {
-        "id": { "type": "STRING", "key": true },
-        "code": { "type": "STRING", "nullable": false },
-        "description": { "type": "STRING", "nullable": false },
-        "value": { "type": "STRING", "nullable": false },
-        "units": { "type": "STRING", "nullable": false }
+        "id": {
+          "type": "STRING",
+          "description": "Stable identifier for this individual result. e.g. `obs-512815bc-001`.",
+          "key": true
+        },
+        "code": {
+          "type": "STRING",
+          "description": "Code for what was measured, from a standard observation terminology (LOINC in the bundled example). Expected to be the code system's own notation, unchanged. e.g. `8480-6`.",
+          "nullable": false
+        },
+        "description": {
+          "type": "STRING",
+          "description": "Human-readable name of what was measured, corresponding to `code`. Carried alongside the code so results are legible without a terminology lookup. e.g. `Systolic Blood Pressure`.",
+          "nullable": false
+        },
+        "value": {
+          "type": "STRING",
+          "description": "The measured result, held as text so that numeric, coded and free-text results can share one property. Numeric comparisons therefore require an explicit cast; the property is expected to carry no unit, which lives in `units`. e.g. `148`.",
+          "nullable": false
+        },
+        "units": {
+          "type": "STRING",
+          "description": "Unit of `value`, in UCUM notation. Expected to be absent or meaningless for non-numeric results. e.g. `mm[Hg]`.",
+          "nullable": false
+        }
       }
     },
     "n:3": {
       "label": "Condition",
+      "description": "A clinical condition, shared across the whole population rather than owned by a patient. One node per standardised code, so that every patient diagnosed with it connects to the same node — which is precisely what makes cross-patient comorbidity analysis a traversal. If source data carries local codes instead, these nodes will not merge and population queries silently mislead.",
       "properties": {
-        "code": { "type": "STRING", "key": true },
-        "description": { "type": "STRING", "nullable": false }
+        "code": {
+          "type": "STRING",
+          "description": "The condition's identifier in a standardised clinical terminology (SNOMED CT in the bundled example), and the key on which patients' diagnoses converge. e.g. `59621000`.",
+          "key": true
+        },
+        "description": {
+          "type": "STRING",
+          "description": "Human-readable name of the condition, corresponding to `code`. e.g. `Hypertension`.",
+          "nullable": false
+        }
       }
     },
     "n:4": {
       "label": "Drug",
+      "description": "A medication, shared across the whole population rather than owned by a patient. One node per standardised code, so that co-prescription and treatment-pattern analysis across patients becomes a traversal. The same caution about local codes applies as for conditions.",
       "properties": {
-        "code": { "type": "STRING", "key": true },
-        "name": { "type": "STRING", "nullable": false }
+        "code": {
+          "type": "STRING",
+          "description": "The drug's identifier in a standardised medication terminology (RxNorm in the bundled example), and the key on which patients' prescriptions converge. e.g. `309362`.",
+          "key": true
+        },
+        "name": {
+          "type": "STRING",
+          "description": "Human-readable name of the medication, corresponding to `code` and conventionally including strength and form. e.g. `Clopidogrel 75 MG Oral Tablet`.",
+          "nullable": false
+        }
       }
     },
     "n:5": {
       "label": "Provider",
+      "description": "A clinician who delivers care at encounters. Held as an entity so that workload and referral patterns can be measured across encounters and patients.",
       "properties": {
-        "id": { "type": "STRING", "key": true },
-        "name": { "type": "STRING", "nullable": false }
+        "id": {
+          "type": "STRING",
+          "description": "Stable identifier for the provider in the source system. e.g. `6e73bd55-65e7-325b-a8c1-e4f8547461b3`.",
+          "key": true
+        },
+        "name": {
+          "type": "STRING",
+          "description": "Display name of the provider. Not an identifier. e.g. `Sondra Botsford`.",
+          "nullable": false
+        }
       }
     },
     "n:6": {
       "label": "Speciality",
+      "description": "A field of clinical practice, shared by every provider who works in it. Keyed on the speciality's name rather than on a code, so providers converge only when the source system spells the speciality identically.",
       "properties": {
-        "name": { "type": "STRING", "key": true }
+        "name": {
+          "type": "STRING",
+          "description": "Name of the speciality as the source system records it, and the key on which providers converge. e.g. `General Practice`.",
+          "key": true
+        }
       }
     },
     "n:7": {
       "label": "Organisation",
+      "description": "A healthcare facility or provider organisation that clinicians belong to — the institutional level above the individual provider.",
       "properties": {
-        "id": { "type": "STRING", "key": true },
-        "name": { "type": "STRING", "nullable": false },
-        "address": { "type": "STRING", "nullable": true }
+        "id": {
+          "type": "STRING",
+          "description": "Stable identifier for the organisation in the source system. e.g. `be4c63f3-8d38-3fa9-a183-62045b5c85f6`.",
+          "key": true
+        },
+        "name": {
+          "type": "STRING",
+          "description": "Name of the organisation as published. e.g. `VA Boston Healthcare System`.",
+          "nullable": false
+        },
+        "address": {
+          "type": "STRING",
+          "description": "Postal address of the organisation as a single unparsed line, with no separate town, region or postcode fields and no geocoding. e.g. `150 South Huntington Avenue Jamaica Plain MA`.",
+          "nullable": true
+        }
       }
     }
   },
   "relationships": {
     "r:0": {
       "type": "HAS_ENCOUNTER",
+      "description": "Attaches an episode of care to the patient who received it. Exactly one patient per encounter; a patient may have many encounters, or none. Every clinical fact in the model reaches its patient along this link.",
       "from": { "node": "n:0" },
       "to": { "node": "n:1" }
     },
     "r:1": {
       "type": "NEXT",
+      "description": "Chains an encounter to the one that followed it for the same patient, in date order — the explicit sequence that makes a care pathway walkable without sorting. At most one following encounter and at most one preceding encounter, so the chain is a simple line per patient and never branches. Not every encounter is chained, so the absence of this link does not mean an encounter was the patient's last; traversals along it are expected to be bounded by an explicit maximum depth.",
       "from": { "node": "n:1" },
       "to": { "node": "n:1" }
     },
     "r:2": {
       "type": "HAS_OBSERVATION",
+      "description": "Records that this measurement was taken at this encounter. Exactly one encounter per observation; an encounter may carry several observations, or none.",
       "from": { "node": "n:1" },
       "to": { "node": "n:2" }
     },
     "r:3": {
       "type": "DIAGNOSED",
+      "description": "Records that this condition was diagnosed at this encounter. An encounter may diagnose several conditions, or none; a condition, being shared across the population, is diagnosed at many encounters. Two patients meet at the condition node, which is what comorbidity analysis traverses.",
       "from": { "node": "n:1" },
       "to": { "node": "n:3" }
     },
     "r:4": {
       "type": "PRESCRIBED",
+      "description": "Records that this medication was prescribed at this encounter. An encounter may prescribe several drugs, or none; a drug, being shared across the population, is prescribed at many encounters. Repeated pairs of drugs reached this way are what co-prescription analysis counts.",
       "from": { "node": "n:1" },
       "to": { "node": "n:4" }
     },
     "r:5": {
       "type": "ATTENDED_BY",
+      "description": "Records the clinician who delivered this encounter. Exactly one attending provider per encounter; a provider attends many encounters, or none. Counting along this link gives provider workload.",
       "from": { "node": "n:1" },
       "to": { "node": "n:5" }
     },
     "r:6": {
       "type": "HAS_SPECIALITY",
+      "description": "Places a provider in their field of practice. Exactly one speciality per provider; a speciality is shared by many providers, or by none. The model records a provider's current speciality only, not a history of it.",
       "from": { "node": "n:5" },
       "to": { "node": "n:6" }
     },
     "r:7": {
       "type": "BELONGS_TO",
+      "description": "Places a provider within the organisation they practise at. Exactly one organisation per provider, so a clinician working across several sites cannot be represented without extending the model; an organisation may have many providers, or none.",
       "from": { "node": "n:5" },
       "to": { "node": "n:7" }
     }

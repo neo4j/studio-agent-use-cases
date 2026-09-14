@@ -1,30 +1,56 @@
 {
   "version": "4.0.0",
+  "name": "Retail Banking Transaction Fraud Ring",
+  "description": "Models retail banking payments as accounts joined by transaction nodes, so that money moved through a chain of accounts and back to where it started is detectable as a cycle rather than as a self-join. Answers which accounts form a closed ring, whether the payments around that ring run in chronological order, and whether the amount decays consistently as it moves.",
   "nodes": {
     "n:0": {
       "label": "Account",
+      "description": "A retail bank account that can send and receive payments. Carries only its identifier: the model deliberately holds no customer, product or balance detail, so an account is a point money passes through rather than a party profile.",
       "properties": {
-        "accountNumber": { "type": "INTEGER", "key": true }
+        "accountNumber": {
+          "type": "INTEGER",
+          "description": "Identifier for the account, unique across the institution. Expected to be an internal account key rather than a printed sort-code-and-number pair, and to be stable for the life of the account. e.g. `1`.",
+          "key": true
+        }
       }
     },
     "n:1": {
       "label": "Transaction",
+      "description": "A single payment moving money from one account to another. Modelled as a node rather than as a relationship so that it can carry its own amount and timestamp and be traversed from either endpoint — which is what makes the chronological-order and amount-decay checks in ring detection expressible at all.",
       "properties": {
-        "transactionId": { "type": "STRING", "key": true },
-        "amount": { "type": "FLOAT", "nullable": false },
-        "currency": { "type": "STRING", "nullable": false },
-        "date": { "type": "ZONED DATETIME", "nullable": false }
+        "transactionId": {
+          "type": "STRING",
+          "description": "Identifier for the payment, unique across the institution. Expected to be the source system's own transaction reference. e.g. `TXN001`.",
+          "key": true
+        },
+        "amount": {
+          "type": "FLOAT",
+          "description": "Value of money moved by this payment, in the major units of `currency` rather than in minor units — a value of 1000.00 on a GBP payment is one thousand pounds, not one thousand pence. Always positive: direction is carried by the relationships, not by the sign. e.g. `1000.00`.",
+          "nullable": false
+        },
+        "currency": {
+          "type": "STRING",
+          "description": "ISO 4217 alphabetic currency code of `amount`, recorded in whatever case the source system supplies rather than normalised to upper case. A single ring is only comparable on amount when every payment in it shares one currency; the model performs no conversion. e.g. `gbp`.",
+          "nullable": false
+        },
+        "date": {
+          "type": "ZONED DATETIME",
+          "description": "Instant at which the payment was executed, as an ISO 8601 zoned datetime. Ordering payments on this is what separates a ring that moves money forwards in time from an arbitrary cycle, so it is expected to be a true execution timestamp rather than a posting or value date. e.g. `2023-10-24T10:00:00Z`.",
+          "nullable": false
+        }
       }
     }
   },
   "relationships": {
     "r:0": {
       "type": "BENEFITS_TO",
+      "description": "Credits the payment to the account that receives the money — the beneficiary side of the transfer. Exactly one beneficiary account per payment; an account may benefit from many payments, or from none. Following this out of a payment and then back out through the beneficiary's own outgoing payments is how a ring is walked.",
       "from": { "node": "n:1" },
       "to": { "node": "n:0" }
     },
     "r:1": {
       "type": "PERFORMS",
+      "description": "Attributes the payment to the account the money leaves — the originating side of the transfer. Exactly one originating account per payment; an account may perform many payments, or none. Read together with the beneficiary link it gives each payment a direction, which is what makes cycle detection meaningful rather than merely finding connected accounts.",
       "from": { "node": "n:0" },
       "to": { "node": "n:1" }
     }
