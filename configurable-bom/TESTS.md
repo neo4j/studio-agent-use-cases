@@ -36,6 +36,17 @@ and never shown to the consuming agent.
 Check after import: 60 nodes, 61 relationships, 0 relationships of type
 `RESOLVED_LINK`.
 
+**On `RESOLVED_LINK` and the model.** The model declares only the six structural
+relationships. It does not declare `RESOLVED_LINK`, and must not: Import
+validates that every relationship a model declares has a source table and a
+complete column mapping, including both node ID columns. A query-created
+relationship has no source data to point at, so declaring it puts the import
+definition into a permanent error state — the six entries this package
+originally carried produced six unmappable relationships and blocked the import
+outright. The definition of `RESOLVED_LINK` lives in `SKILL.md` instead. This is
+a deliberate, documented exception to the rule that every relationship type a
+query references resolves in the model.
+
 ## Sample-data profile
 
 A single configurable mountain bike, deliberately built so that all three of the

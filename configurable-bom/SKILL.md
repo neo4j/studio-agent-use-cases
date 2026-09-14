@@ -66,12 +66,21 @@ structure or start importing data.
 - `REQUIRES` and `HAS_PART` carry `qty`, the number needed per one of the parent.
   Rollups multiply these along the path, so a quantity above a decision
   multiplies everything chosen beneath it.
-- `RESOLVED_LINK` is written by the resolution queries, never imported. It
-  mirrors a structural edge and tags it with a variant name, so many resolved
-  variants coexist over one structure without copying it. How many leave a
-  decision is the whole diagnostic: exactly one is a decision made, more than
-  one is a decision still open to scoring, none at all is a decision the
-  constraints could not satisfy.
+- `RESOLVED_LINK` is written by the resolution queries and **is deliberately
+  absent from `GRAPH_MODEL.json`**, because that file describes what Import
+  loads and this relationship has no source data — it does not exist until a
+  variant is resolved. Its definition therefore lives here:
+
+  | | |
+  | --- | --- |
+  | Mirrors | any structural edge: `REQUIRES`, `HAS_PART` or `HAS_OPTION`, between the same two nodes and in the same direction |
+  | `idVariant` | String. Name of the variant the selection belongs to, so many resolved variants coexist over one structure without copying it |
+  | `relType` | String. The structural relationship type it was resolved from, copied at resolution time |
+  | `qty` | Integer, optional. Quantity copied from that relationship, per one of the source node. Absent where the source carried none, in which case rollups treat it as one |
+
+  How many leave a decision is the whole diagnostic: exactly one is a decision
+  made, more than one is a decision still open to scoring, none at all is a
+  decision the constraints could not satisfy.
 - Design rationale: the model follows the source page, with three deliberate
   departures. Property names are camelCase throughout (`idVariant`, `relType`,
   `wheelSize`) rather than the page's snake_case, matching Neo4j convention.
@@ -79,7 +88,11 @@ structure or start importing data.
   decision in this model varies along exactly one attribute and the queries take
   property names from their constraint parameter rather than from the node. The
   resolution query is scoped to one `productId`, which the page's version is not,
-  so it does not walk a catalog holding many products.
+  so it does not walk a catalog holding many products. Separately, the model
+  declares only the six structural relationships: Import requires a table and a
+  full column mapping for every relationship a model declares, so a
+  query-created one cannot be expressed there without inventing source data for
+  it.
 - Full schema and mappings are in `GRAPH_MODEL.json`; runnable Cypher is in
   `QUERIES.md`.
 - Treat the model's `description` annotations as the authoritative meaning of
@@ -96,7 +109,7 @@ structure or start importing data.
 | Alternative | option nodes reached by `HAS_OPTION` | A node carrying the attribute an allow or deny list compares, readable by property name, with two or more alternatives per decision |
 | Costed leaf | `Part` | A node carrying the numeric measures a rollup sums, stated per unit rather than per parent |
 | Quantity | `qty` on `REQUIRES` and `HAS_PART` | A multiplier on the edge rather than on the node, so the same component counts differently under different parents |
-| Selection record | `RESOLVED_LINK` | A per-variant marker written onto the edge, so resolutions coexist without duplicating the structure |
+| Selection record | `RESOLVED_LINK`, created by the queries rather than imported | A per-variant marker written onto the edge, so resolutions coexist without duplicating the structure |
 
 When the user's schema differs from this model, map their labels onto these
 roles before rewriting anything from `QUERIES.md`. A role with no counterpart in

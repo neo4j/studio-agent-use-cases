@@ -12,6 +12,10 @@ result.
   (`-[:TYPE]->*`, `-[:TYPE]->{1,8}`) and the negated type predicate
   (`-[r:!RESOLVED_LINK]->`). None of this runs on an earlier version.
 - The model in `GRAPH_MODEL.json`, loaded through the Import flow.
+- `RESOLVED_LINK` is **not** declared in `GRAPH_MODEL.json` and does not exist
+  in a freshly imported database. The queries below create it, and `SKILL.md`
+  carries its definition. Every other label, relationship type and property used
+  here is in the model.
 - `SETUP.md` carries one recommended index. Nothing here fails without it, but
   every query that filters `RESOLVED_LINK` by variant scans without it.
 - No APOC or GDS.
@@ -427,8 +431,9 @@ DELETE r
 The Import flow creates these from the key definitions in `GRAPH_MODEL.json`.
 They are listed here so the expected schema can be verified against a live
 database — `SHOW CONSTRAINTS` should report all four — not so they can be
-created by hand. There are no constraints on `RESOLVED_LINK`: it is written by
-the queries above rather than imported.
+created by hand. There are no constraints on `RESOLVED_LINK`, and no definition
+of it in the model either: it is written by the queries above rather than
+imported.
 
 ```cypher
 CREATE CONSTRAINT product_key IF NOT EXISTS
