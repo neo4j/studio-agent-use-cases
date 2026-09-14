@@ -46,7 +46,7 @@ The two connections are read in opposite spirits. Containment runs from a child 
 | `Standard` | `id` | String | Short identifier for the standard as the regulator publishes it, typically the sourcebook code. Section identifiers within that standard are built from this prefix |
 | `Section` | `id` | String | Section identifier exactly as the regulator cites it, including the standard prefix — a sourcebook code followed by chapter and section numbers. Unique across every standard, not merely within one |
 | `Section` | `title` | String | Long heading of the section as published, conventionally repeating the section identifier before the heading text |
-| `Section` | `lastUpdated` | Date | Calendar date on which the section's current text took effect — the in-force date of its most recent amendment, not the date that amendment was announced or published. This is what regulatory-change analysis filters on |
+| `Section` | `lastUpdated` | Zoned datetime | Date on which the section's current text took effect — the in-force date of its most recent amendment, not the date that amendment was announced or published. Only the calendar date carries meaning; the time and zone are an artefact of storing a date in a temporal type. This is what regulatory-change analysis filters on |
 
 ### Relationships
 
