@@ -125,7 +125,8 @@ ORDER BY direction, relatedSectionId
  *                 a given date, with the standard they belong to and how many
  *                 other sections cite them.
  * @params         changedSince - Earliest in-force date to include, as an
- *                     ISO 8601 date string (YYYY-MM-DD). Set it to the start
+ *                     ISO 8601 date or zoned-datetime string (YYYY-MM-DD or
+ *                     YYYY-MM-DDTHH:MM:SSZ). Set it to the start
  *                     of the regulatory-change review cycle in hand, so the
  *                     result is exactly what has not yet been assessed. Where
  *                     no fixed cycle exists, widen from the date of the last
@@ -149,7 +150,7 @@ ORDER BY direction, relatedSectionId
  * TODO(review): unproven query
  */
 MATCH (section:Section)
-WHERE section.lastUpdated >= date($changedSince)
+WHERE section.lastUpdated >= datetime($changedSince)
 OPTIONAL MATCH (section)-[:DEPENDS_ON*1..4]->(std:Standard)
 OPTIONAL MATCH (citing:Section)-[:RELATED]->(section)
 RETURN coalesce(std.id, '(unresolved)') AS standard,
@@ -311,7 +312,8 @@ ORDER BY citingStandard, citedStandard, citingSectionId
  *                 date and which at least a stated number of other sections
  *                 cite, with the standards those citing sections belong to.
  * @params         changedSince - Earliest in-force date to include, as an
- *                     ISO 8601 date string (YYYY-MM-DD). Set it to the start
+ *                     ISO 8601 date or zoned-datetime string (YYYY-MM-DD or
+ *                     YYYY-MM-DDTHH:MM:SSZ). Set it to the start
  *                     of the review cycle in hand, as for the change sweep.
  *                 minInboundCitations - Minimum number of sections that must
  *                     cite the changed section. Start at 2: a threshold of 1
@@ -339,7 +341,7 @@ ORDER BY citingStandard, citedStandard, citingSectionId
  * TODO(review): unproven query
  */
 MATCH (cited:Section)
-WHERE cited.lastUpdated >= date($changedSince)
+WHERE cited.lastUpdated >= datetime($changedSince)
 MATCH (citing:Section)-[:RELATED]->(cited)
 OPTIONAL MATCH (cited)-[:DEPENDS_ON*1..4]->(std:Standard)
 OPTIONAL MATCH (citing)-[:DEPENDS_ON*1..4]->(citingStd:Standard)
