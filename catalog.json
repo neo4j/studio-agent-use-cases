@@ -148,6 +148,34 @@
         ],
         "markdown": "SKILL.md"
       }
+    },
+    {
+      "skillId": "attack-path-analysis",
+      "files": {
+        "graph": "GRAPH_MODEL.json",
+        "skill": [
+          "sample-data/applications.csv",
+          "sample-data/cloud_services.csv",
+          "sample-data/compute_instances.csv",
+          "sample-data/cves.csv",
+          "sample-data/endpoint_resolves_to.csv",
+          "sample-data/endpoints.csv",
+          "sample-data/iam_policies.csv",
+          "sample-data/identities.csv",
+          "sample-data/identity_assumes.csv",
+          "sample-data/instance_can_reach.csv",
+          "sample-data/instance_has_vulnerability.csv",
+          "sample-data/instance_runs.csv",
+          "sample-data/instance_runs_as.csv",
+          "sample-data/policy_accesses_application.csv",
+          "sample-data/policy_accesses_service.csv",
+          "human_description.md",
+          "QUERIES.md",
+          "SETUP.md",
+          "TESTS.md"
+        ],
+        "markdown": "SKILL.md"
+      }
     }
   ]
 }

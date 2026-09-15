@@ -1,0 +1,10 @@
+endpointId,dnsName,port,protocol
+EP-001,shop.northwind.example,443,https
+EP-002,legacy.northwind.example,443,https
+EP-003,vpn.northwind.example,443,https
+EP-004,mail.northwind.example,25,smtp
+EP-005,api.northwind.example,443,https
+EP-006,status.northwind.example,80,http
+EP-007,build.northwind.example,443,https
+EP-008,staging.northwind.example,443,https
+EP-009,sftp.northwind.example,22,ssh

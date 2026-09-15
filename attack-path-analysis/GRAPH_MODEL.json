@@ -1,0 +1,635 @@
+{
+  "version": "4.0.0",
+  "name": "Attack Path Analysis",
+  "description": "Relates internet-facing endpoints, compute instances, vulnerabilities, workload identities, IAM policies, cloud services and business applications so that multi-hop routes from an external foothold to a high-value asset can be traversed as paths rather than inferred from separate inventories. Answers which exposed hosts carry an exploitable vulnerability, where an attacker could move laterally from there, which crown-jewel applications and sensitive cloud data those routes terminate at, which intermediate hosts most routes depend on, and how much a single compromised identity would reach.",
+  "nodes": {
+    "Endpoint": {
+      "label": "Endpoint",
+      "description": "A network entry point reachable from the public internet: one listening service, identified by the public DNS name and port an unauthenticated attacker would connect to. An endpoint is the outermost step of an attack path and carries no vulnerability of its own; the exposure it creates belongs to the compute instances it resolves to.",
+      "properties": {
+        "endpointId": {
+          "type": "STRING",
+          "description": "Unique identifier for the internet-facing entry point. Expected to be stable across scans of the external attack surface. e.g. `EP-001`.",
+          "key": true
+        },
+        "dnsName": {
+          "type": "STRING",
+          "description": "Public DNS name an external attacker resolves to reach this entry point. Not unique across endpoints: the same name exposed on two ports is two endpoints. e.g. `shop.northwind.example`.",
+          "mustExist": true
+        },
+        "port": {
+          "type": "INTEGER",
+          "description": "TCP port on which this entry point accepts connections from the public internet. One port per endpoint, not a range and not a list. e.g. `443`.",
+          "mustExist": true
+        },
+        "protocol": {
+          "type": "STRING",
+          "description": "Application-layer protocol served on that port, as a lowercase identifier. Expected to be one of `https`, `http`, `ssh`, `smtp`, `postgres`, `mysql`. e.g. `https`."
+        }
+      }
+    },
+    "ComputeInstance": {
+      "label": "ComputeInstance",
+      "description": "A host an attacker can execute code on: a virtual machine, bare-metal server or container host. The unit of lateral movement in this model — every hop of an internal attack path is one compute instance to the next. Vulnerabilities are carried here, not on the applications the host runs.",
+      "properties": {
+        "instanceId": {
+          "type": "STRING",
+          "description": "Unique identifier for the compute instance. Expected to be the cloud or CMDB instance identifier, stable for the life of the host. e.g. `CI-001`.",
+          "key": true
+        },
+        "hostname": {
+          "type": "STRING",
+          "description": "Operational hostname of the instance, for human recognition in results. Not an identifier: expected to be unique in practice but not relied on as one. e.g. `edge-proxy-01`.",
+          "mustExist": true
+        },
+        "environment": {
+          "type": "STRING",
+          "description": "Deployment environment the instance belongs to, as a lowercase identifier. Expected to be one of `production`, `staging`, `development`. Governs how seriously an exposure on the host should be read: an exploitable host in a non-production environment is only material if a path leads from it into production. e.g. `production`.",
+          "mustExist": true
+        },
+        "networkSegment": {
+          "type": "STRING",
+          "description": "Label of the network zone or subnet the instance sits in, at the granularity segmentation rules are written at. A free-form label rather than a closed set, since segment naming is site-specific. Two instances sharing a segment are not implied to reach each other — reachability is stated only by CAN_REACH. e.g. `dmz`."
+        }
+      }
+    },
+    "CVE": {
+      "label": "CVE",
+      "description": "A published software vulnerability record, identified by its CVE identifier, together with the severity and exploitation signals used to judge it. Describes the flaw in isolation; whether the flaw matters in this estate is what the surrounding paths establish.",
+      "properties": {
+        "cveId": {
+          "type": "STRING",
+          "description": "CVE identifier as published by the CVE Program, in `CVE-YYYY-NNNN` form. e.g. `CVE-2023-4966`.",
+          "key": true
+        },
+        "cvssScore": {
+          "type": "FLOAT",
+          "description": "CVSS v3.1 base score, 0.0 to 10.0. Severity of the vulnerability in isolation, with no account taken of this estate's exposure, compensating controls or asset value — the context the graph supplies separately. Not a temporal or environmental score. e.g. `9.4`.",
+          "mustExist": true
+        },
+        "severity": {
+          "type": "STRING",
+          "description": "Qualitative severity band derived from the CVSS v3.1 base score, upper case. Expected to be one of `LOW`, `MEDIUM`, `HIGH`, `CRITICAL`. Redundant with cvssScore and carried for readability in results. e.g. `CRITICAL`."
+        },
+        "epssScore": {
+          "type": "FLOAT",
+          "description": "EPSS probability, 0.0 to 1.0, that the vulnerability will be exploited in the wild within the next 30 days. A likelihood, not a severity: a high EPSS on a low CVSS flaw means a weak vulnerability that is actually being used. Expected to be refreshed daily from the EPSS feed in a live deployment. e.g. `0.97`."
+        },
+        "knownExploited": {
+          "type": "BOOLEAN",
+          "description": "True when the vulnerability appears in the CISA Known Exploited Vulnerabilities catalogue, meaning exploitation has been observed in the wild rather than merely predicted. The strongest single signal for prioritising a foothold. e.g. `true`.",
+          "mustExist": true
+        },
+        "publishedDate": {
+          "type": "DATE",
+          "description": "Date the vulnerability record was first published, as a calendar date with no time or zone. First publication, not last modification, and not the date the flaw was introduced or discovered. e.g. `2023-10-10`."
+        }
+      }
+    },
+    "Application": {
+      "label": "Application",
+      "description": "A deployed business application, owned by a business unit and ranked by criticality. The business end of an attack path: what makes a route worth caring about is the tier of the application it terminates at, not the number of hops it took.",
+      "properties": {
+        "applicationId": {
+          "type": "STRING",
+          "description": "Unique identifier for the application in the application portfolio or CMDB. e.g. `APP-001`.",
+          "key": true
+        },
+        "name": {
+          "type": "STRING",
+          "description": "Business name of the application, for recognition in results. e.g. `Payment Ledger`.",
+          "mustExist": true
+        },
+        "tier": {
+          "type": "STRING",
+          "description": "Business criticality tier. Expected to be one of `P0`, `P1`, `P2`, `P3`, where the number ascends as criticality descends: `P0` is the most critical — the crown jewels whose compromise is materially damaging — and `P3` the least. Assigned by the business, not derived from the graph. e.g. `P0`.",
+          "mustExist": true
+        },
+        "businessUnit": {
+          "type": "STRING",
+          "description": "Business unit accountable for the application, used to route a finding to an owner. A free-form label rather than a closed set. e.g. `Finance`."
+        }
+      }
+    },
+    "Identity": {
+      "label": "Identity",
+      "description": "An IAM principal whose permissions an attacker inherits on compromising something: the workload identity a compute instance's processes run as, or a role that can be assumed. The pivot from network compromise to data access — permissions reached through an identity need no further lateral movement.",
+      "properties": {
+        "identityId": {
+          "type": "STRING",
+          "description": "Unique identifier for the IAM principal, expected to be the identity provider's own principal or role identifier. e.g. `ID-001`.",
+          "key": true
+        },
+        "name": {
+          "type": "STRING",
+          "description": "Principal name of the identity as it appears in the identity provider. e.g. `svc-edge-proxy`.",
+          "mustExist": true
+        },
+        "identityType": {
+          "type": "STRING",
+          "description": "Kind of principal, as a lowercase identifier. Expected to be one of `service` (a workload credential bound to a host), `role` (an assumable set of permissions) or `human` (an interactive user account). e.g. `service`."
+        }
+      }
+    },
+    "IAMPolicy": {
+      "label": "IAMPolicy",
+      "description": "A named permission grant that an identity holds, standing between the identity and the resources it can act on. Modelled as its own node rather than collapsed into the identity because one policy is typically attached to many identities, which makes an over-permissive policy a single point that many attack paths pass through.",
+      "properties": {
+        "policyId": {
+          "type": "STRING",
+          "description": "Unique identifier for the permission grant in the identity provider. e.g. `POL-001`.",
+          "key": true
+        },
+        "name": {
+          "type": "STRING",
+          "description": "Policy name as it appears in the identity provider. e.g. `edge-logs-write`.",
+          "mustExist": true
+        },
+        "permissionLevel": {
+          "type": "STRING",
+          "description": "Coarse level of access the policy grants, as a lowercase identifier. Expected to be one of `read`, `write`, `admin`. States the highest action the policy permits on any resource it grants access to, not the typical or intended one — a policy allowing one administrative action is `admin`. e.g. `write`."
+        }
+      }
+    },
+    "CloudService": {
+      "label": "CloudService",
+      "description": "A managed cloud resource holding or moving data — an object store, database, secret store or message queue — reachable through IAM permissions rather than through the network path. The exfiltration end of an attack path, and the reason an identity's blast radius matters independently of what the network topology allows.",
+      "properties": {
+        "serviceId": {
+          "type": "STRING",
+          "description": "Unique identifier for the cloud resource, expected to be its provider resource identifier. e.g. `CS-004`.",
+          "key": true
+        },
+        "name": {
+          "type": "STRING",
+          "description": "Resource name of the cloud service as it appears in the provider console. e.g. `payment-card-vault`.",
+          "mustExist": true
+        },
+        "serviceType": {
+          "type": "STRING",
+          "description": "Kind of cloud resource, as a lowercase hyphenated identifier. Expected to be one of `object-store`, `relational-database`, `secret-store`, `message-queue`. e.g. `secret-store`."
+        },
+        "dataClassification": {
+          "type": "STRING",
+          "description": "Sensitivity of the data the resource holds, as a lowercase identifier. Expected to be one of `public`, `internal`, `confidential`, `restricted`, in ascending order of sensitivity, so `restricted` is the most sensitive. Assigned by data governance, not derived from the graph. e.g. `restricted`.",
+          "mustExist": true
+        }
+      }
+    }
+  },
+  "relationships": {
+    "resolvesTo": {
+      "type": "RESOLVES_TO",
+      "description": "Resolves an internet-facing entry point to the compute instance that serves it, making that instance directly reachable from outside the estate. Each endpoint resolves to at least one instance, and to several where traffic is load balanced; an instance may serve many endpoints, or none at all if it is purely internal.",
+      "from": { "node": "Endpoint" },
+      "to": { "node": "ComputeInstance" }
+    },
+    "hasVulnerability": {
+      "type": "HAS_VULNERABILITY",
+      "description": "Records that a vulnerability scan confirmed the named CVE present on this compute instance. Presence only — it asserts nothing about whether the flaw is reachable or exploitable in context, which is what the surrounding path establishes. An instance may carry many CVE records, or none; one CVE may affect many instances.",
+      "from": { "node": "ComputeInstance" },
+      "to": { "node": "CVE" },
+      "properties": {
+        "detectedOn": {
+          "type": "DATE",
+          "description": "Calendar date on which a scan last confirmed the vulnerability still present on this instance, with no time or zone. Last confirmation rather than first detection, so a recent date means the finding is current and an old one means the instance has not been rescanned. Distinct from the CVE's own publication date. e.g. `2026-08-14`.",
+          "mustExist": true
+        }
+      }
+    },
+    "canReach": {
+      "type": "CAN_REACH",
+      "description": "States that the source compute instance is permitted to open a network connection to the target instance on the stated port, as allowed by firewall rules, security groups and routing. Directed and asymmetric: a DMZ host reaching an application server does not imply the reverse, and mutual reachability is two separate rows. It is a claim about network permission only — not that an attacker holds credentials, nor that a working exploit exists on the target. An instance may reach many instances, or none; an instance may be reachable from many, or none.",
+      "from": { "node": "ComputeInstance" },
+      "to": { "node": "ComputeInstance" },
+      "properties": {
+        "port": {
+          "type": "INTEGER",
+          "description": "TCP port on the target instance that the source is permitted to connect to. One port per relationship, not a range: a rule opening several ports between the same pair is several rows. e.g. `443`.",
+          "mustExist": true
+        },
+        "protocol": {
+          "type": "STRING",
+          "description": "Application-layer protocol permitted on that port, as a lowercase identifier drawn from the same set as an endpoint's protocol. Expected to be one of `https`, `http`, `ssh`, `smtp`, `postgres`, `mysql`. e.g. `https`."
+        }
+      }
+    },
+    "runs": {
+      "type": "RUNS",
+      "description": "Places a business application on the compute instance that hosts it, so that compromise of the host is compromise of the application. An instance may run many applications, or none if it is infrastructure; an application may run on many instances where it is horizontally scaled, or on none if it is not yet deployed.",
+      "from": { "node": "ComputeInstance" },
+      "to": { "node": "Application" }
+    },
+    "runsAs": {
+      "type": "RUNS_AS",
+      "description": "Names the workload identity the instance's processes execute as, and therefore the permissions an attacker inherits the moment they run code on the host. Each instance runs as at most one workload identity; an identity may be shared by many instances, or be held by none if it is only ever assumed interactively.",
+      "from": { "node": "ComputeInstance" },
+      "to": { "node": "Identity" }
+    },
+    "assumes": {
+      "type": "ASSUMES",
+      "description": "Attaches a permission grant to the identity that holds it, so that everything the policy allows is available to whoever controls the identity. An identity may hold many policies, or none; a policy may be attached to many identities, which is what makes a single over-permissive policy a shared choke point.",
+      "from": { "node": "Identity" },
+      "to": { "node": "IAMPolicy" }
+    },
+    "policyAccessesService": {
+      "type": "HAS_ACCESS_TO",
+      "description": "Grants the policy access to a cloud resource, at the level the policy's permissionLevel states. This is the data-exfiltration hop: it needs no network path, so any identity holding the policy reaches the resource regardless of where it sits in the network. One policy may grant access to many resources, or to none if it only grants application access; one resource may be granted by many policies.",
+      "from": { "node": "IAMPolicy" },
+      "to": { "node": "CloudService" }
+    },
+    "policyAccessesApplication": {
+      "type": "HAS_ACCESS_TO",
+      "description": "Grants the policy administrative or operational access to a business application through its control plane, at the level the policy's permissionLevel states. Distinct from the grant to a cloud resource: this reaches an application without compromising the host that runs it, so a crown-jewel application can be exposed by a policy alone with no lateral movement involved. One policy may grant access to many applications, or to none; one application may be granted by many policies, or by none.",
+      "from": { "node": "IAMPolicy" },
+      "to": { "node": "Application" }
+    }
+  },
+  "tables": {
+    "endpoints.csv": {
+      "source": "local",
+      "fields": {
+        "endpointId": { "name": "endpointId", "type": "string" },
+        "dnsName": { "name": "dnsName", "type": "string" },
+        "port": { "name": "port", "type": "string" },
+        "protocol": { "name": "protocol", "type": "string" }
+      }
+    },
+    "compute_instances.csv": {
+      "source": "local",
+      "fields": {
+        "instanceId": { "name": "instanceId", "type": "string" },
+        "hostname": { "name": "hostname", "type": "string" },
+        "environment": { "name": "environment", "type": "string" },
+        "networkSegment": { "name": "networkSegment", "type": "string" }
+      }
+    },
+    "cves.csv": {
+      "source": "local",
+      "fields": {
+        "cveId": { "name": "cveId", "type": "string" },
+        "cvssScore": { "name": "cvssScore", "type": "string" },
+        "severity": { "name": "severity", "type": "string" },
+        "epssScore": { "name": "epssScore", "type": "string" },
+        "knownExploited": { "name": "knownExploited", "type": "string" },
+        "publishedDate": { "name": "publishedDate", "type": "string" }
+      }
+    },
+    "applications.csv": {
+      "source": "local",
+      "fields": {
+        "applicationId": { "name": "applicationId", "type": "string" },
+        "name": { "name": "name", "type": "string" },
+        "tier": { "name": "tier", "type": "string" },
+        "businessUnit": { "name": "businessUnit", "type": "string" }
+      }
+    },
+    "identities.csv": {
+      "source": "local",
+      "fields": {
+        "identityId": { "name": "identityId", "type": "string" },
+        "name": { "name": "name", "type": "string" },
+        "identityType": { "name": "identityType", "type": "string" }
+      }
+    },
+    "iam_policies.csv": {
+      "source": "local",
+      "fields": {
+        "policyId": { "name": "policyId", "type": "string" },
+        "name": { "name": "name", "type": "string" },
+        "permissionLevel": { "name": "permissionLevel", "type": "string" }
+      }
+    },
+    "cloud_services.csv": {
+      "source": "local",
+      "fields": {
+        "serviceId": { "name": "serviceId", "type": "string" },
+        "name": { "name": "name", "type": "string" },
+        "serviceType": { "name": "serviceType", "type": "string" },
+        "dataClassification": { "name": "dataClassification", "type": "string" }
+      }
+    },
+    "endpoint_resolves_to.csv": {
+      "source": "local",
+      "fields": {
+        "endpointId": { "name": "endpointId", "type": "string" },
+        "instanceId": { "name": "instanceId", "type": "string" }
+      }
+    },
+    "instance_has_vulnerability.csv": {
+      "source": "local",
+      "fields": {
+        "instanceId": { "name": "instanceId", "type": "string" },
+        "cveId": { "name": "cveId", "type": "string" },
+        "detectedOn": { "name": "detectedOn", "type": "string" }
+      }
+    },
+    "instance_can_reach.csv": {
+      "source": "local",
+      "fields": {
+        "fromInstanceId": { "name": "fromInstanceId", "type": "string" },
+        "toInstanceId": { "name": "toInstanceId", "type": "string" },
+        "port": { "name": "port", "type": "string" },
+        "protocol": { "name": "protocol", "type": "string" }
+      }
+    },
+    "instance_runs.csv": {
+      "source": "local",
+      "fields": {
+        "instanceId": { "name": "instanceId", "type": "string" },
+        "applicationId": { "name": "applicationId", "type": "string" }
+      }
+    },
+    "instance_runs_as.csv": {
+      "source": "local",
+      "fields": {
+        "instanceId": { "name": "instanceId", "type": "string" },
+        "identityId": { "name": "identityId", "type": "string" }
+      }
+    },
+    "identity_assumes.csv": {
+      "source": "local",
+      "fields": {
+        "identityId": { "name": "identityId", "type": "string" },
+        "policyId": { "name": "policyId", "type": "string" }
+      }
+    },
+    "policy_accesses_service.csv": {
+      "source": "local",
+      "fields": {
+        "policyId": { "name": "policyId", "type": "string" },
+        "serviceId": { "name": "serviceId", "type": "string" }
+      }
+    },
+    "policy_accesses_application.csv": {
+      "source": "local",
+      "fields": {
+        "policyId": { "name": "policyId", "type": "string" },
+        "applicationId": { "name": "applicationId", "type": "string" }
+      }
+    }
+  },
+  "mappings": [
+    {
+      "type": "NodeMapping",
+      "node": "Endpoint",
+      "table": "endpoints.csv",
+      "mode": "MERGE",
+      "key": ["endpointId"],
+      "properties": {
+        "endpointId": { "field": "endpointId" },
+        "dnsName": { "field": "dnsName" },
+        "port": { "field": "port" },
+        "protocol": { "field": "protocol" }
+      }
+    },
+    {
+      "type": "NodeMapping",
+      "node": "ComputeInstance",
+      "table": "compute_instances.csv",
+      "mode": "MERGE",
+      "key": ["instanceId"],
+      "properties": {
+        "instanceId": { "field": "instanceId" },
+        "hostname": { "field": "hostname" },
+        "environment": { "field": "environment" },
+        "networkSegment": { "field": "networkSegment" }
+      }
+    },
+    {
+      "type": "NodeMapping",
+      "node": "CVE",
+      "table": "cves.csv",
+      "mode": "MERGE",
+      "key": ["cveId"],
+      "properties": {
+        "cveId": { "field": "cveId" },
+        "cvssScore": { "field": "cvssScore" },
+        "severity": { "field": "severity" },
+        "epssScore": { "field": "epssScore" },
+        "knownExploited": { "field": "knownExploited" },
+        "publishedDate": { "field": "publishedDate" }
+      }
+    },
+    {
+      "type": "NodeMapping",
+      "node": "Application",
+      "table": "applications.csv",
+      "mode": "MERGE",
+      "key": ["applicationId"],
+      "properties": {
+        "applicationId": { "field": "applicationId" },
+        "name": { "field": "name" },
+        "tier": { "field": "tier" },
+        "businessUnit": { "field": "businessUnit" }
+      }
+    },
+    {
+      "type": "NodeMapping",
+      "node": "Identity",
+      "table": "identities.csv",
+      "mode": "MERGE",
+      "key": ["identityId"],
+      "properties": {
+        "identityId": { "field": "identityId" },
+        "name": { "field": "name" },
+        "identityType": { "field": "identityType" }
+      }
+    },
+    {
+      "type": "NodeMapping",
+      "node": "IAMPolicy",
+      "table": "iam_policies.csv",
+      "mode": "MERGE",
+      "key": ["policyId"],
+      "properties": {
+        "policyId": { "field": "policyId" },
+        "name": { "field": "name" },
+        "permissionLevel": { "field": "permissionLevel" }
+      }
+    },
+    {
+      "type": "NodeMapping",
+      "node": "CloudService",
+      "table": "cloud_services.csv",
+      "mode": "MERGE",
+      "key": ["serviceId"],
+      "properties": {
+        "serviceId": { "field": "serviceId" },
+        "name": { "field": "name" },
+        "serviceType": { "field": "serviceType" },
+        "dataClassification": { "field": "dataClassification" }
+      }
+    },
+    {
+      "type": "RelationshipMapping",
+      "relationship": "resolvesTo",
+      "table": "endpoint_resolves_to.csv",
+      "mode": "MERGE",
+      "key": [],
+      "from": {
+        "node": "Endpoint",
+        "properties": {
+          "endpointId": { "field": "endpointId" }
+        }
+      },
+      "to": {
+        "node": "ComputeInstance",
+        "properties": {
+          "instanceId": { "field": "instanceId" }
+        }
+      }
+    },
+    {
+      "type": "RelationshipMapping",
+      "relationship": "hasVulnerability",
+      "table": "instance_has_vulnerability.csv",
+      "mode": "MERGE",
+      "key": [],
+      "from": {
+        "node": "ComputeInstance",
+        "properties": {
+          "instanceId": { "field": "instanceId" }
+        }
+      },
+      "to": {
+        "node": "CVE",
+        "properties": {
+          "cveId": { "field": "cveId" }
+        }
+      },
+      "properties": {
+        "detectedOn": { "field": "detectedOn" }
+      }
+    },
+    {
+      "type": "RelationshipMapping",
+      "relationship": "canReach",
+      "table": "instance_can_reach.csv",
+      "mode": "MERGE",
+      "key": [],
+      "from": {
+        "node": "ComputeInstance",
+        "properties": {
+          "instanceId": { "field": "fromInstanceId" }
+        }
+      },
+      "to": {
+        "node": "ComputeInstance",
+        "properties": {
+          "instanceId": { "field": "toInstanceId" }
+        }
+      },
+      "properties": {
+        "port": { "field": "port" },
+        "protocol": { "field": "protocol" }
+      }
+    },
+    {
+      "type": "RelationshipMapping",
+      "relationship": "runs",
+      "table": "instance_runs.csv",
+      "mode": "MERGE",
+      "key": [],
+      "from": {
+        "node": "ComputeInstance",
+        "properties": {
+          "instanceId": { "field": "instanceId" }
+        }
+      },
+      "to": {
+        "node": "Application",
+        "properties": {
+          "applicationId": { "field": "applicationId" }
+        }
+      }
+    },
+    {
+      "type": "RelationshipMapping",
+      "relationship": "runsAs",
+      "table": "instance_runs_as.csv",
+      "mode": "MERGE",
+      "key": [],
+      "from": {
+        "node": "ComputeInstance",
+        "properties": {
+          "instanceId": { "field": "instanceId" }
+        }
+      },
+      "to": {
+        "node": "Identity",
+        "properties": {
+          "identityId": { "field": "identityId" }
+        }
+      }
+    },
+    {
+      "type": "RelationshipMapping",
+      "relationship": "assumes",
+      "table": "identity_assumes.csv",
+      "mode": "MERGE",
+      "key": [],
+      "from": {
+        "node": "Identity",
+        "properties": {
+          "identityId": { "field": "identityId" }
+        }
+      },
+      "to": {
+        "node": "IAMPolicy",
+        "properties": {
+          "policyId": { "field": "policyId" }
+        }
+      }
+    },
+    {
+      "type": "RelationshipMapping",
+      "relationship": "policyAccessesService",
+      "table": "policy_accesses_service.csv",
+      "mode": "MERGE",
+      "key": [],
+      "from": {
+        "node": "IAMPolicy",
+        "properties": {
+          "policyId": { "field": "policyId" }
+        }
+      },
+      "to": {
+        "node": "CloudService",
+        "properties": {
+          "serviceId": { "field": "serviceId" }
+        }
+      }
+    },
+    {
+      "type": "RelationshipMapping",
+      "relationship": "policyAccessesApplication",
+      "table": "policy_accesses_application.csv",
+      "mode": "MERGE",
+      "key": [],
+      "from": {
+        "node": "IAMPolicy",
+        "properties": {
+          "policyId": { "field": "policyId" }
+        }
+      },
+      "to": {
+        "node": "Application",
+        "properties": {
+          "applicationId": { "field": "applicationId" }
+        }
+      }
+    }
+  ],
+  "display": {
+    "nodes": {
+      "Endpoint": { "x": -660, "y": 0 },
+      "ComputeInstance": { "x": -400, "y": 0 },
+      "CVE": { "x": -400, "y": -260 },
+      "Identity": { "x": -140, "y": 0 },
+      "IAMPolicy": { "x": 120, "y": 0 },
+      "CloudService": { "x": 380, "y": 0 },
+      "Application": { "x": 120, "y": 260 }
+    }
+  }
+}
