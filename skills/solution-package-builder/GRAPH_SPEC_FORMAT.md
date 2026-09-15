@@ -114,6 +114,7 @@ Each relationship entry needs:
 - `from` and `to` targets referencing node keys
 - Optional relationship properties (same shape as node properties, including `description`)
 - Any multiplicity expectation stated **in the `description`**, not as an extension
+- Source data behind it — see [Declare only what Import can load](#declare-only-what-import-can-load)
 
 ```json
 {
@@ -137,6 +138,47 @@ Each relationship entry needs:
 - **Relationship descriptions are core spec fields — always write one.** When the same relationship `type` string is reused between different node pairs, each reuse is its own entry with its own key and its own description stating that instance's distinct meaning.
 - **Multiplicity goes in the `description`**, in prose, stated in both directions — "Exactly one clinician per prescription; a clinician may authorise many prescriptions, or none." State it only when the sample data actually satisfies it: cardinality is a checkable claim, not decoration, and VALIDATION.md §3b checks it against the bundled rows whether it is written in prose or not.
 - Leave relationship `constraints` and `indexes` empty for the same reasons as nodes.
+
+### Declare only what Import can load
+
+**Every node and every relationship a model declares must have a mapping.** The
+Import tool treats the model as the definition of an import job, not as a
+description of a graph: it requires a source table for each declared entity, a
+column for each of its properties, and an ID column for each endpoint of a
+relationship. Anything declared without those is not ignored — it is flagged
+`Must be specified`, and the import definition stays in an error state that the
+user cannot clear without editing the model by hand.
+
+This makes one category of modelling impossible, and it is a category packages
+reach for naturally: **a relationship or label created by a query rather than
+loaded from data.** A resolution or selection edge written per run, a scored
+link, a `SIMILAR_TO` computed by an algorithm, a cluster label applied by a
+workflow — none of these have source data, none can be mapped, and declaring
+them breaks the import outright.
+
+The rule:
+
+- If it comes from a CSV, declare it and map it.
+- If a query creates it, **do not declare it in the model.** Document it in
+  SKILL.md instead, in enough detail for the consuming agent to use it: the
+  node pairs or labels it connects, its properties with their types, and which
+  queries write it and which remove it. State plainly that it does not exist in
+  a freshly imported database.
+- Never invent a CSV to make a query-created entity mappable. Seeding it at
+  import time pre-computes the very thing the package's queries are there to
+  demonstrate.
+
+This is a deliberate, documented exception to VALIDATION.md §5's rule that every
+label, relationship type and property a query references resolves in
+GRAPH_MODEL.json — the one case where the query is right and the model is
+silent. VALIDATION.md §3 checks for unmapped entities, and §6 checks that
+SKILL.md carries the definition.
+
+> Verified in the Import tool against a package that declared six query-created
+> relationships: all six showed `Must be specified` on the source table, on
+> every property column, and on both node ID columns. The behaviour was
+> confirmed for relationships; nodes were not separately tested, so treat the
+> node half of this rule as the safe assumption rather than as an observation.
 
 ## Tables
 
@@ -289,14 +331,14 @@ The optional `name` fields on nodes, properties, and relationships stay unset �
 1. Define node keys, labels, and identifiers.
 2. Write the spec-root `name` and `description`.
 3. Add node descriptions and properties (with descriptions and `key: true` identifiers).
-4. Define relationship keys, types, directions, and properties, with descriptions stating meaning and multiplicity.
+4. Define relationship keys, types, directions, and properties, with descriptions stating meaning and multiplicity. Decide for each one whether source data exists for it; a relationship a query will create belongs in SKILL.md, not here.
 5. Draft the property descriptions' sample-value intents — and confirm uncertain descriptions with the user now, before data exists to rationalise.
 6. Define the CSV tables and exact field names.
 7. Add node mappings (`NodeMapping`, mode `MERGE`, `key`).
 8. Add relationship mappings and endpoint lookups.
 9. Add display coordinates.
 10. Create sample CSVs that satisfy the descriptions, samples, and multiplicity claims — then set each description's trailing `` e.g. `...` `` verbatim from the generated column.
-11. Check every query-referenced label, type, direction, and property against the model, and every query annotation block against the descriptions.
+11. Check every query-referenced label, type, direction, and property against the model, and every query annotation block against the descriptions. Anything a query references that the model does not define must be a query-created entity documented in SKILL.md — if it is not, one of the two is wrong.
 12. Run the VALIDATION.md §3 runtime gate. A model that has never been through it is not finished, however clean it looks.
 
 ## Consistency checklist
@@ -314,6 +356,7 @@ The optional `name` fields on nodes, properties, and relationships stay unset �
 - The model has passed the VALIDATION.md §3 runtime gate, not just schema validation.
 - Mappings use `"type": "NodeMapping"` / `"RelationshipMapping"`, `mode: "MERGE"`, and `key` arrays; node-mapping `key` matches the `key: true` property.
 - Every mapping table exists in `tables`; every mapped field exists in its table; every mapped property exists on its node or relationship.
+- **Every declared node and every declared relationship has a mapping** — nothing is declared that Import cannot load. Query-created relationships and labels are documented in SKILL.md instead of being declared here.
 - Every relationship mapping direction matches its relationship definition, and endpoint fields resolve to node identifiers.
 - Every query label, relationship type, direction, and property exists in the graph spec, and query annotation blocks agree with model descriptions.
 - Every bundled CSV header matches the corresponding table fields.

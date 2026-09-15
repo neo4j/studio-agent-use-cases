@@ -3,7 +3,7 @@ name: insurance-claims-fraud
 description: Detect insurance claims fraud by modelling claimants, medical professionals, vehicles, and claims as a graph. Provides a graph model, bundled sample data, and Cypher for repeat claimants, unusual medical-professional activity, and vehicles reused across claims.
 metadata:
   neo4j-card-title: Insurance Claims Fraud
-  neo4j-card-category: Financial Services
+  neo4j-card-category: Insurance
   neo4j-card-description: Uncover fraud rings and suspicious claims through the connections between claimants, doctors, vehicles, and claims.
 ---
 

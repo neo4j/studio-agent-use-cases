@@ -133,6 +133,28 @@ Then inspect consistency the schema cannot see:
 - Mappings use `"type": "NodeMapping"` / `"RelationshipMapping"` with `mode: "MERGE"`; each node mapping's `key` array matches its node's `key: true` property.
 - Every mapping table exists in `tables`; every mapping field exists in that table's `fields`; every mapped property exists on its node or relationship.
 - Relationship mapping directions match their relationship definitions, and endpoint fields resolve to node identifiers.
+- **Every declared node and every declared relationship has a mapping.** This is a blocker, and the runtime gate will not catch it: a model that decodes cleanly can still be unimportable. Import treats the model as an import job definition and demands a source table for every declared entity, a column for every property, and an ID column for every relationship endpoint; anything unmapped is flagged `Must be specified` and the import definition cannot be cleared without hand-editing the model. The usual cause is a relationship a query creates rather than loads — a resolution or selection edge, a computed similarity, an algorithm-written link. Those must not be declared at all; they belong in SKILL.md (see GRAPH_SPEC_FORMAT.md, "Declare only what Import can load", and §6 below). The fix is never to invent a CSV to make one mappable.
+
+```bash
+# Matches the mapping type case-insensitively so a legacy model (lowercase
+# "node"/"relationship", which fails schema validation above) reports its real
+# unmapped entities rather than every entity it has.
+node -e '
+const m = JSON.parse(require("node:fs").readFileSync(process.argv[1], "utf8"));
+const is = (x, k) => (x.type ?? "").toLowerCase() === k;
+const mn = new Set((m.mappings ?? []).filter(x => is(x, "nodemapping") || is(x, "node")).map(x => x.node));
+const mr = new Set((m.mappings ?? []).filter(x => is(x, "relationshipmapping") || is(x, "relationship")).map(x => x.relationship));
+for (const n of Object.keys(m.nodes ?? {}))
+  if (!mn.has(n)) console.log(`BLOCKER unmapped node: ${n}`);
+for (const [r, def] of Object.entries(m.relationships ?? {}))
+  if (!mr.has(r)) console.log(`BLOCKER unmapped relationship: ${r} (${def.type})`);
+' "<package-path>/GRAPH_MODEL.json"
+```
+
+Every `BLOCKER` line is either an entity whose mapping was forgotten — add it —
+or a query-created entity that should never have been declared — delete it from
+the model and document it in SKILL.md. Decide which by asking whether any CSV
+could supply it. There is no third case.
 - Table entries use `source: "local"`, keys equal to the exact CSV filenames, and fields declared `"type": "string"` keyed by exact CSV headers; graph property types are correct for query behaviour (numeric comparisons on numeric types, temporal operations on temporal types).
 - **Every table field sets `"name"` to its own key** — checked mechanically in 3b. The importer data model holds table fields as an array, so a field-map key with no `name` is dropped on encode and the package fails to load; a `name` that disagrees with its key leaves mappings pointing at a field the schema does not declare. Neither case throws, so the runtime gate will not find it.
 - `display.nodes` has `x`/`y` for every node.
@@ -302,7 +324,7 @@ For QUERIES.md (and any supporting `.cypher` file):
 - `@params` matches the query's actual parameters exactly: every `$parameter` in the Cypher appears in `@params` with its meaning, and `@params` names nothing the query doesn't use (`None` for parameterless queries). Mechanically checkable — do it mechanically.
 - `@params` is **one line per parameter**, each starting at the parameter name, with wrapped text indented past it. A second parameter beginning at the same indent as the first one's continuation lines is unparseable and defeats the check above — finding.
 - Every parameter that gates a result set carries a **starting point with a data-agnostic justification**: either a concrete value justified by what the parameter does, or a stated procedure for deriving one where no number transfers between datasets ("take the portfolio's upper quartile"). A gating threshold with neither is a finding — the query is unusable without opening TESTS.md. A threshold justified by the sample is a leak, caught in 5a.
-- Labels, relationship types, directions, and properties match GRAPH_MODEL.json exactly.
+- Labels, relationship types, directions, and properties match GRAPH_MODEL.json exactly — **with one exception: entities the queries themselves create.** A relationship type or label that a bundled query writes has no source data, cannot be mapped, and therefore must not be declared in the model at all (§3, and GRAPH_SPEC_FORMAT.md's "Declare only what Import can load"). For each of those, confirm all four of: it is genuinely written by a bundled query and not merely missing from the model; it is absent from `tables` and `mappings` as well as `relationships`; SKILL.md carries its full definition (§6); and QUERIES.md's prerequisites say it does not exist in a freshly imported database. A query-referenced entity that is undeclared *and* undocumented is a blocker — that is the drift this rule exists to catch, and it looks identical to the legitimate case until you check which query writes it.
 - Annotation blocks use the model's vocabulary: where `@description`, `@params`, or `@usage` explains a property or relationship, its wording, unit, scope, and direction agree with that element's GRAPH_MODEL.json `description`. An annotation that contradicts a model description is a blocker — the two are one contract.
 - Variable-length traversals have explicit bounds; thresholds and limits are called out in `@usage` as tunable, in general terms.
 - No per-query schema-drift prose. The adapting section states the procedure once; repeating it per query is boilerplate. An optional `@pattern` tag on a query whose shape isn't recoverable from its Cypher is fine — on every query it is padding, and a warning.
@@ -551,6 +573,7 @@ The greps over-report by design. `schema` may appear legitimately in a domain se
 - Terminology, units, directions, and identifiers are consistent across SKILL.md, QUERIES.md, GRAPH_MODEL.json, and the CSVs — with GRAPH_MODEL.json's `description` annotations (nodes, relationships, and properties) as the reference vocabulary the other files must agree with.
 - The Model section summarises rather than redefines: the authoritative meanings live in the model's descriptions, and SKILL.md says so.
 - SKILL.md instructs the consuming agent to treat the model's descriptions as authoritative when explaining the model or generating Cypher.
+- **Any query-created relationship or label is fully defined in the Model section**, because the model cannot define it (§3, §5). The definition names the node pairs or labels it connects, every property with its graph type, which queries write it and which remove it, and states that it is absent from a freshly imported database and absent from GRAPH_MODEL.json by design. A package whose queries write an entity that SKILL.md does not define leaves the consuming agent unable to explain or adapt those queries — blocker. A one-line mention is not a definition.
 - SKILL.md instructs the consuming agent to keep each query's `/* @... */` annotation block with the query when showing or running it, to treat it as context rather than ground truth (Cypher logic wins on conflict), and to update annotations when adapting a query.
 - Limitations are stated honestly: data-quality assumptions, performance traps, false-positive sources, and the boundary between analytical leads and domain conclusions — stated as properties of the technique, not of the bundled dataset.
 
