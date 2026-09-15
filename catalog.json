@@ -15,7 +15,8 @@
           "INTRODUCTION.md",
           "overview.md",
           "query-patterns.md",
-          "query-templates.md"
+          "query-templates.md",
+          "human_description.md"
         ],
         "markdown": "SKILL.md"
       }
@@ -35,7 +36,8 @@
           "sample-data/treats.csv",
           "sample-data/vehicles.csv",
           "INTRODUCTION.md",
-          "QUERIES.md"
+          "QUERIES.md",
+          "human_description.md"
         ],
         "markdown": "SKILL.md"
       }
@@ -54,7 +56,8 @@
           "sample-data/providers.csv",
           "INTRODUCTION.md",
           "queries.cypher",
-          "QUERIES.md"
+          "QUERIES.md",
+          "human_description.md"
         ],
         "markdown": "SKILL.md"
       }
@@ -68,7 +71,8 @@
           "sample-data/sections.csv",
           "sample-data/standards.csv",
           "QUERIES.md",
-          "TESTS.md"
+          "TESTS.md",
+          "human_description.md"
         ],
         "markdown": "SKILL.md"
       }
@@ -98,7 +102,8 @@
           "query-templates.md",
           "resolution-workflow.md",
           "sample-data.md",
-          "SETUP.md"
+          "SETUP.md",
+          "human_description.md"
         ],
         "markdown": "SKILL.md"
       }
@@ -115,7 +120,8 @@
           "sample-data/roads-city-city.csv",
           "sample-data/roads-city-station.csv",
           "sample-data/roads-station-city.csv",
-          "QUERIES.md"
+          "QUERIES.md",
+          "human_description.md"
         ],
         "markdown": "SKILL.md"
       }
