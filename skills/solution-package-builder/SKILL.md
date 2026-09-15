@@ -80,6 +80,8 @@ Each artifact constrains the next — build in this order.
 
 Follow [GRAPH_SPEC_FORMAT.md](GRAPH_SPEC_FORMAT.md) exactly, and build against the bundled `graph-spec.schema.json` — read it if you need to settle a question the format doc leaves open, and never substitute a remote or remembered version. Record its pinned version in the package's `metadata.neo4j-graph-spec-version` when you write SKILL.md at step 6. Every property a query will touch must exist with the correct graph type; every node identifier is marked `key: true` (composite keys via an explicit `KEY` constraint); every CSV is declared in `tables` and bound in `mappings` (`NodeMapping`/`RelationshipMapping`, mode `MERGE`, `key` arrays); every node gets display coordinates.
 
+**Declare only what Import can load.** Every node and relationship the model declares must have a mapping — Import treats the model as an import job definition and flags anything unmapped as `Must be specified`, leaving the import stuck. So a relationship or label that a *query* creates rather than loads (a resolution or selection edge, a computed similarity, an algorithm-written link) must not be declared at all: define it in SKILL.md at step 6 instead, and never invent a CSV to make it mappable. GRAPH_SPEC_FORMAT.md's [Declare only what Import can load](GRAPH_SPEC_FORMAT.md) has the rule and what it costs to get wrong.
+
 **Annotate the model as you build it, not afterwards.** The spec root, every node, every relationship, and every property gets a `description` — and all annotation lives there. Numeric and coded property descriptions end with a `` e.g. `...` `` sample value (backfilled verbatim from the CSVs in step 2). Descriptions are the semantic contract the sample data and queries must satisfy, and they travel into the user's database with the model — they are what a downstream agent reasons from. Relationship descriptions state what the connection means in the from→to direction and its multiplicity in both directions; where one relationship type is reused between node pairs, each entry's description states its distinct meaning. **Never write an `extensions` block** — the pinned runtime rejects every encoding of it and silently drops the whole package. GRAPH_SPEC_FORMAT.md's Annotations section has the full rules.
 
 **Descriptions you inferred need the user's confirmation.** Source material rarely defines meaning down to the property level — a source page will name `dosage` on a prescription without saying per-administration or per-day, mg or mL. Use the full context you have (the domain, the model structure, the use cases, the queries you plan) to draft the most reasonable reading, then put the uncertain ones to the user before generating sample data:
@@ -139,7 +141,8 @@ The agent runs these as-is when the schema matches and rewrites them when it doe
 - **Every parameter that gates a result needs a starting point, stated data-agnostically.** A threshold with no suggested value is unusable without opening the test file. Give either a concrete value justified by what the parameter does — "start at 4 and raise until the result is a reviewable size" — or a procedure for deriving one where no number could transfer between datasets: "take the portfolio's upper quartile of claims per professional and start there". Both travel; "4 returns the seeded ring" does not.
 
   The trap here is subtler than a row count, and no grep catches it. A justification can be phrased data-agnostically and still be a fact about your generator: "start at 4, which clears ordinary household size" sounds like domain knowledge, but if you picked 4 because your noise generator caps legitimate groups at 3, it is the seed talking. Test each one by asking whether you would write the same sentence having never seen the CSVs. If not, either find the real domain reason or say plainly that the value is a starting point with no strong prior behind it. The tuned value, and the honest note about where it came from, go in TESTS.md.
-- Reference only labels, relationship types, directions, and properties defined in GRAPH_MODEL.json.
+- Reference only labels, relationship types, directions, and properties defined in GRAPH_MODEL.json — or, for entities the queries themselves create, defined in SKILL.md's Model section. Those two are the whole permitted vocabulary; anything else is drift.
+- **Where a query writes an entity the model cannot declare**, say so in the preamble's prerequisites: name it, and state that it does not exist in a freshly imported database. A reader who runs the queries in isolation has no other way to know.
 - **Annotation blocks inherit the model's vocabulary.** When `@description`, `@params`, or `@usage` explains a property or relationship, use the wording, unit, scope, and direction from its GRAPH_MODEL.json `description` — never a paraphrase that could drift (if the model says dose per administration in milligrams, the annotation doesn't say "daily dosage"). The model's descriptions, the query annotations, and the queries themselves must read as one coherent artifact.
 - Bound every variable-length traversal.
 - Mark anything not executed against a live database with a literal `TODO(review): unproven query` line inside the annotation block, and isolate optional APOC/GDS material in its own clearly labelled section.
@@ -262,6 +265,13 @@ the model or start importing data.
   and properties.>
 - <One or two lines of design rationale where the model departs from the
   source material, and why.>
+- <Only when a bundled query creates a relationship or label rather than
+  loading it: define it here, because GRAPH_MODEL.json cannot. Give the
+  node pairs or labels it connects, every property with its graph type,
+  which queries write it and which remove it, and say plainly that it is
+  absent from a freshly imported database and absent from the model by
+  design. A small table reads better than prose. Omit this bullet
+  entirely when every entity the queries touch is in the model.>
 - Full schema and mappings are in `GRAPH_MODEL.json`; runnable Cypher is
   in `QUERIES.md`.
 - Treat the model's `description` annotations as the authoritative meaning
