@@ -1,0 +1,7 @@
+assemblyId,description,wheelSize
+A-DRIVETRAIN,"Drivetrain assembly: gearing, shifting and cranks",
+A-FRAMESET,"Frameset assembly: frame, finish and seating",
+A-BRAKESET,"Brakeset assembly: levers, hoses and calipers",
+A-WHEEL-26,"Built wheel, 26 inch",26
+A-WHEEL-275,"Built wheel, 27.5 inch",27.5
+A-WHEEL-29,"Built wheel, 29 inch",29

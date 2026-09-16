@@ -29,8 +29,8 @@
           "mustExist": true
         },
         "lastUpdated": {
-          "type": "DATE",
-          "description": "Date on which the section's current text took effect in the handbook — the in-force date of the most recent amendment, not the date that amendment was announced or published. Calendar date only, ISO 8601 (YYYY-MM-DD). This is the property regulatory-change analysis filters on.",
+          "type": "ZONED DATETIME",
+          "description": "Date on which the section's current text took effect in the handbook — the in-force date of the most recent amendment, not the date that amendment was announced or published. ISO 8601 zoned datetime (for example 2025-02-01T00:00:00Z); the time and zone carry no meaning beyond the calendar date, kept only because local imports require a zoned datetime rather than a bare date. This is the property regulatory-change analysis filters on.",
           "mustExist": true
         }
       }

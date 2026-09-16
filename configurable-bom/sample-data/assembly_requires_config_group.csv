@@ -1,0 +1,13 @@
+assemblyId,configGroupId,qty,note
+A-DRIVETRAIN,CG-GEARING,1,Cassette fixes the speed count
+A-DRIVETRAIN,CG-SHIFTER,1,Shifter must match the cassette
+A-DRIVETRAIN,CG-DERAILLEUR,1,Derailleur must match the cassette
+A-FRAMESET,CG-FRAME,1,Frame material choice
+A-FRAMESET,CG-FINISH,1,Paint finish choice
+A-BRAKESET,CG-CALIPER,2,One caliper per wheel
+A-WHEEL-26,CG-RIM-26,1,Rim material choice
+A-WHEEL-26,CG-TIRE-26,1,Tire tread choice
+A-WHEEL-275,CG-RIM-275,1,Rim material choice
+A-WHEEL-275,CG-TIRE-275,1,Tire tread choice
+A-WHEEL-29,CG-RIM-29,1,Rim material choice
+A-WHEEL-29,CG-TIRE-29,1,Tire tread choice

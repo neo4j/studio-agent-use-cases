@@ -1,85 +1,107 @@
 {
   "version": "4.0.0",
+  "name": "EV Route Planning",
+  "description": "Models a logistics network as cities and charging sites joined by road segments, alongside a fleet of electric vehicles described by battery, efficiency and charging limits. Answers which vehicles can cover a given lane, what a route looks like once charging stops are part of the plan, and which places sit beyond reach of any charger.",
   "nodes": {
     "n:0": {
       "label": "Geo",
+      "description": "A place on the network that is not a charging site — a city, depot or delivery point. Deliberately carries no label in common with a charging site, since the spec allows a node only one primary label, so any traversal meaning 'any location' must name both labels explicitly or it will silently plan routes that never charge.",
       "properties": {
         "name": {
           "type": "STRING",
+          "description": "Name of the place, and its identifier on the network. Expected to be unique across the whole network rather than within a region. e.g. `Paris`.",
           "key": true
         },
         "lat": {
           "type": "FLOAT",
+          "description": "Latitude in decimal degrees on WGS 84, positive northwards. Used for straight-line distance filters that prune candidates before a traversal; it is not the distance a vehicle drives, which is carried on the road segment. e.g. `48.8566`.",
           "nullable": false
         },
         "lon": {
           "type": "FLOAT",
+          "description": "Longitude in decimal degrees on WGS 84, positive eastwards. e.g. `2.3522`.",
           "nullable": false
         },
         "region": {
           "type": "STRING",
+          "description": "Administrative region the place sits in, used to group and summarise coverage rather than to route. e.g. `Ile-de-France`.",
           "nullable": false
         }
       }
     },
     "n:1": {
       "label": "ChargingStation",
+      "description": "A site where vehicles can charge, sitting on the road network as a place in its own right. Shares no label with other locations, so a route that must be able to charge has to traverse both labels explicitly.",
       "properties": {
         "name": {
           "type": "STRING",
+          "description": "Name of the charging site, and its identifier on the network. e.g. `CS-A1-01`.",
           "key": true
         },
         "lat": {
           "type": "FLOAT",
+          "description": "Latitude in decimal degrees on WGS 84, positive northwards. e.g. `49.7953`.",
           "nullable": false
         },
         "lon": {
           "type": "FLOAT",
+          "description": "Longitude in decimal degrees on WGS 84, positive eastwards. e.g. `2.7256`.",
           "nullable": false
         },
         "region": {
           "type": "STRING",
+          "description": "Administrative region the site sits in, used to summarise charging capacity and coverage by area. e.g. `Hauts-de-France`.",
           "nullable": false
         },
         "operator": {
           "type": "STRING",
+          "description": "Network operator running the site. Expected to matter for access and tariffs rather than for routing. e.g. `ElectraRoute`.",
           "nullable": false
         },
         "power_kw": {
           "type": "FLOAT",
+          "description": "Maximum power the site can deliver to a single vehicle, in kilowatts. The power a given vehicle actually receives is the lesser of this and that vehicle's own charging limit, so this is a ceiling rather than a delivered rate. e.g. `350.0`.",
           "nullable": false
         }
       }
     },
     "n:2": {
       "label": "Car",
+      "description": "A vehicle in the fleet, described by the battery and efficiency figures a route plan needs. Carries no connection to the network: a vehicle is not positioned on the graph, but supplies the energy model a traversal is evaluated against.",
       "properties": {
         "id": {
           "type": "STRING",
+          "description": "Identifier for the vehicle in the fleet. e.g. `EV-001`.",
           "key": true
         },
         "model": {
           "type": "STRING",
+          "description": "Manufacturer's model name for the vehicle. Descriptive only; the energy model reads the numeric properties, never this. e.g. `Corvia eVan 60`.",
           "nullable": false
         },
         "vehicle_class": {
           "type": "STRING",
+          "description": "Category of vehicle, used to group the fleet when comparing what different classes can serve. e.g. `Light Van`.",
           "nullable": false
         },
         "battery_capacity_kwh": {
           "type": "FLOAT",
+          "description": "Usable battery capacity in kilowatt-hours. Expected to be the usable figure rather than the nominal pack size, since range is computed directly from it. e.g. `60.0`.",
           "nullable": false
         },
         "efficiency_kwh_per_km": {
           "type": "FLOAT",
+          "description": "Energy consumed per kilometre driven, in kilowatt-hours per kilometre — a consumption rate, so a higher number means a less efficient vehicle. Treated as constant, with no allowance for load, gradient, weather or speed. e.g. `0.24`.",
           "nullable": false
         },
         "max_charge_power_kw": {
           "type": "FLOAT",
+          "description": "Highest charging power the vehicle can accept, in kilowatts. Caps what it draws from a site however powerful that site is; a plan that ignores this cap produces charging stops shorter than the fleet can achieve. e.g. `90.0`.",
           "nullable": false
         },
         "current_soc_percent": {
           "type": "FLOAT",
+          "description": "Current battery state of charge as a percentage of `battery_capacity_kwh`, from 0 to 100. A snapshot of the vehicle now, and the starting state a route is evaluated from, not a static attribute. e.g. `38.0`.",
           "nullable": false
         }
       }
@@ -88,6 +110,7 @@
   "relationships": {
     "r:0": {
       "type": "ROAD",
+      "description": "A road segment between two places on the network, neither of them a charging site. Stored once per segment and expected to be traversed undirected: the stored direction is an artefact of how the row was written, not a one-way restriction, and reverse segments are deliberately not created. A place may be joined to several others, or to none.",
       "from": {
         "node": "n:0"
       },
@@ -97,28 +120,34 @@
       "properties": {
         "road_ref": {
           "type": "STRING",
+          "description": "Designation of the road the segment belongs to, as signed. Several segments may share one designation. e.g. `A1`.",
           "nullable": false
         },
         "road_class": {
           "type": "STRING",
+          "description": "Class of road, from the network's own four-tier vocabulary — `Motorway`, `Express`, `Trunk` and `Local` — in descending order of speed. e.g. `Motorway`.",
           "nullable": false
         },
         "distance_km": {
           "type": "FLOAT",
+          "description": "Driving distance along the segment in kilometres. This, not the straight-line distance between coordinates, is what energy consumption is computed from. e.g. `112.7`.",
           "nullable": false
         },
         "free_flow_speed_kph": {
           "type": "INTEGER",
+          "description": "Speed in kilometres per hour expected on the segment when traffic is light — the off-peak case. e.g. `130`.",
           "nullable": false
         },
         "peak_speed_kph": {
           "type": "INTEGER",
+          "description": "Speed in kilometres per hour expected on the segment at peak traffic. Expected to be at or below the free-flow speed; choosing between the two is how a plan accounts for time of day. e.g. `95`.",
           "nullable": false
         }
       }
     },
     "r:1": {
       "type": "ROAD",
+      "description": "A road segment joining a place to a charging site — the approach that makes the site reachable. Stored once per segment and expected to be traversed undirected, so this and the segment definition written from a site to a place are two halves of one convention rather than a pair of one-way roads. A place may reach several sites, or none.",
       "from": {
         "node": "n:0"
       },
@@ -128,28 +157,34 @@
       "properties": {
         "road_ref": {
           "type": "STRING",
+          "description": "Designation of the road the segment belongs to, as signed. e.g. `A1`.",
           "nullable": false
         },
         "road_class": {
           "type": "STRING",
+          "description": "Class of road, from the network's own four-tier vocabulary — `Motorway`, `Express`, `Trunk` and `Local` — in descending order of speed. e.g. `Express`.",
           "nullable": false
         },
         "distance_km": {
           "type": "FLOAT",
+          "description": "Driving distance along the segment in kilometres, and the basis for the energy cost of detouring to charge. e.g. `105.8`.",
           "nullable": false
         },
         "free_flow_speed_kph": {
           "type": "INTEGER",
+          "description": "Speed in kilometres per hour expected on the segment when traffic is light. e.g. `130`.",
           "nullable": false
         },
         "peak_speed_kph": {
           "type": "INTEGER",
+          "description": "Speed in kilometres per hour expected on the segment at peak traffic. e.g. `105`.",
           "nullable": false
         }
       }
     },
     "r:2": {
       "type": "ROAD",
+      "description": "A road segment joining a charging site back to a place — the continuation after a charging stop. Stored once per segment and expected to be traversed undirected. Not every site carries one, so its absence means only that no onward segment was recorded, never that a site is a dead end.",
       "from": {
         "node": "n:1"
       },
@@ -159,28 +194,34 @@
       "properties": {
         "road_ref": {
           "type": "STRING",
+          "description": "Designation of the road the segment belongs to, as signed. e.g. `A1`.",
           "nullable": false
         },
         "road_class": {
           "type": "STRING",
+          "description": "Class of road, from the network's own four-tier vocabulary — `Motorway`, `Express`, `Trunk` and `Local` — in descending order of speed. e.g. `Express`.",
           "nullable": false
         },
         "distance_km": {
           "type": "FLOAT",
+          "description": "Driving distance along the segment in kilometres. e.g. `119.2`.",
           "nullable": false
         },
         "free_flow_speed_kph": {
           "type": "INTEGER",
+          "description": "Speed in kilometres per hour expected on the segment when traffic is light. e.g. `130`.",
           "nullable": false
         },
         "peak_speed_kph": {
           "type": "INTEGER",
+          "description": "Speed in kilometres per hour expected on the segment at peak traffic. e.g. `105`.",
           "nullable": false
         }
       }
     },
     "r:3": {
       "type": "CHARGE",
+      "description": "A charging option at a site, modelled as a self-loop so that a route can pass through a charging stop without leaving the site. One of these per tier the site offers, so a site carries several in parallel and they are distinguished by `tier` rather than by endpoint. Every site is expected to offer at least one.",
       "from": {
         "node": "n:1"
       },
@@ -190,14 +231,17 @@
       "properties": {
         "tier": {
           "type": "STRING",
+          "description": "Name of the charging option, from the site's own vocabulary — a short `top-up` stop against a longer `full` charge. Distinguishes the parallel options at one site. e.g. `top-up`.",
           "nullable": false
         },
         "time_in_minutes": {
           "type": "INTEGER",
+          "description": "Dwell time the option represents, in minutes — how long the vehicle stands at the site. Combined with delivered power it gives the energy gained, and it is what a route's elapsed time accumulates. e.g. `15`.",
           "nullable": false
         },
         "power_kw": {
           "type": "FLOAT",
+          "description": "Power offered by this option in kilowatts. The vehicle receives the lesser of this and its own `max_charge_power_kw`, so energy gained is that lesser figure applied over the dwell time, never this figure alone. e.g. `350.0`.",
           "nullable": false
         }
       }

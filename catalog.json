@@ -15,7 +15,8 @@
           "INTRODUCTION.md",
           "overview.md",
           "query-patterns.md",
-          "query-templates.md"
+          "query-templates.md",
+          "human_description.md"
         ],
         "markdown": "SKILL.md"
       }
@@ -35,7 +36,8 @@
           "sample-data/treats.csv",
           "sample-data/vehicles.csv",
           "INTRODUCTION.md",
-          "QUERIES.md"
+          "QUERIES.md",
+          "human_description.md"
         ],
         "markdown": "SKILL.md"
       }
@@ -54,7 +56,8 @@
           "sample-data/providers.csv",
           "INTRODUCTION.md",
           "queries.cypher",
-          "QUERIES.md"
+          "QUERIES.md",
+          "human_description.md"
         ],
         "markdown": "SKILL.md"
       }
@@ -68,6 +71,30 @@
           "sample-data/sections.csv",
           "sample-data/standards.csv",
           "QUERIES.md",
+          "TESTS.md",
+          "human_description.md"
+        ],
+        "markdown": "SKILL.md"
+      }
+    },
+    {
+      "skillId": "configurable-bom",
+      "files": {
+        "graph": "GRAPH_MODEL.json",
+        "skill": [
+          "sample-data/assemblies.csv",
+          "sample-data/assembly_has_part.csv",
+          "sample-data/assembly_requires_config_group.csv",
+          "sample-data/config_group_has_option_assembly.csv",
+          "sample-data/config_group_has_option_part.csv",
+          "sample-data/config_groups.csv",
+          "sample-data/parts.csv",
+          "sample-data/product_requires_assembly.csv",
+          "sample-data/product_requires_config_group.csv",
+          "sample-data/products.csv",
+          "human_description.md",
+          "QUERIES.md",
+          "SETUP.md",
           "TESTS.md"
         ],
         "markdown": "SKILL.md"
@@ -98,7 +125,8 @@
           "query-templates.md",
           "resolution-workflow.md",
           "sample-data.md",
-          "SETUP.md"
+          "SETUP.md",
+          "human_description.md"
         ],
         "markdown": "SKILL.md"
       }
@@ -115,7 +143,8 @@
           "sample-data/roads-city-city.csv",
           "sample-data/roads-city-station.csv",
           "sample-data/roads-station-city.csv",
-          "QUERIES.md"
+          "QUERIES.md",
+          "human_description.md"
         ],
         "markdown": "SKILL.md"
       }

@@ -70,7 +70,10 @@ model or start importing data.
   narrower model is a cleaner template for a user mapping their own handbook.
   One departure: the source page names the change date `last_update` in its
   field list and `last_updated` in its demo Cypher, and this model uses
-  `lastUpdated`, typed as a `DATE` rather than the demo's `datetime`.
+  `lastUpdated`. It is typed as `ZONED DATETIME` rather than `DATE` because
+  the Import flow's local-file mapping only accepts zoned datetimes, not
+  bare dates; the time and zone are otherwise meaningless and always
+  midnight UTC.
 - Full schema and mappings are in `GRAPH_MODEL.json`; runnable Cypher is in
   `QUERIES.md`.
 - Treat the model's `description` annotations as the authoritative meaning of

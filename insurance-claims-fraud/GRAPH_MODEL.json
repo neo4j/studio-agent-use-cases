@@ -1,46 +1,58 @@
 {
   "version": "4.0.0",
+  "name": "Insurance Claims Fraud",
+  "description": "Models motor and personal-injury claims as a graph of claimants, the vehicles they own, the claims they file, and the medical professionals attached to those claims. Answers which claimants file repeatedly, which vehicles recur across otherwise unrelated claims, and which professionals are attached to an unusual share of claim volume or value — the repetition across records that organised fraud produces and that per-claim scoring cannot see.",
   "nodes": {
     "n:0": {
       "label": "Claimant",
+      "description": "A person who has filed one or more claims against a policy. Identified by name alone, so the model treats a spelling variant as a different claimant: real deployments are expected to resolve identity before import rather than rely on this label to do it.",
       "properties": {
         "name": {
           "type": "STRING",
+          "description": "Full name of the claimant, and the identifier by which the same person is recognised across separate claims. Expected to be already normalised, since the model performs no fuzzy matching. e.g. `Angela Watson`.",
           "key": true
         }
       }
     },
     "n:1": {
       "label": "MedicalProfessional",
+      "description": "A clinician who assesses or treats claimants and whose assessment supports a claim for injury. Concentration of claims on one professional is a fraud signal in its own right, so this is a first-class entity rather than a property of the claim.",
       "properties": {
         "name": {
           "type": "STRING",
+          "description": "Full name of the medical professional, including any title as recorded by the insurer, and the identifier by which they are recognised across separate claims. e.g. `Dr. Ruth Butler`.",
           "key": true
         }
       }
     },
     "n:2": {
       "label": "Claim",
+      "description": "A single claim submitted for settlement following an incident. The unit at which money is sought and at which fraud is ultimately assessed, though rarely the unit at which it is detectable.",
       "properties": {
         "claimID": {
           "type": "STRING",
+          "description": "The insurer's reference for the claim, unique across the portfolio. e.g. `CL-000001`.",
           "key": true
         },
         "date": {
           "type": "STRING",
+          "description": "Calendar date of the incident the claim relates to, as an ISO 8601 date in YYYY-MM-DD form. Held as a string rather than a temporal type, so comparisons are lexicographic — which orders correctly for this format but requires an explicit conversion before any date arithmetic. e.g. `2024-01-25`.",
           "nullable": true
         },
         "amountClaimed": {
           "type": "INTEGER",
+          "description": "Amount sought on the claim, as a whole currency unit with no minor units. The model carries no currency code and assumes a single-currency portfolio, so totals across claims are only meaningful under that assumption. e.g. `1447`.",
           "nullable": false
         }
       }
     },
     "n:3": {
       "label": "Vehicle",
+      "description": "A motor vehicle that can be owned by a claimant and named in claims. Held separately from the claim so that a single vehicle appearing across several otherwise unconnected incidents becomes visible — the classic staged-accident signal.",
       "properties": {
         "VIN": {
           "type": "STRING",
+          "description": "Vehicle identification number — the manufacturer's 17-character serial for the vehicle. Expected to be the identifier that survives a change of registration plate or of owner, which is what makes it usable for linking claims. e.g. `PYXLNVHK732U50J1C`.",
           "key": true
         }
       }
@@ -49,6 +61,7 @@
   "relationships": {
     "r:0": {
       "type": "HAS_CLAIM",
+      "description": "Records that the claimant filed this claim. Exactly one claimant per claim; a claimant may file many claims, and in the general case none. Counting and totalling along this link is the simplest repeat-claimant check the model supports.",
       "from": {
         "node": "n:0"
       },
@@ -58,6 +71,7 @@
     },
     "r:1": {
       "type": "TREATED_BY",
+      "description": "Records that this medical professional was attached to the claim and provided the clinical assessment it rests on. Exactly one professional per claim; a professional may be attached to many claims, or to none. Concentration of claim count or claim value on one professional is what marks them an outlier against their peers.",
       "from": {
         "node": "n:2"
       },
@@ -67,6 +81,7 @@
     },
     "r:2": {
       "type": "OWNS",
+      "description": "Records that the claimant owns this vehicle. Exactly one owner per vehicle in this model, which therefore represents current ownership rather than an ownership history; a claimant may own several vehicles, or none.",
       "from": {
         "node": "n:0"
       },
@@ -76,6 +91,7 @@
     },
     "r:3": {
       "type": "INVOLVED_IN",
+      "description": "Records that this vehicle featured in the incident behind the claim. Exactly one vehicle per claim; a vehicle may be involved in several claims, or in none. A vehicle implausibly often involved is the entry point to a staged-accident ring.",
       "from": {
         "node": "n:3"
       },
@@ -85,6 +101,7 @@
     },
     "r:4": {
       "type": "TREATS",
+      "description": "Records a care relationship between the professional and the person, independent of any particular claim. Many-to-many in both directions: a professional may treat many claimants and a claimant may be treated by several professionals. Held separately from the claim link so the two can be compared — a professional treating someone whose claim they were never attached to is a different situation from one with a simply large caseload.",
       "from": {
         "node": "n:1"
       },
