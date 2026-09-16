@@ -121,7 +121,7 @@
       "properties": {
         "qty": {
           "type": "INTEGER",
-          "description": "Number of the required assembly needed per one of the product. Multiplied along the path when costing or weighing a resolved variant. e.g. `1`.",
+          "description": "Number of the required assembly needed per one of the product. Multiplied along the path when costing or weighing a resolved variant. e.g. `1`. This entry carries the existence constraint for qty on REQUIRES for the whole type: the constraint is scoped to the relationship type, not to a node pair, so declaring it here covers the other REQUIRES entries too. Do not add mustExist to those — redeclaring it mints a duplicate constraint name and the package fails to load.",
           "mustExist": true
         },
         "note": {
@@ -138,8 +138,7 @@
       "properties": {
         "qty": {
           "type": "INTEGER",
-          "description": "Number of the chosen option needed per one of the product. Multiplied along the path when costing or weighing a resolved variant. e.g. `2`.",
-          "mustExist": true
+          "description": "Number of the chosen option needed per one of the product. Multiplied along the path when costing or weighing a resolved variant. e.g. `2`. Expected to be present on every row; the existence constraint for qty on REQUIRES is declared once on productRequiresAssembly and applies to this entry too."
         },
         "note": {
           "type": "STRING",
@@ -155,8 +154,7 @@
       "properties": {
         "qty": {
           "type": "INTEGER",
-          "description": "Number of the chosen option needed per one of the assembly. Multiplied along the path when costing or weighing a resolved variant. e.g. `2`.",
-          "mustExist": true
+          "description": "Number of the chosen option needed per one of the assembly. Multiplied along the path when costing or weighing a resolved variant. e.g. `2`. Expected to be present on every row; the existence constraint for qty on REQUIRES is declared once on productRequiresAssembly and applies to this entry too."
         },
         "note": {
           "type": "STRING",
