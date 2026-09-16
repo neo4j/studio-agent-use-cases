@@ -1,123 +1,153 @@
 {
   "version": "4.0.0",
+  "name": "Identity Validation",
+  "description": "Models raw profile records as a hub of identities joined to the attribute values they carry — name, phone, email, SSN, address, date of birth and IP — so that two records describing the same person converge on the shared attribute node rather than having to be compared pairwise. Answers which identities are candidate matches, how strong the combined evidence is, and where a reused or near-miss identifier suggests a synthetic identity.",
   "nodes": {
     "n:0": {
       "label": "Identity",
+      "description": "A single raw profile record exactly as one source system captured it, not yet resolved to a real-world person. The hub of the model: every attribute hangs off an identity, and resolving two identities to one person is the outcome the package is looking for rather than something the data states.",
       "properties": {
         "identityId": {
           "type": "STRING",
+          "description": "Identifier for the profile record, unique across every source system rather than only within one. e.g. `ID-1001`.",
           "key": true
         },
         "sourceSystem": {
           "type": "STRING",
+          "description": "Name of the system the record was captured in. Two identities agreeing on an attribute matter more when they come from different systems, so this is what makes a match cross-channel rather than a duplicate within one feed. e.g. `CRM`.",
           "nullable": false
         }
       }
     },
     "n:1": {
       "label": "PersonName",
+      "description": "A person's name as captured, shared by every identity recorded under exactly that name. Deliberately a descriptor rather than an identifier: names are far too common to be evidence of a match on their own, so this node corroborates a candidate found through real identifiers and is expected never to generate candidates by itself.",
       "properties": {
         "fullName": {
           "type": "STRING",
+          "description": "The full name as captured, in the masked display form, and the key on which identities converge. Because the key is the masked form it is weaker than the name it stands for — two different people whose masks collide would share one node — so masks are expected to be disambiguated before load. e.g. `Robert A***n`.",
           "key": true
         },
         "firstName": {
           "type": "STRING",
+          "description": "Given name, held separately for display and for future name-decomposition work. Not read by any matching logic. e.g. `Robert`.",
           "nullable": true
         },
         "lastName": {
           "type": "STRING",
+          "description": "Family name, held separately for display and for future name-decomposition work. Not read by any matching logic. e.g. `Anderson`.",
           "nullable": true
         }
       }
     },
     "n:2": {
       "label": "Phone",
+      "description": "A telephone number, shared by every identity recorded with exactly that number. A strong identifier: convergence here is meaningful evidence that two records describe the same person, and is the single most productive match signal in the model.",
       "properties": {
         "phoneNumber": {
           "type": "STRING",
+          "description": "The telephone number in one fixed format. Convergence depends on exact string equality, so the same number written with different punctuation or spacing forms a separate node — normalisation to a single format is expected upstream, as the model performs none. e.g. `555-201-8823`.",
           "key": true
         }
       }
     },
     "n:3": {
       "label": "Email",
+      "description": "An email address, shared by every identity recorded with exactly that address. A strong identifier, subject to the same exact-equality caveat as any other.",
       "properties": {
         "email": {
           "type": "STRING",
+          "description": "The email address in the masked display form, and the key on which identities converge. Exact string equality only: no case folding, and no normalisation of provider-specific aliasing such as dots or plus-addressing. e.g. `rob***son@maild.net`.",
           "key": true
         }
       }
     },
     "n:4": {
       "label": "SSN",
+      "description": "A social security number, shared by every identity recorded with exactly that number. The strongest identifier in the model when it matches exactly — and, when two differ by a single character, the near-miss that most often marks a synthetic identity built by perturbing a real one.",
       "properties": {
         "ssn": {
           "type": "STRING",
+          "description": "The social security number, masked to its final digits and held in one fixed format. Convergence depends on exact string equality; a near-miss is deliberately a different node, since detecting near-misses is a separate query rather than a merge. e.g. `XXX-XX-1190`.",
           "key": true
         }
       }
     },
     "n:5": {
       "label": "Address",
+      "description": "A postal address, shared by every identity recorded at exactly that address. Identified by the raw street string together with city, state and zipcode rather than by a geocoder-standardised form, specifically so that a suite or apartment number captured by one system is not normalised away.",
       "properties": {
         "addressId": {
           "type": "STRING",
+          "description": "Canonical concatenation of `address`, `city`, `state` and `zipcode`, and the key on which identities converge. Exists only because the import flow requires a single identifying property and cannot infer one from a composite; because it is derived from exactly the four values it replaces, convergence behaves identically to a composite key. e.g. `1210 Foxglove Dr, Austin, TX 78701`.",
           "key": true
         },
         "address": {
           "type": "STRING",
+          "description": "Street portion of the address as captured, including any suite or apartment detail. Held for querying and display; identity is carried by `addressId`. e.g. `1210 Foxglove Dr`.",
           "nullable": false
         },
         "city": {
           "type": "STRING",
+          "description": "Town or city portion of the address. A descriptor — far too common to be evidence of a match on its own. e.g. `Austin`.",
           "nullable": false
         },
         "state": {
           "type": "STRING",
+          "description": "State portion of the address, as a two-letter postal abbreviation. A descriptor. e.g. `TX`.",
           "nullable": false
         },
         "zipcode": {
           "type": "STRING",
+          "description": "Postal code portion of the address, as captured and not extended to a full plus-four form. e.g. `78701`.",
           "nullable": false
         }
       }
     },
     "n:6": {
       "label": "DOB",
+      "description": "A date of birth, shared by every identity with exactly that birthdate. Keyed on a hash of the full date rather than on the masked value that is displayed: keying on the masked year would converge everyone born in the same year onto one node, which is a coincidence rather than a match.",
       "properties": {
         "dateHash": {
           "type": "STRING",
+          "description": "Keyed hash of the full unmasked birthdate — an HMAC-SHA256 computed once at load time and stored truncated — and the key on which identities converge. Never displayed. Because it is keyed, identical birthdates converge only within one deployment's secret; the hash is expected to be recomputed if that secret changes. e.g. `6be47cfe80eb4426`.",
           "key": true
         },
         "dob": {
           "type": "STRING",
+          "description": "The birthdate in masked, year-only display form. Display only, and deliberately not the key: its entropy is far too low to identify a person. e.g. `1978-XX-XX`.",
           "nullable": false
         }
       }
     },
     "n:7": {
       "label": "IPAddress",
+      "description": "An IP address a profile was seen from, shared by every identity recorded with exactly that address. Treated as a device or channel signal rather than a property of a person — a shared address is meaningful evidence, but one that shared infrastructure explains innocently far more often than a shared phone number does.",
       "properties": {
         "ip": {
           "type": "STRING",
+          "description": "The IP address as captured. Exact string equality only, with no normalisation between notations and no grouping into subnets. e.g. `203.0.113.45`.",
           "key": true
         }
       }
     },
     "n:8": {
       "label": "Location",
+      "description": "A geographic point that one or more addresses resolve to, one hop past the address. This is where standardisation pays off: two differently written addresses that a geocoder treats as the same place converge here even though their address nodes stay distinct.",
       "properties": {
         "locationId": {
           "type": "STRING",
+          "description": "Canonical form of the coordinate pair, and the key on which addresses converge. Exists because the import flow requires a single identifying property. When a real geocoding provider is used, its own stable place identifier is expected to replace this, since repeated lookups of one place can return coordinates differing in the last decimal and would then fail to converge. e.g. `33.450191,-112.085658`.",
           "key": true
         },
         "latitude": {
           "type": "FLOAT",
+          "description": "Latitude of the point in decimal degrees on WGS 84, positive northwards. This and `longitude` are what proximity queries actually read; the model stores no point value, which is derived after load. e.g. `33.450191`.",
           "nullable": false
         },
         "longitude": {
           "type": "FLOAT",
+          "description": "Longitude of the point in decimal degrees on WGS 84, positive eastwards. e.g. `-112.085658`.",
           "nullable": false
         }
       }
@@ -126,6 +156,7 @@
   "relationships": {
     "r:0": {
       "type": "HAS_NAME",
+      "description": "Attaches the name captured on this profile record. At most one name per identity, and an identity that has none simply carries no such link rather than a null value; a name may be shared by several identities. Shared names corroborate a candidate match but are expected never to generate one.",
       "from": {
         "node": "n:0"
       },
@@ -135,6 +166,7 @@
     },
     "r:1": {
       "type": "HAS_PHONE",
+      "description": "Attaches a telephone number captured on this profile record. At most one phone per identity, and a missing phone is modelled by the absence of this link; a phone may be shared by several identities, and that convergence is the match signal.",
       "from": {
         "node": "n:0"
       },
@@ -144,6 +176,7 @@
     },
     "r:2": {
       "type": "HAS_EMAIL",
+      "description": "Attaches an email address captured on this profile record. At most one email per identity, and a missing email is modelled by the absence of this link; an email may be shared by several identities.",
       "from": {
         "node": "n:0"
       },
@@ -153,6 +186,7 @@
     },
     "r:3": {
       "type": "HAS_SSN",
+      "description": "Attaches a social security number captured on this profile record. At most one SSN per identity, and a missing SSN is modelled by the absence of this link; an SSN may be shared by several identities — legitimately where records genuinely match, and suspiciously where they do not.",
       "from": {
         "node": "n:0"
       },
@@ -162,6 +196,7 @@
     },
     "r:4": {
       "type": "HAS_ADDRESS",
+      "description": "Attaches a postal address captured on this profile record. At most one address per identity, and a missing address is modelled by the absence of this link; an address may be shared by several identities, which is expected at a household and unremarkable on its own.",
       "from": {
         "node": "n:0"
       },
@@ -171,6 +206,7 @@
     },
     "r:5": {
       "type": "HAS_DOB",
+      "description": "Attaches the date of birth captured on this profile record. At most one date of birth per identity, and a missing one is modelled by the absence of this link; a birthdate may be shared by several identities, so it corroborates a match rather than establishing one.",
       "from": {
         "node": "n:0"
       },
@@ -180,6 +216,7 @@
     },
     "r:6": {
       "type": "HAS_IP",
+      "description": "Attaches an IP address the profile record was seen from. At most one address per identity, and a missing one is modelled by the absence of this link; an address may be shared by several identities.",
       "from": {
         "node": "n:0"
       },
@@ -189,6 +226,7 @@
     },
     "r:7": {
       "type": "GEOCODED_TO",
+      "description": "Resolves a postal address to the geographic point a geocoder placed it at. At most one point per address; a point may be shared by several addresses, which is what makes differently written forms of one place converge. An address that failed to geocode carries no such link, and that absence — rather than any enumeration of malformed forms — is the implausible-address signal.",
       "from": {
         "node": "n:5"
       },

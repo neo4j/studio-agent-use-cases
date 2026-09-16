@@ -32,7 +32,7 @@ name: example-skill
 description: One-line description of what this skill helps with.
 metadata:
   neo4j-card-title: Example Skill
-  neo4j-card-category: General
+  neo4j-card-category: Industry Agnostic
   neo4j-card-description: Short card summary shown in Studio Agent.
 ---
 ```
@@ -42,7 +42,7 @@ metadata:
 | `name` | Skill id. Must match the skill directory name (kebab-case). |
 | `description` | Skill description used by the agent. |
 | `metadata.neo4j-card-title` | Display title on the use-case card. |
-| `metadata.neo4j-card-category` | Display category used to group related use cases (for example `Financial Services`, `Insurance`, `Healthcare & Life Sciences`, `Manufacturing`, `Cybersecurity`, `Industry Agnostic`). |
+| `metadata.neo4j-card-category` | Display category used to group related use cases. A closed set, matched exactly: `Financial Services`, `Insurance`, `Healthcare & Life Sciences`, `Manufacturing`, `Cybersecurity`, `Industry Agnostic`. An unlisted value is rejected and the package is dropped from the catalog. |
 | `metadata.neo4j-card-description` | Short summary shown on the use-case card. |
 
 ## Raw files
