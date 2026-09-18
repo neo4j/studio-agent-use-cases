@@ -36,6 +36,24 @@ Every query therefore carries `TODO(review): unproven query` in its
 | Choke points | `UNWIND nodes(path)[1..-1]` and `count(DISTINCT path)` | That the slice excludes both endpoints and that distinct path counting behaves as assumed. Under relationship-uniqueness a path may revisit a node (see the `artifact-store-01` note in the profile), which the simulation reproduces deliberately. |
 | Crown-jewel exposure summary | `collect({app: exposed, …})` over zero rows, then `[entry IN exposure WHERE entry.app = target][0]` | That the collect still yields one row with an empty list when no crown jewel is reachable at all, so unreached applications are still returned. This is the construct the whole negative case rests on. The comprehension variable is deliberately not named `row`, to avoid shadowing the alias it feeds. |
 
+## Editing note: the reused relationship type
+
+`HAS_ACCESS_TO` is declared twice — `policyAccessesService` and
+`policyAccessesApplication` — and **neither entry carries any properties**. Keep
+it that way unless you understand the consequence.
+
+A `mustExist` on a relationship property generates an existence constraint
+scoped to the *relationship type*, not to the node pair. Declaring the same
+constrained property on both entries of a reused type therefore mints two
+constraints with the same name, and the package fails to load. This is a real
+defect that has already been fixed once in another package in this repository.
+
+If a property is ever needed on `HAS_ACCESS_TO`, declare any `mustExist` on
+exactly one of the two entries and say so in both descriptions, rather than
+declaring it on each. The relationship-property constraints currently in the
+model — `HAS_VULNERABILITY.detectedOn` and `CAN_REACH.port` — are safe because
+both types are declared exactly once. No node label is reused.
+
 ## How to run
 
 1. **Use a disposable database.** Every query here reads, but the schema
