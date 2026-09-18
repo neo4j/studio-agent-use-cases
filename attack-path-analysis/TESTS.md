@@ -36,7 +36,34 @@ Every query therefore carries `TODO(review): unproven query` in its
 | Choke points | `UNWIND nodes(path)[1..-1]` and `count(DISTINCT path)` | That the slice excludes both endpoints and that distinct path counting behaves as assumed. Under relationship-uniqueness a path may revisit a node (see the `artifact-store-01` note in the profile), which the simulation reproduces deliberately. |
 | Crown-jewel exposure summary | `collect({app: exposed, …})` over zero rows, then `[entry IN exposure WHERE entry.app = target][0]` | That the collect still yields one row with an empty list when no crown jewel is reachable at all, so unreached applications are still returned. This is the construct the whole negative case rests on. The comprehension variable is deliberately not named `row`, to avoid shadowing the alias it feeds. |
 
-## Editing note: the reused relationship type
+## Editing notes
+
+Two things in this model will break the package if changed carelessly. Both are
+defects that have actually occurred in this repository, not hypotheticals.
+
+### Temporal properties must be `ZONED DATETIME`, never `DATE`
+
+`CVE.publishedDate` and `HAS_VULNERABILITY.detectedOn` are typed
+`ZONED DATETIME`, and the CSV columns carry a full ISO 8601 zoned datetime
+(`2026-08-14T00:00:00Z`) rather than a bare `2026-08-14`.
+
+This is not a modelling preference. **The Import tool does not support `DATE` for
+local CSV imports**: it flags the property with "Not supported in local imports"
+and the load cannot proceed, which is exactly the failure this package shipped
+with before the type was changed. Every other package in this repository
+carrying a temporal property uses `ZONED DATETIME` for the same reason.
+
+Only the calendar date is meaningful. The time component is always midnight UTC
+and should be treated as padding. If you regenerate the sample data, keep the
+`T00:00:00Z` suffix on both columns, and keep the trailing sample values in the
+two property descriptions in the same form — they are checked verbatim against
+the columns.
+
+No bundled query filters on either property, so no expected result in this file
+depends on a date value; that is why the type change required no re-derivation.
+A query added later should compare with `datetime($value)`, not `date($value)`.
+
+### The reused relationship type carries no properties
 
 `HAS_ACCESS_TO` is declared twice — `policyAccessesService` and
 `policyAccessesApplication` — and **neither entry carries any properties**. Keep

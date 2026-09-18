@@ -16,6 +16,11 @@ and which hosts most routes depend on.
 - The index in `SETUP.md` is recommended, not required. Without it the
   crown-jewel queries scan the `Application` label instead of seeking; results
   are identical.
+- **Temporal properties are `ZONED DATETIME`.** `CVE.publishedDate` and
+  `HAS_VULNERABILITY.detectedOn` both carry a zoned datetime whose time is always
+  midnight UTC, because the Import tool does not accept a bare date for local CSV
+  loads. Only the calendar date is meaningful. No query below filters on either,
+  but one you add should compare with `datetime($value)`, not `date($value)`.
 - **Variable-length bounds cannot be parameterised in Cypher.** Every traversal
   below carries a literal ceiling in the pattern and a `$maxLateralHops` filter
   inside it. The parameter tunes the bound; the literal is the hard limit. To

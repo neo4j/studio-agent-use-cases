@@ -74,6 +74,13 @@ or start importing data.
   exploitation in the wild, and `knownExploited` records observed exploitation
   via the CISA KEV catalogue. The queries filter on KEV and CVSS together
   because either alone over-selects.
+- **The two temporal properties are `ZONED DATETIME`, not `DATE`** —
+  `CVE.publishedDate` and `HAS_VULNERABILITY.detectedOn`. Only the calendar date
+  carries meaning; the time is always midnight UTC. The type is forced by the
+  Import tool, which does not accept a bare date for local CSV loads. When
+  writing new Cypher against either, compare with `datetime($value)` rather than
+  `date($value)`, and truncate with `date(p.publishedDate)` if a calendar date is
+  what you want to return.
 - The identity half of the model — `RUNS_AS` to an `Identity`, `ASSUMES` to an
   `IAMPolicy`, `HAS_ACCESS_TO` to a `CloudService` or `Application` — is what
   converts a host compromise into a data exposure. It needs no network path, so

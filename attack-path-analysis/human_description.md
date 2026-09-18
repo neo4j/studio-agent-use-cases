@@ -107,7 +107,7 @@ whatever that host happens to run.
 | `CVE` | `severity` | String | Qualitative severity band derived from the score, upper case. Carried for readability alongside the numeric value |
 | `CVE` | `epssScore` | Float | Probability from 0.0 to 1.0 that the vulnerability will be exploited in the wild within the next 30 days. A likelihood, not a severity: a high likelihood on a weak flaw means something actually being used |
 | `CVE` | `knownExploited` | Boolean | True when exploitation has been observed in the wild rather than merely predicted. The strongest single signal for prioritising an entry point |
-| `CVE` | `publishedDate` | Date | Date the vulnerability record was first published — first publication, not last modification, and not when the flaw was introduced or discovered |
+| `CVE` | `publishedDate` | Zoned datetime | Date the vulnerability record was first published — first publication, not last modification, and not when the flaw was introduced or discovered. Only the calendar date is meaningful; the time is always midnight UTC |
 | `Application` | `applicationId` | String | Unique identifier in the application portfolio |
 | `Application` | `name` | String | Business name of the application |
 | `Application` | `tier` | String | Business criticality band, where the number ascends as criticality descends: the lowest-numbered band is the crown-jewel set whose compromise is materially damaging. Assigned by the business, never derived from the connections |
@@ -140,6 +140,6 @@ whatever that host happens to run.
 
 | Relationship | Property | Type | What it holds |
 | ------------ | -------- | ---- | ------------- |
-| `HAS_VULNERABILITY` | `detectedOn` | Date | The date a scan **last confirmed** the vulnerability still present on this machine — last confirmation rather than first detection, so a recent date means the finding is current and an old one means the machine has not been rescanned. Distinct from the vulnerability's own publication date |
+| `HAS_VULNERABILITY` | `detectedOn` | Zoned datetime | The date a scan **last confirmed** the vulnerability still present on this machine — last confirmation rather than first detection, so a recent date means the finding is current and an old one means the machine has not been rescanned. Distinct from the vulnerability's own publication date. Only the calendar date is meaningful; the time is always midnight UTC |
 | `CAN_REACH` | `port` | Integer | The port on the target machine the source is permitted to connect to. One port per connection, not a range: a rule opening several ports between the same pair is several connections |
 | `CAN_REACH` | `protocol` | String | Application-layer protocol permitted on that port, lower case, from the same set as an entry point's protocol |

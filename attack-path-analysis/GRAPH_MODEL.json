@@ -81,8 +81,8 @@
           "mustExist": true
         },
         "publishedDate": {
-          "type": "DATE",
-          "description": "Date the vulnerability record was first published, as a calendar date with no time or zone. First publication, not last modification, and not the date the flaw was introduced or discovered. e.g. `2023-10-10`."
+          "type": "ZONED DATETIME",
+          "description": "Date the vulnerability record was first published. First publication, not last modification, and not the date the flaw was introduced or discovered. Carried as an ISO 8601 zoned datetime because local CSV imports do not support a bare date; the time is always midnight UTC and carries no meaning beyond the calendar date. e.g. `2023-10-10T00:00:00Z`."
         }
       }
     },
@@ -191,8 +191,8 @@
       "to": { "node": "CVE" },
       "properties": {
         "detectedOn": {
-          "type": "DATE",
-          "description": "Calendar date on which a scan last confirmed the vulnerability still present on this instance, with no time or zone. Last confirmation rather than first detection, so a recent date means the finding is current and an old one means the instance has not been rescanned. Distinct from the CVE's own publication date. e.g. `2026-08-14`.",
+          "type": "ZONED DATETIME",
+          "description": "Date on which a scan last confirmed the vulnerability still present on this instance. Last confirmation rather than first detection, so a recent date means the finding is current and an old one means the instance has not been rescanned. Distinct from the CVE's own publication date. Carried as an ISO 8601 zoned datetime because local CSV imports do not support a bare date; the time is always midnight UTC and carries no meaning beyond the calendar date. e.g. `2026-08-14T00:00:00Z`.",
           "mustExist": true
         }
       }
