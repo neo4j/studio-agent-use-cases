@@ -1,0 +1,10 @@
+applicationId,name,tier,businessUnit
+APP-001,Payment Ledger,P0,Finance
+APP-002,Card Tokenization Service,P0,Finance
+APP-003,Order Management,P1,Commerce
+APP-004,Inventory Sync,P2,Supply Chain
+APP-005,Customer CRM,P1,Sales
+APP-006,Legacy Supplier Portal,P3,Supply Chain
+APP-007,Build Orchestrator,P1,Platform
+APP-008,Status Page,P3,Platform
+APP-009,HR Records,P0,People
