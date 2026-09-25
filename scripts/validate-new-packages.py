@@ -248,7 +248,8 @@ def validate_skill_md(skill_id: str, skill_dir: Path, issues: list[Issue]) -> No
     if not match:
         issues.append(
             Issue(
-                f"{skill_id}: SKILL.md must start with YAML frontmatter delimited by --- lines",
+                f"{skill_id}: SKILL.md must start with YAML frontmatter "
+                "delimited by --- lines",
                 rel,
                 1,
             )
@@ -282,7 +283,8 @@ def validate_skill_md(skill_id: str, skill_dir: Path, issues: list[Issue]) -> No
         if name != skill_id:
             issues.append(
                 Issue(
-                    f"{skill_id}: SKILL.md 'name' must match the directory name ({skill_id!r}), got {name!r}",
+                    f"{skill_id}: SKILL.md 'name' must match the directory name "
+                    f"({skill_id!r}), got {name!r}",
                     rel,
                     1,
                 )
@@ -291,7 +293,8 @@ def validate_skill_md(skill_id: str, skill_dir: Path, issues: list[Issue]) -> No
     if non_empty_string(frontmatter.get("description")) is None:
         issues.append(
             Issue(
-                f"{skill_id}: SKILL.md frontmatter is missing a non-empty 'description'",
+                f"{skill_id}: SKILL.md frontmatter is missing a non-empty "
+                "'description'",
                 rel,
                 1,
             )
@@ -301,7 +304,8 @@ def validate_skill_md(skill_id: str, skill_dir: Path, issues: list[Issue]) -> No
     if not isinstance(metadata, dict):
         issues.append(
             Issue(
-                f"{skill_id}: SKILL.md frontmatter is missing a 'metadata' mapping with Neo4j card fields",
+                f"{skill_id}: SKILL.md frontmatter is missing a 'metadata' mapping "
+                "with Neo4j card fields",
                 rel,
                 1,
             )
@@ -312,7 +316,8 @@ def validate_skill_md(skill_id: str, skill_dir: Path, issues: list[Issue]) -> No
     if title is None:
         issues.append(
             Issue(
-                f"{skill_id}: metadata.neo4j-card-title is required and must be a non-empty string",
+                f"{skill_id}: metadata.neo4j-card-title is required and must be "
+                "a non-empty string",
                 rel,
                 1,
             )
@@ -322,7 +327,8 @@ def validate_skill_md(skill_id: str, skill_dir: Path, issues: list[Issue]) -> No
     if category is None:
         issues.append(
             Issue(
-                f"{skill_id}: metadata.neo4j-card-category is required and must be a non-empty string",
+                f"{skill_id}: metadata.neo4j-card-category is required and must be "
+                "a non-empty string",
                 rel,
                 1,
             )
@@ -331,7 +337,8 @@ def validate_skill_md(skill_id: str, skill_dir: Path, issues: list[Issue]) -> No
         allowed = ", ".join(repr(item) for item in ALLOWED_CATEGORIES)
         issues.append(
             Issue(
-                f"{skill_id}: metadata.neo4j-card-category must be one of: {allowed}. Got {category!r}",
+                f"{skill_id}: metadata.neo4j-card-category must be one of: "
+                f"{allowed}. Got {category!r}",
                 rel,
                 1,
             )
@@ -341,7 +348,8 @@ def validate_skill_md(skill_id: str, skill_dir: Path, issues: list[Issue]) -> No
     if card_description is None:
         issues.append(
             Issue(
-                f"{skill_id}: metadata.neo4j-card-description is required and must be a non-empty string",
+                f"{skill_id}: metadata.neo4j-card-description is required and "
+                "must be a non-empty string",
                 rel,
                 1,
             )
@@ -394,7 +402,8 @@ def validate_catalog_entry(skill_id: str, issues: list[Issue]) -> None:
     if entry is None:
         issues.append(
             Issue(
-                f"{skill_id}: new package must be listed in catalog.json with skillId {skill_id!r}",
+                f"{skill_id}: new package must be listed in catalog.json "
+                f"with skillId {skill_id!r}",
                 catalog,
             )
         )
@@ -414,7 +423,8 @@ def validate_catalog_entry(skill_id: str, issues: list[Issue]) -> None:
     if graph != "GRAPH_MODEL.json":
         issues.append(
             Issue(
-                f"{skill_id}: catalog.json files.graph must be 'GRAPH_MODEL.json', got {graph!r}",
+                f"{skill_id}: catalog.json files.graph must be 'GRAPH_MODEL.json', "
+                f"got {graph!r}",
                 catalog,
             )
         )
@@ -423,7 +433,8 @@ def validate_catalog_entry(skill_id: str, issues: list[Issue]) -> None:
     if markdown != "SKILL.md":
         issues.append(
             Issue(
-                f"{skill_id}: catalog.json files.markdown must be 'SKILL.md', got {markdown!r}",
+                f"{skill_id}: catalog.json files.markdown must be 'SKILL.md', "
+                f"got {markdown!r}",
                 catalog,
             )
         )

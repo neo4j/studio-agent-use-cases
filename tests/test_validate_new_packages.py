@@ -94,14 +94,18 @@ class ValidatorTestCase(unittest.TestCase):
             json.dumps(payload, indent=2), encoding="utf-8"
         )
 
-    def skill_md_issues(self, content: str | None = None, *, missing: bool = False) -> list[str]:
+    def skill_md_issues(
+        self, content: str | None = None, *, missing: bool = False
+    ) -> list[str]:
         if not missing and content is not None:
             self.write_skill_md(content)
         issues: list[vnp.Issue] = []
         vnp.validate_skill_md(SKILL_ID, self.skill_dir, issues)
         return [issue.message for issue in issues]
 
-    def graph_model_issues(self, content: str | None = None, *, missing: bool = False) -> list[str]:
+    def graph_model_issues(
+        self, content: str | None = None, *, missing: bool = False
+    ) -> list[str]:
         if not missing and content is not None:
             self.write_graph_model(content)
         issues: list[vnp.Issue] = []
@@ -119,7 +123,9 @@ class TestIssue(unittest.TestCase):
 
     def test_annotation_without_location(self) -> None:
         issue = vnp.Issue("package directory does not exist")
-        self.assertEqual(issue.annotation(), "::error::package directory does not exist")
+        self.assertEqual(
+            issue.annotation(), "::error::package directory does not exist"
+        )
 
 
 class TestHelpers(unittest.TestCase):
@@ -222,7 +228,9 @@ class TestValidateSkillMd(ValidatorTestCase):
 
     def test_missing_file(self) -> None:
         messages = self.skill_md_issues(missing=True)
-        self.assertTrue(any("missing required file SKILL.md" in msg for msg in messages))
+        self.assertTrue(
+            any("missing required file SKILL.md" in msg for msg in messages)
+        )
 
     def test_empty_file(self) -> None:
         messages = self.skill_md_issues("   \n")
@@ -259,27 +267,27 @@ class TestValidateSkillMd(ValidatorTestCase):
         messages = self.skill_md_issues(content)
         self.assertTrue(any("non-empty 'description'" in msg for msg in messages))
         self.assertTrue(any("neo4j-card-title" in msg for msg in messages))
-        self.assertTrue(any("neo4j-card-category is required" in msg for msg in messages))
+        self.assertTrue(
+            any("neo4j-card-category is required" in msg for msg in messages)
+        )
         self.assertTrue(any("neo4j-card-description" in msg for msg in messages))
 
     def test_missing_metadata_mapping(self) -> None:
-        content = (
-            "---\n"
-            f"name: {SKILL_ID}\n"
-            "description: A test skill.\n"
-            "---\n\n"
-            "Body\n"
-        )
+        content = f"---\nname: {SKILL_ID}\ndescription: A test skill.\n---\n\nBody\n"
         messages = self.skill_md_issues(content)
         self.assertTrue(any("'metadata' mapping" in msg for msg in messages))
 
     def test_rejects_unknown_category(self) -> None:
         messages = self.skill_md_issues(skill_md(category="General"))
-        self.assertTrue(any("must be one of" in msg and "General" in msg for msg in messages))
+        self.assertTrue(
+            any("must be one of" in msg and "General" in msg for msg in messages)
+        )
 
     def test_empty_body(self) -> None:
         messages = self.skill_md_issues(skill_md(body="   \n"))
-        self.assertTrue(any("body after frontmatter must be non-empty" in msg for msg in messages))
+        self.assertTrue(
+            any("body after frontmatter must be non-empty" in msg for msg in messages)
+        )
 
 
 class TestValidateGraphModel(ValidatorTestCase):
@@ -315,7 +323,9 @@ class TestValidateCatalogEntry(ValidatorTestCase):
     def test_missing_catalog_entry(self) -> None:
         issues: list[vnp.Issue] = []
         vnp.validate_catalog_entry(SKILL_ID, issues)
-        self.assertTrue(any("must be listed in catalog.json" in i.message for i in issues))
+        self.assertTrue(
+            any("must be listed in catalog.json" in i.message for i in issues)
+        )
 
     def test_missing_files_object(self) -> None:
         self.write_catalog({"schemaVersion": 1, "skills": [{"skillId": SKILL_ID}]})
@@ -328,8 +338,12 @@ class TestValidateCatalogEntry(ValidatorTestCase):
         issues: list[vnp.Issue] = []
         vnp.validate_catalog_entry(SKILL_ID, issues)
         messages = [issue.message for issue in issues]
-        self.assertTrue(any("files.graph must be 'GRAPH_MODEL.json'" in msg for msg in messages))
-        self.assertTrue(any("files.markdown must be 'SKILL.md'" in msg for msg in messages))
+        self.assertTrue(
+            any("files.graph must be 'GRAPH_MODEL.json'" in msg for msg in messages)
+        )
+        self.assertTrue(
+            any("files.markdown must be 'SKILL.md'" in msg for msg in messages)
+        )
 
 
 class TestValidatePackage(ValidatorTestCase):
@@ -347,11 +361,15 @@ class TestValidatePackage(ValidatorTestCase):
     def test_collects_issues_from_all_checks(self) -> None:
         issues = vnp.validate_package(SKILL_ID)
         messages = [issue.message for issue in issues]
-        self.assertTrue(any("missing required file SKILL.md" in msg for msg in messages))
+        self.assertTrue(
+            any("missing required file SKILL.md" in msg for msg in messages)
+        )
         self.assertTrue(
             any("missing required file GRAPH_MODEL.json" in msg for msg in messages)
         )
-        self.assertTrue(any("must be listed in catalog.json" in msg for msg in messages))
+        self.assertTrue(
+            any("must be listed in catalog.json" in msg for msg in messages)
+        )
 
 
 class TestDiscoverNewPackages(ValidatorTestCase):
@@ -380,9 +398,7 @@ class TestDiscoverNewPackages(ValidatorTestCase):
             patch.object(
                 vnp, "working_tree_top_level_dirs", return_value={"retail-banking"}
             ),
-            patch.object(
-                vnp, "catalog_skill_ids_at", return_value={"retail-banking"}
-            ),
+            patch.object(vnp, "catalog_skill_ids_at", return_value={"retail-banking"}),
         ):
             self.assertEqual(vnp.discover_new_packages("abc123"), [])
 
