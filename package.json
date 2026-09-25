@@ -2,7 +2,12 @@
   "name": "studio-agent-use-cases",
   "version": "1.0.0",
   "description": "Public Neo4j Studio Agent skill packages",
-  "scripts": {},
+  "scripts": {
+    "setup": "python3 -m venv .venv && .venv/bin/python -m pip install -r requirements-dev.txt",
+    "format": ".venv/bin/ruff format .",
+    "format:check": ".venv/bin/ruff format --check .",
+    "lint": ".venv/bin/ruff check --fix ."
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/neo4j/studio-agent-use-cases.git"
