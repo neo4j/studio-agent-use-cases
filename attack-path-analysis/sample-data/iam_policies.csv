@@ -1,0 +1,13 @@
+policyId,name,permissionLevel
+POL-001,edge-logs-write,write
+POL-002,portal-assets-read,read
+POL-003,order-events-write,write
+POL-004,payment-vault-read,read
+POL-005,ci-artifact-admin,admin
+POL-006,ci-deploy-all-prod,admin
+POL-007,backup-bucket-write,write
+POL-008,platform-break-glass,admin
+POL-009,metrics-read,read
+POL-010,inventory-feed-write,write
+POL-011,hr-records-read,read
+POL-012,shared-config-read,read

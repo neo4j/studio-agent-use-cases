@@ -1,0 +1,12 @@
+identityId,name,identityType
+ID-001,svc-edge-proxy,service
+ID-002,svc-legacy-portal,service
+ID-003,svc-web-front,service
+ID-004,svc-app-orders,service
+ID-005,svc-app-payments,service
+ID-006,role-ci-deployer,role
+ID-007,svc-db-backup,service
+ID-008,role-platform-admin,role
+ID-009,svc-monitoring,service
+ID-010,svc-inventory,service
+ID-011,svc-hr-records,service

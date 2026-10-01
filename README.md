@@ -22,6 +22,26 @@ Every skill must have:
 - a parseable `GRAPH_MODEL.json`; and
 - every sample CSV referenced by the graph model, with the fields that model uses.
 
+## Development
+
+Python code is formatted and linted with [Ruff](https://docs.astral.sh/ruff/). You need Python 3.12 or newer and pnpm. After cloning, run once:
+
+```sh
+pnpm run setup
+```
+
+This creates a local `.venv/` and installs the Ruff version pinned in `requirements-dev.txt`, which is the same version CI uses.
+
+| Command | Purpose |
+| ------- | ------- |
+| `pnpm run format` | Format all Python files. |
+| `pnpm run format:check` | Report unformatted files without changing them. |
+| `pnpm run lint` | Lint and apply automatic fixes. |
+
+Run the validator unit tests with `python3 -m unittest discover -s tests`.
+
+CI reads the Ruff version from `requirements-dev.txt`, so upgrading Ruff only means changing that file and re-running `pnpm run setup`.
+
 ## SKILL.md frontmatter
 
 Each `SKILL.md` starts with YAML frontmatter. Use-case display fields live under `metadata`:
