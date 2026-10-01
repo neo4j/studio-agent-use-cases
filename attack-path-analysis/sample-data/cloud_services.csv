@@ -1,0 +1,11 @@
+serviceId,name,serviceType,dataClassification
+CS-001,edge-access-logs,object-store,internal
+CS-002,portal-static-assets,object-store,public
+CS-003,order-event-stream,message-queue,confidential
+CS-004,payment-card-vault,secret-store,restricted
+CS-005,customer-pii-db,relational-database,restricted
+CS-006,build-artifacts,object-store,internal
+CS-007,db-backups,object-store,restricted
+CS-008,platform-metrics,object-store,internal
+CS-009,hr-records-db,relational-database,restricted
+CS-010,shared-config,object-store,internal
