@@ -623,13 +623,13 @@
   ],
   "display": {
     "nodes": {
-      "Endpoint": { "x": -660, "y": 0 },
-      "ComputeInstance": { "x": -400, "y": 0 },
-      "CVE": { "x": -400, "y": -260 },
-      "Identity": { "x": -140, "y": 0 },
-      "IAMPolicy": { "x": 120, "y": 0 },
-      "CloudService": { "x": 380, "y": 0 },
-      "Application": { "x": 120, "y": 260 }
+      "Endpoint": { "x": -330, "y": 0 },
+      "ComputeInstance": { "x": -200, "y": 0 },
+      "CVE": { "x": -200, "y": -130 },
+      "Identity": { "x": -70, "y": 0 },
+      "IAMPolicy": { "x": 60, "y": 0 },
+      "CloudService": { "x": 190, "y": 0 },
+      "Application": { "x": 60, "y": 130 }
     }
   }
 }

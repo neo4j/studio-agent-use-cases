@@ -163,8 +163,8 @@
   ],
   "display": {
     "nodes": {
-      "Standard": { "x": -220, "y": 0 },
-      "Section": { "x": 160, "y": 0 }
+      "Standard": { "x": -110, "y": 0 },
+      "Section": { "x": 80, "y": 0 }
     }
   }
 }
