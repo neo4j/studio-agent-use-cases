@@ -37,7 +37,7 @@ Everything surfaced this way is an investigative lead, never proof. Closed loops
 
 The reference ontology is as small as it can usefully be: two kinds of thing and two kinds of connection.
 
-The design decision worth understanding is that a payment is **a thing, not a link**. The obvious model joins two accounts directly and hangs the amount and date on that link. This one places the payment between them as an entity in its own right, with the originating account pointing into it and the payment pointing on to the beneficiary.
+The design decision worth understanding is that a payment is **a thing, not a link**. The obvious design joins two accounts directly and hangs the amount and date on that link. The reference ontology instead places the payment between them as an entity in its own right, with the originating account pointing into it and the payment pointing on to the beneficiary.
 
 That indirection is what makes the useful checks expressible. Because a payment is an entity, it can be reached from either end, compared with its neighbours around a ring, and ordered against them — which is what the chronology and amount-decay tests depend on. It also means an account carries no customer, product or balance detail: it is a point money passes through, and everything interesting is in how those points connect.
 
