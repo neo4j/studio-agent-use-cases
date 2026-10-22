@@ -24,7 +24,7 @@
     {
       "skillId": "insurance-claims-fraud",
       "files": {
-        "graph": "GRAPH_MODEL.json",
+        "graph": "ONTOLOGY.json",
         "skill": [
           "sample-data/claimants.csv",
           "sample-data/claims.csv",
@@ -35,9 +35,9 @@
           "sample-data/treated_by.csv",
           "sample-data/treats.csv",
           "sample-data/vehicles.csv",
-          "INTRODUCTION.md",
           "QUERIES.md",
-          "human_description.md"
+          "human_description.md",
+          "TESTS.md"
         ],
         "markdown": "SKILL.md"
       }

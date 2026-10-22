@@ -1,28 +1,49 @@
-# Claims Fraud — Query Guidance
+# Insurance Claims Fraud — Query Guidance
 
-Cypher for the `insurance-claims-fraud` use case. Every query references only labels,
-relationship types, and properties defined in `GRAPH_MODEL.json`. The `//` comments before
-each query state its purpose, inputs, prerequisites, and the expected result against the
-bundled `sample-data/` so they act as a lightweight test oracle.
+Cypher for the `insurance-claims-fraud` use case. Every query references only labels, relationship types, and properties defined in the reference ontology (`ONTOLOGY.json`). No query writes to the database; the Graph Data Science queries create and drop an in-memory projection only.
 
-Prerequisites for this section: Neo4j 5.x / Cypher 5, and the bundled sample data imported
-(Claimant, MedicalProfessional, Claim, Vehicle with HAS_CLAIM, TREATED_BY, OWNS,
-INVOLVED_IN, TREATS). No APOC required. The GDS section below additionally requires the
-Graph Data Science library.
+## Prerequisites
 
-Sample-data profile (synthetic, seeded): 4,000 claimants, 50 medical professionals,
-4,500 vehicles, 5,000 claims. Deliberately seeded fraud signals: 600 claimants with more
-than one claim, 3 medical professionals handling only high-value claims, and 100 vehicles
-each reused across 6 claims (crash-for-cash). Thresholds in the queries below are tuned to
-this profile — the source page's demo thresholds (`> 1`, `> 5000`) match its four-row demo
-and would flag almost everything at this volume.
+- Neo4j 5.x, Cypher 5. No APOC required. The Graph Data Science section additionally requires the Graph Data Science (GDS) library, which is not available on every target — some Aura tiers do not include it.
+- The graph is loaded through the Import flow from `ONTOLOGY.json` — the bundled `sample-data/` CSVs, or the user's own data mapped onto the reference ontology.
+- The node keys in `ONTOLOGY.json` make `Claimant.name`, `MedicalProfessional.name`, `Claim.claimID`, and `Vehicle.VIN` unique. `Claim.amountClaimed` is an INTEGER, so the totals below are numeric sums.
+- No `SETUP.md` statements are needed, and no query creates a label, relationship type, or property in the database. The GDS projection `fraud-graph` lives only in the GDS graph catalog, in memory, and does not exist until its projection query runs.
+- The medical-professional outlier thresholds and the result sizes of the Louvain and PageRank queries are parameters, each with a starting point in `@params`. The other thresholds and limits are literals in the Cypher, and each query's `@usage` says how to change them.
+- Queries come in pairs per signal — repeat claimants, medical-professional outliers, reused vehicles — a tabular query and a graph or ranking view, followed by the optional Graph Data Science section.
 
-## 1. Claimants with multiple claims
+## Adapting these queries
+
+These queries assume the reference ontology in `ONTOLOGY.json`. When the user's database differs — their own ontology, a modified one, or a database that predates this package — the queries are patterns to rebuild, not Cypher to run.
+
+1. Read the live schema (`CALL db.schema.visualization()`, `SHOW CONSTRAINTS`) rather than assuming the reference ontology applies.
+2. Map their labels onto the role map in `SKILL.md`. A role with no counterpart means the pattern below it has no analogue — say so rather than forcing a fit.
+3. Rewrite from the pattern, and update the annotation block to describe what the rewritten query actually does.
+
+## Claimants with multiple claims
 
 ```cypher
-// Purpose: flag claimants who filed more than one claim (a possible red flag).
-// Inputs: none. Prerequisites: Claimant-[:HAS_CLAIM]->Claim imported.
-// Expected (sample data): 600 rows; the top claimants have numClaims = 10, then 5, then 2.
+/*
+ * @name           Claimants with multiple claims
+ * @description    Flags claimants who filed more than one claim — the
+ *                 simplest repeat-claimant check — by counting HAS_CLAIM
+ *                 relationships per claimant.
+ * @params         None
+ * @prerequisites  None beyond the imported reference ontology.
+ * @returns        One row per claimant with more than one claim: claimant
+ *                 (Claimant.name) and numClaims, ordered by numClaims
+ *                 descending.
+ * @usage          The literal threshold numClaims > 1 is the definition of a
+ *                 repeat claimant, not a tuned value. On a large portfolio
+ *                 the list is long: raise the literal towards the
+ *                 portfolio's upper percentile of claims per claimant until
+ *                 the result is reviewable by hand. Claimants are keyed by
+ *                 name, so a spelling variant counts as a different
+ *                 claimant and splits the count. Frequency alone is a lead,
+ *                 not a finding.
+ * @tags           repeat-claimant, claimant, claim, frequency
+ * @sample         Bundled sample data only: returns 600 rows — 20
+ *                 claimants with 10 claims, then 80 with 5 and 500 with 2.
+ */
 MATCH (c:Claimant)-[:HAS_CLAIM]->(cl:Claim)
 WITH c, count(cl) AS numClaims
 WHERE numClaims > 1
@@ -30,12 +51,29 @@ RETURN c.name AS claimant, numClaims
 ORDER BY numClaims DESC
 ```
 
+## Claim subgraphs of the most frequent repeat claimants
+
 ```cypher
-// Purpose: graph view of the claims belonging to the most prolific repeat claimants.
-// Note: corrected from the source page, where `path` was dropped by the aggregating WITH
-// and would not compile; here the path is re-matched after the count. A LIMIT keeps the
-// visualisation readable at this data volume.
-// Expected (sample data): the claim subgraphs of the highest-frequency claimants (up to 10 claims each).
+/*
+ * @name           Claim subgraphs of the most frequent repeat claimants
+ * @description    Visualises the claims of the most frequent repeat
+ *                 claimants: ranks claimants with more than one claim by
+ *                 claim count, keeps the top 20, and re-matches each one's
+ *                 HAS_CLAIM paths after the count for Browser or Bloom to
+ *                 draw.
+ * @params         None
+ * @prerequisites  None beyond the imported reference ontology.
+ * @returns        Paths Claimant → Claim, one per claim, for at most 20
+ *                 claimants.
+ * @usage          Visual, not tabular — use Claimants with multiple claims
+ *                 for the counts. The literal LIMIT 20 caps how many
+ *                 claimants are drawn and keeps the picture readable; lower
+ *                 it if the graph is crowded. Claimants tied on claim count
+ *                 at the cut-off are chosen arbitrarily.
+ * @tags           visualisation, repeat-claimant, claimant, claim
+ * @sample         Bundled sample data only: returns 200 paths — the 20
+ *                 claimants with 10 claims each.
+ */
 MATCH (c:Claimant)-[:HAS_CLAIM]->(:Claim)
 WITH c, count(*) AS numClaims
 WHERE numClaims > 1
@@ -45,28 +83,85 @@ MATCH path = (c)-[:HAS_CLAIM]->(:Claim)
 RETURN path
 ```
 
-## 2. Medical professionals with unusual patterns
+## Medical professionals with unusual patterns
 
 ```cypher
-// Purpose: surface medical professionals who are clear outliers by claim volume or total value.
-// Inputs: thresholds tuned to THIS sample — the median doctor handles ~94 claims / ~£0.85M
-//   total, so > 150 claims OR > £3M isolates the outliers. Retune for your portfolio; the
-//   source page's > 1 / > 5000 would return every doctor at this volume.
-// Prerequisites: Claim-[:TREATED_BY]->MedicalProfessional imported; amountClaimed is numeric.
-// Expected (sample data): 3 rows (the seeded fraudulent doctors), each claimCount 200 and
-//   totalAmount roughly £7.7M–£8.1M. The next-highest doctor sits at ~94 claims / ~£0.85M.
+/*
+ * @name           Medical professionals with unusual patterns
+ * @description    Surfaces medical professionals who are outliers by claim
+ *                 volume or by total value claimed, counting TREATED_BY
+ *                 relationships and summing Claim.amountClaimed per
+ *                 professional.
+ * @params         minClaims - Number of claims a professional must exceed to
+ *                     be flagged on volume. Integer. Start at twice the
+ *                     portfolio's median claims per professional, then
+ *                     raise it until the result is reviewable by hand.
+ *                 minTotal - Total amountClaimed, in whole currency units,
+ *                     a professional must exceed to be flagged on value.
+ *                     Integer. Start at twice the portfolio's median total
+ *                     per professional, and tune it the same way.
+ * @prerequisites  Claim.amountClaimed loaded as an INTEGER, so the sum is
+ *                 numeric.
+ * @returns        One row per professional above either threshold:
+ *                 medicalProfessional (MedicalProfessional.name),
+ *                 claimCount, and totalAmount (summed amountClaimed, in
+ *                 whole currency units), ordered by totalAmount descending.
+ * @usage          A professional above either threshold is returned. The
+ *                 starting points use the median because it is not pulled
+ *                 up by the outliers being looked for, as a high
+ *                 percentile can be when outliers are more than a few
+ *                 percent of professionals; the factor of two has no
+ *                 strong prior behind it. Compute the medians with
+ *                 percentileCont(…, 0.5) over the per-professional counts
+ *                 and totals, and read Medical professionals ranked by
+ *                 total claim value to keep each threshold between the
+ *                 bulk of professionals and the outliers. Thresholds set
+ *                 too low flag every busy professional. totalAmount
+ *                 assumes a single-currency portfolio. A busy clinic and a
+ *                 fraudulent one look alike from the outside, so an
+ *                 outlier is a lead for review.
+ * @tags           medical-professional, outlier, claim-value, claim-volume
+ * @sample         Bundled sample data only: $minClaims = 150, $minTotal =
+ *                 3000000 returns 3 rows — Dr. Ruth Butler (200 claims,
+ *                 8135003), Dr. Jason Brown (200, 8001365), and Dr. Eric
+ *                 Robinson (200, 7701383).
+ */
 MATCH (m:MedicalProfessional)<-[:TREATED_BY]-(cl:Claim)
 WITH m, count(cl) AS claimCount, sum(cl.amountClaimed) AS totalAmount
-WHERE claimCount > 150 OR totalAmount > 3000000
+WHERE claimCount > $minClaims OR totalAmount > $minTotal
 RETURN m.name AS medicalProfessional, claimCount, totalAmount
 ORDER BY totalAmount DESC
 ```
 
+## Medical professionals ranked by total claim value
+
 ```cypher
-// Purpose: threshold-free ranking of medical professionals by exposure — robust as data grows.
-// Inputs: LIMIT only. Prerequisites: as above.
-// Expected (sample data): the 3 fraudulent doctors head the list (~£8M each, 200 claims),
-//   followed by a long tail of ~£0.85M / ~94-claim doctors.
+/*
+ * @name           Medical professionals ranked by total claim value
+ * @description    Threshold-free ranking of medical professionals by the
+ *                 total value claimed across the claims they are attached
+ *                 to, with claim count alongside.
+ * @params         None
+ * @prerequisites  Claim.amountClaimed loaded as an INTEGER, so the sum is
+ *                 numeric.
+ * @returns        Up to 10 rows: medicalProfessional
+ *                 (MedicalProfessional.name), claimCount, and totalAmount
+ *                 (summed amountClaimed, in whole currency units), ordered
+ *                 by totalAmount descending.
+ * @usage          Run it first, to see the spread before choosing the
+ *                 thresholds for Medical professionals with unusual
+ *                 patterns: outliers show as a gap between the leading rows
+ *                 and the rest. The literal LIMIT 10 sets how many are
+ *                 shown; raise it to see where the bulk of professionals
+ *                 sits. It ranks rather than filters, so it stays
+ *                 meaningful as the portfolio grows.
+ * @tags           medical-professional, ranking, claim-value
+ * @sample         Bundled sample data only: returns 10 rows, led by Dr.
+ *                 Ruth Butler (200 claims, 8135003), Dr. Jason Brown (200,
+ *                 8001365), and Dr. Eric Robinson (200, 7701383); the other
+ *                 seven have 93–94 claims and totals from 848139 down to
+ *                 788452.
+ */
 MATCH (m:MedicalProfessional)<-[:TREATED_BY]-(cl:Claim)
 RETURN m.name AS medicalProfessional,
        count(cl) AS claimCount,
@@ -75,13 +170,30 @@ ORDER BY totalAmount DESC
 LIMIT 10
 ```
 
-## 3. Potential "crash for cash" scams
+## Potential "crash for cash" scams
 
 ```cypher
-// Purpose: identify vehicles appearing in more than one claim (a staged-accident signal).
-// Inputs: none. Prerequisites: Vehicle-[:INVOLVED_IN]->Claim imported.
-// Expected (sample data): 100 rows, each with claimCount = 6 (the seeded crash-for-cash
-//   vehicles). The other 4,400 vehicles appear in exactly one claim and are excluded.
+/*
+ * @name           Potential "crash for cash" scams
+ * @description    Identifies vehicles involved in more than one claim — the
+ *                 staged-accident signal — by counting INVOLVED_IN
+ *                 relationships per vehicle.
+ * @params         None
+ * @prerequisites  None beyond the imported reference ontology.
+ * @returns        One row per vehicle involved in more than one claim:
+ *                 vehicle (Vehicle.VIN) and claimCount, ordered by
+ *                 claimCount descending.
+ * @usage          The literal threshold claimCount > 1 flags any repeat
+ *                 involvement. A vehicle can feature in more than one
+ *                 genuine incident, so on a large portfolio raise the
+ *                 literal until the result is reviewable and look hardest
+ *                 at the highest counts. Relies on VIN being recorded
+ *                 consistently: a missing or mistyped VIN splits one
+ *                 vehicle into several.
+ * @tags           crash-for-cash, vehicle, staged-accident, claim
+ * @sample         Bundled sample data only: returns 100 rows, each with
+ *                 claimCount 6.
+ */
 MATCH (v:Vehicle)-[:INVOLVED_IN]->(cl:Claim)
 WITH v, count(cl) AS claimCount
 WHERE claimCount > 1
@@ -89,10 +201,28 @@ RETURN v.VIN AS vehicle, claimCount
 ORDER BY claimCount DESC
 ```
 
+## Claim subgraphs of vehicles involved in more than one claim
+
 ```cypher
-// Purpose: graph view of claims linked to vehicles involved in more than one claim.
-// A LIMIT keeps the visualisation readable; drop it to see all 100 reused vehicles.
-// Expected (sample data): up to 10 shared vehicles, each fanning out to 6 claims.
+/*
+ * @name           Claim subgraphs of vehicles involved in more than one claim
+ * @description    Visualises the claims linked to vehicles involved in more
+ *                 than one claim: ranks those vehicles by claim count,
+ *                 keeps the top 10, and returns each one's INVOLVED_IN
+ *                 paths for Browser or Bloom to draw.
+ * @params         None
+ * @prerequisites  None beyond the imported reference ontology.
+ * @returns        Paths Vehicle → Claim, one per claim, for at most 10
+ *                 vehicles.
+ * @usage          Visual, not tabular — use Potential "crash for cash"
+ *                 scams for the full list. The literal LIMIT 10 keeps the
+ *                 picture readable; drop it to draw every vehicle involved
+ *                 in more than one claim. Vehicles tied on claim count at
+ *                 the cut-off are chosen arbitrarily.
+ * @tags           visualisation, crash-for-cash, vehicle, claim
+ * @sample         Bundled sample data only: returns 60 paths — 10 of the
+ *                 100 vehicles with 6 claims each; which 10 is not fixed.
+ */
 MATCH (v:Vehicle)-[:INVOLVED_IN]->(:Claim)
 WITH v, count(*) AS claimCount
 WHERE claimCount > 1
@@ -102,15 +232,35 @@ MATCH path = (v)-[:INVOLVED_IN]->(:Claim)
 RETURN path
 ```
 
-## 4. Graph Data Science (advanced, optional)
+## Graph Data Science (optional)
 
-These require the Graph Data Science (GDS) library, which is not available on every target
-(for example, some Aura tiers). They have not been executed against the sample data.
+The queries in this section require the Graph Data Science (GDS) library, which is not available on every target — some Aura tiers do not include it. Confirm GDS is installed before offering them.
+
+Run them in order: project the `fraud-graph` first, then the Louvain and PageRank queries in either order, and drop the projection last. The projection is an in-memory copy held in the GDS graph catalog; nothing in this section writes to the database. Projecting under a name that already exists fails, so drop an existing `fraud-graph` before projecting again.
+
+## Project the fraud-graph
 
 ```cypher
-// TODO(review): unproven query — requires GDS. Purpose: build an in-memory projection.
-// Prerequisites: GDS installed; sample data imported.
-// Expected: returns the projected node and relationship counts for 'fraud-graph'.
+/*
+ * @name           Project the fraud-graph
+ * @description    Builds the in-memory GDS projection 'fraud-graph' over
+ *                 all four node labels and the HAS_CLAIM, TREATED_BY, OWNS,
+ *                 and INVOLVED_IN relationships, each projected undirected.
+ * @params         None
+ * @prerequisites  GDS library installed. No projection named fraud-graph
+ *                 already in the GDS graph catalog.
+ * @returns        One row describing the projection, including its node
+ *                 and relationship counts. GDS counts each undirected
+ *                 relationship once in each direction.
+ * @usage          Run before the Louvain and PageRank queries, and drop the
+ *                 projection afterwards to release its memory. TREATS is
+ *                 not projected, so the algorithms see claim-borne links
+ *                 only.
+ * @tags           gds, projection
+ * @sample         Bundled sample data only: projects 13550 nodes and 39000
+ *                 relationships (19500 relationships, each counted in both
+ *                 directions).
+ */
 CALL gds.graph.project(
   'fraud-graph',
   ['Claimant', 'MedicalProfessional', 'Claim', 'Vehicle'],
@@ -123,40 +273,110 @@ CALL gds.graph.project(
 )
 ```
 
-```cypher
-// TODO(review): unproven query — requires GDS and the 'fraud-graph' projection above.
-// Purpose: community detection to reveal clusters of related claimants, doctors, and vehicles.
-// Expected: one (nodeId, communityId) row per projected node; the John Doe / Dr. House /
-// VIN-12345 cluster should fall in a single community given the shared claims.
-CALL gds.louvain.stream('fraud-graph')
-YIELD nodeId, communityId
-RETURN gds.util.asNode(nodeId) AS node, communityId
-ORDER BY communityId ASC
-```
+## Louvain communities in the fraud-graph
 
 ```cypher
-// TODO(review): unproven query — requires GDS and the 'fraud-graph' projection above.
-// Purpose: PageRank to highlight highly connected (potentially central) entities.
-// Expected: a score per projected node, highest for the most connected entities.
+/*
+ * @name           Louvain communities in the fraud-graph
+ * @description    Runs Louvain community detection over the fraud-graph to
+ *                 reveal clusters of related claimants, medical
+ *                 professionals, claims, and vehicles, and summarises each
+ *                 community by its size and by how many members carry each
+ *                 label.
+ * @params         limit - Maximum number of communities returned, largest
+ *                     first. Start at 10 for a reviewable list; raise it to
+ *                     reach smaller communities.
+ * @prerequisites  GDS library installed; the fraud-graph projection from
+ *                 Project the fraud-graph.
+ * @returns        One row per community, at most $limit: communityId, size
+ *                 (members), and claimants, professionals, claims, and
+ *                 vehicles (members with each label), ordered by size
+ *                 descending.
+ * @usage          Louvain is not deterministic: community IDs are arbitrary
+ *                 labels that change between runs, and boundaries can
+ *                 shift too, so compare compositions rather than IDs. With
+ *                 $limit at least the number of communities, the sizes and
+ *                 each label column sum to the projected node counts. A
+ *                 community whose claims outnumber its vehicles or its
+ *                 claimants concentrates the reused-vehicle or
+ *                 repeat-claimant signal; to list its members, filter the
+ *                 stream on its communityId within the same run. A
+ *                 community is a lead for review, not a ring.
+ * @tags           gds, community-detection, louvain, ring
+ * @sample         Bundled sample data only: $limit = 10 returns 10
+ *                 communities, each with claimants, professionals, claims,
+ *                 and vehicles summing to its size; community IDs and
+ *                 compositions vary between runs.
+ */
+CALL gds.louvain.stream('fraud-graph')
+YIELD nodeId, communityId
+WITH communityId, gds.util.asNode(nodeId) AS member
+WITH communityId,
+     count(*) AS size,
+     sum(CASE WHEN member:Claimant THEN 1 ELSE 0 END) AS claimants,
+     sum(CASE WHEN member:MedicalProfessional THEN 1 ELSE 0 END) AS professionals,
+     sum(CASE WHEN member:Claim THEN 1 ELSE 0 END) AS claims,
+     sum(CASE WHEN member:Vehicle THEN 1 ELSE 0 END) AS vehicles
+RETURN communityId, size, claimants, professionals, claims, vehicles
+ORDER BY size DESC
+LIMIT $limit
+```
+
+## PageRank centrality in the fraud-graph
+
+```cypher
+/*
+ * @name           PageRank centrality in the fraud-graph
+ * @description    Runs PageRank over the fraud-graph to highlight highly
+ *                 connected, potentially central entities.
+ * @params         limit - Maximum number of nodes returned, highest score
+ *                     first. Start at 20 for a reviewable list; raise it to
+ *                     look past the top-scoring label.
+ * @prerequisites  GDS library installed; the fraud-graph projection from
+ *                 Project the fraud-graph.
+ * @returns        At most $limit rows: node (the node itself) and score,
+ *                 ordered by score descending.
+ * @usage          Scores grow with the number of claim links reaching a
+ *                 node, and each medical professional is attached to many
+ *                 claims, so professionals score highest by construction:
+ *                 compare a node's score with others of the same label
+ *                 rather than across labels. To rank one label, filter the
+ *                 streamed nodes by label before the ORDER BY and LIMIT.
+ * @tags           gds, centrality, pagerank
+ * @sample         Bundled sample data only: $limit = 20 returns 20 medical
+ *                 professionals; the three highest scores belong to Dr.
+ *                 Jason Brown, Dr. Eric Robinson, and Dr. Ruth Butler.
+ */
 CALL gds.pageRank.stream('fraud-graph')
 YIELD nodeId, score
 RETURN gds.util.asNode(nodeId) AS node, score
 ORDER BY score DESC
+LIMIT $limit
 ```
 
+## Drop the fraud-graph projection
+
 ```cypher
-// TODO(review): unproven query — requires GDS. Remember to release the projection.
+/*
+ * @name           Drop the fraud-graph projection
+ * @description    Removes the fraud-graph projection from the GDS graph
+ *                 catalog, releasing its memory.
+ * @params         None
+ * @prerequisites  GDS library installed; the fraud-graph projection
+ *                 exists.
+ * @returns        One row describing the dropped projection.
+ * @usage          Run last, after the Louvain and PageRank queries. Fails
+ *                 when no projection named fraud-graph exists.
+ * @tags           gds, projection, clean-up
+ */
 CALL gds.graph.drop('fraud-graph')
 ```
 
-## Constraints
+## Node-key constraints
 
-The node-key constraints below are created automatically when the sample data is loaded via
-the Import app from `GRAPH_MODEL.json`, which is the only route data takes into the graph.
-They are listed here as a schema reference and to verify what the import produced:
+Import creates these node-key constraints from the key definitions in `ONTOLOGY.json`. They are listed as a reference for checking the live database (`SHOW CONSTRAINTS`), not as statements to run: recreating them, or adding `UNIQUE` variants, conflicts with the existing `KEY` constraints.
 
 ```cypher
-// Node-key constraints matching GRAPH_MODEL.json.
 CREATE CONSTRAINT name_Claimant_key IF NOT EXISTS
   FOR (c:Claimant) REQUIRE c.name IS NODE KEY;
 CREATE CONSTRAINT name_MedicalProfessional_key IF NOT EXISTS
