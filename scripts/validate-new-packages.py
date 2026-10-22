@@ -3,7 +3,10 @@
 
 Required files:
   - SKILL.md with YAML frontmatter
-  - GRAPH_MODEL.json (parseable JSON)
+  - ONTOLOGY.json (parseable JSON object declaring the pinned ontology graph spec
+    as its `schema` and the directory name as its `id`)
+
+A legacy GRAPH_MODEL.json is rejected: convert it to ONTOLOGY.json first.
 
 Required SKILL.md frontmatter:
   name: <kebab-case skill id matching the directory>
@@ -38,6 +41,11 @@ ALLOWED_CATEGORIES = (
     "Cybersecurity",
     "Industry Agnostic",
 )
+
+ONTOLOGY_FILE = "ONTOLOGY.json"
+LEGACY_GRAPH_MODEL_FILE = "GRAPH_MODEL.json"
+# Must match the pin in skills/solution-package-builder/ONTOLOGY_SPEC_FORMAT.md.
+ONTOLOGY_SCHEMA_URI = "https://neo4j.com/docs/ontology-graph-spec/1.0.0/schema.json"
 
 IGNORE_TOP_LEVEL_DIRS = {".github", "scripts", "node_modules", "skills", "tests"}
 FRONTMATTER_RE = re.compile(r"\A---\s*\n(.*?\n)---\s*(?:\n(.*))?\Z", re.DOTALL)
@@ -364,17 +372,26 @@ def validate_skill_md(skill_id: str, skill_dir: Path, issues: list[Issue]) -> No
         )
 
 
-def validate_graph_model(skill_id: str, skill_dir: Path, issues: list[Issue]) -> None:
-    graph_model = skill_dir / "GRAPH_MODEL.json"
-    rel = Path(skill_id) / "GRAPH_MODEL.json"
+def validate_ontology(skill_id: str, skill_dir: Path, issues: list[Issue]) -> None:
+    if (skill_dir / LEGACY_GRAPH_MODEL_FILE).is_file():
+        issues.append(
+            Issue(
+                f"{skill_id}: legacy {LEGACY_GRAPH_MODEL_FILE} is not supported; "
+                f"convert it to {ONTOLOGY_FILE}",
+                Path(skill_id) / LEGACY_GRAPH_MODEL_FILE,
+            )
+        )
 
-    if not graph_model.is_file():
-        issues.append(Issue(f"{skill_id}: missing required file GRAPH_MODEL.json", rel))
+    ontology = skill_dir / ONTOLOGY_FILE
+    rel = Path(skill_id) / ONTOLOGY_FILE
+
+    if not ontology.is_file():
+        issues.append(Issue(f"{skill_id}: missing required file {ONTOLOGY_FILE}", rel))
         return
 
-    text = graph_model.read_text(encoding="utf-8")
+    text = ontology.read_text(encoding="utf-8")
     if not text.strip():
-        issues.append(Issue(f"{skill_id}: GRAPH_MODEL.json is empty", rel, 1))
+        issues.append(Issue(f"{skill_id}: {ONTOLOGY_FILE} is empty", rel, 1))
         return
 
     try:
@@ -383,7 +400,7 @@ def validate_graph_model(skill_id: str, skill_dir: Path, issues: list[Issue]) ->
         line = exc.lineno if exc.lineno else 1
         issues.append(
             Issue(
-                f"{skill_id}: GRAPH_MODEL.json is not valid JSON: {exc.msg}",
+                f"{skill_id}: {ONTOLOGY_FILE} is not valid JSON: {exc.msg}",
                 rel,
                 line,
             )
@@ -392,7 +409,30 @@ def validate_graph_model(skill_id: str, skill_dir: Path, issues: list[Issue]) ->
 
     if not isinstance(data, dict):
         issues.append(
-            Issue(f"{skill_id}: GRAPH_MODEL.json must contain a JSON object", rel, 1)
+            Issue(f"{skill_id}: {ONTOLOGY_FILE} must contain a JSON object", rel, 1)
+        )
+        return
+
+    schema = data.get("schema")
+    if schema != ONTOLOGY_SCHEMA_URI:
+        issues.append(
+            Issue(
+                f"{skill_id}: {ONTOLOGY_FILE} 'schema' must be "
+                f"{ONTOLOGY_SCHEMA_URI!r}, got {schema!r}",
+                rel,
+                1,
+            )
+        )
+
+    ontology_id = data.get("id")
+    if ontology_id != skill_id:
+        issues.append(
+            Issue(
+                f"{skill_id}: {ONTOLOGY_FILE} 'id' must match the directory name "
+                f"({skill_id!r}), got {ontology_id!r}",
+                rel,
+                1,
+            )
         )
 
 
@@ -420,10 +460,10 @@ def validate_catalog_entry(skill_id: str, issues: list[Issue]) -> None:
         return
 
     graph = files.get("graph")
-    if graph != "GRAPH_MODEL.json":
+    if graph != ONTOLOGY_FILE:
         issues.append(
             Issue(
-                f"{skill_id}: catalog.json files.graph must be 'GRAPH_MODEL.json', "
+                f"{skill_id}: catalog.json files.graph must be {ONTOLOGY_FILE!r}, "
                 f"got {graph!r}",
                 catalog,
             )
@@ -449,7 +489,7 @@ def validate_package(skill_id: str) -> list[Issue]:
         return issues
 
     validate_skill_md(skill_id, skill_dir, issues)
-    validate_graph_model(skill_id, skill_dir, issues)
+    validate_ontology(skill_id, skill_dir, issues)
     validate_catalog_entry(skill_id, issues)
     return issues
 
