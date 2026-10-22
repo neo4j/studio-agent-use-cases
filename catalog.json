@@ -79,7 +79,7 @@
     {
       "skillId": "configurable-bom",
       "files": {
-        "graph": "GRAPH_MODEL.json",
+        "graph": "ONTOLOGY.json",
         "skill": [
           "sample-data/assemblies.csv",
           "sample-data/assembly_has_part.csv",

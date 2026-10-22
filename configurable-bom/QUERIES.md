@@ -1,8 +1,16 @@
-# Configurable BOM — Cypher
+# Configurable Bill of Materials — Query Guidance
 
-Runnable Cypher for exploring a configurable product structure, resolving a
-variant from it, pruning the decisions constraints left open, and costing the
-result.
+Cypher for the `configurable-bom` use case: exploring a configurable product
+structure, resolving a variant from it, pruning the decisions constraints left
+open, and costing the result. Every query references only labels, relationship
+types and properties defined in the reference ontology (`ONTOLOGY.json`), plus
+`RESOLVED_LINK`, which the queries create and `SKILL.md` defines. **Four of these
+queries write to the database:** resolving a variant creates `RESOLVED_LINK`
+relationships; pruning, garbage collection and clearing delete them. None of
+them touches `Product`, `Assembly`, `ConfigGroup` or `Part`, or any structural
+relationship between them — the configurable structure is read-only throughout,
+and every write is confined to one variant's links. Confirm the target database
+before running any of them.
 
 ## Prerequisites
 
@@ -10,45 +18,31 @@ result.
   `CYPHER 25` directive and use query chaining (`NEXT`) and scoped call
   subqueries (`CALL (var) { ... }`); several use quantified path patterns
   (`-[:TYPE]->*`, `-[:TYPE]->{1,8}`) and the negated type predicate
-  (`-[r:!RESOLVED_LINK]->`). None of this runs on an earlier version.
-- The model in `GRAPH_MODEL.json`, loaded through the Import flow.
-- `RESOLVED_LINK` is **not** declared in `GRAPH_MODEL.json` and does not exist
-  in a freshly imported database. The queries below create it, and `SKILL.md`
-  carries its definition. Every other label, relationship type and property used
-  here is in the model.
+  (`-[r:!RESOLVED_LINK]->`). None of this runs on an earlier version. No APOC
+  or GDS.
+- The graph is loaded through the Import flow from `ONTOLOGY.json` — the
+  bundled `sample-data/` CSVs, or the user's own data mapped onto the reference
+  ontology.
+- `RESOLVED_LINK` is **not** declared in `ONTOLOGY.json` and does not exist in a
+  freshly imported database. The queries below create it, and `SKILL.md`
+  carries its definition. Every other label, relationship type and property
+  used here is in the reference ontology.
 - `SETUP.md` carries one recommended index. Nothing here fails without it, but
   every query that filters `RESOLVED_LINK` by variant scans without it.
-- No APOC or GDS.
-
-**Four of these queries write to the database.** Resolving a variant creates
-`RESOLVED_LINK` relationships; pruning, garbage collection and clearing delete
-them. None of them touches `Product`, `Assembly`, `ConfigGroup` or `Part`, or
-any structural relationship between them — the configurable structure is
-read-only throughout, and every write is confined to one variant's links.
-Confirm the target database before running any of them.
-
-The intended order for a full resolution is: resolve, then prune, then garbage
-collect, then roll up. Rolling up before pruning counts every surviving option,
-which is a sum over a superset rather than over a bill of materials.
+- The intended order for a full resolution is: resolve, then prune, then garbage
+  collect, then roll up. Rolling up before pruning counts every surviving
+  option, which is a sum over a superset rather than over a bill of materials.
+- Anchors are parameters, never hardcoded IDs. Ask the user which product
+  (`Product.productId`) and which variant name to work with, rather than
+  inventing either.
 
 ## Adapting these queries
 
-These queries assume the model in `GRAPH_MODEL.json`. When the user's schema
-differs — their own model, a modified one, or a database that predates this
-package — the queries are patterns to rebuild, not Cypher to run.
+These queries assume the reference ontology in `ONTOLOGY.json`. When the user's database differs — their own ontology, a modified one, or a database that predates this package — the queries are patterns to rebuild, not Cypher to run.
 
-1. Read the live schema (`CALL db.schema.visualization()`, `SHOW CONSTRAINTS`)
-   rather than assuming this model applies.
-2. Map their labels onto the role map in `SKILL.md`. A role with no counterpart
-   means the pattern below it has no analogue — say so rather than forcing a fit.
-3. Rewrite from the pattern, and update the annotation block to describe what
-   the rewritten query actually does.
-
-The commonest mismatch in this domain is a structure that records a chosen
-option directly on the parent rather than as a separate decision node. There is
-then no counterpart to the decision role, and the constraint and scoring
-patterns have nothing to attach to — the structure describes variants that have
-already been resolved elsewhere.
+1. Read the live schema (`CALL db.schema.visualization()`, `SHOW CONSTRAINTS`) rather than assuming the reference ontology applies.
+2. Map their labels onto the role map in `SKILL.md`. A role with no counterpart means the pattern below it has no analogue — say so rather than forcing a fit.
+3. Rewrite from the pattern, and update the annotation block to describe what the rewritten query actually does.
 
 ## Explore the configurable structure of a product
 
@@ -61,7 +55,7 @@ already been resolved elsewhere.
  *                 only; ignores any resolved variant.
  * @params         productId - Identifier of the product to explore. Matches
  *                     Product.productId.
- * @prerequisites  None beyond the imported model.
+ * @prerequisites  None beyond the imported reference ontology.
  * @returns        One path per route from the product down through the
  *                 structure, for rendering as a graph.
  * @usage          The first query to run on an unfamiliar catalog: it shows
@@ -73,8 +67,10 @@ already been resolved elsewhere.
  *                 to read. Returns paths, not a deduplicated tree, so a part
  *                 used by several assemblies appears on several paths.
  * @tags           structure, exploration, bom, product
- *
- * TODO(review): unproven query
+ * @sample         Bundled sample data only: $productId = 'MB1' returns 61
+ *                 paths of 1 to 4 hops, together covering all 61 structural
+ *                 relationships; the deepest reach the rims and tires beneath
+ *                 the three wheel assemblies.
  */
 MATCH path = (:Product {productId: $productId})-[:REQUIRES|HAS_PART|HAS_OPTION]->{1,8}()
 RETURN path
@@ -90,7 +86,7 @@ RETURN path
  *                 and the options themselves with the value each carries for
  *                 that property.
  * @params         None
- * @prerequisites  None beyond the imported model.
+ * @prerequisites  None beyond the imported reference ontology.
  * @returns        One row per ConfigGroup: configGroupId, category,
  *                 optionProperty, and a list of {optionId, optionValue}.
  * @usage          Use this to build the constraints parameter the resolution
@@ -102,8 +98,10 @@ RETURN path
  *                 by one constraint entry, which is how a single constraint
  *                 keeps components that must match in step.
  * @tags           configuration, options, constraints, catalog
- *
- * TODO(review): unproven query
+ * @sample         Bundled sample data only: returns 13 rows. CG-RIM-26,
+ *                 CG-RIM-275 and CG-RIM-29 all report category rim, the three
+ *                 tire decisions report tire, and CG-WHEELSET's options are
+ *                 assemblies with wheelSize 26, 27.5 and 29.
  */
 MATCH (cg:ConfigGroup)-[:HAS_OPTION]->(option)
 RETURN cg.configGroupId AS configGroupId,
@@ -153,10 +151,18 @@ ORDER BY category, configGroupId
  *                 configuration, it prunes as it walks and never enumerates the
  *                 rejected combinations. Clear a variant before re-resolving it
  *                 under different constraints; MERGE is idempotent, so a second
- *                 run under the same constraints changes nothing.
+ *                 run under the same constraints changes nothing. Its
+ *                 variable-length traversal is unbounded and relies on the
+ *                 structure being acyclic.
  * @tags           resolution, constraints, variant, write, bom
- *
- * TODO(review): unproven query
+ * @sample         Bundled sample data only: $productId = 'MB1', $idVariant =
+ *                 'V-WELL', $constraints = one allowList per category —
+ *                 wheelset wheelSize ['29']; gearing, shifter and derailleur
+ *                 gearSystem ['9-Speed']; rim material ['Alloy']; tire pattern
+ *                 ['Trail']; frame-material material ['Aluminum']; finish
+ *                 color ['Black']; caliper brakeType ['Hydraulic Disc'] —
+ *                 writes 30 RESOLVED_LINK relationships and leaves each of
+ *                 the 9 decisions it reaches with exactly one option.
  */
 CYPHER 25
 
@@ -203,8 +209,9 @@ SET rl.qty = r.qty
  *                 which is worth checking before reading anything into an empty
  *                 result.
  * @tags           bom, variant, visualisation
- *
- * TODO(review): unproven query
+ * @sample         Bundled sample data only: $idVariant = 'V-WELL', resolved as
+ *                 in the resolve query's sample, returns 30 paths, one per
+ *                 resolved link.
  */
 MATCH p = ()-[:RESOLVED_LINK {idVariant: $idVariant}]->()
 RETURN p
@@ -250,10 +257,18 @@ RETURN p
  *                 surprises. Deleting a link can strand the links below it;
  *                 run the garbage collector afterwards. Read the chosen options
  *                 before trusting the totals: scoring always picks something,
- *                 including when neither option was really acceptable.
+ *                 including when neither option was really acceptable. Its
+ *                 variable-length traversal is unbounded and relies on the
+ *                 structure being acyclic.
  * @tags           scoring, optimisation, pruning, variant, write
- *
- * TODO(review): unproven query
+ * @sample         Bundled sample data only: $idVariant = 'V-LOOSE' — resolved
+ *                 for 'MB1' with deny lists only: rim material ['Carbon'];
+ *                 gearing, shifter and derailleur gearSystem ['7-Speed'] —
+ *                 with $scoring = [{field: 'cost', factor: -1.0}, {field:
+ *                 'weight', factor: -50.0}] and $maxIterations = 10 settles
+ *                 all 10 open decisions in 2 passes, deleting 13 of the
+ *                 variant's 55 links. It keeps A-WHEEL-26, P-FRAME-STEEL,
+ *                 P-PAINT-BLACK, P-CALIPER-MECH and the 9-Speed drivetrain.
  */
 CYPHER 25
 
@@ -314,10 +329,13 @@ CALL (_) {
  *                 picture and the totals disagree. Deletes only links whose
  *                 source has no remaining route back to a product, so it is
  *                 safe to run repeatedly and harmless on a variant that needed
- *                 no pruning.
+ *                 no pruning. Its variable-length traversal is unbounded and
+ *                 relies on the structure being acyclic.
  * @tags           cleanup, pruning, variant, write
- *
- * TODO(review): unproven query
+ * @sample         Bundled sample data only: $idVariant = 'V-LOOSE', after
+ *                 the prune query's sample, deletes 12 links — everything
+ *                 beneath the discarded A-WHEEL-275 and A-WHEEL-29 — leaving
+ *                 30. A second run deletes nothing.
  */
 MATCH ()<-[r:RESOLVED_LINK {idVariant: $idVariant}]-(x)
 WHERE NOT EXISTS { (x)<-[:RESOLVED_LINK {idVariant: $idVariant}]-*(:Product) }
@@ -347,9 +365,12 @@ DELETE r
  *                 before quoting the result: an over-constrained variant still
  *                 totals cleanly, and the number it gives is for an incomplete
  *                 product. A relationship carrying no quantity counts as one.
+ *                 Its variable-length traversal is unbounded and relies on the
+ *                 structure being acyclic.
  * @tags           rollup, cost, weight, variant, bom
- *
- * TODO(review): unproven query
+ * @sample         Bundled sample data only: $idVariant = 'V-WELL' returns
+ *                 weightKg 8.95 and cost 1164.80; 'V-LOOSE' after pruning and
+ *                 garbage collection returns 9.29 and 1015.60.
  */
 MATCH path = (leaf)<-[rs:RESOLVED_LINK {idVariant: $idVariant}]-*(:Product)
 WHERE NOT EXISTS { (leaf)-[:RESOLVED_LINK {idVariant: $idVariant}]->() }
@@ -386,10 +407,14 @@ RETURN round(vals.weight, 2) AS weightKg, round(vals.cost, 2) AS cost
  *                 list, or accept that the product cannot be built to that
  *                 specification. Run it on a variant that was never resolved
  *                 and it returns nothing, because nothing was reached; that is
- *                 not the same as a satisfiable configuration.
+ *                 not the same as a satisfiable configuration. Its
+ *                 variable-length traversal is unbounded and relies on the
+ *                 structure being acyclic.
  * @tags           constraints, diagnostics, over-constrained, variant
- *
- * TODO(review): unproven query
+ * @sample         Bundled sample data only: $productId = 'MB1', $idVariant =
+ *                 'V-OVER' — resolved with the V-WELL constraints except a
+ *                 gearing allowList of ['11-Speed'] — returns 1 path, MB1 →
+ *                 A-DRIVETRAIN → CG-GEARING. 'V-WELL' returns no rows.
  */
 MATCH path = (:Product {productId: $productId})-[:RESOLVED_LINK {idVariant: $idVariant}]->*(x)
              -[:REQUIRES]->(y:ConfigGroup)
@@ -407,7 +432,7 @@ RETURN path
  *                 variant is concerned. WRITES to the database.
  * @params         idVariant - Name of the variant to clear, as supplied when it
  *                     was resolved.
- * @prerequisites  None beyond the imported model.
+ * @prerequisites  None beyond the imported reference ontology.
  * @returns        Nothing. Its effect is the RESOLVED_LINK relationships it
  *                 deletes.
  * @usage          Run before re-resolving a variant under different
@@ -419,21 +444,17 @@ RETURN path
  *                 On a variant with very many links, wrap the delete in
  *                 CALL { ... } IN TRANSACTIONS to avoid one large transaction.
  * @tags           cleanup, variant, reset, write
- *
- * TODO(review): unproven query
+ * @sample         Bundled sample data only: $idVariant = 'V-LOOSE' deletes its
+ *                 30 remaining links after pruning and garbage collection, or
+ *                 55 if run straight after resolving.
  */
 MATCH ()-[r:RESOLVED_LINK {idVariant: $idVariant}]->()
 DELETE r
 ```
 
-## Node-key constraints (schema reference)
+## Node-key constraints
 
-The Import flow creates these from the key definitions in `GRAPH_MODEL.json`.
-They are listed here so the expected schema can be verified against a live
-database — `SHOW CONSTRAINTS` should report all four — not so they can be
-created by hand. There are no constraints on `RESOLVED_LINK`, and no definition
-of it in the model either: it is written by the queries above rather than
-imported.
+Import creates these node-key constraints from the key definitions in `ONTOLOGY.json`. They are listed as a reference for checking the live database (`SHOW CONSTRAINTS`), not as statements to run: recreating them, or adding `UNIQUE` variants, conflicts with the existing `KEY` constraints. `ONTOLOGY.json` also declares `qty` as required on `REQUIRES`, so expect that existence constraint alongside these. There are no constraints on `RESOLVED_LINK`: the queries above write it rather than Import loading it.
 
 ```cypher
 CREATE CONSTRAINT product_key IF NOT EXISTS
