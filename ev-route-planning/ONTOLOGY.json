@@ -1,0 +1,722 @@
+{
+  "schema": "https://neo4j.com/docs/ontology-graph-spec/1.0.0/schema.json",
+  "id": "ev-route-planning",
+  "version": "1",
+  "name": "EV Route Planning",
+  "description": "Models a logistics network as cities and charging sites joined by road segments, alongside a fleet of electric vehicles described by battery, efficiency and charging limits. Answers which vehicles can cover a given lane, what a route looks like once charging stops are part of the plan, and which places sit beyond reach of any charger.",
+  "nodes": {
+    "Geo": {
+      "label": "Geo",
+      "description": "A place on the network that is not a charging site — a city, depot or delivery point. Deliberately carries no label in common with a charging site: the reference ontology gives each node a single label, so any traversal meaning 'any location' must name both labels explicitly or it will silently plan routes that never charge.",
+      "properties": {
+        "name": {
+          "type": "STRING",
+          "description": "Name of the place, and its identifier on the network. Expected to be unique across the whole network rather than within a region. e.g. `Paris`.",
+          "key": true
+        },
+        "lat": {
+          "type": "FLOAT",
+          "description": "Latitude in decimal degrees on WGS 84, positive northwards. Used for straight-line distance filters that prune candidates before a traversal; it is not the distance a vehicle drives, which is carried on the road segment. e.g. `48.8566`.",
+          "must_exist": true
+        },
+        "lon": {
+          "type": "FLOAT",
+          "description": "Longitude in decimal degrees on WGS 84, positive eastwards. e.g. `2.3522`.",
+          "must_exist": true
+        },
+        "region": {
+          "type": "STRING",
+          "description": "Administrative region the place sits in, used to group and summarise coverage rather than to route. e.g. `Ile-de-France`.",
+          "must_exist": true
+        }
+      },
+      "extensions": {
+        "display": {
+          "x": -73,
+          "y": 0
+        }
+      }
+    },
+    "ChargingStation": {
+      "label": "ChargingStation",
+      "description": "A site where vehicles can charge, sitting on the road network as a place in its own right. Shares no label with other locations, so a route that must be able to charge has to traverse both labels explicitly.",
+      "properties": {
+        "name": {
+          "type": "STRING",
+          "description": "Name of the charging site, and its identifier on the network. e.g. `CS-A1-01`.",
+          "key": true
+        },
+        "lat": {
+          "type": "FLOAT",
+          "description": "Latitude in decimal degrees on WGS 84, positive northwards. e.g. `49.7953`.",
+          "must_exist": true
+        },
+        "lon": {
+          "type": "FLOAT",
+          "description": "Longitude in decimal degrees on WGS 84, positive eastwards. e.g. `2.7256`.",
+          "must_exist": true
+        },
+        "region": {
+          "type": "STRING",
+          "description": "Administrative region the site sits in, used to summarise charging capacity and coverage by area. e.g. `Hauts-de-France`.",
+          "must_exist": true
+        },
+        "operator": {
+          "type": "STRING",
+          "description": "Network operator running the site. Expected to matter for access and tariffs rather than for routing. e.g. `ElectraRoute`.",
+          "must_exist": true
+        },
+        "power_kw": {
+          "type": "FLOAT",
+          "description": "Maximum power the site can deliver to a single vehicle, in kilowatts. The power a given vehicle actually receives is the lesser of this and that vehicle's own charging limit, so this is a ceiling rather than a delivered rate. e.g. `350.0`.",
+          "must_exist": true
+        }
+      },
+      "extensions": {
+        "display": {
+          "x": 73,
+          "y": 0
+        }
+      }
+    },
+    "Car": {
+      "label": "Car",
+      "description": "A vehicle in the fleet, described by the battery and efficiency figures a route plan needs. Carries no connection to the network: a vehicle is not positioned on the graph, but supplies the energy model a traversal is evaluated against.",
+      "properties": {
+        "id": {
+          "type": "STRING",
+          "description": "Identifier for the vehicle in the fleet. e.g. `EV-001`.",
+          "key": true
+        },
+        "model": {
+          "type": "STRING",
+          "description": "Manufacturer's model name for the vehicle. Descriptive only; the energy model reads the numeric properties, never this. e.g. `Corvia eVan 60`.",
+          "must_exist": true
+        },
+        "vehicle_class": {
+          "type": "STRING",
+          "description": "Category of vehicle, used to group the fleet when comparing what different classes can serve. e.g. `Light Van`.",
+          "must_exist": true
+        },
+        "battery_capacity_kwh": {
+          "type": "FLOAT",
+          "description": "Usable battery capacity in kilowatt-hours. Expected to be the usable figure rather than the nominal pack size, since range is computed directly from it. e.g. `60.0`.",
+          "must_exist": true
+        },
+        "efficiency_kwh_per_km": {
+          "type": "FLOAT",
+          "description": "Energy consumed per kilometre driven, in kilowatt-hours per kilometre — a consumption rate, so a higher number means a less efficient vehicle. Treated as constant, with no allowance for load, gradient, weather or speed. e.g. `0.24`.",
+          "must_exist": true
+        },
+        "max_charge_power_kw": {
+          "type": "FLOAT",
+          "description": "Highest charging power the vehicle can accept, in kilowatts. Caps what it draws from a site however powerful that site is; a plan that ignores this cap produces charging stops shorter than the fleet can achieve. e.g. `90.0`.",
+          "must_exist": true
+        },
+        "current_soc_percent": {
+          "type": "FLOAT",
+          "description": "Current battery state of charge as a percentage of `battery_capacity_kwh`, from 0 to 100. A snapshot of the vehicle now, and the starting state a route is evaluated from, not a static attribute. e.g. `38.0`.",
+          "must_exist": true
+        }
+      },
+      "extensions": {
+        "display": {
+          "x": 0,
+          "y": -87
+        }
+      }
+    }
+  },
+  "relationships": {
+    "geoRoadGeo": {
+      "type": "ROAD",
+      "description": "A road segment between two places on the network, neither of them a charging site. Stored once per segment and expected to be traversed undirected: the stored direction is an artefact of how the row was written, not a one-way restriction, and reverse segments are deliberately not created. A place may be joined to several others, or to none.",
+      "from": {
+        "node": "Geo"
+      },
+      "to": {
+        "node": "Geo"
+      },
+      "properties": {
+        "road_ref": {
+          "type": "STRING",
+          "description": "Designation of the road the segment belongs to, as signed. Several segments may share one designation. e.g. `A1`.",
+          "must_exist": true
+        },
+        "road_class": {
+          "type": "STRING",
+          "description": "Class of road, from the network's own four-tier vocabulary — `Motorway`, `Express`, `Trunk` and `Local` — in descending order of speed. e.g. `Motorway`.",
+          "must_exist": true
+        },
+        "distance_km": {
+          "type": "FLOAT",
+          "description": "Driving distance along the segment in kilometres. This, not the straight-line distance between coordinates, is what energy consumption is computed from. e.g. `112.7`.",
+          "must_exist": true
+        },
+        "free_flow_speed_kph": {
+          "type": "INTEGER",
+          "description": "Speed in kilometres per hour expected on the segment when traffic is light — the off-peak case. e.g. `130`.",
+          "must_exist": true
+        },
+        "peak_speed_kph": {
+          "type": "INTEGER",
+          "description": "Speed in kilometres per hour expected on the segment at peak traffic. Expected to be at or below the free-flow speed; choosing between the two is how a plan accounts for time of day. e.g. `95`.",
+          "must_exist": true
+        }
+      }
+    },
+    "geoRoadChargingStation": {
+      "type": "ROAD",
+      "description": "A road segment joining a place to a charging site — the approach that makes the site reachable. Stored once per segment and expected to be traversed undirected, so this and the segment definition written from a site to a place are two halves of one convention rather than a pair of one-way roads. A place may reach several sites, or none.",
+      "from": {
+        "node": "Geo"
+      },
+      "to": {
+        "node": "ChargingStation"
+      },
+      "properties": {
+        "road_ref": {
+          "type": "STRING",
+          "description": "Designation of the road the segment belongs to, as signed. e.g. `A1`.",
+          "must_exist": true
+        },
+        "road_class": {
+          "type": "STRING",
+          "description": "Class of road, from the network's own four-tier vocabulary — `Motorway`, `Express`, `Trunk` and `Local` — in descending order of speed. e.g. `Express`.",
+          "must_exist": true
+        },
+        "distance_km": {
+          "type": "FLOAT",
+          "description": "Driving distance along the segment in kilometres, and the basis for the energy cost of detouring to charge. e.g. `105.8`.",
+          "must_exist": true
+        },
+        "free_flow_speed_kph": {
+          "type": "INTEGER",
+          "description": "Speed in kilometres per hour expected on the segment when traffic is light. e.g. `130`.",
+          "must_exist": true
+        },
+        "peak_speed_kph": {
+          "type": "INTEGER",
+          "description": "Speed in kilometres per hour expected on the segment at peak traffic. e.g. `105`.",
+          "must_exist": true
+        }
+      }
+    },
+    "chargingStationRoadGeo": {
+      "type": "ROAD",
+      "description": "A road segment joining a charging site back to a place — the continuation after a charging stop. Stored once per segment and expected to be traversed undirected. Not every site carries one, so its absence means only that no onward segment was recorded, never that a site is a dead end.",
+      "from": {
+        "node": "ChargingStation"
+      },
+      "to": {
+        "node": "Geo"
+      },
+      "properties": {
+        "road_ref": {
+          "type": "STRING",
+          "description": "Designation of the road the segment belongs to, as signed. e.g. `A1`.",
+          "must_exist": true
+        },
+        "road_class": {
+          "type": "STRING",
+          "description": "Class of road, from the network's own four-tier vocabulary — `Motorway`, `Express`, `Trunk` and `Local` — in descending order of speed. e.g. `Express`.",
+          "must_exist": true
+        },
+        "distance_km": {
+          "type": "FLOAT",
+          "description": "Driving distance along the segment in kilometres. e.g. `119.2`.",
+          "must_exist": true
+        },
+        "free_flow_speed_kph": {
+          "type": "INTEGER",
+          "description": "Speed in kilometres per hour expected on the segment when traffic is light. e.g. `130`.",
+          "must_exist": true
+        },
+        "peak_speed_kph": {
+          "type": "INTEGER",
+          "description": "Speed in kilometres per hour expected on the segment at peak traffic. e.g. `105`.",
+          "must_exist": true
+        }
+      }
+    },
+    "charge": {
+      "type": "CHARGE",
+      "description": "A charging option at a site, modelled as a self-loop so that a route can pass through a charging stop without leaving the site. One of these per tier the site offers, so a site carries several in parallel and they are distinguished by `tier` rather than by endpoint. Every site is expected to offer at least one.",
+      "from": {
+        "node": "ChargingStation",
+        "min_count": 1
+      },
+      "to": {
+        "node": "ChargingStation"
+      },
+      "properties": {
+        "tier": {
+          "type": "STRING",
+          "description": "Name of the charging option, from the site's own vocabulary — a short `top-up` stop against a longer `full` charge. Distinguishes the parallel options at one site. e.g. `top-up`.",
+          "must_exist": true
+        },
+        "time_in_minutes": {
+          "type": "INTEGER",
+          "description": "Dwell time the option represents, in minutes — how long the vehicle stands at the site. Combined with delivered power it gives the energy gained, and it is what a route's elapsed time accumulates. e.g. `15`.",
+          "must_exist": true
+        },
+        "power_kw": {
+          "type": "FLOAT",
+          "description": "Power offered by this option in kilowatts. The vehicle receives the lesser of this and its own `max_charge_power_kw`, so energy gained is that lesser figure applied over the dwell time, never this figure alone. e.g. `350.0`.",
+          "must_exist": true
+        }
+      }
+    }
+  },
+  "extensions": {
+    "tables": {
+      "cities.csv": {
+        "source": "local",
+        "columns": [
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "lat",
+            "type": "string"
+          },
+          {
+            "name": "lon",
+            "type": "string"
+          },
+          {
+            "name": "region",
+            "type": "string"
+          }
+        ]
+      },
+      "charging-stations.csv": {
+        "source": "local",
+        "columns": [
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "lat",
+            "type": "string"
+          },
+          {
+            "name": "lon",
+            "type": "string"
+          },
+          {
+            "name": "region",
+            "type": "string"
+          },
+          {
+            "name": "operator",
+            "type": "string"
+          },
+          {
+            "name": "power_kw",
+            "type": "string"
+          }
+        ]
+      },
+      "cars.csv": {
+        "source": "local",
+        "columns": [
+          {
+            "name": "id",
+            "type": "string"
+          },
+          {
+            "name": "model",
+            "type": "string"
+          },
+          {
+            "name": "vehicle_class",
+            "type": "string"
+          },
+          {
+            "name": "battery_capacity_kwh",
+            "type": "string"
+          },
+          {
+            "name": "efficiency_kwh_per_km",
+            "type": "string"
+          },
+          {
+            "name": "max_charge_power_kw",
+            "type": "string"
+          },
+          {
+            "name": "current_soc_percent",
+            "type": "string"
+          }
+        ]
+      },
+      "roads-city-city.csv": {
+        "source": "local",
+        "columns": [
+          {
+            "name": "from_name",
+            "type": "string"
+          },
+          {
+            "name": "to_name",
+            "type": "string"
+          },
+          {
+            "name": "road_ref",
+            "type": "string"
+          },
+          {
+            "name": "road_class",
+            "type": "string"
+          },
+          {
+            "name": "distance_km",
+            "type": "string"
+          },
+          {
+            "name": "free_flow_speed_kph",
+            "type": "string"
+          },
+          {
+            "name": "peak_speed_kph",
+            "type": "string"
+          }
+        ]
+      },
+      "roads-city-station.csv": {
+        "source": "local",
+        "columns": [
+          {
+            "name": "from_name",
+            "type": "string"
+          },
+          {
+            "name": "to_name",
+            "type": "string"
+          },
+          {
+            "name": "road_ref",
+            "type": "string"
+          },
+          {
+            "name": "road_class",
+            "type": "string"
+          },
+          {
+            "name": "distance_km",
+            "type": "string"
+          },
+          {
+            "name": "free_flow_speed_kph",
+            "type": "string"
+          },
+          {
+            "name": "peak_speed_kph",
+            "type": "string"
+          }
+        ]
+      },
+      "roads-station-city.csv": {
+        "source": "local",
+        "columns": [
+          {
+            "name": "from_name",
+            "type": "string"
+          },
+          {
+            "name": "to_name",
+            "type": "string"
+          },
+          {
+            "name": "road_ref",
+            "type": "string"
+          },
+          {
+            "name": "road_class",
+            "type": "string"
+          },
+          {
+            "name": "distance_km",
+            "type": "string"
+          },
+          {
+            "name": "free_flow_speed_kph",
+            "type": "string"
+          },
+          {
+            "name": "peak_speed_kph",
+            "type": "string"
+          }
+        ]
+      },
+      "charges.csv": {
+        "source": "local",
+        "columns": [
+          {
+            "name": "station_name",
+            "type": "string"
+          },
+          {
+            "name": "tier",
+            "type": "string"
+          },
+          {
+            "name": "time_in_minutes",
+            "type": "string"
+          },
+          {
+            "name": "power_kw",
+            "type": "string"
+          }
+        ]
+      }
+    },
+    "mappings": {
+      "mapping0": [
+        {
+          "type": "NODE",
+          "node": "Geo",
+          "table": "cities.csv",
+          "mode": "MERGE",
+          "key": [
+            "name"
+          ],
+          "properties": {
+            "name": {
+              "column": "name"
+            },
+            "lat": {
+              "column": "lat"
+            },
+            "lon": {
+              "column": "lon"
+            },
+            "region": {
+              "column": "region"
+            }
+          }
+        },
+        {
+          "type": "NODE",
+          "node": "ChargingStation",
+          "table": "charging-stations.csv",
+          "mode": "MERGE",
+          "key": [
+            "name"
+          ],
+          "properties": {
+            "name": {
+              "column": "name"
+            },
+            "lat": {
+              "column": "lat"
+            },
+            "lon": {
+              "column": "lon"
+            },
+            "region": {
+              "column": "region"
+            },
+            "operator": {
+              "column": "operator"
+            },
+            "power_kw": {
+              "column": "power_kw"
+            }
+          }
+        },
+        {
+          "type": "NODE",
+          "node": "Car",
+          "table": "cars.csv",
+          "mode": "MERGE",
+          "key": [
+            "id"
+          ],
+          "properties": {
+            "id": {
+              "column": "id"
+            },
+            "model": {
+              "column": "model"
+            },
+            "vehicle_class": {
+              "column": "vehicle_class"
+            },
+            "battery_capacity_kwh": {
+              "column": "battery_capacity_kwh"
+            },
+            "efficiency_kwh_per_km": {
+              "column": "efficiency_kwh_per_km"
+            },
+            "max_charge_power_kw": {
+              "column": "max_charge_power_kw"
+            },
+            "current_soc_percent": {
+              "column": "current_soc_percent"
+            }
+          }
+        },
+        {
+          "type": "RELATIONSHIP",
+          "relationship": "geoRoadGeo",
+          "table": "roads-city-city.csv",
+          "mode": "MERGE",
+          "key": [],
+          "from_node": {
+            "label": "Geo",
+            "properties": {
+              "name": {
+                "column": "from_name"
+              }
+            }
+          },
+          "to_node": {
+            "label": "Geo",
+            "properties": {
+              "name": {
+                "column": "to_name"
+              }
+            }
+          },
+          "properties": {
+            "road_ref": {
+              "column": "road_ref"
+            },
+            "road_class": {
+              "column": "road_class"
+            },
+            "distance_km": {
+              "column": "distance_km"
+            },
+            "free_flow_speed_kph": {
+              "column": "free_flow_speed_kph"
+            },
+            "peak_speed_kph": {
+              "column": "peak_speed_kph"
+            }
+          }
+        },
+        {
+          "type": "RELATIONSHIP",
+          "relationship": "geoRoadChargingStation",
+          "table": "roads-city-station.csv",
+          "mode": "MERGE",
+          "key": [],
+          "from_node": {
+            "label": "Geo",
+            "properties": {
+              "name": {
+                "column": "from_name"
+              }
+            }
+          },
+          "to_node": {
+            "label": "ChargingStation",
+            "properties": {
+              "name": {
+                "column": "to_name"
+              }
+            }
+          },
+          "properties": {
+            "road_ref": {
+              "column": "road_ref"
+            },
+            "road_class": {
+              "column": "road_class"
+            },
+            "distance_km": {
+              "column": "distance_km"
+            },
+            "free_flow_speed_kph": {
+              "column": "free_flow_speed_kph"
+            },
+            "peak_speed_kph": {
+              "column": "peak_speed_kph"
+            }
+          }
+        },
+        {
+          "type": "RELATIONSHIP",
+          "relationship": "chargingStationRoadGeo",
+          "table": "roads-station-city.csv",
+          "mode": "MERGE",
+          "key": [],
+          "from_node": {
+            "label": "ChargingStation",
+            "properties": {
+              "name": {
+                "column": "from_name"
+              }
+            }
+          },
+          "to_node": {
+            "label": "Geo",
+            "properties": {
+              "name": {
+                "column": "to_name"
+              }
+            }
+          },
+          "properties": {
+            "road_ref": {
+              "column": "road_ref"
+            },
+            "road_class": {
+              "column": "road_class"
+            },
+            "distance_km": {
+              "column": "distance_km"
+            },
+            "free_flow_speed_kph": {
+              "column": "free_flow_speed_kph"
+            },
+            "peak_speed_kph": {
+              "column": "peak_speed_kph"
+            }
+          }
+        },
+        {
+          "type": "RELATIONSHIP",
+          "relationship": "charge",
+          "table": "charges.csv",
+          "mode": "MERGE",
+          "key": [
+            "tier"
+          ],
+          "from_node": {
+            "label": "ChargingStation",
+            "properties": {
+              "name": {
+                "column": "station_name"
+              }
+            }
+          },
+          "to_node": {
+            "label": "ChargingStation",
+            "properties": {
+              "name": {
+                "column": "station_name"
+              }
+            }
+          },
+          "properties": {
+            "tier": {
+              "column": "tier"
+            },
+            "time_in_minutes": {
+              "column": "time_in_minutes"
+            },
+            "power_kw": {
+              "column": "power_kw"
+            }
+          }
+        }
+      ]
+    }
+  }
+}

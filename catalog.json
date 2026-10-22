@@ -133,7 +133,7 @@
     {
       "skillId": "ev-route-planning",
       "files": {
-        "graph": "GRAPH_MODEL.json",
+        "graph": "ONTOLOGY.json",
         "skill": [
           "sample-data/cars.csv",
           "sample-data/charges.csv",
@@ -143,7 +143,8 @@
           "sample-data/roads-city-station.csv",
           "sample-data/roads-station-city.csv",
           "QUERIES.md",
-          "human_description.md"
+          "human_description.md",
+          "TESTS.md"
         ],
         "markdown": "SKILL.md"
       }
