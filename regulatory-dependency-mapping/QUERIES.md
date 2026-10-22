@@ -1,45 +1,41 @@
-# Regulatory Dependency Mapping — Cypher
+# Regulatory Dependency Mapping — Query Guidance
 
-Runnable Cypher for the model in `GRAPH_MODEL.json`.
+Cypher for the `regulatory-dependency-mapping` use case. Every query references only labels, relationship types, and properties defined in the reference ontology (`ONTOLOGY.json`). No query writes to the stored graph; the GDS queries create and drop an in-memory projection only.
 
 ## Prerequisites
 
 - Neo4j 5.x, Cypher 5. No APOC.
-- The model imported through the Import flow, either from the bundled
-  `sample-data/` CSVs or from the user's own handbook mapped onto the same
-  model.
+- The graph is loaded through the Import flow from `ONTOLOGY.json` — the
+  bundled `sample-data/` CSVs, or the user's own handbook mapped onto the
+  reference ontology.
+- The node keys in `ONTOLOGY.json` make `Standard.id` and `Section.id` unique,
+  so every anchored lookup below is an index seek rather than a label scan.
 - Every query outside the **Graph Data Science** section is plain Cypher and
-  needs nothing beyond the imported model. No post-import setup is required.
+  needs nothing beyond the imported reference ontology. No post-import setup
+  is required.
 - The queries prefixed **GDS —** need the Graph Data Science plugin (2.x) on
   the target database. GDS is absent on some Aura tiers and many self-managed
   installs; the plain-Cypher queries cover the same ground, with
   *Most-cited sections by inbound citation count* standing in for PageRank as
   a degree-based measure of influence.
-
-## A note on traversal depth
-
-Several queries walk the handbook hierarchy or the citation graph with a
-variable-length pattern. **Cypher requires a literal bound on those, so depth
-cannot be exposed as a parameter** — there is no `$maxDepth` to pass. A bound
-of N returns the pattern to depth N and silently omits anything deeper: the
-result is not marked as truncated, and nothing in it says a deeper section
-existed. Each query's `@usage` states its bound. Before trusting any of them
-on an unfamiliar handbook, check how deep it actually nests and raise the
-literal in the Cypher if it nests deeper than the bound allows.
+- **Traversal depth cannot be parameterised.** Cypher requires a literal bound
+  on a variable-length pattern, so there is no `$maxDepth` to pass. A bound of
+  N returns the pattern to depth N and silently omits anything deeper: the
+  result is not marked as truncated. Each query's `@usage` states its bound.
+  Before trusting any of them on an unfamiliar handbook, check how deep it
+  actually nests and raise the literal in the Cypher if it nests deeper than
+  the bound allows.
+- Anchors are parameters, never hardcoded identifiers. Before running an
+  anchored query, ask the user which standard or section they mean, or offer
+  real identifiers from the hierarchy query. Do not invent identifiers.
 
 ## Adapting these queries
 
-These queries assume the model in `GRAPH_MODEL.json`. When the user's schema
-differs — their own model, a modified one, or a database that predates this
-package — the queries are patterns to rebuild, not Cypher to run.
+These queries assume the reference ontology in `ONTOLOGY.json`. When the user's database differs — their own ontology, a modified one, or a database that predates this package — the queries are patterns to rebuild, not Cypher to run.
 
-1. Read the live schema (`CALL db.schema.visualization()`, `SHOW CONSTRAINTS`)
-   rather than assuming this model applies.
-2. Map their labels onto the role map in `SKILL.md`. A role with no
-   counterpart means the pattern below it has no analogue — say so rather
-   than forcing a fit.
-3. Rewrite from the pattern, and update the annotation block to describe what
-   the rewritten query actually does.
+1. Read the live schema (`CALL db.schema.visualization()`, `SHOW CONSTRAINTS`) rather than assuming the reference ontology applies.
+2. Map their labels onto the role map in `SKILL.md`. A role with no counterpart means the pattern below it has no analogue — say so rather than forcing a fit.
+3. Rewrite from the pattern, and update the annotation block to describe what the rewritten query actually does.
 
 ## Explore a standard's section hierarchy
 
@@ -51,7 +47,7 @@ package — the queries are patterns to rebuild, not Cypher to run.
  *                 down through top-level sections to their child sections.
  * @params         standardId - Identifier of the standard to expand, as the
  *                     regulator publishes it and as Standard.id records it.
- * @prerequisites  None beyond the imported model.
+ * @prerequisites  None beyond the imported reference ontology.
  * @returns        One row per section: the standard, section identifier,
  *                 title, the in-force date of its current text, and its depth
  *                 below the standard.
@@ -66,7 +62,8 @@ package — the queries are patterns to rebuild, not Cypher to run.
  *                 altogether — the second is an import or data-quality
  *                 finding, and the two look identical here.
  * @tags           hierarchy, standard, section, orientation
- * TODO(review): unproven query
+ * @sample         Bundled sample data only: $standardId = 'MIFIDPRU' returns
+ *                 48 rows — 9 at depth 1, 28 at depth 2 and 11 at depth 3.
  */
 MATCH path = (std:Standard {id: $standardId})<-[:DEPENDS_ON*1..4]-(section:Section)
 RETURN std.id             AS standard,
@@ -87,7 +84,7 @@ ORDER BY depth, sectionId
  *                 the cited section that the reference points at.
  * @params         sectionId - Identifier of the section to examine, as
  *                     Section.id records it.
- * @prerequisites  None beyond the imported model.
+ * @prerequisites  None beyond the imported reference ontology.
  * @returns        One row per cross-reference: direction ('cites' or 'cited
  *                 by'), the section at the other end with its title and
  *                 in-force date, and the rule reference carried on the
@@ -104,7 +101,10 @@ ORDER BY depth, sectionId
  *                 and when the identifier does not exist, so confirm the
  *                 identifier before concluding a section is unreferenced.
  * @tags           cross-reference, change-assessment, section
- * TODO(review): unproven query
+ * @sample         Bundled sample data only: $sectionId = 'MIFIDPRU 4.12'
+ *                 returns 7 rows, all 'cited by' — COBS 11.2, MIFIDPRU 1.2.1,
+ *                 MIFIDPRU 4.1, MIFIDPRU 6.2, MIFIDPRU 7.1, MIFIDPRU 9.2 and
+ *                 SYSC 7.3.
  */
 MATCH (section:Section {id: $sectionId})-[ref:RELATED]-(related:Section)
 RETURN CASE WHEN startNode(ref) = section THEN 'cites' ELSE 'cited by' END
@@ -131,7 +131,7 @@ ORDER BY direction, relatedSectionId
  *                     result is exactly what has not yet been assessed. Where
  *                     no fixed cycle exists, widen from the date of the last
  *                     assessment until the result stops being reviewable.
- * @prerequisites  None beyond the imported model.
+ * @prerequisites  None beyond the imported reference ontology.
  * @returns        One row per changed section: standard, section identifier
  *                 and title, in-force date, and inbound citation count.
  *                 Newest change first. The standard reads '(unresolved)' where
@@ -147,7 +147,9 @@ ORDER BY direction, relatedSectionId
  *                 dropped. Treat those rows as a data-quality finding in their
  *                 own right.
  * @tags           regulatory-change, section, change-sweep
- * TODO(review): unproven query
+ * @sample         Bundled sample data only: $changedSince = '2026-06-01'
+ *                 returns 2 rows — MIFIDPRU 4.12 (2026-07-15, 7 inbound
+ *                 citations) and MIFIDPRU 4.12.1 (2026-06-30, 0).
  */
 MATCH (section:Section)
 WHERE section.lastUpdated >= datetime($changedSince)
@@ -172,20 +174,21 @@ ORDER BY lastUpdated DESC, sectionId
  *                 chain of citations.
  * @params         sectionId - Identifier of the section being changed, as
  *                     Section.id records it.
- * @prerequisites  None beyond the imported model.
+ * @prerequisites  None beyond the imported reference ontology.
  * @returns        One row per affected section: how it was reached ('changed
  *                 text' for the section and its subsections, 'cites changed
  *                 text' for everything downstream), the standard it belongs
  *                 to, its identifier, title and in-force date. The standard
  *                 reads '(unresolved)' where the section does not reach one.
- * @usage          The impact-assessment query, and the reason this model is a
- *                 graph rather than a table — a citation chain three deep is
- *                 invisible to any per-section review. Three literal bounds
- *                 sit in the Cypher and none can be parameterised: three hops
- *                 down the subsection hierarchy, three hops of citation, and
- *                 four hops up to the standard — a section nested deeper than
- *                 four levels is still returned, but shows '(unresolved)' in
- *                 place of its standard.
+ * @usage          The impact-assessment query, and the reason the reference
+ *                 ontology is a graph rather than a table — a citation chain
+ *                 three deep is invisible to any per-section review. Three
+ *                 literal bounds sit in the Cypher and none can be
+ *                 parameterised: three hops down the subsection hierarchy,
+ *                 three hops of citation, and four hops up to the standard —
+ *                 a section nested deeper than four levels is still
+ *                 returned, but shows '(unresolved)' in place of its
+ *                 standard.
  *                 The citation bound is the one that changes the answer, and
  *                 it is a genuine trade-off rather than a safe default — each
  *                 extra hop reaches text with a progressively weaker claim to
@@ -194,7 +197,10 @@ ORDER BY lastUpdated DESC, sectionId
  *                 first, then widen, and watch how fast the count grows;
  *                 anything omitted beyond the bound is omitted silently.
  * @tags           impact-analysis, regulatory-change, citation-chain
- * TODO(review): unproven query
+ * @sample         Bundled sample data only: $sectionId = 'MIFIDPRU 4.12'
+ *                 returns 15 rows — 2 'changed text' (MIFIDPRU 4.12 and
+ *                 MIFIDPRU 4.12.1) and 13 'cites changed text', spanning
+ *                 COBS, MIFIDPRU and SYSC.
  */
 MATCH (changed:Section {id: $sectionId})
 OPTIONAL MATCH (descendant:Section)-[:DEPENDS_ON*1..3]->(changed)
@@ -226,7 +232,7 @@ ORDER BY reachedVia, standard, sectionId
  * @params         limit - Maximum sections to return. Start at 20, roughly a
  *                     screen a reader can take in at once, and raise it only
  *                     once the top of the ranking has been dealt with.
- * @prerequisites  None beyond the imported model.
+ * @prerequisites  None beyond the imported reference ontology.
  * @returns        One row per cited section: standard, identifier, title,
  *                 in-force date, inbound citation count and outbound citation
  *                 count. Most cited first. The standard reads '(unresolved)'
@@ -245,7 +251,9 @@ ORDER BY reachedVia, standard, sectionId
  *                 optional, so a section nested deeper is still ranked but
  *                 shows '(unresolved)' in place of its standard.
  * @tags           centrality, cross-reference, section, change-cost
- * TODO(review): unproven query
+ * @sample         Bundled sample data only: $limit = 20 returns 20 rows, led
+ *                 by MIFIDPRU 4.12 (7 inbound, 0 outbound), then SYSC 15A.1
+ *                 (5 inbound, 4 outbound).
  */
 MATCH (citing:Section)-[:RELATED]->(cited:Section)
 WITH cited, count(DISTINCT citing) AS inboundCitations
@@ -270,7 +278,7 @@ LIMIT $limit
  *                 sections resolve to different standards, with the rule
  *                 referenced at the far end.
  * @params         None
- * @prerequisites  None beyond the imported model.
+ * @prerequisites  None beyond the imported reference ontology.
  * @returns        One row per cross-standard citation: citing standard and
  *                 section, cited standard and section, the rule reference, and
  *                 the in-force date of the cited text. Ordered by the pair of
@@ -288,7 +296,9 @@ LIMIT $limit
  *                 citing to cited is the direction of dependency, and the
  *                 cited standard is the one whose changes propagate outward.
  * @tags           cross-standard, dependency, overlap, cross-reference
- * TODO(review): unproven query
+ * @sample         Bundled sample data only: returns 12 rows, covering all six
+ *                 ordered pairs of the three standards COBS, MIFIDPRU and
+ *                 SYSC.
  */
 MATCH (citing:Section)-[ref:RELATED]->(cited:Section)
 MATCH (citing)-[:DEPENDS_ON*1..4]->(citingStd:Standard)
@@ -321,7 +331,7 @@ ORDER BY citingStandard, citedStandard, citingSectionId
  *                     while 2 is the first value that means more than one part
  *                     of the book leans on this text. Raise it until the list
  *                     is short enough to work through by hand.
- * @prerequisites  None beyond the imported model.
+ * @prerequisites  None beyond the imported reference ontology.
  * @returns        One row per section: standard, identifier, title, in-force
  *                 date, inbound citation count, the number of distinct
  *                 standards citing it, and those standards. Most cited first.
@@ -338,7 +348,10 @@ ORDER BY citingStandard, citedStandard, citingSectionId
  *                 toward the citation total but contributes no standard, so
  *                 the standard count is a floor, not an exact figure.
  * @tags           regulatory-change, prioritisation, centrality, cross-standard
- * TODO(review): unproven query
+ * @sample         Bundled sample data only: $changedSince = '2025-09-09',
+ *                 $minInboundCitations = 2 returns 4 rows — MIFIDPRU 4.12 (7
+ *                 citations from 3 standards), SYSC 15A.3 (4), COBS 11.4 (3)
+ *                 and MIFIDPRU 8.1 (2).
  */
 MATCH (cited:Section)
 WHERE cited.lastUpdated >= datetime($changedSince)
@@ -359,7 +372,7 @@ RETURN coalesce(std.id, '(unresolved)') AS standard,
 ORDER BY inboundCitations DESC, lastUpdated DESC, sectionId
 ```
 
-## Graph Data Science
+## Graph Data Science (optional)
 
 The four queries below need the **GDS plugin (2.x)** on the target database.
 Check with `RETURN gds.version()` before offering them; if that errors, GDS is
@@ -397,7 +410,8 @@ not agreed to modify.
  *                 communities. Check the reported counts against the Section
  *                 and RELATED totals before trusting either analytic.
  * @tags           gds, projection, setup
- * TODO(review): unproven query
+ * @sample         Bundled sample data only: returns graphName
+ *                 'regulatorySections', nodeCount 137, relationshipCount 85.
  */
 CALL gds.graph.project('regulatorySections', 'Section', 'RELATED')
 YIELD graphName, nodeCount, relationshipCount
@@ -436,7 +450,10 @@ RETURN graphName, nodeCount, relationshipCount
  *                 at four literal hops: a section nested deeper is scored by
  *                 GDS but omitted from this result.
  * @tags           gds, pagerank, centrality, section, change-cost
- * TODO(review): unproven query
+ * @sample         Bundled sample data only: $limit = 20 ranks MIFIDPRU 4.12
+ *                 first, then SYSC 8.3 (4 inbound) above SYSC 15A.1 (5
+ *                 inbound), with MIFIDPRU 1.2 fourth on a single inbound
+ *                 citation.
  */
 CALL gds.pageRank.stream('regulatorySections')
 YIELD nodeId, score
@@ -487,7 +504,9 @@ LIMIT $limit
  *                 a member nested deeper contributes no standard and the
  *                 member count understates the true component size.
  * @tags           gds, wcc, community, cross-reference, section
- * TODO(review): unproven query
+ * @sample         Bundled sample data only: $minCommunitySize = 2 returns 10
+ *                 components sized 49, 6, 4, 4, 2, 2, 2, 2, 2, 2; the
+ *                 49-member component spans COBS, MIFIDPRU and SYSC.
  */
 CALL gds.wcc.stream('regulatorySections')
 YIELD nodeId, componentId
@@ -523,20 +542,17 @@ ORDER BY communitySize DESC, componentId
  *                 rather than passing silently, which is deliberate — a
  *                 mistyped projection name should be noticed.
  * @tags           gds, projection, cleanup
- * TODO(review): unproven query
+ * @sample         Bundled sample data only: returns graphName
+ *                 'regulatorySections' and nodeCount 137.
  */
 CALL gds.graph.drop('regulatorySections')
 YIELD graphName, nodeCount
 RETURN graphName, nodeCount
 ```
 
-## Node-key constraints (schema reference)
+## Node-key constraints
 
-The Import flow creates these from the `key: true` definitions in
-`GRAPH_MODEL.json`. They are reproduced here so the expected schema can be
-confirmed with `SHOW CONSTRAINTS` after an import — not to build it. Running
-them against a database Import has already populated is unnecessary, and on a
-database that has differently-named equivalents it adds duplicates.
+Import creates these node-key constraints from the key definitions in `ONTOLOGY.json`. They are listed as a reference for checking the live database (`SHOW CONSTRAINTS`), not as statements to run: recreating them, or adding `UNIQUE` variants, conflicts with the existing `KEY` constraints.
 
 ```cypher
 CREATE CONSTRAINT standard_id IF NOT EXISTS

@@ -64,7 +64,7 @@
     {
       "skillId": "regulatory-dependency-mapping",
       "files": {
-        "graph": "GRAPH_MODEL.json",
+        "graph": "ONTOLOGY.json",
         "skill": [
           "sample-data/section_references.csv",
           "sample-data/sections.csv",
