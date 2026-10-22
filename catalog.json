@@ -102,7 +102,7 @@
     {
       "skillId": "identity-validation",
       "files": {
-        "graph": "GRAPH_MODEL.json",
+        "graph": "ONTOLOGY.json",
         "skill": [
           "sample-data/addresses.csv",
           "sample-data/dobs.csv",
@@ -113,19 +113,11 @@
           "sample-data/names.csv",
           "sample-data/phones.csv",
           "sample-data/ssns.csv",
-          "caveats.md",
-          "graph-model.md",
           "implementation-guidance.md",
-          "indexes.cypher",
-          "INTRODUCTION.md",
-          "overview.md",
           "QUERIES.md",
-          "query-patterns.md",
-          "query-templates.md",
-          "resolution-workflow.md",
-          "sample-data.md",
           "SETUP.md",
-          "human_description.md"
+          "human_description.md",
+          "TESTS.md"
         ],
         "markdown": "SKILL.md"
       }

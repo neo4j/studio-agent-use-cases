@@ -1,30 +1,52 @@
-# Query Templates
+# Identity Validation — Query Guidance
 
-Runnable Cypher for the Identity Graph model. Every query carries a leading `//` comment block stating its purpose, inputs, prerequisites, and expected result against the bundled sample data, so the comment acts as a lightweight test oracle.
+Cypher for the `identity-validation` use case. Every query references only labels, relationship types, and properties defined in the reference ontology (`ONTOLOGY.json`), plus the query-created `:Placeholder` label defined in `SKILL.md`. The two placeholder-detection queries write that label; every other query is read-only.
 
-Expected counts are a property of this dataset. If you regenerate or extend `sample-data/`, re-run every template and update the comments.
+## Prerequisites
 
-Prerequisites in one place:
+- Neo4j 5.x, Cypher 5. The matching queries use negated label expressions (`:!Placeholder`).
+- APOC for the two queries marked "(requires APOC)" — `apoc.text.jaroWinklerDistance`. No other query needs it. No GDS.
+- The graph is loaded through the Import flow from `ONTOLOGY.json` — the bundled `sample-data/` CSVs, or the user's own data mapped onto the reference ontology.
+- The node keys in `ONTOLOGY.json` make every attribute value unique per label, so records sharing a value converge on one node and every anchored lookup is an index seek.
+- `SETUP.md` run post-import: its required statement creates the `ssnFuzzyIndex` fulltext index that the two near-duplicate SSN queries depend on, and its two recommended statements apply the placeholder flags every matching query excludes.
+- `:Placeholder` is a label the placeholder-detection queries (or `SETUP.md` statements 2 and 3) add to attribute nodes holding filler values. It does not exist in a freshly imported database, and it is not part of the reference ontology. Until it is applied, the `:Placeholder` exclusions have nothing to exclude and filler values create false matches. Likewise, the optional `SETUP.md` spatial statements write a `Location.coordinates` point property that no query here depends on.
+- Anchors are parameters, never hardcoded IDs. Ask the user which identity or phone number they want, or offer one from the results of **Confidence-Scored Identity Matches**. Do not invent IDs.
+- Run order matters: the two flagging queries first, then matching, then corroboration. The queries below are in that order, so the APOC queries are labelled in place rather than moved.
 
-- Neo4j 5.x / Cypher 5 (negated label expressions such as `:!Placeholder`).
-- The bundled sample data imported from `sample-data/`.
-- `SETUP.md` run post-import: its required statement creates the fulltext index `Near-Duplicate SSN` depends on, and its recommended statements apply the placeholder flags every matching query excludes.
-- APOC, for `Descriptor Similarity` and `Weighted Composite Match Score` only.
+## Adapting these queries
 
-Run order matters: the two flagging queries first, then matching, then corroboration.
+These queries assume the reference ontology in `ONTOLOGY.json`. When the user's database differs — their own ontology, a modified one, or a database that predates this package — the queries are patterns to rebuild, not Cypher to run.
 
-## Placeholder & Invalid Identifier Detection
+1. Read the live schema (`CALL db.schema.visualization()`, `SHOW CONSTRAINTS`) rather than assuming the reference ontology applies.
+2. Map their labels onto the role map in `SKILL.md`. A role with no counterpart means the pattern below it has no analogue — say so rather than forcing a fit.
+3. Rewrite from the pattern, and update the annotation block to describe what the rewritten query actually does.
 
-Run this first, before any matching query. (These two statements are steps 2 and 3 of `SETUP.md` — if setup was run at import time, they are already applied; don't run them twice.) Source systems often stuff a non-null filler value into a required field when the real value isn't known (`"none@none.com"`, `"N/A"`, `"999-999-9999"`). Those are not identifiers, and left alone they silently create false-positive matches between unrelated people. This flags known placeholder values with a `:Placeholder` label so the matching queries can exclude them.
+## Placeholder Email Detection
 
 ```cypher
-// Purpose: flag filler/placeholder email values with a :Placeholder label so they
-//   cannot act as a shared identifier in any matching query.
-// Inputs: the knownPlaceholderEmails list below; extend per source system.
-// Prerequisites: sample data imported. This query WRITES a label (no data change).
-// Expected: 2 rows against the sample data — "none@none.com" (shared by ID-4002
-//   and ID-5001) and "test@test.com" (shared by ID-8004 and ID-8005). Both pairs
-//   are otherwise unrelated, so both disappear from the match results afterwards.
+/*
+ * @name           Placeholder Email Detection
+ * @description    Flags filler email values — the non-null junk a source
+ *                 system stores when the real value is unknown, such as
+ *                 "none@none.com" — with a :Placeholder label, so they
+ *                 cannot act as a shared identifier in any matching query.
+ *                 Left alone, one filler value links every unrelated record
+ *                 that carries it.
+ * @params         None
+ * @prerequisites  Writes a label (no data change): confirm the target
+ *                 database first. Equivalent to SETUP.md statement 2 — run it
+ *                 once, here or there, not both.
+ * @returns        One row per flagged Email: flaggedEmail, in order.
+ * @usage          Run before any matching query, and again whenever a new
+ *                 source system is onboarded. The literal list
+ *                 knownPlaceholderEmails and the word-boundary pattern are
+ *                 illustrative, not exhaustive: extend both with each source
+ *                 system's own filler conventions.
+ * @tags           placeholder, data-quality, email, setup
+ * @sample         Bundled sample data only: returns 2 rows — none@none.com
+ *                 and test@test.com, each shared by two otherwise-unrelated
+ *                 identities.
+ */
 WITH ['none@none.com', 'n/a', 'test@test.com', 'unknown@unknown.com'] AS knownPlaceholderEmails
 MATCH (e:Email)
 WHERE toLower(e.email) IN knownPlaceholderEmails
@@ -34,12 +56,28 @@ RETURN e.email AS flaggedEmail
 ORDER BY flaggedEmail;
 ```
 
+## Placeholder Phone Detection
+
 ```cypher
-// Purpose: flag filler/placeholder phone values with a :Placeholder label.
-// Inputs: the knownPlaceholderPhones list below; extend per source system.
-// Prerequisites: sample data imported. This query WRITES a label (no data change).
-// Expected: 1 row against the sample data — "999-999-9999", shared by ID-8001,
-//   ID-8002 and ID-8003, three otherwise-unrelated identities.
+/*
+ * @name           Placeholder Phone Detection
+ * @description    Flags filler phone values such as "999-999-9999" with a
+ *                 :Placeholder label, so they cannot act as a shared
+ *                 identifier in any matching query.
+ * @params         None
+ * @prerequisites  Writes a label (no data change): confirm the target
+ *                 database first. Equivalent to SETUP.md statement 3 — run it
+ *                 once, here or there, not both.
+ * @returns        One row per flagged Phone: flaggedPhone, in order.
+ * @usage          Run before any matching query, alongside Placeholder Email
+ *                 Detection. Extend the literal list knownPlaceholderPhones
+ *                 per source system. Add an equivalent check for SSN where
+ *                 the data holds unmasked values: numbers starting 000, 666
+ *                 or 900–999 are never issued.
+ * @tags           placeholder, data-quality, phone, setup
+ * @sample         Bundled sample data only: returns 1 row — 999-999-9999,
+ *                 shared by three otherwise-unrelated identities.
+ */
 WITH ['999-999-9999', '000-000-0000', '555-555-5555'] AS knownPlaceholderPhones
 MATCH (p:Phone)
 WHERE p.phoneNumber IN knownPlaceholderPhones
@@ -48,21 +86,40 @@ RETURN p.phoneNumber AS flaggedPhone
 ORDER BY flaggedPhone;
 ```
 
-Extend both lists — and add an equivalent check for `SSN` (values starting `000`, `666`, or `900`–`999`, which the SSA never issues) — per the placeholder conventions of your own source systems.
-
 ## Shared Identifier Fan-out (Basic)
 
-The simplest pattern in this package, and the right place to start. It returns the full `path`, so it renders directly as a graph in Neo4j Browser rather than a table of disconnected fields.
-
 ```cypher
-// Purpose: find every pair of identities that share any single strong identifier,
-//   returning the connecting path so the result renders as a graph.
-// Inputs: none. Add a filter on a specific identity or value to narrow it.
-// Prerequisites: sample data imported; placeholder detection already run, or the
-//   :!Placeholder filter has nothing to exclude yet.
-// Expected: 39 rows spanning 17 distinct identity pairs against the sample data
-//   (each row is one pair plus one shared attribute node). Without placeholder
-//   detection first, 22 pairs appear — the 5 extra are placeholder false positives.
+/*
+ * @name           Shared Identifier Fan-out (Basic)
+ * @description    The simplest pattern in this package, and the place to
+ *                 start: every pair of identities that converge on the same
+ *                 phone, email, SSN, address, date of birth or IP address
+ *                 node, with the connecting path. PersonName is left out
+ *                 deliberately — a name is a descriptor, not an identifier.
+ * @params         None
+ * @prerequisites  Neo4j 5.x for the :!Placeholder negated label expression.
+ *                 Placeholder flags applied first; until then the exclusion
+ *                 has nothing to exclude.
+ * @returns        One row per identity pair and shared attribute node:
+ *                 identity1 and identity2 (identityId, identity1 the lower),
+ *                 sharedSignal (the relationship type), shared (the
+ *                 attribute node) and path, which renders as a graph in
+ *                 Browser. A pair sharing several attributes appears once
+ *                 per attribute.
+ * @usage          The literal LIMIT 200 keeps the result browsable; on a
+ *                 real population this returns far more, so filter to one
+ *                 identity or attribute value under investigation rather
+ *                 than raising it. Relationship types are filtered inside
+ *                 the pattern so the planner never expands the wrong ones;
+ *                 widen the type list if the data adds attribute types. No
+ *                 type(r1) = type(r2) check is needed while each attribute
+ *                 label receives only one relationship type; reintroduce it
+ *                 if that stops being true.
+ * @tags           matching, fan-out, shared-identifier, visualisation
+ * @sample         Bundled sample data only: returns 39 rows across 17
+ *                 identity pairs with the placeholder flags applied; 44 rows
+ *                 across 22 pairs without them.
+ */
 MATCH path = (i1:Identity)-[r1:HAS_PHONE|HAS_EMAIL|HAS_SSN|HAS_ADDRESS|HAS_DOB|HAS_IP]->
              (shared:!Placeholder)
              <-[r2:HAS_PHONE|HAS_EMAIL|HAS_SSN|HAS_ADDRESS|HAS_DOB|HAS_IP]-(i2:Identity)
@@ -76,19 +133,34 @@ ORDER BY sharedSignal, identity1, identity2
 LIMIT 200;
 ```
 
-The `LIMIT` is a habit worth keeping rather than a necessity here: this dataset is deliberately sparse in matches, but the same query against a real population returns far more, and browsing the whole result set is rarely what you want. Filter to a specific identity or attribute value you're investigating instead.
-
 ## Confidence-Scored Identity Matches
 
 ```cypher
-// Purpose: rank candidate pairs by how many distinct identifier types they share.
-// Inputs: none.
-// Prerequisites: sample data imported; placeholder detection already run.
-// Expected: 17 rows against the sample data — 1 pair at confidence 5
-//   (ID-1001/ID-1003), 3 at confidence 4 (the Angela Torres cluster), 1 at
-//   confidence 3, 7 at confidence 2, and 5 at confidence 1. Confidence 3+ picks
-//   out the seeded multi-channel clusters with no tuning. 476 of the 500
-//   identities have no match at all.
+/*
+ * @name           Confidence-Scored Identity Matches
+ * @description    Groups the fan-out by identity pair and ranks pairs by how
+ *                 many distinct identifier types they share — a shared phone
+ *                 is confidence 1, a shared phone and address confidence 2.
+ * @params         None
+ * @prerequisites  Neo4j 5.x for the :!Placeholder negated label expression.
+ *                 Placeholder flags applied first.
+ * @returns        One row per identity pair: identity1, identity2,
+ *                 sharedSignals (the distinct relationship types shared) and
+ *                 confidence (their count, 1–6), ordered by confidence
+ *                 descending.
+ * @usage          The right first query for a demo: it separates pairs that
+ *                 share several identifier types from pairs that share one.
+ *                 confidence is a count, not a probability — a triage
+ *                 ranking, not a calibrated likelihood. Treat one shared
+ *                 attribute, especially an address alone, as a weak lead.
+ *                 Run it before and after the placeholder flags to show the
+ *                 false positives filler values create. The literal LIMIT 50
+ *                 caps the list. Offers anchors for Match Cluster as a Graph.
+ * @tags           matching, confidence, ranking, triage
+ * @sample         Bundled sample data only: returns 17 rows — 1 at
+ *                 confidence 5 (ID-1001 / ID-1003), 3 at 4, 1 at 3, 7 at 2
+ *                 and 5 at 1.
+ */
 MATCH (i1:Identity)-[r1:HAS_PHONE|HAS_EMAIL|HAS_SSN|HAS_ADDRESS|HAS_DOB|HAS_IP]->
       (shared:!Placeholder)
       <-[r2:HAS_PHONE|HAS_EMAIL|HAS_SSN|HAS_ADDRESS|HAS_DOB|HAS_IP]-(i2:Identity)
@@ -102,23 +174,33 @@ ORDER BY confidence DESC, identity1, identity2
 LIMIT 50;
 ```
 
-`confidence` is how many distinct identifier types a pair shares — one shared phone is confidence 1, a shared phone _and_ address is confidence 2. It is a count, not a probability: higher is stronger evidence, but treat it as a triage ranking, not a calibrated likelihood.
-
-Run this with and without the placeholder-detection step to see the difference. Without it, unrelated identities show false-positive matches purely from shared filler values.
-
 ## Match Cluster as a Graph
 
-The confidence query above answers "which pairs?" in a table. This answers "what does one cluster actually look like?" as a graph — the view to put on screen in a demo.
-
 ```cypher
-// Purpose: return the full match cluster around one identity as paths, so Browser
-//   renders the identities and the attribute nodes that connect them.
-// Inputs: $identityId — an Identity.identityId, e.g. "ID-1001".
-// Prerequisites: sample data imported; placeholder detection already run.
-// Expected: 8 paths for $identityId = "ID-1001" — 5 shared attributes linking it
-//   to ID-1003 (phone, SSN, address, DOB, IP) and 3 linking it to ID-1002 (phone,
-//   email, IP). Renders as the 3-record Robert Anderson cluster across CRM,
-//   MobileApp and CallCenter.
+/*
+ * @name           Match Cluster as a Graph
+ * @description    The full match cluster around one identity as paths: the
+ *                 seed, every attribute node it shares, and every other
+ *                 identity on the far side. The confidence query answers
+ *                 "which pairs?"; this answers "what does one cluster look
+ *                 like?".
+ * @params         identityId - Identity.identityId of the seed record. Ask
+ *                     the user, or offer one from Confidence-Scored Identity
+ *                     Matches.
+ * @prerequisites  Neo4j 5.x for the :!Placeholder negated label expression.
+ *                 Placeholder flags applied first.
+ * @returns        Paths seed Identity → shared attribute ← matching
+ *                 Identity, one per shared attribute and matching identity,
+ *                 for Browser to draw as one cluster.
+ * @usage          Visual, not tabular — the view to put on screen in a
+ *                 demo. An identity with no shared attribute returns
+ *                 nothing.
+ * @tags           visualisation, cluster, matching
+ * @sample         Bundled sample data only: $identityId = 'ID-1001' returns
+ *                 8 paths — 5 shared attributes linking it to ID-1003 and 3
+ *                 to ID-1002, the Robert A***n records across CRM, MobileApp
+ *                 and CallCenter.
+ */
 MATCH path = (seed:Identity {identityId: $identityId})
              -[:HAS_PHONE|HAS_EMAIL|HAS_SSN|HAS_ADDRESS|HAS_DOB|HAS_IP]->
              (shared:!Placeholder)
@@ -130,17 +212,27 @@ RETURN path;
 
 ## Implausible Address Detection
 
-The same "flag junk before matching on it" idea as placeholder detection, applied to addresses. Instead of a filler value it's an address a geocoder can't resolve at all. Rather than enumerating every way an address can be wrong, this flags by absence: any `Address` with no `GEOCODED_TO` relationship is one the geocoding step couldn't place.
-
 ```cypher
-// Purpose: surface addresses the geocoding step could not resolve, by absence of a
-//   GEOCODED_TO relationship rather than by inspecting values.
-// Inputs: none.
-// Prerequisites: sample data imported (addresses.csv and locations.csv both).
-// Expected: exactly 3 rows against the sample data — ID-8105 (zip 00000, invalid
-//   format), ID-8106 (zip 99999, invalid format) and ID-8107 (zip 98101, a Seattle
-//   zip on an Austin address). Run before the two location queries below: an
-//   unresolved address has no Location, so it is excluded from both automatically.
+/*
+ * @name           Implausible Address Detection
+ * @description    The "flag junk before matching on it" idea applied to
+ *                 addresses: surfaces every address the geocoding step could
+ *                 not resolve. It flags by absence — an Address with no
+ *                 GEOCODED_TO relationship — rather than by trying to
+ *                 enumerate every way an address can be malformed.
+ * @params         None
+ * @prerequisites  None beyond the imported reference ontology.
+ * @returns        One row per identity and unresolved address: identity,
+ *                 address, city, state and zipcode, ordered by zipcode.
+ * @usage          Read-only. Run it before the two location queries: an
+ *                 unresolved address has no Location, so it is silently
+ *                 absent from both. Re-run whenever a new source system
+ *                 brings new failure modes.
+ * @tags           data-quality, address, geocoding
+ * @sample         Bundled sample data only: returns 3 rows — ID-8105 (zip
+ *                 00000), ID-8106 (zip 99999) and ID-8107 (Seattle zip 98101
+ *                 on an Austin address).
+ */
 MATCH (i:Identity)-[:HAS_ADDRESS]->(a:Address)
 WHERE NOT (a)-[:GEOCODED_TO]->(:Location)
 RETURN i.identityId AS identity,
@@ -153,17 +245,31 @@ ORDER BY a.zipcode;
 
 ## Location Match: Same Coordinates, Different Address Text
 
-Two different address strings — "215 Congress Ave" vs "215 Congress Avenue" — can still geocode to the same `Location`. That convergence is itself a match signal, the same way two identities sharing a `Phone` node converge into a match: here `Location` is the identifier, not `Address`.
-
 ```cypher
-// Purpose: find identities whose address text differs but whose geocoded location
-//   is identical — matches that string-based fan-out cannot see. Returns paths.
-// Inputs: none.
-// Prerequisites: sample data imported; Implausible Address Detection run first.
-// Expected: exactly 2 rows against the sample data — "215 Congress Ave" /
-//   "215 Congress Avenue" in Austin (ID-8101/ID-8102), and "900 16th St" /
-//   "900 16th Street" in Denver (ID-8103/ID-8104). Neither pair shares any other
-//   identifier, so this is the only template in the package that catches them.
+/*
+ * @name           Location Match: Same Coordinates, Different Address Text
+ * @description    Finds identities whose address text differs but whose
+ *                 addresses resolve to the same Location — "12 Main St" and
+ *                 "12 Main Street". Convergence on Location is
+ *                 a match signal in the same way convergence on a Phone is;
+ *                 here Location is the identifier, not Address.
+ * @params         None
+ * @prerequisites  None beyond the imported reference ontology. Review
+ *                 Implausible Address Detection first.
+ * @returns        One row per identity pair and shared Location: identity1,
+ *                 address1, identity2, address2 (the street portions),
+ *                 latitude, longitude and path.
+ * @usage          The a1.address <> a2.address filter is what separates this
+ *                 from the fan-out, which already catches identities sharing
+ *                 the same Address node. It surfaces only what exact string
+ *                 equality misses, so pairs found here may share nothing
+ *                 else at all.
+ * @tags           matching, location, geocoding, standardisation
+ * @sample         Bundled sample data only: returns 2 rows — ID-8101 /
+ *                 ID-8102 (215 Congress Ave / 215 Congress Avenue, Austin)
+ *                 and ID-8103 / ID-8104 (900 16th St / 900 16th Street,
+ *                 Denver).
+ */
 MATCH path = (i1:Identity)-[:HAS_ADDRESS]->(a1:Address)-[:GEOCODED_TO]->
              (l:Location)
              <-[:GEOCODED_TO]-(a2:Address)<-[:HAS_ADDRESS]-(i2:Identity)
@@ -179,24 +285,39 @@ RETURN i1.identityId AS identity1,
 ORDER BY latitude, longitude;
 ```
 
-The `a1.address <> a2.address` filter is what makes this distinct from the plain fan-out: identities sharing the _exact same_ address string already appear there via `HAS_ADDRESS`. This surfaces only the cases the string comparison misses.
-
-## Descriptor Similarity: Near-Miss Name Spelling
-
-`PersonName` is a **descriptor**, not an identifier. Plenty of unrelated people share a name, so a name alone should never establish a match — which is why it is excluded from the fan-out. Once two identities are already suspected of being the same person via a real identifier, a near-miss spelling is corroborating evidence.
-
-This deliberately scores only pairs that already share a real identifier, never all name pairs in the graph. Jaro-Winkler rewards a matching prefix heavily, so two unrelated people who happen to share a first name can outscore a genuine near-miss spelling; run over the full population it returns mostly noise. Against this dataset an unblocked scan at the same threshold returns 2,264 pairs, versus 3 when blocked.
-
-`apoc.text.jaroWinklerDistance` returns a **distance** (0 = identical, larger = more different), not a similarity — most Jaro-Winkler implementations elsewhere return a similarity, so the mistake is easy to make. The query converts with `1 - apoc.text.jaroWinklerDistance(...)` so `nameSimilarity` means what it says and the threshold reads naturally. Skipping the conversion doesn't error; it just sorts and thresholds backwards.
+## Descriptor Similarity: Near-Miss Name Spelling (requires APOC)
 
 ```cypher
-// Purpose: corroborate an already-suspected match with a near-miss name spelling.
-// Inputs: threshold 0.80 below; raise it to tighten.
-// Prerequisites: APOC installed; sample data imported; placeholder detection run.
-// Expected: exactly 3 rows against the sample data — the seeded synthetic-identity
-//   pairs Carlos/Carla Marquez (0.948), Tyler/Taylor Bowen (0.923) and
-//   David/Daniel Kim (0.861), each already flagged by a shared phone number.
-//   15 candidate pairs enter the scoring step; 3 clear the threshold.
+/*
+ * @name           Descriptor Similarity: Near-Miss Name Spelling (requires APOC)
+ * @description    Corroborates an already-suspected match with a near-miss
+ *                 name spelling. PersonName is a descriptor: plenty of
+ *                 unrelated people share a name, so a name never establishes
+ *                 a match. Only pairs that already share a phone, email, SSN
+ *                 or address are scored, never all name pairs.
+ * @params         None
+ * @prerequisites  APOC (apoc.text.jaroWinklerDistance). Placeholder flags
+ *                 applied first.
+ * @returns        One row per blocked pair with different names scoring at
+ *                 or above the threshold: identity1, name1, identity2, name2
+ *                 and nameSimilarity (0–1, 1 identical), ordered by
+ *                 nameSimilarity descending.
+ * @usage          apoc.text.jaroWinklerDistance returns a distance (0 =
+ *                 identical), not a similarity; the query converts with
+ *                 1 - distance so the literal threshold 0.80 reads
+ *                 naturally. Skipping the conversion does not error — it
+ *                 sorts and thresholds backwards. 0.80 is a common starting
+ *                 point for Jaro–Winkler name matching; raise it to tighten.
+ *                 Jaro–Winkler rewards a shared prefix, so an unblocked scan
+ *                 returns mostly coincidental first-name matches and grows
+ *                 with population size — keep the blocking match. The
+ *                 blocking set leaves out HAS_DOB (a scope choice) and
+ *                 HAS_IP (shared infrastructure is weak evidence).
+ * @tags           corroboration, descriptor, name, fuzzy, apoc
+ * @sample         Bundled sample data only: returns 3 rows — Carlos M***z /
+ *                 Carla M***z 0.948, Tyler B***n / Taylor B***n 0.923 and
+ *                 David K** / Daniel K** 0.861.
+ */
 MATCH (i1:Identity)-[:HAS_PHONE|HAS_EMAIL|HAS_SSN|HAS_ADDRESS]->(shared)
       <-[:HAS_PHONE|HAS_EMAIL|HAS_SSN|HAS_ADDRESS]-(i2:Identity)
 WHERE i1.identityId < i2.identityId
@@ -216,23 +337,39 @@ RETURN i1.identityId AS identity1,
 ORDER BY nameSimilarity DESC;
 ```
 
-The blocking set is `HAS_PHONE|HAS_EMAIL|HAS_SSN|HAS_ADDRESS`, excluding `HAS_DOB` and `HAS_IP` — see `query-patterns.md` for why.
-
 ## Nearby Address (Geographic Distance as Descriptor)
 
-Geographic distance is a descriptor for the same reason a name is: plenty of unrelated people live near each other. Like the name query, this scores only pairs already blocked by a real identifier — here phone, email, or SSN, deliberately excluding `HAS_ADDRESS`, since address plausibility is exactly what's being corroborated.
-
-`point.distance()` returns metres directly for geographic points. The query constructs the points inline from `latitude` and `longitude`, so it works against imported data with no extra step. If you materialise a `coordinates` point property (see the optional section of `SETUP.md`), substitute `l1.coordinates` and `l2.coordinates`.
-
 ```cypher
-// Purpose: corroborate an already-suspected match with geographic proximity.
-// Inputs: 500m threshold below; tune down for denser real-world address data.
-// Prerequisites: sample data imported; Implausible Address Detection run first.
-//   Built-in point.distance() — no APOC or plugin needed.
-// Expected: exactly 1 row against the sample data — ID-4001 (David Kim) and
-//   ID-4002 (Daniel Kim), 241m apart in Austin. That pair is already flagged by a
-//   shared phone and a near-miss name, so this is a third corroborating signal,
-//   not a new discovery. 11 candidate pairs enter the distance step.
+/*
+ * @name           Nearby Address (Geographic Distance as Descriptor)
+ * @description    Corroborates an already-suspected match with geographic
+ *                 proximity. Distance is a descriptor for the same reason a
+ *                 name is: plenty of unrelated people live near each other.
+ *                 Only pairs already sharing a phone, email or SSN are
+ *                 scored; HAS_ADDRESS is deliberately left out of the
+ *                 blocking set, since address plausibility is what is being
+ *                 corroborated.
+ * @params         None
+ * @prerequisites  None beyond the imported reference ontology — the built-in
+ *                 point.distance(), no plugin. Placeholder flags applied
+ *                 first; review Implausible Address Detection first.
+ * @returns        One row per blocked pair whose addresses resolve to
+ *                 different Locations within the threshold: identity1,
+ *                 address1, identity2, address2 and metersApart (rounded
+ *                 metres), nearest first.
+ * @usage          point.distance() returns metres for geographic points,
+ *                 built inline from Location.latitude and longitude; a
+ *                 cartesian x/y point would return the units of x and y. The
+ *                 literal 500 m threshold is a starting point with no strong
+ *                 prior: lower it where addresses are dense, and keep the
+ *                 identifier blocking or the query surfaces large numbers of
+ *                 coincidentally nearby strangers. If the optional SETUP.md
+ *                 statements have materialised Location.coordinates,
+ *                 substitute l1.coordinates and l2.coordinates.
+ * @tags           corroboration, descriptor, spatial, distance
+ * @sample         Bundled sample data only: returns 1 row — ID-4001 /
+ *                 ID-4002, about 242 m apart in Austin.
+ */
 MATCH (i1:Identity)-[:HAS_PHONE|HAS_EMAIL|HAS_SSN]->(shared)
       <-[:HAS_PHONE|HAS_EMAIL|HAS_SSN]-(i2:Identity)
 WHERE i1.identityId < i2.identityId
@@ -255,21 +392,37 @@ RETURN i1.identityId AS identity1,
 ORDER BY metersApart;
 ```
 
-This is meant to strengthen an already-suspected match, not to discover one on distance alone. An unblocked version at real address density would return plenty of coincidentally-nearby strangers.
-
-## Weighted Composite Match Score
-
-Blends identifier confidence with descriptor similarity into one illustrative score. `size(sharedSignals) / 6.0` rescales the identifier count (1–6, never 0 here, since every returned pair already passed the blocking match) into the same 0–1 range as `nameSimilarity`, so the two terms can be weighted and summed meaningfully. The 0.7/0.3 split is a starting point, not a tuned value.
+## Weighted Composite Match Score (requires APOC)
 
 ```cypher
-// Purpose: rank candidate pairs by a single score combining identifier confidence
-//   with name similarity, for triaging a large candidate list.
-// Inputs: the 0.7/0.3 weights below — illustrative, tune with domain expertise.
-// Prerequisites: APOC installed; sample data imported; placeholder detection run.
-// Expected: 15 rows against the sample data. The seeded multi-channel clusters
-//   (Robert Anderson, Angela Torres, Marcus Odom, Wei Zhang, Maria Chen, Priya
-//   Nair) occupy the top at 0.533–0.883, and the 3 synthetic-identity pairs sit
-//   distinctly below at 0.375–0.401 — the ambiguous band a human should review.
+/*
+ * @name           Weighted Composite Match Score (requires APOC)
+ * @description    Blends identifier confidence with name similarity into one
+ *                 illustrative score, for triaging a large candidate list.
+ *                 Pairs are blocked on a shared phone, email, SSN or address,
+ *                 then scored on every identifier type they share.
+ * @params         None
+ * @prerequisites  APOC (apoc.text.jaroWinklerDistance). Placeholder flags
+ *                 applied first.
+ * @returns        One row per blocked pair where both identities carry a
+ *                 name: identity1, identity2, sharedSignals,
+ *                 identifierConfidence (1–6), nameSimilarity (0–1, two
+ *                 decimals) and weightedScore (0–1), highest first.
+ * @usage          size(sharedSignals) / 6.0 rescales the identifier count
+ *                 into the same 0–1 range as nameSimilarity so the two can
+ *                 be weighted and summed. The literal 0.7 / 0.3 weights are
+ *                 an illustrative starting point, not tuned values: adjust
+ *                 them with domain expertise, or learn them from a dataset
+ *                 already known to be deduplicated. Read the middle band —
+ *                 pairs held up by a single identifier and a near-miss name
+ *                 — as the ambiguous cases a human should review. The
+ *                 literal LIMIT 50 caps the list.
+ * @tags           scoring, triage, composite, apoc
+ * @sample         Bundled sample data only: returns 15 rows from 0.883
+ *                 (ID-1001 / ID-1003) down to 0.375; the three near-miss-name
+ *                 pairs score 0.375–0.401, below every exact-name pair
+ *                 (0.533 and up).
+ */
 MATCH (i1:Identity)-[:HAS_PHONE|HAS_EMAIL|HAS_SSN|HAS_ADDRESS]->(shared)
       <-[:HAS_PHONE|HAS_EMAIL|HAS_SSN|HAS_ADDRESS]-(i2:Identity)
 WHERE i1.identityId < i2.identityId
@@ -295,21 +448,39 @@ LIMIT 50;
 
 ## Near-Duplicate SSN (Synthetic Identity Signal)
 
-Everything above catches records that match exactly. A synthetic-identity fraudster doesn't need an exact match to slip past those checks: reuse a victim's real contact details so the application looks legitimate, but alter one digit of the SSN so it doesn't collide under exact-match dedup. The fan-out and confidence queries would never catch that, because the SSNs genuinely don't match.
-
-The masked SSN carries only 4 digits of entropy (10,000 possible values). Across 500 people that produces 244 coincidental edit-distance-1 pairs with no relationship to each other. The fix is the same as elsewhere: only treat a near-duplicate SSN as meaningful when the same two identities _also_ share a real contact identifier.
-
 ```cypher
-// Purpose: find SSNs that are almost identical (edit distance 1) and corroborated
-//   by a genuinely shared contact identifier — the synthetic-identity signature.
-// Inputs: the ~1 fuzzy operator below; ~2 widens it (Lucene caps at 2).
-// Prerequisites: ssnFuzzyIndex fulltext index with the 'keyword' analyzer, created
-//   by SETUP.md; sample data imported; placeholder detection run.
-// Expected: exactly 3 rows against the sample data — the seeded synthetic-identity
-//   pairs Carla/Carlos Marquez (XXX-XX-4508 / XXX-XX-4598), David/Daniel Kim
-//   (XXX-XX-4821 / XXX-XX-4831) and Taylor/Tyler Bowen (XXX-XX-8017 /
-//   XXX-XX-8517), each corroborated by a shared phone number. Without the
-//   corroboration match, 244 coincidental pairs are returned instead.
+/*
+ * @name           Near-Duplicate SSN (Synthetic Identity Signal)
+ * @description    The synthetic-identity signature: two SSNs one edit apart,
+ *                 held by identities that also share a genuine contact
+ *                 identifier. A fraudster reuses a victim's contact details
+ *                 so the application looks legitimate, but alters one digit
+ *                 of the SSN so it never collides under exact-match
+ *                 deduplication — which the fan-out and confidence queries
+ *                 therefore cannot see.
+ * @params         None
+ * @prerequisites  The ssnFuzzyIndex fulltext index with the 'keyword'
+ *                 analyzer (SETUP.md statement 1) — the query fails without
+ *                 it. Placeholder flags applied first.
+ * @returns        One row per near-duplicate SSN pair and corroborating
+ *                 attribute: identity1, ssn1, identity2, ssn2 (ssn1 the
+ *                 lower), score (the Lucene relevance score) and
+ *                 corroboratingSignal (the shared relationship type).
+ * @usage          The literal ~1 fuzzy operator allows one edit; ~2 widens
+ *                 it, and Lucene caps it at 2. The - in each SSN is escaped
+ *                 before it reaches the Lucene parser, where it is reserved.
+ *                 The fuzzy lookup is cheap; the corroboration match is what
+ *                 removes noise. SSNs masked to their last four digits have
+ *                 only 10,000 possible values, so coincidental one-edit pairs
+ *                 grow quickly with population size — never drop the
+ *                 corroboration. A near-duplicate can also be an honest
+ *                 typo: treat a hit as a lead for review.
+ * @tags           synthetic-identity, fraud, fuzzy, ssn, fulltext
+ * @sample         Bundled sample data only: returns 3 rows — XXX-XX-4508 /
+ *                 XXX-XX-4598 (ID-7002 / ID-7001), XXX-XX-4821 / XXX-XX-4831
+ *                 (ID-4001 / ID-4002) and XXX-XX-8017 / XXX-XX-8517 (ID-7004
+ *                 / ID-7003), each corroborated by HAS_PHONE.
+ */
 MATCH (s:SSN)
 WITH s, replace(s.ssn, '-', '\\-') AS escapedSsn
 CALL db.index.fulltext.queryNodes('ssnFuzzyIndex', escapedSsn + '~1') YIELD node, score
@@ -328,18 +499,27 @@ RETURN i1.identityId AS identity1,
 ORDER BY score DESC;
 ```
 
-The `-` in each SSN must be escaped before it reaches the Lucene query parser, since `-` is a reserved character there. Using the fulltext index rather than a pairwise self-join is what makes this scale: the fuzzy lookup itself is fast, and it was the lack of corroboration that caused the noise, not the lookup mechanism.
-
-Same query, returned as a graph for a demo:
+## Near-Duplicate SSN as a Graph
 
 ```cypher
-// Purpose: same synthetic-identity detection, returned as paths so Browser renders
-//   the two identities, their near-duplicate SSNs, and the shared phone that
-//   corroborates the link.
-// Inputs: none.
-// Prerequisites: as above — ssnFuzzyIndex, sample data, placeholder detection.
-// Expected: 3 rows for the same 3 seeded fraud pairs, each with 3 path columns
-//   that Browser merges into one graph view per row.
+/*
+ * @name           Near-Duplicate SSN as a Graph
+ * @description    The same synthetic-identity detection returned as paths:
+ *                 the two identities, their near-duplicate SSNs, and the
+ *                 shared contact attribute that corroborates the link.
+ * @params         None
+ * @prerequisites  As Near-Duplicate SSN (Synthetic Identity Signal): the
+ *                 ssnFuzzyIndex fulltext index and the placeholder flags.
+ * @returns        One row per near-duplicate SSN pair and corroborating
+ *                 attribute: corroborationPath, ssnPath1 and ssnPath2, which
+ *                 Browser merges into one picture per row.
+ * @usage          Visual counterpart of the tabular query — the view for a
+ *                 demo. Tuning and caveats are the same.
+ * @tags           synthetic-identity, fraud, visualisation, ssn, fulltext
+ * @sample         Bundled sample data only: returns 3 rows, one per pair
+ *                 found by the tabular query, each corroborated by a shared
+ *                 Phone.
+ */
 MATCH (s:SSN)
 WITH s, replace(s.ssn, '-', '\\-') AS escapedSsn
 CALL db.index.fulltext.queryNodes('ssnFuzzyIndex', escapedSsn + '~1') YIELD node
@@ -356,17 +536,31 @@ RETURN corroborationPath, ssnPath1, ssnPath2;
 
 ## Cross-Channel Profile Assembly
 
-Everything above is about _finding_ candidate matches. Once a cluster is worth trusting, this is the operational query that follows: given one known identifier, pull every `Identity` linked to it and assemble the full picture across source systems. Each attribute is an `OPTIONAL MATCH`, so a record missing a field returns `null` for that column instead of dropping out.
-
 ```cypher
-// Purpose: assemble one resolved profile across every source system that holds a
-//   record for a known identifier.
-// Inputs: $phoneNumber — e.g. "555-201-8823".
-// Prerequisites: sample data imported.
-// Expected: 3 rows for $phoneNumber = "555-201-8823" — ID-1001 (CRM), ID-1002
-//   (MobileApp) and ID-1003 (CallCenter), all Robert A***n. ID-1002 returns null
-//   for address, SSN and DOB; ID-1003 returns null for email. That is the point:
-//   no single record is complete, and together they are.
+/*
+ * @name           Cross-Channel Profile Assembly
+ * @description    The operational query that follows matching: given one
+ *                 known phone number, pulls every Identity that carries it
+ *                 and assembles each record's attributes side by side across
+ *                 source systems.
+ * @params         phoneNumber - Phone.phoneNumber of the known identifier,
+ *                     in the stored format. Ask the user, or take one from a
+ *                     cluster that has passed review.
+ * @prerequisites  None beyond the imported reference ontology.
+ * @returns        One row per identity carrying the phone: identity,
+ *                 sourceSystem, name, email, ssn, address, dob and ip,
+ *                 ordered by sourceSystem. A missing attribute returns null
+ *                 rather than dropping the row.
+ * @usage          Assemble a profile only for clusters that have passed a
+ *                 confidence threshold and review — presenting an unreviewed
+ *                 low-confidence merge as one person is the failure to avoid.
+ *                 The nulls are the point: no single record is complete.
+ * @tags           profile, assembly, cross-channel, operational
+ * @sample         Bundled sample data only: $phoneNumber = '555-201-8823'
+ *                 returns 3 rows — ID-1001 (CRM), ID-1003 (CallCenter) and
+ *                 ID-1002 (MobileApp); ID-1002 has no SSN, address or DOB,
+ *                 and ID-1003 no email.
+ */
 MATCH (p:Phone {phoneNumber: $phoneNumber})<-[:HAS_PHONE]-(i:Identity)
 OPTIONAL MATCH (i)-[:HAS_NAME]->(n:PersonName)
 OPTIONAL MATCH (i)-[:HAS_EMAIL]->(e:Email)
@@ -385,28 +579,38 @@ RETURN i.identityId AS identity,
 ORDER BY sourceSystem;
 ```
 
-Same assembly, returned as a graph:
+## Cross-Channel Profile as a Graph
 
 ```cypher
-// Purpose: the assembled profile as paths, so Browser renders every source-system
-//   record around the shared identifier as one connected picture.
-// Inputs: $phoneNumber — e.g. "555-201-8823".
-// Prerequisites: sample data imported.
-// Expected: 17 paths for $phoneNumber = "555-201-8823" — 7 attributes on ID-1001,
-//   4 on ID-1002 and 6 on ID-1003. Renders as 3 Identity nodes sharing a Phone,
-//   an Email, an IPAddress, an Address, an SSN, a DOB and a PersonName.
+/*
+ * @name           Cross-Channel Profile as a Graph
+ * @description    The assembled profile as paths: every record carrying the
+ *                 phone number and every attribute each one holds, drawn as
+ *                 one connected picture around the shared identifier.
+ * @params         phoneNumber - Phone.phoneNumber of the known identifier,
+ *                     in the stored format.
+ * @prerequisites  None beyond the imported reference ontology.
+ * @returns        Paths Identity → attribute, one per attribute of each
+ *                 identity carrying the phone, for Browser to draw.
+ * @usage          Visual counterpart of Cross-Channel Profile Assembly; the
+ *                 same review caveat applies. Shared attribute nodes are
+ *                 drawn once, so convergence is visible at a glance.
+ * @tags           profile, assembly, cross-channel, visualisation
+ * @sample         Bundled sample data only: $phoneNumber = '555-201-8823'
+ *                 returns 17 paths — 7 from ID-1001, 4 from ID-1002 and 6
+ *                 from ID-1003.
+ */
 MATCH (:Phone {phoneNumber: $phoneNumber})<-[:HAS_PHONE]-(i:Identity)
 MATCH path = (i)-[:HAS_NAME|HAS_PHONE|HAS_EMAIL|HAS_SSN|HAS_ADDRESS|HAS_DOB|HAS_IP]->
              (attribute)
 RETURN path;
 ```
 
-## Constraints
+## Node-key constraints
 
-The node-key constraints below are created automatically when the sample data is loaded via the Import app from `GRAPH_MODEL.json`, which is the only route data takes into the graph. They are listed here as a schema reference and to verify what the import produced — do **not** recreate them, or `UNIQUE` variants of them, on an imported database:
+Import creates these node-key constraints from the key definitions in `ONTOLOGY.json`. They are listed as a reference for checking the live database (`SHOW CONSTRAINTS`), not as statements to run: recreating them, or adding `UNIQUE` variants, conflicts with the existing `KEY` constraints.
 
 ```cypher
-// Node-key constraints matching GRAPH_MODEL.json. Schema reference; Import creates these.
 CREATE CONSTRAINT identityId_Identity_key IF NOT EXISTS
   FOR (i:Identity) REQUIRE i.identityId IS NODE KEY;
 CREATE CONSTRAINT fullName_PersonName_key IF NOT EXISTS
