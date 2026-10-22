@@ -151,7 +151,7 @@
     {
       "skillId": "attack-path-analysis",
       "files": {
-        "graph": "GRAPH_MODEL.json",
+        "graph": "ONTOLOGY.json",
         "skill": [
           "sample-data/applications.csv",
           "sample-data/cloud_services.csv",
