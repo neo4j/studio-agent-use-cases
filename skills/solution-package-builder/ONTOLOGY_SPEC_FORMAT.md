@@ -16,7 +16,7 @@ ontology-graph-spec-version: 1.0.0
 
 That line is the single source of truth for the pin. Every package this skill builds declares the matching spec through the `schema` field of its `ONTOLOGY.json` — `https://neo4j.com/docs/ontology-graph-spec/1.0.0/schema.json` — and VALIDATION.md treats a package whose `schema` names a different version as a blocker.
 
-Provenance of the bundled copy: `ontology-graph-spec.schema.json` from [neo4j/graph-spec](https://github.com/neo4j/graph-spec/blob/main/ontology-graph-spec.schema.json), commit `0c32cd8b447dabc0aab363e67d3690fbe0130b1b` (19 October 2026), SHA-256 `fa8ee450a5161fe691e04934b42e94628eca0f55f8c759eccc8fe1c2da69121b`. That commit predates the official V1 release: `1.0.0` may still change before release without its version string changing, so the commit and hash — not the version string — identify exactly what this bundle carries. Refreshing the copy is a deliberate exercise, never a side effect of other work: replace the file, update the provenance line and the pin, then re-validate every existing package against it.
+Provenance of the bundled copy: `ontology-graph-spec.schema.json` from [neo4j/graph-spec](https://github.com/neo4j/graph-spec/blob/main/ontology-graph-spec.schema.json), commit `9c0e3e8c2d511bf689bfc682a281c0a7cee37a09` (21 October 2026), SHA-256 `56cd1364fa6d4f0222c24663c459521d2fb7edb45a9e229f0018cb4a1f797ca9`. It is identical to the copy published at the `schema` URI above. That commit predates the official V1 release: `1.0.0` may still change before release without its version string changing, so the commit and hash — not the version string — identify exactly what this bundle carries. Refreshing the copy is a deliberate exercise, never a side effect of other work: replace the file, update the provenance line and the pin, then re-validate every existing package against it.
 
 The reference ontology is not only a structural contract — it is the primary semantic artefact an agent reasons over. It is the only package artefact that crosses into the user's database via Import, so meaning carried only in SKILL.md prose or query annotations is lost at exactly the moment it becomes most useful: when a user has mapped their own data onto the template and an agent is working from the result. Annotate it per the [Annotations](#annotations-for-agent-reasoning) section.
 
@@ -27,12 +27,12 @@ This pipeline follows the spec's structure exactly but adopts only part of it. T
 | Area | Packages use | Packages do not use |
 | ---- | ------------ | ------------------- |
 | Root | `schema`, `id`, `version`, `name`, `description`, `nodes`, `relationships`, `extensions` | — |
-| Nodes | `label`, `description`, `aliases`, `reference`, `properties`, `constraints` (composite keys and additional requirements), `extensions.display` | `labels` (unless multi-label), `name`, `extensions.indexes`, `extensions.custom` |
+| Nodes | `label`, `description`, `aliases`, `reference`, `properties`, `constraints` (composite keys and additional requirements), `extensions.display` | `labels` (unless multi-label), `extensions.indexes`, `extensions.custom` |
 | Properties | `type`, `description`, `key`, `must_exist`, `unique`, `one_of`, `pattern`, `reference`, `dimension` (vectors only) | `name`, `extensions` |
-| Relationships | `type`, `description`, `aliases`, `reference`, `from`/`to` with `node` and `count`/`min_count`/`max_count`, `properties` | `name`, `constraints`, `extensions` |
-| Root `extensions` | `tables`, `mappings` | `custom` |
+| Relationships | `type`, `description`, `aliases`, `reference`, `from`/`to` with `node` and `count`/`min_count`/`max_count`, `properties` | `constraints`, `extensions` |
+| Root `extensions` | `data_source_tables`, `data_source_mappings` | `custom` |
 
-**Extensions are allowed in exactly three places**, because the spec moved import and layout data there and a package cannot load its sample data without them: root `extensions.tables`, root `extensions.mappings`, and each node's `extensions.display`. No other `extensions` key is written anywhere — no `custom` at any level, no `indexes`, and no extension on a property, relationship, constraint, label set, table, column or foreign key.
+**Extensions are allowed in exactly three places**, because the spec moved import and layout data there and a package cannot load its sample data without them: root `extensions.data_source_tables`, root `extensions.data_source_mappings`, and each node's `extensions.display`. No other `extensions` key is written anywhere — no `custom` at any level, no `indexes`, and no extension on a property, relationship, constraint, label set, table, column or foreign key.
 
 ## Top-level shape
 
@@ -46,8 +46,8 @@ This pipeline follows the spec's structure exactly but adopts only part of it. T
   "nodes": {},
   "relationships": {},
   "extensions": {
-    "tables": {},
-    "mappings": {
+    "data_source_tables": {},
+    "data_source_mappings": {
       "mapping0": []
     }
   }
@@ -63,7 +63,7 @@ This pipeline follows the spec's structure exactly but adopts only part of it. T
 | `description`   | One or two sentences: the domain, and what the reference ontology answers. |
 | `nodes`         | Node definitions keyed by readable stable IDs. |
 | `relationships` | Relationship definitions keyed by readable stable IDs. |
-| `extensions`    | `tables` and `mappings` only — see [Tables](#tables) and [Mappings](#mappings). |
+| `extensions`    | `data_source_tables` and `data_source_mappings` only — see [Tables](#tables) and [Mappings](#mappings). |
 
 **Entity keys are readable.** Key each node by its label (`"Prescription"`) and each relationship by a descriptive camelCase ID (`"prescribedBy"`). These keys connect definitions to mappings, and readable keys make every cross-reference self-explanatory to agents. Keep them stable.
 
@@ -252,7 +252,7 @@ Both are optional. Both are claims an agent will repeat to a user, so the standa
 
 ## Tables
 
-`extensions.tables` describes each CSV used by a mapping:
+`extensions.data_source_tables` describes each CSV used by a mapping:
 
 ```json
 {
@@ -279,7 +279,7 @@ If sample CSVs are bundled, place them under `sample-data/`. Keep table referenc
 
 ## Mappings
 
-`extensions.mappings` is a map of named mapping lists. Packages carry exactly one list, keyed `"mapping0"` — the key the spec library itself assigns when it converts an Import data model — and every mapping goes in it. Each mapping is a discriminated union on `type`: `"NODE"` or `"RELATIONSHIP"` (also `"QUERY"`, which packages do not use). Leave the optional mapping `id`, `depends_on` and `match_label` unset.
+`extensions.data_source_mappings` is a map of named mapping lists. Packages carry exactly one list, keyed `"mapping0"` — the key the spec library itself assigns when it converts an Import data model — and every mapping goes in it. Each mapping is a discriminated union on `type`: `"NODE"` or `"RELATIONSHIP"` (also `"QUERY"`, which packages do not use). Leave the optional mapping `id`, `depends_on` and `match_label` unset.
 
 ### Node mappings
 
@@ -298,7 +298,7 @@ If sample CSVs are bundled, place them under `sample-data/`. Keep table referenc
 }
 ```
 
-- `node` references a key in `nodes`; `table` references a key in `extensions.tables`.
+- `node` references a key in `nodes`; `table` references a key in `extensions.data_source_tables`.
 - `mode` is `"MERGE"` for packages — rows may repeat a key and merge into one node.
 - `key` (an array) lists the graph properties that identify the node; it matches the property marked `key: true`.
 - Every mapped graph property must exist on the node; every referenced `column` must exist in the table.
@@ -372,7 +372,7 @@ e.g. `250`.
 
 A single backticked literal, taken **verbatim** from the mapped CSV column, as the last clause of the description. The fixed form keeps it mechanically checkable — VALIDATION.md §3b extracts it with `` /e\.g\. `([^`]+)`\.?\s*$/ `` and compares it against the column — so this is a convention with a test behind it, not a formatting preference. One value only; do not list alternatives.
 
-The optional `name` fields on nodes, properties, relationships and constraints stay unset — readable entity keys and labels already carry the names, and the spec library derives `name` from the key when it internalises a document. Populate `name` at the root only.
+The optional `name` fields on properties and constraints stay unset — readable entity keys and labels already carry the names, and the spec library derives `name` from the key when it internalises a document. Populate `name` at the root only.
 
 ### Authoring rules
 
@@ -398,10 +398,10 @@ Packages built before this pin ship a `GRAPH_MODEL.json` in the older graph-spec
 | `version: "4.0.0"` | `schema: "https://neo4j.com/docs/ontology-graph-spec/1.0.0/schema.json"`, `version: "1"`, and `id` set to the package folder name |
 | `metadata.neo4j-graph-spec-version` in SKILL.md | Removed — the `schema` field declares the spec |
 | `mustExist` (or older `nullable: false`) | `must_exist: true` |
-| Root `tables` | `extensions.tables` |
+| Root `tables` | `extensions.data_source_tables` |
 | Table `fields` map (`{ "col": { "name": "col", "type": "string" } }`) | Table `columns` array, in CSV header order (`[{ "name": "col", "type": "string" }]`) |
 | `primaryKeys`, `foreignKeys` | Omitted for CSV tables (`primary_keys`, `foreign_keys` if ever needed) |
-| Root `mappings` array | `extensions.mappings.mapping0` |
+| Root `mappings` array | `extensions.data_source_mappings.mapping0` |
 | `"type": "NodeMapping"` (or older `"node"`) | `"type": "NODE"` |
 | `"type": "RelationshipMapping"` (or older `"relationship"`) | `"type": "RELATIONSHIP"` |
 | Relationship mapping `from` / `to` with `node` | `from_node` / `to_node` with the endpoint node's `label` |
@@ -424,7 +424,7 @@ The script also renames positional entity keys (`n:0` → the node's label; `r:0
 5. Add `aliases` and `reference` where the source material supports them.
 6. Draft the property descriptions' sample-value intents — and confirm uncertain descriptions, value restrictions, counts and aliases with the user now, before data exists to rationalise.
 7. Define the CSV tables and their columns in header order.
-8. Add node mappings (`NODE`, mode `MERGE`, `key`) to `extensions.mappings.mapping0`.
+8. Add node mappings (`NODE`, mode `MERGE`, `key`) to `extensions.data_source_mappings.mapping0`.
 9. Add relationship mappings and endpoint lookups.
 10. Add `extensions.display` coordinates to every node.
 11. Create sample CSVs that satisfy the descriptions, value restrictions, and counts — then set each description's trailing `` e.g. `...` `` verbatim from the generated column.
@@ -443,10 +443,10 @@ The script also renames positional entity keys (`n:0` → the node's label; `r:0
 - No property has both `one_of` and `pattern`; every mapped CSV value satisfies the restriction; no `pattern` encodes the package's own identifier scheme.
 - Every relationship target uses `count` or a `min_count`/`max_count` range, not both; every count holds in the sample data and agrees with the prose in the description.
 - Every `reference` is a real URL that was read; every alias comes from source material.
-- **The only `extensions` keys are root `tables` and `mappings` and node `display`.** No `custom`, no `indexes`, nothing on properties or relationships.
+- **The only `extensions` keys are root `data_source_tables` and `data_source_mappings` and node `display`.** No `custom`, no `indexes`, nothing on properties or relationships.
 - The reference ontology has passed the VALIDATION.md §3 runtime gate, not just schema validation.
-- Mappings live in the single list `extensions.mappings.mapping0`, use `"type": "NODE"` / `"RELATIONSHIP"`, `mode: "MERGE"`, and `key` arrays; node-mapping `key` matches the `key: true` property.
-- Every mapping table exists in `extensions.tables`; every mapped `column` exists in its table; every mapped property exists on its node or relationship.
+- Mappings live in the single list `extensions.data_source_mappings.mapping0`, use `"type": "NODE"` / `"RELATIONSHIP"`, `mode: "MERGE"`, and `key` arrays; node-mapping `key` matches the `key: true` property.
+- Every mapping table exists in `extensions.data_source_tables`; every mapped `column` exists in its table; every mapped property exists on its node or relationship.
 - **Every declared node and every declared relationship has a mapping** — nothing is declared that Import cannot load. Query-created relationships and labels are documented in SKILL.md instead of being declared here.
 - Every relationship mapping's `from_node.label` and `to_node.label` match the labels of the relationship's `from.node` and `to.node`, and endpoint columns resolve to node identifiers.
 - Every query label, relationship type, direction, and property exists in the reference ontology, and query annotation blocks agree with its descriptions.

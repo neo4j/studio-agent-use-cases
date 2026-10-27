@@ -23,7 +23,7 @@ if "--min-length" in args:
 p = pathlib.Path(args[0])
 m = json.loads((p / "ONTOLOGY.json").read_text(encoding="utf-8"))
 ext = m.get("extensions") or {}
-mappings = [x for lst in (ext.get("mappings") or {}).values() for x in lst]
+mappings = [x for lst in (ext.get("data_source_mappings") or {}).values() for x in lst]
 
 def find_csv(name):
     hits = [f for f in (p / "sample-data").rglob("*.csv")

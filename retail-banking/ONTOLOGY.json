@@ -81,7 +81,7 @@
     }
   },
   "extensions": {
-    "tables": {
+    "data_source_tables": {
       "accounts.csv": {
         "source": "local",
         "columns": [
@@ -121,7 +121,7 @@
         ]
       }
     },
-    "mappings": {
+    "data_source_mappings": {
       "mapping0": [
         {
           "type": "NODE",

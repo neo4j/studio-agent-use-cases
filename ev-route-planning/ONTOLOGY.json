@@ -177,28 +177,23 @@
       "properties": {
         "road_ref": {
           "type": "STRING",
-          "description": "Designation of the road the segment belongs to, as signed. e.g. `A1`.",
-          "must_exist": true
+          "description": "Designation of the road the segment belongs to, as signed. Expected on every ROAD relationship. e.g. `A1`."
         },
         "road_class": {
           "type": "STRING",
-          "description": "Class of road, from the network's own four-tier vocabulary — `Motorway`, `Express`, `Trunk` and `Local` — in descending order of speed. e.g. `Express`.",
-          "must_exist": true
+          "description": "Class of road, from the network's own four-tier vocabulary — `Motorway`, `Express`, `Trunk` and `Local` — in descending order of speed. Expected on every ROAD relationship. e.g. `Express`."
         },
         "distance_km": {
           "type": "FLOAT",
-          "description": "Driving distance along the segment in kilometres, and the basis for the energy cost of detouring to charge. e.g. `105.8`.",
-          "must_exist": true
+          "description": "Driving distance along the segment in kilometres, and the basis for the energy cost of detouring to charge. Expected on every ROAD relationship. e.g. `105.8`."
         },
         "free_flow_speed_kph": {
           "type": "INTEGER",
-          "description": "Speed in kilometres per hour expected on the segment when traffic is light. e.g. `130`.",
-          "must_exist": true
+          "description": "Speed in kilometres per hour expected on the segment when traffic is light. Expected on every ROAD relationship. e.g. `130`."
         },
         "peak_speed_kph": {
           "type": "INTEGER",
-          "description": "Speed in kilometres per hour expected on the segment at peak traffic. e.g. `105`.",
-          "must_exist": true
+          "description": "Speed in kilometres per hour expected on the segment at peak traffic. Expected on every ROAD relationship. e.g. `105`."
         }
       }
     },
@@ -214,28 +209,23 @@
       "properties": {
         "road_ref": {
           "type": "STRING",
-          "description": "Designation of the road the segment belongs to, as signed. e.g. `A1`.",
-          "must_exist": true
+          "description": "Designation of the road the segment belongs to, as signed. Expected on every ROAD relationship. e.g. `A1`."
         },
         "road_class": {
           "type": "STRING",
-          "description": "Class of road, from the network's own four-tier vocabulary — `Motorway`, `Express`, `Trunk` and `Local` — in descending order of speed. e.g. `Express`.",
-          "must_exist": true
+          "description": "Class of road, from the network's own four-tier vocabulary — `Motorway`, `Express`, `Trunk` and `Local` — in descending order of speed. Expected on every ROAD relationship. e.g. `Express`."
         },
         "distance_km": {
           "type": "FLOAT",
-          "description": "Driving distance along the segment in kilometres. e.g. `119.2`.",
-          "must_exist": true
+          "description": "Driving distance along the segment in kilometres. Expected on every ROAD relationship. e.g. `119.2`."
         },
         "free_flow_speed_kph": {
           "type": "INTEGER",
-          "description": "Speed in kilometres per hour expected on the segment when traffic is light. e.g. `130`.",
-          "must_exist": true
+          "description": "Speed in kilometres per hour expected on the segment when traffic is light. Expected on every ROAD relationship. e.g. `130`."
         },
         "peak_speed_kph": {
           "type": "INTEGER",
-          "description": "Speed in kilometres per hour expected on the segment at peak traffic. e.g. `105`.",
-          "must_exist": true
+          "description": "Speed in kilometres per hour expected on the segment at peak traffic. Expected on every ROAD relationship. e.g. `105`."
         }
       }
     },
@@ -269,7 +259,7 @@
     }
   },
   "extensions": {
-    "tables": {
+    "data_source_tables": {
       "cities.csv": {
         "source": "local",
         "columns": [
@@ -474,7 +464,7 @@
         ]
       }
     },
-    "mappings": {
+    "data_source_mappings": {
       "mapping0": [
         {
           "type": "NODE",

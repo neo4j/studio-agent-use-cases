@@ -59,7 +59,7 @@
                         "string",
                         "null"
                     ],
-                    "description": "Shorthand for the identifying label. Moved to labels when the model is internalised."
+                    "description": "Shorthand for the identifying label. Expanded into labels when the model is decoded."
                 },
                 "labels": {
                     "$ref": "#/$defs/Labels",
@@ -82,13 +82,6 @@
                 "extensions": {
                     "$ref": "#/$defs/NodeExtensions",
                     "description": "Extensions for the node."
-                },
-                "name": {
-                    "type": [
-                        "string",
-                        "null"
-                    ],
-                    "description": "Human-readable name. Used in place of the stable id in the pretty form of the model."
                 },
                 "description": {
                     "type": "string",
@@ -175,21 +168,21 @@
                         "boolean",
                         "null"
                     ],
-                    "description": "Shorthand for an existence constraint. Expanded into constraints when the model is internalised."
+                    "description": "Shorthand for an existence constraint. Expanded into constraints when the model is decoded."
                 },
                 "unique": {
                     "type": [
                         "boolean",
                         "null"
                     ],
-                    "description": "Shorthand for a uniqueness constraint. Expanded into constraints when the model is internalised."
+                    "description": "Shorthand for a uniqueness constraint. Expanded into constraints when the model is decoded."
                 },
                 "key": {
                     "type": [
                         "boolean",
                         "null"
                     ],
-                    "description": "Shorthand for a key constraint. Expanded into constraints when the model is internalised."
+                    "description": "Shorthand for a key constraint. Expanded into constraints when the model is decoded."
                 },
                 "extensions": {
                     "$ref": "#/$defs/PropertyExtensions",
@@ -200,7 +193,7 @@
                         "string",
                         "null"
                     ],
-                    "description": "Human-readable name. Used in place of the stable id in the pretty form of the model."
+                    "description": "Name of the property in the database, when different from its id."
                 },
                 "description": {
                     "type": "string",
@@ -291,13 +284,6 @@
                     "$ref": "#/$defs/ConstraintType",
                     "description": "Type of the constraint."
                 },
-                "label": {
-                    "type": [
-                        "string",
-                        "null"
-                    ],
-                    "description": "Label the constraint applies to."
-                },
                 "properties": {
                     "type": "array",
                     "description": "Ids of the properties the constraint covers.",
@@ -314,7 +300,7 @@
                         "string",
                         "null"
                     ],
-                    "description": "Human-readable name. Used in place of the stable id in the pretty form of the model."
+                    "description": "Name of the constraint in the database."
                 }
             },
             "required": [
@@ -420,7 +406,7 @@
                         "string",
                         "null"
                     ],
-                    "description": "Human-readable name. Used in place of the stable id in the pretty form of the model."
+                    "description": "Name of the index in the database."
                 }
             },
             "required": [
@@ -684,13 +670,6 @@
                     "$ref": "#/$defs/RelationshipExtensions",
                     "description": "Extensions for the relationship."
                 },
-                "name": {
-                    "type": [
-                        "string",
-                        "null"
-                    ],
-                    "description": "Human-readable name. Used in place of the stable id in the pretty form of the model."
-                },
                 "description": {
                     "type": "string",
                     "description": "Description of the relationship."
@@ -775,7 +754,7 @@
                         "string",
                         "null"
                     ],
-                    "description": "Human-readable name. Used in place of the stable id in the pretty form of the model."
+                    "description": "Name of the constraint in the database."
                 }
             },
             "required": [
@@ -853,7 +832,7 @@
                         "string",
                         "null"
                     ],
-                    "description": "Human-readable name. Used in place of the stable id in the pretty form of the model."
+                    "description": "Name of the index in the database."
                 }
             },
             "required": [
@@ -866,14 +845,14 @@
             "type": "object",
             "description": "Extensions for a graph model.",
             "properties": {
-                "tables": {
+                "data_source_tables": {
                     "type": "object",
                     "description": "Data source table schemas keyed by table id.",
                     "additionalProperties": {
                         "$ref": "#/$defs/Table"
                     }
                 },
-                "mappings": {
+                "data_source_mappings": {
                     "type": "object",
                     "description": "Sets of data source mappings from tables to nodes and relationships, often used for importing.",
                     "additionalProperties": {
@@ -958,6 +937,10 @@
                     "items": {
                         "$ref": "#/$defs/Neo4jType"
                     }
+                },
+                "nullable": {
+                    "type": "boolean",
+                    "description": "Whether the column can hold null values."
                 },
                 "dimension": {
                     "type": [

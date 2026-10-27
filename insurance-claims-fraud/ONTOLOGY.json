@@ -143,7 +143,7 @@
     }
   },
   "extensions": {
-    "tables": {
+    "data_source_tables": {
       "claimants.csv": {
         "source": "local",
         "columns": [
@@ -254,7 +254,7 @@
         ]
       }
     },
-    "mappings": {
+    "data_source_mappings": {
       "mapping0": [
         {
           "type": "NODE",

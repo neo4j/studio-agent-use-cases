@@ -12,9 +12,9 @@ out = lambda level, msg: print(f"{level} {msg}")
 SAMPLE = re.compile(r"e\.g\. `([^`]+)`\.?\s*$")
 NUMERIC_OR_CODED = re.compile(r"^(INTEGER|FLOAT|DATE|ZONED |LOCAL |DURATION|BOOLEAN)")
 
-# Blocker: extensions anywhere except root tables/mappings and node display.
+# Blocker: extensions anywhere except root data_source_tables/data_source_mappings and node display.
 for key, val in (m.get("extensions") or {}).items():
-    if key not in ("tables", "mappings"):
+    if key not in ("data_source_tables", "data_source_mappings"):
         out("BLOCKER", f"root extensions.{key} is not permitted")
 def scan(o, path):
     if isinstance(o, dict):
@@ -51,7 +51,7 @@ def find_csv(name):
     hits = [f for f in (p / "sample-data").rglob("*.csv")
             if f.relative_to(p / "sample-data").as_posix() == name or f.name == name]
     return hits[0] if len(hits) == 1 else None
-tables = (m.get("extensions") or {}).get("tables") or {}
+tables = (m.get("extensions") or {}).get("data_source_tables") or {}
 rows = {}
 for t, tbl in tables.items():
     cols = [c.get("name") for c in tbl.get("columns", [])]
@@ -66,9 +66,9 @@ for t, tbl in tables.items():
             out("BLOCKER", f"table {t}: CSV header {reader.fieldnames} != columns {cols} (names and order)")
         rows[t] = list(reader)
 
-mappings = [x for lst in ((m.get("extensions") or {}).get("mappings") or {}).values() for x in lst]
-if set(((m.get("extensions") or {}).get("mappings") or {}).keys()) != {"mapping0"}:
-    out("BLOCKER", "extensions.mappings must hold exactly one list, keyed mapping0")
+mappings = [x for lst in ((m.get("extensions") or {}).get("data_source_mappings") or {}).values() for x in lst]
+if set(((m.get("extensions") or {}).get("data_source_mappings") or {}).keys()) != {"mapping0"}:
+    out("BLOCKER", "extensions.data_source_mappings must hold exactly one list, keyed mapping0")
 
 # Collect mapped values per (owner, property), and node identities per node key.
 values = collections.defaultdict(list)

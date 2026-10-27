@@ -172,7 +172,7 @@ for mp in m.get("mappings", []):
         maps.append(x)
     else:
         fail(f"unsupported mapping type {mp.get('type')!r}")
-o["extensions"] = {"tables": tables, "mappings": {"mapping0": maps}}
+o["extensions"] = {"data_source_tables": tables, "data_source_mappings": {"mapping0": maps}}
 
 out = p / "ONTOLOGY.json"
 out.write_text(json.dumps(o, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")

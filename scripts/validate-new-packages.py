@@ -4,7 +4,10 @@
 Required files:
   - SKILL.md with YAML frontmatter
   - ONTOLOGY.json (parseable JSON object declaring the pinned ontology graph spec
-    as its `schema` and the directory name as its `id`)
+    as its `schema` and the directory name as its `id`, keeping its tables and
+    mappings in `extensions.data_source_tables` / `extensions.data_source_mappings`,
+    and declaring each property constraint on only one entry per label or
+    relationship type)
 
 A legacy GRAPH_MODEL.json is rejected: convert it to ONTOLOGY.json first.
 
@@ -46,6 +49,13 @@ ONTOLOGY_FILE = "ONTOLOGY.json"
 LEGACY_GRAPH_MODEL_FILE = "GRAPH_MODEL.json"
 # Must match the pin in skills/solution-package-builder/ONTOLOGY_SPEC_FORMAT.md.
 ONTOLOGY_SCHEMA_URI = "https://neo4j.com/docs/ontology-graph-spec/1.0.0/schema.json"
+# Pre-release names of the root extension keys, renamed in the spec.
+RENAMED_EXTENSION_KEYS = {
+    "tables": "data_source_tables",
+    "mappings": "data_source_mappings",
+}
+# Property flags that the runtime expands into a named constraint.
+PROPERTY_CONSTRAINT_FLAGS = ("key", "unique", "must_exist")
 
 IGNORE_TOP_LEVEL_DIRS = {".github", "scripts", "node_modules", "skills", "tests"}
 FRONTMATTER_RE = re.compile(r"\A---\s*\n(.*?\n)---\s*(?:\n(.*))?\Z", re.DOTALL)
@@ -434,6 +444,77 @@ def validate_ontology(skill_id: str, skill_dir: Path, issues: list[Issue]) -> No
                 1,
             )
         )
+
+    extensions = data.get("extensions")
+    if isinstance(extensions, dict):
+        for old, new in RENAMED_EXTENSION_KEYS.items():
+            if old in extensions:
+                issues.append(
+                    Issue(
+                        f"{skill_id}: {ONTOLOGY_FILE} 'extensions.{old}' must be "
+                        f"renamed to 'extensions.{new}'",
+                        rel,
+                        1,
+                    )
+                )
+
+    validate_property_constraints(skill_id, data, rel, issues)
+
+
+def entity_token(entity: dict, kind: str) -> str | None:
+    """Return the label or relationship type a constraint on this entity applies to."""
+    if kind == "relationships":
+        return non_empty_string(entity.get("type"))
+    labels = entity.get("labels")
+    if isinstance(labels, dict):
+        return non_empty_string(labels.get("identifier"))
+    return non_empty_string(entity.get("label"))
+
+
+def validate_property_constraints(
+    skill_id: str, data: dict, rel: Path, issues: list[Issue]
+) -> None:
+    """Reject a property constraint declared on more than one entry.
+
+    Constraints are scoped to a label or relationship type, not to one entry, so
+    entries sharing a label or type that each flag the same property produce
+    duplicate constraint names, and the runtime drops the package. Declare the
+    flag on one entry and describe the requirement in the others.
+    """
+    declared: dict[tuple[str, str, str, str], list[str]] = {}
+    for kind in ("nodes", "relationships"):
+        entities = data.get(kind)
+        if not isinstance(entities, dict):
+            continue
+        for entity_key, entity in entities.items():
+            if not isinstance(entity, dict):
+                continue
+            token = entity_token(entity, kind)
+            properties = entity.get("properties")
+            if token is None or not isinstance(properties, dict):
+                continue
+            for prop, spec in properties.items():
+                if not isinstance(spec, dict):
+                    continue
+                for flag in PROPERTY_CONSTRAINT_FLAGS:
+                    if spec.get(flag) is True:
+                        declared.setdefault((kind, token, prop, flag), []).append(
+                            entity_key
+                        )
+
+    for (kind, token, prop, flag), entity_keys in declared.items():
+        if len(entity_keys) > 1:
+            owner = "label" if kind == "nodes" else "relationship type"
+            issues.append(
+                Issue(
+                    f"{skill_id}: {ONTOLOGY_FILE} declares '{flag}' on {prop!r} for "
+                    f"{owner} {token!r} in more than one entry "
+                    f"({', '.join(entity_keys)}); the constraint applies to the "
+                    f"whole {owner}, so declare it on one entry only",
+                    rel,
+                    1,
+                )
+            )
 
 
 def validate_catalog_entry(skill_id: str, issues: list[Issue]) -> None:

@@ -26,7 +26,7 @@ print(f"PACKAGE {p.name}")
 # --- ontology file and generation --------------------------------------------------
 def generation(path):
     m = json.loads(path.read_text(encoding="utf-8"))
-    if "schema" in m and isinstance(m.get("extensions"), dict) and "tables" in m["extensions"]:
+    if "schema" in m and isinstance(m.get("extensions"), dict) and "data_source_tables" in m["extensions"]:
         return f"current (schema {m['schema']})"
     text = path.read_text(encoding="utf-8")
     if re.search(r'"n:\d+"', text) or '"nullable"' in text or re.search(r'"type":\s*"(node|relationship)"', text):

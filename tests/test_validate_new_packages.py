@@ -343,6 +343,78 @@ class TestValidateOntology(ValidatorTestCase):
             any("legacy GRAPH_MODEL.json is not supported" in msg for msg in messages)
         )
 
+    def test_accepts_data_source_extension_keys(self) -> None:
+        ontology = json.loads(VALID_ONTOLOGY)
+        ontology["extensions"] = {
+            "data_source_tables": {},
+            "data_source_mappings": {"mapping0": []},
+        }
+        self.assertEqual(self.ontology_issues(json.dumps(ontology)), [])
+
+    def test_rejects_renamed_extension_keys(self) -> None:
+        ontology = json.loads(VALID_ONTOLOGY)
+        ontology["extensions"] = {"tables": {}, "mappings": {"mapping0": []}}
+        messages = self.ontology_issues(json.dumps(ontology))
+        self.assertTrue(
+            any(
+                "'extensions.tables' must be renamed to "
+                "'extensions.data_source_tables'" in msg
+                for msg in messages
+            )
+        )
+        self.assertTrue(
+            any(
+                "'extensions.mappings' must be renamed to "
+                "'extensions.data_source_mappings'" in msg
+                for msg in messages
+            )
+        )
+
+    def test_rejects_constraint_repeated_across_relationship_entries(self) -> None:
+        ontology = json.loads(VALID_ONTOLOGY)
+        road = {"type": "STRING", "must_exist": True}
+        ontology["relationships"] = {
+            "aRoadB": {"type": "ROAD", "properties": {"ref": dict(road)}},
+            "bRoadA": {"type": "ROAD", "properties": {"ref": dict(road)}},
+        }
+        messages = self.ontology_issues(json.dumps(ontology))
+        self.assertTrue(
+            any(
+                "declares 'must_exist' on 'ref' for relationship type 'ROAD'" in msg
+                and "aRoadB, bRoadA" in msg
+                for msg in messages
+            )
+        )
+
+    def test_rejects_constraint_repeated_across_node_entries(self) -> None:
+        ontology = json.loads(VALID_ONTOLOGY)
+        ontology["nodes"] = {
+            "a": {"label": "Place", "properties": {"id": {"key": True}}},
+            "b": {
+                "labels": {"identifier": "Place"},
+                "properties": {"id": {"key": True}},
+            },
+        }
+        messages = self.ontology_issues(json.dumps(ontology))
+        self.assertTrue(
+            any("declares 'key' on 'id' for label 'Place'" in msg for msg in messages)
+        )
+
+    def test_accepts_constraint_declared_once_per_relationship_type(self) -> None:
+        ontology = json.loads(VALID_ONTOLOGY)
+        ontology["relationships"] = {
+            "aRoadB": {
+                "type": "ROAD",
+                "properties": {"ref": {"type": "STRING", "must_exist": True}},
+            },
+            "bRoadA": {"type": "ROAD", "properties": {"ref": {"type": "STRING"}}},
+            "aLinkB": {
+                "type": "LINK",
+                "properties": {"ref": {"type": "STRING", "must_exist": True}},
+            },
+        }
+        self.assertEqual(self.ontology_issues(json.dumps(ontology)), [])
+
 
 class TestValidateCatalogEntry(ValidatorTestCase):
     def test_valid_catalog_entry(self) -> None:

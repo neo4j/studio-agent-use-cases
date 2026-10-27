@@ -243,11 +243,11 @@ Use [ONTOLOGY_SPEC_FORMAT.md](ONTOLOGY_SPEC_FORMAT.md) for the complete field-by
 - Be valid JSON containing an object that validates against the bundled `ontology-graph-spec.schema.json`.
 - Be accepted by the destination runtime's conversion. This is a required gate, not a courtesy check — see VALIDATION.md §3.
 - Set `schema` to the ontology graph spec URI for the version the skill bundle is pinned to, `id` to the package's `skillId`, and `version` to the document's revision label.
-- Define nodes, relationships, `extensions.tables`, `extensions.mappings` (one list, `mapping0`), and `extensions.display` coordinates on every node, with readable stable keys.
+- Define nodes, relationships, `extensions.data_source_tables`, `extensions.data_source_mappings` (one list, `mapping0`), and `extensions.display` coordinates on every node, with readable stable keys.
 - Carry no other `extensions` — no `custom` at any level, no `indexes`, nothing on properties or relationships.
 - Mark every node identifier `key: true` (composite keys via an explicit `KEY` constraint), and use `must_exist` for required non-key properties.
 - Define each query-referenced property with its correct graph type.
-- Declare every bundled CSV in `extensions.tables` with `columns` listed in header order, each `name` equal to the header exactly and each `"type": "string"`; conversion happens through mappings (`NODE`/`RELATIONSHIP`, mode `MERGE`, `key` arrays, `column` references).
+- Declare every bundled CSV in `extensions.data_source_tables` with `columns` listed in header order, each `name` equal to the header exactly and each `"type": "string"`; conversion happens through mappings (`NODE`/`RELATIONSHIP`, mode `MERGE`, `key` arrays, `column` references).
 - Carry semantic annotations: a `description` on the root, on every node, on every relationship (meaning in the from→to direction, plus multiplicity in both directions), and on every property (unit, encoding, and scope for numeric and coded properties, ending with a `` e.g. `...` `` sample value drawn verbatim from the bundled CSVs); `one_of` or `pattern` where the domain fixes a property's values; relationship target counts matching the prose multiplicity; and `aliases` and `reference` where the source material supports them. See ONTOLOGY_SPEC_FORMAT.md's Annotations section for the full rules.
 - **Declare only nodes and relationships that have a mapping.** Import reads the reference ontology as an import job definition and requires a source table, property columns, and endpoint ID columns for everything declared; an unmapped entity leaves the import definition in an error state the user cannot clear. A relationship or label a bundled query creates rather than loads therefore has no place in `ONTOLOGY.json` — document it in `SKILL.md` instead. See ONTOLOGY_SPEC_FORMAT.md's "Declare only what Import can load".
 
@@ -318,7 +318,7 @@ Adapt every domain term, filename, property, and mapping. Do not leave angle-bra
     }
   },
   "extensions": {
-    "tables": {
+    "data_source_tables": {
       "entities.csv": {
         "source": "local",
         "columns": [
@@ -335,7 +335,7 @@ Adapt every domain term, filename, property, and mapping. Do not leave angle-bra
         ]
       }
     },
-    "mappings": {
+    "data_source_mappings": {
       "mapping0": [
         {
           "type": "NODE",
@@ -390,7 +390,7 @@ Note the annotation shape in the example: `description` on the root, nodes, rela
 
 ## Sample CSV files
 
-Put import-ready files under `sample-data/`. The parser resolves CSV references found in the reference ontology's `extensions.tables` keys and mapping `table` values.
+Put import-ready files under `sample-data/`. The parser resolves CSV references found in the reference ontology's `extensions.data_source_tables` keys and mapping `table` values.
 
 For the minimal example:
 
