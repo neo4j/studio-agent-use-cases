@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
-"""Check ONTOLOGY.json annotations against the bundled sample data (VALIDATION.md section 3b).
+"""Check ONTOLOGY.json annotations against the bundled sample data (VALIDATION.md sections 3, 3b and 4).
 
 Usage: python3 check_annotations.py <package-dir>
+Also checks the two rules the schema and the spec library miss but the destination enforces: a constraint
+flag repeated across entries of one label or relationship type (duplicate constraint names), and repeated
+endpoint pairs in a relationship table whose mapping key cannot tell them apart (MERGE collapses them).
 Prints BLOCKER / WARN / NOTE / COUNT lines and ends with "done". Standard library only."""
 import csv, json, re, sys, pathlib, collections
 
@@ -13,8 +16,11 @@ SAMPLE = re.compile(r"e\.g\. `([^`]+)`\.?\s*$")
 NUMERIC_OR_CODED = re.compile(r"^(INTEGER|FLOAT|DATE|ZONED |LOCAL |DURATION|BOOLEAN)")
 
 # Blocker: extensions anywhere except root data_source_tables/data_source_mappings and node display.
+RENAMED = {"tables": "data_source_tables", "mappings": "data_source_mappings"}
 for key, val in (m.get("extensions") or {}).items():
-    if key not in ("data_source_tables", "data_source_mappings"):
+    if key in RENAMED:
+        out("BLOCKER", f"root extensions.{key} is the pre-release name; rename it to extensions.{RENAMED[key]}")
+    elif key not in ("data_source_tables", "data_source_mappings"):
         out("BLOCKER", f"root extensions.{key} is not permitted")
 def scan(o, path):
     if isinstance(o, dict):
@@ -125,6 +131,24 @@ for k, r in m.get("relationships", {}).items():
     elif len(r["description"]) > 1024: out("BLOCKER", f"description over 1024 chars: relationship {k}")
     check_props(k, r.get("properties"))
 
+# Constraint flags are scoped to a label or relationship type, not to an entry: the same flag on the same
+# property in two entries of one type becomes two constraints with one name, and the destination drops the
+# package. Property and constraint `name` stay unset (ONTOLOGY_SPEC_FORMAT.md).
+flagged = collections.defaultdict(list)
+for kind, entities in (("label", m.get("nodes", {})), ("relationship type", m.get("relationships", {}))):
+    for k, e in entities.items():
+        token = e.get("type") if kind != "label" else (e.get("label") or (e.get("labels") or {}).get("identifier"))
+        for prop, d in (e.get("properties") or {}).items():
+            if d.get("name"): out("WARN", f"{k}.{prop} sets name {d['name']!r}; packages leave property names unset")
+            for flag in ("key", "must_exist", "unique"):
+                if d.get(flag) is True: flagged[(kind, token, prop, flag)].append(k)
+        for c, cd in (e.get("constraints") or {}).items():
+            if cd.get("name"): out("WARN", f"constraint {k}.{c} sets name {cd['name']!r}; packages leave constraint names unset")
+for (kind, token, prop, flag), keys in flagged.items():
+    if len(keys) > 1:
+        out("BLOCKER", f"{flag} on {prop!r} is declared by {len(keys)} entries of {kind} {token!r} ({', '.join(keys)}); "
+            "the constraint covers the whole type, so flag it on one entry and state it in the others' descriptions")
+
 # Relationship counts against the data, per node at each end, pooled across every
 # mapping of the same relationship entry.
 labels = {k: (n.get("label") or (n.get("labels") or {}).get("identifier")) for k, n in m.get("nodes", {}).items()}
@@ -140,6 +164,25 @@ for mp in mappings:
         f = tuple(r.get(mp["from_node"]["properties"][k]["column"], "") for k in sorted(mp["from_node"]["properties"]))
         t = tuple(r.get(mp["to_node"]["properties"][k]["column"], "") for k in sorted(mp["to_node"]["properties"]))
         if all(f) and all(t): pairs_by_rel[rk].add((f, t))
+    # Under MERGE a relationship is identified by its endpoints plus its mapping key, so rows repeating that
+    # identity become one relationship: data loss when their property values differ, redundancy when they don't.
+    ident_cols = [mp["from_node"]["properties"][k]["column"] for k in sorted(mp["from_node"]["properties"])] \
+        + [mp["to_node"]["properties"][k]["column"] for k in sorted(mp["to_node"]["properties"])] \
+        + [(mp.get("properties") or {}).get(k, {}).get("column", k) for k in mp.get("key", [])]
+    prop_cols = [v["column"] for v in (mp.get("properties") or {}).values()]
+    seen = collections.defaultdict(set)
+    for r in rows.get(mp["table"], []):
+        ident = tuple(r.get(c, "") for c in ident_cols)
+        if all(ident[:len(ident_cols) - len(mp.get("key", []))]): seen[ident].add(tuple(r.get(c, "") for c in prop_cols))
+    repeated = {i: v for i, v in seen.items() if len(v) > 1}
+    rows_by_ident = collections.Counter(tuple(r.get(c, "") for c in ident_cols) for r in rows.get(mp["table"], []))
+    duplicates = [i for i, n in rows_by_ident.items() if n > 1 and i not in repeated]
+    if repeated:
+        out("BLOCKER", f"{rk}: {len(repeated)} endpoint pairs in {mp['table']} repeat with different property values under "
+            f"key {mp.get('key', [])}, e.g. {next(iter(repeated))}; MERGE keeps one per pair — set the mapping key "
+            "to the property that tells parallel relationships apart")
+    if duplicates:
+        out("WARN", f"{rk}: {len(duplicates)} endpoint pairs in {mp['table']} repeat with identical values; they merge into one relationship")
 for rk, rel in m.get("relationships", {}).items():
     pairs = pairs_by_rel.get(rk, set())
     for end in ("from", "to"):

@@ -28,6 +28,8 @@ def generation(path):
     m = json.loads(path.read_text(encoding="utf-8"))
     if "schema" in m and isinstance(m.get("extensions"), dict) and "data_source_tables" in m["extensions"]:
         return f"current (schema {m['schema']})"
+    if "schema" in m and isinstance(m.get("extensions"), dict) and "tables" in m["extensions"]:
+        return f"pre-release ontology graph spec (schema {m['schema']}, extensions.tables/mappings): rename to data_source_tables/data_source_mappings"
     text = path.read_text(encoding="utf-8")
     if re.search(r'"n:\d+"', text) or '"nullable"' in text or re.search(r'"type":\s*"(node|relationship)"', text):
         return "legacy, older dialect (declares version 4.0.0 but predates the alpha.25 shape: positional keys / nullable / lowercase mapping types)"
@@ -47,6 +49,13 @@ if has_csv: REQUIRED.add("TESTS.md")
 for f in sorted(REQUIRED):
     if not (p / f).is_file():
         print(f"MISSING {f}" + (" (create)" if f != "ONTOLOGY.json" else " (convert GRAPH_MODEL.json)"))
+# The destination refuses to load any packaged file over 50,000 characters into the conversation. Counted in
+# characters, not bytes; TESTS.md, human_description.md and the CSVs never reach the agent.
+for f in sorted(p.glob("*")):
+    if f.is_file() and f.suffix in (".md", ".cypher", ".json") and f.name not in ("TESTS.md", "human_description.md"):
+        n = len(f.read_text(encoding="utf-8"))
+        if n > 50_000: print(f"OVERSIZE {f.name}: {n} characters (the destination refuses files over 50,000)")
+        elif n > 45_000: print(f"NEAR-LIMIT {f.name}: {n} characters (keep headroom under 50,000)")
 
 CATEGORY = [
     (r"^GRAPH_MODEL\.json$", "legacy ontology: convert to ONTOLOGY.json, then delete"),

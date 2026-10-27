@@ -199,6 +199,13 @@
                     "type": "string",
                     "description": "Description of the property."
                 },
+                "aliases": {
+                    "type": "array",
+                    "description": "Alternative names for the property.",
+                    "items": {
+                        "type": "string"
+                    }
+                },
                 "reference": {
                     "type": "string",
                     "description": "Reference or URI of an external resource describing the property."

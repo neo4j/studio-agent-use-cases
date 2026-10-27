@@ -29,7 +29,7 @@ Confirm:
 - `TESTS.md` and `human_description.md` are **not** indexed in SKILL.md's Supporting files table, and no agent-facing file instructs the agent to read either. Any mention is worth reviewing; an instruction to load one defeats the split and is a blocker.
 - The folder name (`skillId`) is kebab-case and stable.
 - Supporting files beyond the required set use only `.md` or `.cypher`, and each is indexed in SKILL.md with a stated purpose so the agent knows when to load it. An unindexed supporting file is a warning: index it, fold it in, or remove it. `TESTS.md` and `human_description.md` are the only exemptions.
-- Readable files stay under ~50,000 characters. This is guidance, not an enforced limit — exceeding it is a *warning*, not a blocker — but note that larger files consume more of the consuming agent's context and increase the need for a more powerful model. Report any file over the target with its size and whether annotations, queries, or prose drove the growth, so the user can decide. **`TESTS.md`, `human_description.md` and the sample-data CSVs are exempt** — none reaches the consuming agent, so size costs nothing there. A large TESTS.md is not a finding; a large QUERIES.md usually means material that belongs in TESTS.md has not moved. `human_description.md` has its own length guidance in 5d, which is about the reader, not the context window.
+- **Every file the agent can load is at most 50,000 characters** — QUERIES.md, SETUP.md, ONTOLOGY.json and every supporting file. This is enforced by the destination, not guidance: upx's file-reading tools refuse any packaged file longer than that (`MAX_PACKAGE_FILE_CHARACTERS`), so the agent cannot read it at all. Over the limit is a **blocker**; over 45,000 is a warning, because the next added query or annotation tips it over. Count characters, not bytes — `wc -c` overstates any file with typographic dashes or arrows. Report every file near the limit with its size and what drove the growth. **`TESTS.md`, `human_description.md` and the sample-data CSVs are exempt** — none reaches the consuming agent, so size costs nothing there. A large TESTS.md is not a finding; a large QUERIES.md usually means material that belongs in TESTS.md has not moved, or verbose annotation blocks that can be tightened without losing meaning. `human_description.md` has its own length guidance in 5d, which is about the reader, not the context window.
 - Paths use forward slashes with no absolute, URL, backslash, empty, `.` or `..` segments.
 - No file references a bundled file that does not exist.
 - In `neo4j/studio-agent-use-cases`, the package's `catalog.json` entry lists exactly the files in the folder (`scripts/catalog_entry.py <repo-root> <skillId>` prints any difference; no output means none).
@@ -60,7 +60,15 @@ rg -ni 'read|load|see|consult|refer|open' /tmp/reserved-mentions.txt \
   && echo "BLOCKER: an agent-facing file instructs the agent to read a reserved file"
 
 rg -n "TODO\(review\)" "$P"
-wc -c "$P"/*.md "$P"/ONTOLOGY.json
+
+# Characters, not bytes: the destination refuses agent-loadable files over 50,000.
+python3 - "$P" <<'PY'
+import sys, pathlib
+for f in sorted(pathlib.Path(sys.argv[1]).glob("*")):
+    if f.suffix in (".md", ".cypher", ".json") and f.name not in ("TESTS.md", "human_description.md"):
+        n = len(f.read_text(encoding="utf-8"))
+        print(("BLOCKER " if n > 50_000 else "WARN " if n > 45_000 else "") + f"{f.name}: {n} characters")
+PY
 ```
 
 ## 2. Frontmatter and parser checks
@@ -98,7 +106,7 @@ print('schema OK')
 "
 ```
 
-The schema sets `additionalProperties: false` throughout, so any off-schema key fails here — including every field of the legacy graph-spec format (`mustExist`, `nullable`, root `tables`/`mappings`/`display`, table `fields`, `NodeMapping`/`RelationshipMapping`, `field` references) and a missing `schema` or `id`. A schema failure is a blocker.
+The schema sets `additionalProperties: false` throughout, so any off-schema key fails here — including every field of the legacy graph-spec format (`mustExist`, `nullable`, root `tables`/`mappings`/`display`, table `fields`, `NodeMapping`/`RelationshipMapping`, `field` references), the pre-release `extensions.tables`/`extensions.mappings` names, a `name` on a node or relationship, a `label` on a constraint, and a missing `schema` or `id`. A schema failure is a blocker.
 
 **Schema validity is necessary, not sufficient.** The schema is generated from the spec library's own type definitions; it cannot express the library's semantic rules (below), and it cannot tell you whether the destination runtime reads the file. A package that the runtime cannot read is not rejected loudly — it is silently dropped from the destination's catalogue. That is why the spec-library check and the runtime gate below are both required.
 
@@ -140,6 +148,7 @@ Then inspect consistency the schema cannot see:
 - `id` equals the package folder name; `version` is set (it is the document's revision label, distinct from the pinned spec version checked above).
 - Node and relationship keys are readable and stable (label-based for nodes, camelCase for relationships); every key referenced by relationships and mappings exists.
 - Every node has exactly one `key: true` property (or a composite `KEY` constraint instead); `key: true` is never combined with `unique`/`must_exist` on the same property.
+- **No `key`, `must_exist` or `unique` flag on a property is repeated across entries that share a relationship type or label.** Blocker: each flag becomes a constraint named from the type and property, the repeats collide, and the destination drops the package while registering it (`graph-spec contains duplicate constraint name "…"`). Neither the schema nor the spec library sees it; `check_annotations.py` (3b) reports it, and the runtime gate below confirms it. The fix is in ONTOLOGY_SPEC_FORMAT.md, "Constraint flags on shared labels and types".
 - `extensions.data_source_mappings` holds exactly one list, `mapping0`. Mappings use `"type": "NODE"` / `"RELATIONSHIP"` with `mode: "MERGE"`; each node mapping's `key` array matches its node's `key: true` property, or the properties of its composite `KEY` constraint.
 - Every mapping table exists in `extensions.data_source_tables`; every mapped `column` exists in that table's `columns`; every mapped property exists on its node or relationship.
 - Every relationship mapping's `from_node.label` and `to_node.label` equal the labels of the relationship's `from.node` and `to.node`, and endpoint columns resolve to node identifiers.
@@ -167,118 +176,58 @@ could supply it. There is no third case.
 - Every node has `extensions.display` with `x`/`y`. Checked mechanically in 3b.
 - Valid JSON only: no comments, trailing commas, or unresolved placeholders.
 
-### The spec-library check (required when available)
+### The spec-library check (required)
 
-The spec library — the code the schema is generated from — runs semantic rules the schema cannot express: a relationship target with both `count` and `min_count`/`max_count`, negative counts or `min_count` above `max_count`, a property with both `one_of` and `pattern`, a node, relationship or property `description` over 1,024 characters, a label containing `:` or `=`, constraint and index coherence, and mapping dependency cycles. Run it from a checkout of [neo4j/graph-spec](https://github.com/neo4j/graph-spec) at the commit named in ONTOLOGY_SPEC_FORMAT.md's provenance line — a different commit is a different contract. This is tooling, not the spec: the bundled schema stays the authority for structure.
+The spec library — the code the schema is generated from — runs semantic rules the schema cannot express: a relationship target with both `count` and `min_count`/`max_count`, negative counts or `min_count` above `max_count`, a property with both `one_of` and `pattern`, a node, relationship or property `description` over 1,024 characters, label and type tokens, constraint and index coherence, duplicate property and column names, mapping keys and mapping-dependency cycles. Run the npm release named on ONTOLOGY_SPEC_FORMAT.md's `ontology-graph-spec-release:` line — a different release is a different contract — with `scripts/spec_library_check.mjs`. It needs Node and nothing else. This is tooling, not the spec: the bundled schema stays the authority for structure.
 
 ```bash
-G="<path-to-graph-spec-checkout>"   # at the pinned commit
-P="<package-path>"
+S=$(cd "<skill-path>" && pwd)       # absolute: the commands below run from a scratch directory
+P=$(cd "<package-path>" && pwd)
+RELEASE=$(sed -n 's/^ontology-graph-spec-release: *v//p' "$S/ONTOLOGY_SPEC_FORMAT.md" | head -1)
 
-mkdir -p "$G/go/cmd/validatefile"
-cat > "$G/go/cmd/validatefile/main.go" <<'EOF'
-package main
-
-import (
-	"encoding/json"
-	"fmt"
-	"os"
-
-	"github.com/neo4j/graph-spec/go/model"
-	"github.com/neo4j/graph-spec/go/validation"
-)
-
-func main() {
-	b, err := os.ReadFile(os.Args[1])
-	if err != nil { panic(err) }
-	var m model.GraphModel
-	if err := json.Unmarshal(b, &m); err != nil { fmt.Println("DECODE FAILED:", err); os.Exit(2) }
-	issues, err := validation.Validate(m)
-	if err != nil { fmt.Println("VALIDATE ERROR:", err); os.Exit(2) }
-	if len(issues) == 0 { fmt.Println("SPEC LIBRARY OK"); return }
-	for _, i := range issues { fmt.Printf("BLOCKER %s at %s: %s\n", i.Code, i.Path, i.Message) }
-	os.Exit(1)
-}
-EOF
-(cd "$G/go" && go run ./cmd/validatefile "$P/ONTOLOGY.json")
-rm -rf "$G/go/cmd/validatefile"
+W=$(mktemp -d)                      # a scratch directory, never the package or the repo
+(cd "$W" && npm init -y >/dev/null && npm install --silent "@neo4j/ontology-graph-spec@$RELEASE" \
+  && cp "$S/scripts/spec_library_check.mjs" . && node spec_library_check.mjs "$P/ONTOLOGY.json")
 ```
 
-The library needs a Go toolchain at the version its `go.mod` names and a Linux or Apple-silicon host (it embeds a native library). If module downloads fail behind a proxy, `GOPROXY=direct` usually works. Issue paths use the library's internal ids (`nodes.node1.properties.node1_property0`), not the package's readable keys — locate the element by its position in the file. If no toolchain is available, say so in the handoff: "spec library not run" is a finding to report. 3b's script covers the count, `one_of`/`pattern`, description-length and label-token rules in the meantime, but not constraint, index or mapping-dependency coherence.
+The script decodes the file with the library and runs every built-in validation set (`Validations.all`), reporting each issue as a `BLOCKER`, and prints `SPEC LIBRARY OK` when there are none. It filters exactly one rule, `missing_property_name`: that rule mirrors an Import-UI requirement that every property carry a `name`, and packages leave property names unset by design because the property's key is its database name (ONTOLOGY_SPEC_FORMAT.md) — the library would otherwise raise it on every property of every package. Do not widen the filter; any other issue is real.
+
+The library does **not** catch a constraint flag repeated across entries of one relationship type or label; 3b's script and the runtime gate do. If npm cannot reach the registry, say so in the handoff: "spec library not run" is a finding to report, and 3b's script covers the count, `one_of`/`pattern`, description-length and label-token rules in the meantime — but not constraint, index, mapping-key or mapping-dependency coherence.
 
 ### The runtime gate (required)
 
-**A reference ontology that has not been decoded by the destination runtime is not validated.** Schema validation and every eyeball check above can pass on a package that the destination silently drops. Run this gate on every package, every time; a package that has not been through it does not ship, and "no runtime available to test against" is a finding to report, not a reason to skip.
+**A reference ontology that has not been through the destination runtime is not validated.** Schema validation, the spec library and every eyeball check above can pass on a package that the destination silently drops. Run this gate on every package, every time; a package that has not been through it does not ship, and "no runtime available to test against" is a finding to report, not a reason to skip.
 
-For Aura/upx, the destination is `graphSpecJsonToDataModelAndVisualisation` — the same call the app's package registry makes — or whatever replaces it when upx adopts the ontology graph spec; use the call the registry actually makes. Drop a temporary test into a checked-out upx repo and run it:
+For Aura/upx the gate is the registry's own loading path. While it loads the catalogue, `buildRegisteredSkillPackage` (in `commons/chat-assistant/src/skill-loader/use-case-source.ts`) parses and registers each package (`buildUseCasePackageFromSource`) and then converts its reference ontology to an Import model (`ontologySpecJsonToDataModelAndVisualisation(…, { tool: 'importer' })`, which decodes with the library release upx embeds). A throw at either step logs `Skipping invalid remote skill package` and the package is gone from the catalogue. `scripts/runtime_gate.test.ts` makes exactly those two calls. Before running it, read `buildRegisteredSkillPackage` on the destination's main branch (`trunk` for upx) and update the two calls if the path has changed — the gate is only as good as its match to the registry.
+
+Run it against an up-to-date checkout of the destination's main branch. Use a separate git worktree rather than switching someone's working copy, and install dependencies there:
 
 ```bash
-U="<path-to-upx-checkout>"
-P="<package-path>"
+U=$(cd "<upx-worktree-on-trunk>" && pwd)   # e.g. git -C <upx> worktree add --detach <scratch>/upx-trunk origin/trunk
+S=$(cd "<skill-path>" && pwd)
+REPO=$(cd "<studio-agent-use-cases checkout>" && pwd)   # catalog.json updated for the package, or the package folder present
+(cd "$U" && pnpm install --frozen-lockfile --prefer-offline >/dev/null)
 
-cat > "$U/commons/ui/src/assistant-sidebar/skills/tmp-runtime-gate.test.ts" <<EOF
-import { readFileSync } from 'node:fs';
-import { graphSpecJsonToDataModelAndVisualisation } from '@nx/import-shared/sample-models';
-import { describe, expect, it } from 'vitest';
-
-describe('runtime gate', () => {
-  it('decodes', () => {
-    let result = 'DECODE OK';
-    try {
-      const { dataModel } = graphSpecJsonToDataModelAndVisualisation(readFileSync('$P/ONTOLOGY.json', 'utf8'));
-
-      // Decoding without throwing is not enough: the encode step can drop content silently.
-      // Assert the output is coherent — every table field keeps a name, and every mapping
-      // points at a field that exists under that name.
-      const dm = dataModel;
-      const schema = dm.dataSourceSchema ?? dm.graphMappingRepresentation?.dataSourceSchema;
-      const tables = schema?.tableSchemas ?? [];
-      const problems = [];
-      const declared = new Set();
-      for (const table of tables) {
-        for (const [index, field] of (table.fields ?? []).entries()) {
-          if (typeof field.name !== 'string' || field.name === '') {
-            problems.push(\`table "\${table.name ?? '?'}" field #\${index} encoded with no name: \${JSON.stringify(field)}\`);
-          } else {
-            declared.add(field.name);
-          }
-        }
-      }
-      for (const mapping of dm.graphMappingRepresentation?.nodeMappings ?? []) {
-        for (const pm of mapping.propertyMappings ?? []) {
-          if (pm.fieldName !== undefined && !declared.has(pm.fieldName)) {
-            problems.push(\`mapping references undeclared field "\${pm.fieldName}"\`);
-          }
-        }
-      }
-      if (problems.length > 0) result = \`ENCODE LOSSY: \${problems.join('; ')}\`;
-    } catch (error) {
-      result = \`DECODE FAILED: \${error instanceof Error ? error.message : String(error)}\`;
-    }
-    expect(result).toBe('DECODE OK');
-  });
-});
-EOF
-
-(cd "$U" && pnpm exec vitest run commons/ui/src/assistant-sidebar/skills/tmp-runtime-gate.test.ts 2>&1 | grep -E 'DECODE|Tests ')
-rm -f "$U/commons/ui/src/assistant-sidebar/skills/tmp-runtime-gate.test.ts"
+T="$U/commons/chat-assistant/src/skill-loader/tmp-runtime-gate.test.ts"
+cp "$S/scripts/runtime_gate.test.ts" "$T"
+(cd "$U/commons/chat-assistant" && USE_CASES_REPO="$REPO" USE_CASES_ONLY="<skillId>" \
+  ../../node_modules/.bin/vitest run src/skill-loader/tmp-runtime-gate.test.ts 2>&1 | grep -E '^GATE|^  [A-Z]|Tests ')
+rm -f "$T"
 ```
 
-Note the assertion is written to surface the *message*, not just a pass/fail — a failing run prints the runtime's own diagnosis (`Unknown Extension type. Keys: [type, value]`, `Missing required labels at …`, `Version must be specified`, `Unable to determine version from schema`), which is what tells you which rule the reference ontology broke. A runtime that has not yet adopted the ontology graph spec fails on the `schema` field or the `extensions` layout; that is case 3 below, not a package defect. Delete the temp file afterwards: it lives in someone else's repo.
+Every package must print `REGISTER OK` and `IMPORT CONVERT OK`. The test is written to surface the runtime's own message, not just a pass/fail, because the message names the rule that broke: `graph-spec contains duplicate constraint name "…"` (a constraint flag repeated across entries of one type), `Unknown Extension type. Keys: [x, y]` (a runtime that does not read the extension layout), `Sample data is incomplete. Missing CSV files: …` (catalog or `sample-data/` out of step with the reference ontology). Delete the temp file afterwards: it lives in someone else's repo.
 
-The gate covers the reference ontology's decode *and* the coherence of what it encodes — a decode that throws nothing can still produce a lossy result, which is exactly how a table-field `name` defect reached production under the legacy format. It does not cover the package's SKILL.md frontmatter, card metadata, or CSV resolution; those are checked separately by the destination's own package parser, and sections 1, 2 and 4 stand in for that.
+The gate covers registration, the decode, and the coherence of what the conversion encodes — a conversion that throws nothing can still be lossy, which is how a table-field `name` defect reached production under the legacy format, so the test also asserts every encoded field keeps its name. It does not cover SKILL.md's prose, CSV content or the queries; sections 1, 2, 4 and 5 stand in for those. A gate that passes proves the destination will list the package and can build its Import model; it says nothing about whether the data supports the queries (sections 5 and 5c).
 
-A gate that passes is still not proof of a working package. It proves the reference ontology survives the destination's decode and encode with its column names intact; it says nothing about whether those names match the bundled CSVs (section 4) or whether the data supports the queries (sections 5 and 5c).
+Check, too, **which release of the spec library the destination embeds** (for upx, `@neo4j/ontology-graph-spec` in `pnpm-workspace.yaml`). A runtime older than the pin decodes newer fields without complaint and drops them — under `0.9.1`, property `aliases` pass the gate and never reach the Import model. Name the embedded release in the handoff whenever it differs from the pin, and list any pinned-release feature the package uses that the runtime will drop.
 
 **If the runtime rejects a schema-valid reference ontology, stop.** Report it to the user with the exact error; do not strip fields until it passes. There are three explanations, and they call for different responses:
 
-1. **The reference ontology breaks a documented rule.** Fix it.
-2. **The schema and the runtime disagree at the same pinned version** — as the typed extension values did at the previous pin. Fix the *pipeline* (this skill), not just the one package, so the next package does not repeat it.
-3. **The runtime and the pin are on different spec versions** — either way round. If the runtime is ahead, raise it as a spec-update decision: replace `ontology-graph-spec.schema.json`, update the pin and provenance in ONTOLOGY_SPEC_FORMAT.md, re-validate and migrate every existing package. If the runtime is behind, the package waits for the runtime. Never edit a reference ontology to fit an unpinned runtime.
+1. **The reference ontology breaks a rule — documented, or enforced only by the runtime.** Fix it, and if the rule was not in this skill, add it (with a check) so the next package does not repeat it — that is how the constraint-flag rule entered ONTOLOGY_SPEC_FORMAT.md and `check_annotations.py`.
+2. **The schema and the runtime disagree at the same pinned release** — as the typed extension values did at an earlier pin. Fix the *pipeline* (this skill), not just the one package.
+3. **The runtime and the pin are on different releases** — either way round. If the runtime is ahead, raise it as a spec-update decision: replace `ontology-graph-spec.schema.json`, update the release line and provenance in ONTOLOGY_SPEC_FORMAT.md, re-validate and migrate every existing package. If the runtime is behind, the package waits for the runtime, or avoids the newer feature. Never edit a reference ontology to fit an unpinned runtime.
 
-Do not assume (3) without evidence: the first real failure under the legacy format was a (2).
-
-Until upx adopts the ontology graph spec, expect every package built by this skill to fail the gate as case 3 — on the `schema` field or the `extensions` layout. Run the gate anyway, record the exact error, and report it in the handoff as "runtime gate failed: destination predates the pinned spec". The package is not shippable until the destination catches up, but every other check still runs and still has to pass.
+Do not assume (3) without evidence: the first real failure under the legacy format was a (2), and the first under this format was a (1).
 
 ## 3b. Annotation checks
 
@@ -295,11 +244,12 @@ Annotations are tested content, not decoration — check them against the same c
 - Stated units and encodings are consistent with the CSV value ranges (a "milligrams" property whose values run 0.001–0.9 is probably grams). An enumeration stated only in prose ("one of `https`, `http`, `ssh`") belongs in `one_of` where the set is closed; until it is moved, check by eye that it matches the values present.
 - **Value restrictions hold and are the domain's.** No property has both `one_of` and `pattern`; every mapped value is in `one_of` or fully matches `pattern` (checked below); the sample is an allowed value. By eye: a `one_of` list is the domain's complete closed set, not the distinct values the generator happened to emit, and no `pattern` encodes the package's own identifier scheme — either would reject a user's legitimate data. Each is a warning.
 - **Counts hold.** Every relationship target's `count`/`min_count`/`max_count` holds for every node at that end in the sample data (checked below), and the prose multiplicity in the description says the same thing. A count the data violates is a blocker; prose and counts that disagree is a blocker.
-- **Aliases and references are sourced.** Every `reference` is a real URL that was actually read — a fabricated or unverified one is a blocker. Every alias is an industry term from the source material, not a spelling variant, the label itself, or one organisation's private vocabulary — warning.
-- The optional `name` fields on nodes, properties, relationships and constraints are unset — root `name` only.
+- **Aliases and references are sourced.** Every `reference` is a real URL that was actually read — a fabricated or unverified one is a blocker. Every alias — on a node, relationship or property — is an industry term from the source material, not a spelling variant, the label itself, or one organisation's private vocabulary — warning. A property alias the destination's embedded library predates (ONTOLOGY_SPEC_FORMAT.md, "Aliases and references") is dropped on import, so any synonym a downstream consumer needs is in the description as well.
+- `name` is set at the root only. Nodes and relationships have no `name` field (the schema rejects one); a property or constraint `name` is a warning — it renames the database property or overrides the constraint name the destination derives.
+- **Constraint flags are not repeated across entries of one label or relationship type** (§3) — blocker, checked by the script below.
 - Inferred annotations the user has not confirmed are marked `TODO(review): inferred description` — an unmarked, unconfirmed stipulation is a warning.
 
-The bundled script `scripts/check_annotations.py` resolves every mapping to its CSV column and checks the extensions allow-list, display coordinates, the root `id`, table columns against CSV headers, descriptions, samples, value restrictions, endpoint labels, and counts:
+The bundled script `scripts/check_annotations.py` resolves every mapping to its CSV column and checks the extensions allow-list (naming the pre-release extension keys specifically), display coordinates, the root `id`, table columns against CSV headers, descriptions, samples, value restrictions, endpoint labels, counts, constraint flags repeated across entries of one type, and repeated endpoint pairs a relationship mapping's `key` cannot tell apart (§4):
 
 ```bash
 python3 "<skill-path>/scripts/check_annotations.py" "<package-path>"
@@ -316,6 +266,7 @@ For every CSV referenced in `extensions.data_source_tables` or a mapping's `tabl
 - Every row has the expected column count; values with delimiters, quotes, or newlines are CSV-escaped.
 - Identifier columns are present. Rows may repeat a node key — mode `MERGE` merges them into one node — but every mapped node property must then carry the same value on every row sharing that key; conflicting values make the imported property nondeterministic.
 - Every non-empty relationship endpoint value resolves to a node row. An empty endpoint value creates no relationship — a legitimate pattern for chain ends (e.g. a last encounter with no `NEXT`) — but should be deliberate, not accidental.
+- **Rows that repeat a relationship's identity are deliberate.** Under `MERGE` a relationship is identified by its endpoints plus its mapping `key`, so two rows with the same endpoint pair and an empty `key` become one relationship and one row's property values are lost. Where the domain has parallel relationships (several `CHARGE` options at one site), the mapping `key` names the property that tells them apart (ONTOLOGY_SPEC_FORMAT.md, "Relationship mappings"). `check_annotations.py` reports a blocker when repeated pairs carry different property values and a warning when they are exact repeats; the expected relationship counts in TESTS.md must reflect what the import actually creates.
 - Dates, numbers, and booleans convert cleanly to their declared graph property types.
 - Values conform to their property's confirmed annotations — unit, encoding and scope in the `description`, and `one_of` or `pattern` (cross-check with section 3b).
 - The deliberately seeded signal patterns described in **TESTS.md's** sample-data profile actually exist in the data.
@@ -329,16 +280,16 @@ For QUERIES.md (and any supporting `.cypher` file):
 - The preamble states prerequisites in one place. It does **not** profile the sample data — row counts and seeded signals belong in TESTS.md.
 - An **"Adapting these queries"** section appears near the top: read the live schema, map onto SKILL.md's role map, rewrite, update the annotation block. Missing section is a finding.
 - Every query opens with a `/* @... */` annotation block **before any query logic** (a Cypher block comment, so it can never execute), carrying the required tags: `@name` matching the query's `##` heading, `@description`, `@params`, `@prerequisites`, `@returns`, `@usage`, `@tags`. No `@version`. A missing block or missing required tag is a finding.
-- **`@sample`, where present:** at most one per query; opens with the literal `Bundled sample data only:`; gives a value for every `$parameter` the query takes; every value it names exists in the bundled CSVs (an anchor that does not exist is a blocker — it sends the agent's smoke test to a false alarm); and it agrees with the query's TESTS.md section — parameters, row count and named results. Disagreement is a blocker: one of the two is stale.
+- **`@sample`, where present:** at most one per query; opens with the literal `Bundled sample data only:`; gives a value for every `$parameter` the query takes; every anchor it names — a key or name the query looks up — exists in the bundled CSVs (an anchor that does not exist is a blocker — it sends the agent's smoke test to a false alarm), while values that are not lookups need not: a threshold or date, or a name the query itself writes (an identifier for a variant the query creates); and it agrees with the query's TESTS.md section — parameters, row count and named results. Disagreement is a blocker: one of the two is stale.
 - `@params` matches the query's actual parameters exactly: every `$parameter` in the Cypher appears in `@params` with its meaning, and `@params` names nothing the query doesn't use (`None` for parameterless queries). Mechanically checkable — do it mechanically.
 - `@params` is **one line per parameter**, each starting at the parameter name, with wrapped text indented past it. A second parameter beginning at the same indent as the first one's continuation lines is unparseable and defeats the check above — finding.
 - Every parameter that gates a result set carries a **starting point with a data-agnostic justification**: either a concrete value justified by what the parameter does, or a stated procedure for deriving one where no number transfers between datasets ("take the portfolio's upper quartile"). A gating threshold with neither is a finding — the query is unusable without opening TESTS.md. A threshold justified by the sample is a leak, caught in 5a.
 - Labels, relationship types, directions, and properties match ONTOLOGY.json exactly — **with one exception: entities the queries themselves create.** A relationship type or label that a bundled query writes has no source data, cannot be mapped, and therefore must not be declared in the reference ontology at all (§3, and ONTOLOGY_SPEC_FORMAT.md's "Declare only what Import can load"). For each of those, confirm all four of: it is genuinely written by a bundled query and not merely missing from the reference ontology; it is absent from `extensions.data_source_tables` and `extensions.data_source_mappings` as well as `relationships`; SKILL.md carries its full definition (§6); and QUERIES.md's prerequisites say it does not exist in a freshly imported database. A query-referenced entity that is undeclared *and* undocumented is a blocker — that is the drift this rule exists to catch, and it looks identical to the legitimate case until you check which query writes it.
 - Annotation blocks use the reference ontology's vocabulary: where `@description`, `@params`, or `@usage` explains a property or relationship, its wording, unit, scope, allowed values, and direction agree with that element's ONTOLOGY.json annotations. An annotation that contradicts the reference ontology is a blocker — the two are one contract.
-- Variable-length traversals have explicit bounds; thresholds and limits are called out in `@usage` as tunable, in general terms.
+- Variable-length traversals have explicit bounds; thresholds and limits are called out in `@usage` as tunable, in general terms. The one accepted exception is a walk over a structure that is acyclic by construction (a bill of materials, a containment hierarchy), where any fixed bound would silently truncate deep branches and turn them into false results: leave it unbounded and say so in `@usage` — that the walk is unbounded and relies on the structure being acyclic.
 - No per-query schema-drift prose. The adapting section states the procedure once; repeating it per query is boilerplate. An optional `@pattern` tag on a query whose shape isn't recoverable from its Cypher is fine — on every query it is padding, and a warning.
 - No design rationale between the queries (why the reference ontology departs from a source page, why a query differs from a published one). That belongs in SKILL.md's Reference ontology section or a supporting rationale file.
-- APOC or GDS use is confined to a clearly labelled section with prerequisites stated — or, where the queries must run in a stated order, each APOC/GDS query is labelled in place in its heading and `@prerequisites`.
+- APOC or GDS use is confined to a clearly labelled section with prerequisites stated — a divider heading such as `## Graph Data Science (optional)` holding only section prose (plugin needs, projection lifecycle, run order), followed by each query under its own `##` heading with the requirement in `@prerequisites` — or, where the package's queries must run in a stated order, each APOC/GDS query is labelled in place with "(requires APOC)" or "(requires GDS)" in its heading and `@prerequisites`.
 - The node-key constraints implied by ONTOLOGY.json (`key: true` properties and composite `KEY` constraints) appear at the end as a reference for checking the live database, introduced by section prose; the individual statements need no annotation blocks.
 
 Running the queries against a database is manual testing, outside this skill's scope. Do not import data or run queries as part of validation, and do not mark queries as unproven. The checks above are static: read every query against ONTOLOGY.json and against the seeded design TESTS.md describes, and confirm by reading the CSVs that each query's pattern is present in the data — a query whose pattern the data cannot produce is a blocker whether or not anyone runs it.
@@ -432,7 +383,7 @@ Both files carry headings the other does not — prerequisites and the adapting 
 
 ```bash
 P="<package-path>"
-Q_SKIP='^## (Prerequisites|Adapting these queries|Graph Data Science.*|Node-key constraints.*)$'
+Q_SKIP='^## (Prerequisites|Adapting these queries|Graph Data Science.*|APOC.*|Node-key constraints.*)$'
 T_SKIP='^## (How to run|Sample-data profile)$'
 
 rg -N '^## ' "$P/QUERIES.md" | grep -Ev "$Q_SKIP" | sort > /tmp/q-headings.txt
@@ -586,7 +537,7 @@ The package's own terminology line ("users may say model, graph model…") is an
 
 Validation findings are decisions for the user, not silent patches. After completing sections 1–6:
 
-1. **Classify** each finding: *blocker* (package would be rejected, fails schema validation or the spec-library check, declares a spec version other than the bundle's pin or none at all, a query's pattern cannot be produced by the bundled data, an agent-facing file makes a false claim about the user's data, `human_description.md` is missing or misnamed, or it calls the ontology anything but the reference ontology) or *warning* (works but weakens quality — vague description, untuned threshold, oversized agent-facing file).
+1. **Classify** each finding: *blocker* (package would be rejected, fails schema validation, the spec-library check or the runtime gate, declares a spec version other than the bundle's pin or none at all, repeats a constraint flag across entries of one type, collapses parallel relationships under an empty mapping key, has an agent-loadable file over 50,000 characters, a query's pattern cannot be produced by the bundled data, an agent-facing file makes a false claim about the user's data, `human_description.md` is missing or misnamed, or it calls the ontology anything but the reference ontology) or *warning* (works but weakens quality — vague description, untuned threshold, agent-loadable file near the 50,000-character limit).
 2. **Report** them together in one summary. For each finding give: the file and location, what's wrong, why it matters, and a concrete proposed fix. Where more than one fix is reasonable, present the options with a recommendation rather than choosing silently.
 3. **Ask** before applying fixes that change meaning — reference ontology changes, description changes, data regeneration, threshold changes, renames. Mechanical corrections (a typo'd field name that must match a CSV header, invalid JSON syntax, a stray row count that belongs in TESTS.md) may be fixed directly and reported.
 4. **Re-run** the affected checks after fixes, and repeat until no blockers remain.
@@ -618,8 +569,10 @@ Warnings (2)
 The handoff summary must name:
 
 - Files created or changed.
-- Checks actually run, including whether ONTOLOGY.json validated against the bundled `ontology-graph-spec.schema.json`, **the ontology graph spec version its `schema` field declares and that it matches the bundle's pin**, whether the spec-library check ran and passed, whether the destination runtime or registry test accepted it. Queries are not run; say so, and point the tester at TESTS.md.
+- Checks actually run, including whether ONTOLOGY.json validated against the bundled `ontology-graph-spec.schema.json`, **the ontology graph spec version its `schema` field declares and that it matches the bundle's pin**, the spec-library release the check ran with and its result, and the runtime gate's `REGISTER` and `IMPORT CONVERT` results with the destination commit they ran against. Queries are not run; say so, and point the tester at TESTS.md.
+- The spec-library release the destination embeds, when it differs from the pin, and any pinned-release feature the package uses that the destination will drop.
 - Every remaining `TODO(review):` with its path — calling out `inferred description` items the user has not yet confirmed.
-- Any agent-facing file over the ~50,000-character guidance size, with what drove it. (TESTS.md, human_description.md and the CSVs are exempt and need no mention.)
+- Every agent-loadable file over 45,000 characters, with its size and what drove it. (TESTS.md, human_description.md and the CSVs are exempt and need no mention.)
+- In `neo4j/studio-agent-use-cases`, the result of `python3 scripts/validate-new-packages.py <base>` and `python3 -m unittest discover -s tests`, which CI runs on the pull request.
 - That `human_description.md` covers every node, relationship and property the reference ontology defines, and that **it still needs a human read** — nothing downstream validates its prose, so the handoff must say so rather than implying the automated checks cleared it.
 - Any assumption that still requires domain-owner review.

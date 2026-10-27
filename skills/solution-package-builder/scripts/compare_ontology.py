@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Prove a migration preserved meaning: compare a legacy GRAPH_MODEL.json with ONTOLOGY.json.
+"""Prove a migration preserved meaning: compare a legacy GRAPH_MODEL.json (or a pre-release ONTOLOGY.json
+still using extensions.tables / extensions.mappings) with ONTOLOGY.json.
 
 Usage: python3 compare_ontology.py <old GRAPH_MODEL.json or ONTOLOGY.json> <new ONTOLOGY.json>
 
@@ -46,10 +47,11 @@ def load(path):
                      "from_counts": counts(r["from"]), "to_counts": counts(r["to"])}
     ext = m.get("extensions") or {}
     tables = {}
-    for t, tbl in (ext.get("data_source_tables") or m.get("tables") or {}).items():
+    # Current names, then the pre-release ONTOLOGY.json names, then legacy GRAPH_MODEL.json root keys.
+    for t, tbl in (ext.get("data_source_tables") or ext.get("tables") or m.get("tables") or {}).items():
         cols = [c["name"] for c in tbl["columns"]] if "columns" in tbl else list((tbl.get("fields") or {}).keys())
         tables[t] = sorted(cols)
-    maps = ext.get("data_source_mappings")
+    maps = ext.get("data_source_mappings") or ext.get("mappings")
     maps = [x for lst in maps.values() for x in lst] if isinstance(maps, dict) else (m.get("mappings") or [])
     bind = set()
     rel_by_key = m.get("relationships", {})

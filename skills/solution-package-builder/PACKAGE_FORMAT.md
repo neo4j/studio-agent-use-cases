@@ -194,7 +194,7 @@ Contract:
 
 - **Reserved filename**, at the package root. Runtimes implementing this format must not load it and must not surface it to the agent.
 - **Exempt from the supporting-file rule.** Every other non-required file must be indexed in SKILL.md with a stated purpose; `TESTS.md` must not be, precisely because the agent should never load it.
-- **Exempt from the file-size guidance.** It never consumes the consuming agent's context, so detail is free here. This is the file verbosity belongs in.
+- **Exempt from the file-size limit.** It never consumes the consuming agent's context, so detail is free here. This is the file verbosity belongs in.
 - **Required whenever the package bundles sample data.** A package whose CSVs resolve but which ships no `TESTS.md` has no oracle and cannot be verified.
 
 Structure: a "How to run" preamble, the full sample-data profile, then one `##` section per query whose heading matches its `QUERIES.md` heading exactly, so the two files pair mechanically. Each file also has headings the other does not — prerequisites and the adapting section on one side, how-to-run and the profile on the other — and parity is checked over the query headings only.
@@ -221,7 +221,7 @@ Contract:
 - **Reserved filename**, lower-case with an underscore, at the package root. Runtimes implementing this format must not load it into the agent's context and must not surface it to the agent.
 - **Required**, whether or not the package bundles sample data. A reference-ontology template still needs explaining.
 - **Exempt from the supporting-file rule.** Like `TESTS.md`, it must not be indexed in `SKILL.md` — the agent should never load it.
-- **Exempt from the file-size guidance**, for the same reason, though it has a practical length of its own: a page a reader gets through in two or three minutes.
+- **Exempt from the file-size limit**, for the same reason, though it has a practical length of its own: a page a reader gets through in two or three minutes.
 - **Reference ontology.** Like every file in the package, it calls the ontology the *reference ontology* — never "graph model", "data model" or "schema".
 - **No filenames, no Cypher, no JSON, no agent instructions, and no sample data** — not counts, not seeded entities, not a general mention. The reader sees a rendered page, not a directory, and the bundled data is out of scope for it. This is stricter than the rule on `SKILL.md`, which permits a general mention of the sample.
 
@@ -246,6 +246,8 @@ Use [ONTOLOGY_SPEC_FORMAT.md](ONTOLOGY_SPEC_FORMAT.md) for the complete field-by
 - Define nodes, relationships, `extensions.data_source_tables`, `extensions.data_source_mappings` (one list, `mapping0`), and `extensions.display` coordinates on every node, with readable stable keys.
 - Carry no other `extensions` — no `custom` at any level, no `indexes`, nothing on properties or relationships.
 - Mark every node identifier `key: true` (composite keys via an explicit `KEY` constraint), and use `must_exist` for required non-key properties.
+- Put each `key`, `must_exist` or `unique` flag on **one entry per relationship type or label**. The flags become database constraints scoped to the type, named from type and property, so the same flag on two entries of a reused type produces duplicate constraint names and the destination drops the package. State the requirement in prose on the other entries.
+- Give a relationship mapping a `key` naming the distinguishing property wherever its table holds several rows for the same endpoint pair (parallel relationships); with `key: []`, `MERGE` collapses them into one.
 - Define each query-referenced property with its correct graph type.
 - Declare every bundled CSV in `extensions.data_source_tables` with `columns` listed in header order, each `name` equal to the header exactly and each `"type": "string"`; conversion happens through mappings (`NODE`/`RELATIONSHIP`, mode `MERGE`, `key` arrays, `column` references).
 - Carry semantic annotations: a `description` on the root, on every node, on every relationship (meaning in the from→to direction, plus multiplicity in both directions), and on every property (unit, encoding, and scope for numeric and coded properties, ending with a `` e.g. `...` `` sample value drawn verbatim from the bundled CSVs); `one_of` or `pattern` where the domain fixes a property's values; relationship target counts matching the prose multiplicity; and `aliases` and `reference` where the source material supports them. See ONTOLOGY_SPEC_FORMAT.md's Annotations section for the full rules.
@@ -429,10 +431,11 @@ The sample data is a means to a quick working demo. It is not the subject of the
 
 In a runtime that implements this format, adding a valid folder to its configured use-case root enables discovery. Typically:
 
-- `SKILL.md` and `ONTOLOGY.json` are loaded eagerly.
+- `SKILL.md` and `ONTOLOGY.json` are loaded eagerly, and the reference ontology is converted to an Import model while the catalogue loads.
 - `TESTS.md` is never loaded, at any point, by any path.
 - `human_description.md` is never loaded into the agent's context either. It is available to the UI for rendering, and to it alone.
-- An invalid use case is logged and skipped rather than necessarily failing the build.
+- Every other file is read on demand through a tool that refuses any file over 50,000 characters, so a longer QUERIES.md, SETUP.md, ONTOLOGY.json or supporting file is unreadable to the agent.
+- An invalid use case is logged and skipped rather than failing the build — and "invalid" includes a reference ontology the runtime cannot convert to an Import model (a duplicate constraint name, an encoding it cannot read). The package simply disappears from the catalogue, which is why VALIDATION.md's runtime gate runs the same two steps.
 
 The active agent receives the use case's `SKILL.md` body.
 

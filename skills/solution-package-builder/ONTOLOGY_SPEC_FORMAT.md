@@ -16,7 +16,17 @@ ontology-graph-spec-version: 1.0.0
 
 That line is the single source of truth for the pin. Every package this skill builds declares the matching spec through the `schema` field of its `ONTOLOGY.json` — `https://neo4j.com/docs/ontology-graph-spec/1.0.0/schema.json` — and VALIDATION.md treats a package whose `schema` names a different version as a blocker.
 
-Provenance of the bundled copy: `ontology-graph-spec.schema.json` from [neo4j/graph-spec](https://github.com/neo4j/graph-spec/blob/main/ontology-graph-spec.schema.json), commit `9c0e3e8c2d511bf689bfc682a281c0a7cee37a09` (21 October 2026), SHA-256 `56cd1364fa6d4f0222c24663c459521d2fb7edb45a9e229f0018cb4a1f797ca9`. It is identical to the copy published at the `schema` URI above. That commit predates the official V1 release: `1.0.0` may still change before release without its version string changing, so the commit and hash — not the version string — identify exactly what this bundle carries. Refreshing the copy is a deliberate exercise, never a side effect of other work: replace the file, update the provenance line and the pin, then re-validate every existing package against it.
+Provenance of the bundled copy: `ontology-graph-spec.schema.json` from [neo4j/ontology-graph-spec](https://github.com/neo4j/ontology-graph-spec) release `v0.10.0` (commit `6c3ce42c12027225cf56f13a6347227bcdc2fbb7`, 27 October 2026), SHA-256 `1b0fa49e8a0793c2f5bc3ec02245309c766f1a994cb10af6bedb599064ab0458`. On that date it was byte-identical to the copy published at the `schema` URI above. The same release is on npm as `@neo4j/ontology-graph-spec@0.10.0`, and that is the library VALIDATION.md's spec-library check runs:
+
+```text
+ontology-graph-spec-release: v0.10.0
+```
+
+Two version numbers are in play and they are not the same thing. `1.0.0` is the version of the format, carried in the `schema` URI; it has not changed while the format was being finalised, so it cannot tell two revisions of the schema apart. `v0.10.0` is the release of the repository and its libraries, and together with the hash it identifies exactly what this bundle carries. The published copy behind the URI follows the latest release, so it can move ahead of this bundle without notice — that is why the bundled file, never the URI, is what packages are validated against.
+
+The destination runtime embeds its own release of the same library, and it can lag this pin. At the time of writing upx embeds `@neo4j/ontology-graph-spec@0.9.1`, whose schema differs from `v0.10.0` only in lacking property `aliases`: it accepts them and silently drops them on decode. Find the embedded release in the destination's dependency catalogue (for upx, `@neo4j/ontology-graph-spec` in `pnpm-workspace.yaml`) before relying on anything newer than it — see [Pipeline caveats](#pipeline-caveats).
+
+Refreshing the copy is a deliberate exercise, never a side effect of other work: replace the file, update the provenance line and the release line, re-run the spec-library check with the matching npm release, then re-validate every existing package against it.
 
 The reference ontology is not only a structural contract — it is the primary semantic artefact an agent reasons over. It is the only package artefact that crosses into the user's database via Import, so meaning carried only in SKILL.md prose or query annotations is lost at exactly the moment it becomes most useful: when a user has mapped their own data onto the template and an agent is working from the result. Annotate it per the [Annotations](#annotations-for-agent-reasoning) section.
 
@@ -28,7 +38,7 @@ This pipeline follows the spec's structure exactly but adopts only part of it. T
 | ---- | ------------ | ------------------- |
 | Root | `schema`, `id`, `version`, `name`, `description`, `nodes`, `relationships`, `extensions` | — |
 | Nodes | `label`, `description`, `aliases`, `reference`, `properties`, `constraints` (composite keys and additional requirements), `extensions.display` | `labels` (unless multi-label), `extensions.indexes`, `extensions.custom` |
-| Properties | `type`, `description`, `key`, `must_exist`, `unique`, `one_of`, `pattern`, `reference`, `dimension` (vectors only) | `name`, `extensions` |
+| Properties | `type`, `description`, `key`, `must_exist`, `unique`, `one_of`, `pattern`, `aliases`, `reference`, `dimension` (vectors only) | `name`, `extensions` |
 | Relationships | `type`, `description`, `aliases`, `reference`, `from`/`to` with `node` and `count`/`min_count`/`max_count`, `properties` | `constraints`, `extensions` |
 | Root `extensions` | `data_source_tables`, `data_source_mappings` | `custom` |
 
@@ -109,14 +119,14 @@ Each node entry needs:
 
 ### Node properties
 
-The key in `properties` is the Neo4j property name.
+The key in `properties` is the Neo4j property name. Leave the property's own `name` unset: the spec uses it only for a database name that differs from the key, and packages always key a property by its database name.
 
 - `type` — a value from the spec's `Neo4jType` enum. Common in packages: `STRING`, `INTEGER`, `FLOAT`, `BOOLEAN`, `DATE`, `ZONED DATETIME`, `POINT`. The enum also covers `LIST<...>` (including `LIST<ANY>`), `VECTOR<...>` (with `dimension`), sized numerics (`INTEGER8/16/32`, `FLOAT32`), `DURATION`, times, and `UUID`. Match types to query behaviour: numeric comparisons require numeric types, temporal operations temporal types.
 - `description` — required by this pipeline on every property; see [Annotations](#annotations-for-agent-reasoning).
 - `key: true` — marks the node's single-property identifier. It implies existence and uniqueness (a node key), so do **not** combine it with `unique` or `must_exist`. Exactly one property per node carries it — or none, when the node's identity is a composite `KEY` constraint, in which case the node mapping's `key` lists that constraint's properties.
-- `must_exist` / `unique` — for non-key requirements. `must_exist: true` means the property is required. (Older revisions spelled this `mustExist`, and older still `nullable` with the inverted sense; neither exists in the spec.)
+- `must_exist` / `unique` — for non-key requirements. `must_exist: true` means the property is required. (Older revisions spelled this `mustExist`, and older still `nullable` with the inverted sense; neither exists in the spec.) `key`, `must_exist` and `unique` each expand into a database constraint scoped to the label or relationship type, not to the entry — where a label or type is declared by more than one entry, see [Constraint flags on shared labels and types](#constraint-flags-on-shared-labels-and-types).
 - `one_of` / `pattern` — value restrictions; see [Value restrictions](#value-restrictions). Never both on one property.
-- `reference` — see [Aliases and references](#aliases-and-references).
+- `aliases` / `reference` — see [Aliases and references](#aliases-and-references).
 - `dimension` — only for `VECTOR<...>` types.
 - A **sample value** in the `description`, as a trailing `` e.g. `...` `` clause taken verbatim from the mapped CSV column. See [Annotations](#annotations-for-agent-reasoning).
 
@@ -138,13 +148,12 @@ The key in `properties` is the Neo4j property name.
 "constraints": {
   "flight_leg_key": {
     "type": "KEY",
-    "label": "FlightLeg",
     "properties": ["flightNo", "departureDate"]
   }
 }
 ```
 
-Constraint types: `EXISTS`, `KEY`, `PROPERTY_TYPE`, `UNIQUE`. Prefer a single-property key — composite keys break the Import flow — and use a surrogate derived key where the natural identity is composite. Write no `extensions.indexes`: the Import pipeline is not known to create indexes from the reference ontology, so index needs belong in `SETUP.md` where the agent applies them with consent.
+A constraint applies to the node it is declared on; it carries no `label` of its own (older revisions had one, and the schema no longer allows it). Constraint types: `EXISTS`, `KEY`, `PROPERTY_TYPE`, `UNIQUE`. Prefer a single-property key — composite keys break the Import flow — and use a surrogate derived key where the natural identity is composite. Write no `extensions.indexes`: the Import pipeline is not known to create indexes from the reference ontology, so index needs belong in `SETUP.md` where the agent applies them with consent.
 
 ## Relationships
 
@@ -179,6 +188,18 @@ Each relationship entry needs:
 - `from.node` and `to.node` reference keys in `nodes`. A relationship may connect two different node definitions or a node definition to itself. (The spec also allows a label-only target via `label`; packages use `node` references.)
 - **Relationship descriptions are core spec fields — always write one.** When the same relationship `type` string is reused between different node pairs, each reuse is its own entry with its own key and its own description stating that instance's distinct meaning.
 - Write no relationship `constraints` and no `extensions`, for the same reasons as nodes.
+
+### Constraint flags on shared labels and types
+
+`key`, `must_exist` and `unique` are shorthand for database constraints, and a database constraint belongs to a label or a relationship type — not to one entry in `ONTOLOGY.json`. The destination names each one from the type, the property and the kind (`road_ref_ROAD_propertyExistence`), so two entries that share a type and flag the same property produce two constraints with the same name. The destination rejects that with `graph-spec contains duplicate constraint name "…"` while converting the reference ontology to an Import model, and because it converts at registration, the whole package silently disappears from the catalogue.
+
+The usual cause is a relationship type reused between node pairs (`ROAD` city→city, city→station, station→city; `REQUIRES` product→assembly and assembly→config group), each entry faithfully carrying the same `must_exist` flags. The rule:
+
+- **Flag each property on exactly one entry per label or type.** Choose the entry that best represents the type and put the flag there; it already constrains every relationship of that type in the database.
+- **State the requirement in the other entries' descriptions instead** — "Expected on every `ROAD` relationship." — so an agent reading any entry still learns it.
+- The same applies to a label declared by more than one node entry (multi-label nodes sharing an `identifier`), though packages rarely have one.
+
+Neither the schema nor the spec library catches this; `check_annotations.py` and the runtime gate do (VALIDATION.md §3).
 
 ### Multiplicity
 
@@ -247,7 +268,8 @@ SKILL.md carries the definition.
 
 Both are optional. Both are claims an agent will repeat to a user, so the standard is the same as for descriptions: write them from the source material, and never invent them.
 
-- **`aliases`** (nodes and relationships) — other names the industry uses for the same concept: `Claimant` → `["Policyholder", "Insured party"]`, `Encounter` → `["Visit", "Episode of care"]`. They let an agent recognise the concept when a user, or a user's own schema, names it differently, so they support mapping a user's labels onto the reference ontology. Use terms from the source pages or established industry usage. An expansion of an abbreviated label is an alias (`DOB` → `["Date of birth"]`); spelling or case variants, the label itself, and one organisation's private vocabulary are not — customer vocabulary cannot be generated, and an alias that only fits one customer misleads every other. Aliases you are unsure of go to the user with the uncertain descriptions at step 1.
+- **`aliases`** (nodes, relationships and properties) — other names the industry uses for the same concept: `Claimant` → `["Policyholder", "Insured party"]`, `Encounter` → `["Visit", "Episode of care"]`, a property `birthDate` → `["Date of birth"]`. They let an agent recognise the concept when a user, or a user's own schema, names it differently, so they support mapping a user's labels and columns onto the reference ontology. Use terms from the source pages or established industry usage. An expansion of an abbreviated label is an alias (`DOB` → `["Date of birth"]`); spelling or case variants, the label itself, and one organisation's private vocabulary are not — customer vocabulary cannot be generated, and an alias that only fits one customer misleads every other. Aliases you are unsure of go to the user with the uncertain descriptions at step 1.
+  - **Property aliases are new in release `v0.10.0`**, and a destination embedding an older library ignores them: upx at `0.9.1` accepts the field and drops it on decode, so a property alias reaches the agent reading `ONTOLOGY.json` but not the user's database. Until the destination's embedded release is `0.10.0` or later, a property synonym that a downstream consumer must see also goes in the property's `description`.
 - **`reference`** (nodes, relationships, properties) — a URI for an external resource that defines the concept: a standard or code system, a regulatory definition, or the industry use-case page the package is built from (a page under `https://neo4j.com/developer/industry-use-cases/`). Every `reference` must be a real, reachable URL you have actually read. Never construct a plausible-looking URL; omit the field instead. One URI per element.
 
 ## Tables
@@ -272,7 +294,7 @@ Both are optional. Both are claims an agent will repeat to a user, so the standa
 - The table key is the exact CSV filename and must match the `table` value used by mappings.
 - `source` is `"local"` for bundled CSV input.
 - `columns` lists every CSV column **in header order**, each `name` equal to the header exactly, including case, with no duplicates and no empty names. Declare every column `"type": "string"` — the mapped property's type converts values to graph types.
-- The spec's richer column facets (`size`, `suggested`, `supported`) and table keys (`primary_keys`, `foreign_keys`) describe RDBMS sources; omit them for bundled CSVs.
+- The spec's richer column facets (`size`, `suggested`, `supported`, `nullable`) and table keys (`primary_keys`, `foreign_keys`) describe RDBMS sources; omit them for bundled CSVs.
 - Include endpoint columns used only to connect relationships, even when they do not become graph properties.
 
 If sample CSVs are bundled, place them under `sample-data/`. Keep table references unambiguous.
@@ -334,6 +356,7 @@ If sample CSVs are bundled, place them under `sample-data/`. Keep table referenc
 - `from_node` and `to_node` identify the endpoint nodes **by label** — the `label` of the node definitions the relationship's `from.node` and `to.node` point at. Their `properties` map each endpoint node's key property to the column carrying its value.
 - Top-level `properties` map relationship properties; omit when the relationship has none.
 - Every non-empty endpoint value in sample data must resolve to a mapped node.
+- **`key` decides which rows become one relationship.** With mode `MERGE` and `key: []`, Import identifies a relationship by its endpoints alone, so every row joining the same two nodes merges into one relationship and only one row's properties survive. That is right when the table holds one row per pair. When the domain has **parallel relationships** — several of the same type between the same two nodes, told apart by a property (a charging site's `top-up` and `full` options, modelled as two `CHARGE` self-loops) — set `key` to that property: `"key": ["tier"]`. The spec library turns a relationship mapping's `key` into Import's relationship key properties, which control merging only; it does not create a database constraint, so do not also mark the property `key: true` (on a relationship that would demand it be unique across every relationship of the type). VALIDATION.md §4 checks every relationship table for repeated endpoint pairs.
 
 ## Display
 
@@ -357,7 +380,7 @@ Annotations give the reference ontology its meaning: they define terms, not just
 | ------------ | ------------- | ------- |
 | Root         | `name`, `description` | Domain, and what the reference ontology answers |
 | Node         | `description`, `aliases`, `reference` | What the entity is in the domain; other industry names; an external definition |
-| Property     | `description`, `one_of`/`pattern`, `reference` | Meaning, unit/encoding/scope, and a trailing sample value; allowed values; an external definition |
+| Property     | `description`, `one_of`/`pattern`, `aliases`, `reference` | Meaning, unit/encoding/scope, and a trailing sample value; allowed values; other names; an external definition |
 | Relationship | `description`, target counts, `aliases`, `reference` | Meaning in the from→to direction and multiplicity both ways; the same multiplicity as counts; other names; an external definition |
 
 **`description` carries the meaning.** The structured fields restate parts of it in checkable form; they never replace it. A property with `one_of` still says in its description what the values mean, and a relationship with counts still states its multiplicity in prose. No annotation goes in `extensions`.
@@ -372,7 +395,7 @@ e.g. `250`.
 
 A single backticked literal, taken **verbatim** from the mapped CSV column, as the last clause of the description. The fixed form keeps it mechanically checkable — VALIDATION.md §3b extracts it with `` /e\.g\. `([^`]+)`\.?\s*$/ `` and compares it against the column — so this is a convention with a test behind it, not a formatting preference. One value only; do not list alternatives.
 
-The optional `name` fields on properties and constraints stay unset — readable entity keys and labels already carry the names, and the spec library derives `name` from the key when it internalises a document. Populate `name` at the root only.
+Populate `name` at the root only. Nodes and relationships have no `name` field; a property's `name` is only for a database name that differs from its key, which never happens in a package; and a constraint's `name` would override the name the destination derives for it. The spec library's `missing_property_name` rule (in its `consistentSchema` set) mirrors an Import-UI requirement and fires on every property left in this shorthand form — VALIDATION.md §3 explains why that one rule is filtered.
 
 ### Authoring rules
 
@@ -385,8 +408,13 @@ The optional `name` fields on properties and constraints stay unset — readable
 
 ### Pipeline caveats
 
-- The bundled schema validates structure, so run a JSON Schema validation against it — but **schema validity does not prove the destination runtime accepts the file**. The schema is generated from the spec library's own type definitions, and a runtime can lag the spec, or hand-write a decoder that departs from the generated form. At the previous pin (`4.0.0-alpha.25`) the typed extension-value encoding was exactly that case: the runtime could not read the encoding the schema documented, and dropped any package carrying an `extensions` block. The spec has since replaced that encoding, which is why this pipeline now writes the three structural extensions above — but only the runtime gate in VALIDATION.md §3 proves the destination reads them. It is a blocker, not an optional extra. If a schema-valid file is rejected, stop and raise it with the user rather than stripping fields silently.
-- The spec library carries semantic checks the schema cannot express — count conflicts, `one_of` with `pattern`, description length, label tokens. VALIDATION.md §3 runs them when the library is available.
+- The bundled schema validates structure, so run a JSON Schema validation against it — but **schema validity does not prove the destination runtime accepts the file**. The destination decodes the reference ontology with its own embedded release of the spec library and then converts it to an Import model, and it does both while registering the package: a throw at either step drops the package from the catalogue with nothing but a log line. Three ways this has bitten packages already:
+  - the runtime could not read an encoding the schema documented (the typed extension values at the old `4.0.0-alpha.25` pin, and the node `display` extension before upx adopted the ontology graph spec);
+  - the runtime enforces a rule the schema and the library do not — duplicate constraint names from flags repeated across entries of one type (see [Constraint flags on shared labels and types](#constraint-flags-on-shared-labels-and-types));
+  - the runtime embeds an older release than the pin and silently drops what it does not know (property `aliases` under `0.9.1`).
+
+  Only the runtime gate in VALIDATION.md §3 proves the destination reads the file. It is a blocker, not an optional extra. If a schema-valid file is rejected, stop and raise it with the user rather than stripping fields silently.
+- The spec library carries semantic checks the schema cannot express — count conflicts, `one_of` with `pattern`, description length, label tokens, mapping keys, column names. VALIDATION.md §3 runs it with the npm release that matches the pin; no toolchain beyond Node is needed.
 - The sample-value convention and the requirement that prose multiplicity matches the counts are this pipeline's own. Nothing but this pipeline validates them — which makes VALIDATION.md §3b the only thing standing between a plausible-looking annotation and a false one.
 
 ## Converting a legacy graph model
@@ -413,19 +441,21 @@ Packages built before this pin ship a `GRAPH_MODEL.json` in the older graph-spec
 | Relationship target `property` | Removed |
 | Positional keys (`n:0`, `r:1`) | Readable keys (label for nodes, camelCase for relationships) |
 
-The script also renames positional entity keys (`n:0` → the node's label; `r:0` → the relationship type in camelCase, prefixed and suffixed with its node labels where one type joins several pairs), and drops legacy `indexes` and `extensions`, logging each so their meaning can be moved by hand.
+The script also renames positional entity keys (`n:0` → the node's label; `r:0` → the relationship type in camelCase, prefixed and suffixed with its node labels where one type joins several pairs), and drops legacy `indexes` and `extensions`, logging each so their meaning can be moved by hand. It warns — it does not fix — on the two things a faithful conversion carries over but the destination will not accept: a constraint flag repeated across entries of one relationship type or label (legacy files routinely set `mustExist` on every reuse of a type), and a relationship table with repeated endpoint pairs under an empty mapping `key`. Both are meaning changes for the migration plan; see [Constraint flags on shared labels and types](#constraint-flags-on-shared-labels-and-types) and [Relationship mappings](#relationship-mappings).
+
+**Pre-release `ONTOLOGY.json`.** A package converted before the spec renamed its root extensions carries `extensions.tables` and `extensions.mappings`. That shape fails the bundled schema; the fix is the rename alone — `tables` → `data_source_tables`, `mappings` → `data_source_mappings` — with nothing else touched, proved by `compare_ontology.py` against the file before the rename (it reads both names). `inventory.py` reports this generation separately from the legacy `GRAPH_MODEL.json` ones.
 
 ## Authoring order
 
 1. Define node keys, labels, and identifiers.
 2. Write the root `schema`, `id`, `version`, `name` and `description`.
 3. Add node descriptions and properties (with descriptions and `key: true` identifiers), plus any `one_of`/`pattern` the domain fixes.
-4. Define relationship keys, types, directions, and properties, with descriptions stating meaning and multiplicity and target counts matching that prose. Decide for each one whether source data exists for it; a relationship a query will create belongs in SKILL.md, not here.
+4. Define relationship keys, types, directions, and properties, with descriptions stating meaning and multiplicity and target counts matching that prose. Decide for each one whether source data exists for it; a relationship a query will create belongs in SKILL.md, not here. Where a type is reused between node pairs, put each `must_exist`/`unique` flag on one entry only and state it in prose on the others.
 5. Add `aliases` and `reference` where the source material supports them.
 6. Draft the property descriptions' sample-value intents — and confirm uncertain descriptions, value restrictions, counts and aliases with the user now, before data exists to rationalise.
 7. Define the CSV tables and their columns in header order.
 8. Add node mappings (`NODE`, mode `MERGE`, `key`) to `extensions.data_source_mappings.mapping0`.
-9. Add relationship mappings and endpoint lookups.
+9. Add relationship mappings and endpoint lookups, with a `key` naming the distinguishing property wherever the domain has parallel relationships between the same two nodes.
 10. Add `extensions.display` coordinates to every node.
 11. Create sample CSVs that satisfy the descriptions, value restrictions, and counts — then set each description's trailing `` e.g. `...` `` verbatim from the generated column.
 12. Check every query-referenced label, type, direction, and property against the reference ontology, and every query annotation block against the descriptions. Anything a query references that the reference ontology does not define must be a query-created entity documented in SKILL.md — if it is not, one of the two is wrong.
@@ -439,6 +469,8 @@ The script also renames positional entity keys (`n:0` → the node's label; `r:0
 - Node and relationship keys are readable and stable; every key referenced by relationships and mappings exists.
 - Every node, every relationship, and every property has a non-empty, specific `description` of at most 1,024 characters; numeric, temporal, and coded properties state unit, encoding, or scope.
 - Exactly one `key: true` property per node (or a composite `KEY` constraint instead), never combined with `unique`/`must_exist` on the same property.
+- No `key`, `must_exist` or `unique` flag on a property is repeated across entries that share a relationship type or label.
+- `name` is set at the root only — not on properties or constraints.
 - Every property description carrying a sample ends with `` e.g. `<value>`. ``, and that value appears verbatim in the mapped CSV column.
 - No property has both `one_of` and `pattern`; every mapped CSV value satisfies the restriction; no `pattern` encodes the package's own identifier scheme.
 - Every relationship target uses `count` or a `min_count`/`max_count` range, not both; every count holds in the sample data and agrees with the prose in the description.
@@ -449,6 +481,7 @@ The script also renames positional entity keys (`n:0` → the node's label; `r:0
 - Every mapping table exists in `extensions.data_source_tables`; every mapped `column` exists in its table; every mapped property exists on its node or relationship.
 - **Every declared node and every declared relationship has a mapping** — nothing is declared that Import cannot load. Query-created relationships and labels are documented in SKILL.md instead of being declared here.
 - Every relationship mapping's `from_node.label` and `to_node.label` match the labels of the relationship's `from.node` and `to.node`, and endpoint columns resolve to node identifiers.
+- A relationship table with more than one row for the same endpoint pair has a mapping `key` naming the property that tells those rows apart.
 - Every query label, relationship type, direction, and property exists in the reference ontology, and query annotation blocks agree with its descriptions.
 - Every bundled CSV header row matches its table's `columns` names, in order.
 - Every node has `extensions.display` coordinates.

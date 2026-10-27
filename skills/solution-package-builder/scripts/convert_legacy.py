@@ -174,6 +174,35 @@ for mp in m.get("mappings", []):
         fail(f"unsupported mapping type {mp.get('type')!r}")
 o["extensions"] = {"data_source_tables": tables, "data_source_mappings": {"mapping0": maps}}
 
+# --- faithful but not accepted by the destination: warn, never fix (both are meaning changes) ---------------
+flags = {}
+for kind, entities in (("label", o["nodes"]), ("type", o["relationships"])):
+    for k, e in entities.items():
+        token = e.get("type") if kind == "type" else label_of(e)
+        for pk, pv in (e.get("properties") or {}).items():
+            for flag in ("key", "must_exist", "unique"):
+                if pv.get(flag): flags.setdefault((kind, token, pk, flag), []).append(k)
+for (kind, token, pk, flag), keys in flags.items():
+    if len(keys) > 1:
+        note(f"WARN {flag} on {pk} repeats across {len(keys)} entries of {kind} {token} ({', '.join(keys)}): "
+             "duplicate constraint names; keep it on one entry and move it to prose on the others")
+def rows(table):
+    hits = [f for f in (p / "sample-data").rglob("*.csv")
+            if f.relative_to(p / "sample-data").as_posix() == table or f.name == table]
+    if len(hits) != 1: return []
+    with hits[0].open(newline="", encoding="utf-8") as fh:
+        return list(csv.DictReader(fh))
+for x in maps:
+    if x["type"] != "RELATIONSHIP" or x["key"]: continue
+    cols = [v["column"] for v in x["from_node"]["properties"].values()] + [v["column"] for v in x["to_node"]["properties"].values()]
+    seen = {}
+    for r in rows(x["table"]):
+        seen[tuple(r.get(c, "") for c in cols)] = seen.get(tuple(r.get(c, "") for c in cols), 0) + 1
+    repeated = sum(1 for n in seen.values() if n > 1)
+    if repeated:
+        note(f"WARN {x['relationship']}: {repeated} endpoint pairs repeat in {x['table']} under an empty key; "
+             "MERGE will collapse them — set the mapping key to the property that tells them apart")
+
 out = p / "ONTOLOGY.json"
 out.write_text(json.dumps(o, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 print("\n".join(log))

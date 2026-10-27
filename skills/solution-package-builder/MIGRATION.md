@@ -18,14 +18,16 @@ An update is not a rebuild. A new package fails by being incomplete; an update f
 
 ## Tools
 
-The `scripts/` folder beside this file does the mechanical work. Use them rather than converting by hand — a script is repeatable and a hand conversion is not. All are standard-library Python 3.
+The `scripts/` folder beside this file does the mechanical work. Use them rather than converting by hand — a script is repeatable and a hand conversion is not. The Python scripts are standard-library Python 3; the two others are for Node and for the destination's test runner.
 
 | Script | Does |
 | ------ | ---- |
-| `inventory.py <package-dir>` | Read-only. Ontology format generation, missing files, every file outside the format with a suggested clean-up category, legacy markers in each Markdown file, QUERIES.md/TESTS.md structure, and catalog.json drift. |
-| `convert_legacy.py <package-dir>` | Writes `ONTOLOGY.json` from `GRAPH_MODEL.json` (either legacy dialect). Structural only: it renames positional entity keys, converts fields and mappings, and logs every key rename and every dropped field. It never invents annotations and never deletes the legacy file. |
-| `compare_ontology.py <old> <new>` | Proves the conversion kept meaning: labels, relationship type + direction, property names, types, keys, existence, descriptions, table columns and mapping bindings, compared by label and type rather than entity key. Exit 0 and `EQUIVALENT`, or a list of differences. |
-| `check_annotations.py <package-dir>` | VALIDATION.md §3b against the bundled CSVs. |
+| `inventory.py <package-dir>` | Read-only. Ontology format generation (two legacy `GRAPH_MODEL.json` dialects, the pre-release `ONTOLOGY.json` shape, current), missing files, every file outside the format with a suggested clean-up category, legacy markers in each Markdown file, agent-loadable files over or near the 50,000-character limit, QUERIES.md/TESTS.md structure, and catalog.json drift. |
+| `convert_legacy.py <package-dir>` | Writes `ONTOLOGY.json` from `GRAPH_MODEL.json` (either legacy dialect). Structural only: it renames positional entity keys, converts fields and mappings, and logs every key rename and every dropped field. It never invents annotations and never deletes the legacy file. It prints a `WARN` for each faithful conversion the destination will not accept — a constraint flag repeated across entries of one type, repeated endpoint pairs under an empty relationship-mapping key — and fixes neither. |
+| `compare_ontology.py <old> <new>` | Proves the conversion kept meaning: labels, relationship type + direction, property names, types, keys, existence, descriptions, annotations, table columns and mapping bindings, compared by label and type rather than entity key. Reads a legacy `GRAPH_MODEL.json`, a pre-release `ONTOLOGY.json` or a current one as `<old>`. Exit 0 and `EQUIVALENT`, or a list of differences. |
+| `check_annotations.py <package-dir>` | VALIDATION.md §3b against the bundled CSVs, plus the two destination-enforced rules: constraint flags per type, and repeated endpoint pairs per relationship mapping key. |
+| `spec_library_check.mjs <ONTOLOGY.json>…` | VALIDATION.md §3's spec-library check, run with the pinned npm release from a scratch directory. |
+| `runtime_gate.test.ts` | VALIDATION.md §3's runtime gate: a temporary test copied into the destination's loader folder, run, and deleted. |
 | `catalog_entry.py <repo-root> <skillId> [--write]` | Rebuilds the package's `catalog.json` entry from the folder. |
 
 ## Phase 1: Locate
@@ -40,7 +42,8 @@ Change nothing yet.
 
 1. Run `inventory.py`. It names the ontology generation, what is missing, every extra file and every legacy marker.
 2. Run VALIDATION.md against the package as it stands and collect every finding. On a legacy package most findings are expected; they become plan items.
-3. Run `convert_legacy.py` on a scratch copy of the package (not the branch) and `compare_ontology.py` on its output. It must print `EQUIVALENT`. A conversion that is not equivalent, or that refuses to convert, is a blocker to resolve in the plan before anything else.
+3. Run `convert_legacy.py` on a scratch copy of the package (not the branch) and `compare_ontology.py` on its output. It must print `EQUIVALENT`. A conversion that is not equivalent, or that refuses to convert, is a blocker to resolve in the plan before anything else. Every `WARN` line the converter prints is a plan item in its own right: moving a repeated `must_exist` to one entry (and into prose on the others), or setting a relationship mapping's `key` for parallel relationships, changes meaning and needs approval — but leaving it is not an option, because the destination drops or silently damages the package. Run `check_annotations.py` on the scratch copy too; it reports the same two rules and every annotation finding.
+   - **A package already on `ONTOLOGY.json` in the pre-release shape** (`inventory.py` says so; the file has `extensions.tables`/`extensions.mappings`) needs no converter: rename the two keys to `data_source_tables`/`data_source_mappings`, and require `compare_ontology.py <before> <after>` to print `EQUIVALENT`. Then assess it like any other package — it was built before the constraint-flag and parallel-relationship rules, so check both.
 4. Build the **content map**: for each file that will be deleted, list each distinct piece of its content — a rule, a caveat, a query, a definition, a sample-data fact — and its destination.
 
 | Kind of file | Typical examples | Destination of its content |
@@ -84,7 +87,7 @@ The plan contains:
 
 On the branch, in this order — each step constrains the next, as in a new build.
 
-1. **Ontology.** Run `convert_legacy.py` in the package folder; run `compare_ontology.py GRAPH_MODEL.json ONTOLOGY.json` and require `EQUIVALENT`; then `git rm GRAPH_MODEL.json`. Fold ontology prose into descriptions, apply the approved annotations, replace "model" terminology inside descriptions, and keep each description within 1,024 characters. Re-run `compare_ontology.py` against the legacy file from the base commit (`git show <base>:<skillId>/GRAPH_MODEL.json`): the only differences allowed are the approved description edits and the approved annotations.
+1. **Ontology.** Run `convert_legacy.py` in the package folder; run `compare_ontology.py GRAPH_MODEL.json ONTOLOGY.json` and require `EQUIVALENT`; then `git rm GRAPH_MODEL.json`. Apply the approved fixes for the converter's `WARN` lines (a repeated constraint flag kept on one entry, with "Expected on every `<TYPE>` relationship." in the others' descriptions; a relationship mapping `key` for parallel relationships). Fold ontology prose into descriptions, apply the approved annotations, replace "model" terminology inside descriptions, and keep each description within 1,024 characters. Where the legacy `e.g.` sample is a seeded entity, move it to an unremarkable value from the same column. Re-run `compare_ontology.py` against the legacy file from the base commit (`git show <base>:<skillId>/GRAPH_MODEL.json`): the only differences allowed are the approved description edits and the approved annotations.
 2. **CSVs.** Untouched, unless the plan approved a change.
 3. **QUERIES.md.** Bring it to the format in SKILL.md step 3: a prerequisites preamble, the "Adapting these queries" section, an @-annotation block on every query, the data-agnostic sweep (sample-data claims move to TESTS.md), APOC/GDS material in its own section, and the node-key constraints reference at the end. Add the queries the content map brings in. Keep every query's Cypher byte-for-byte; the annotation block goes above it. Remove every `TODO(review): unproven query`. Comments inside the Cypher block are the one exception to byte-for-byte: a comment or `:param` line carrying sample-data expectations moves into the query's `@sample` tag (VALIDATION.md 5a), and the Phase 5 comparison ignores comments, so it still proves the logic unchanged. Three cases need a rule:
    - **A heading that holds more than one query** is split into one `##` heading per query. Each resulting heading must describe its own query: the first query keeps the original heading only if it still does, otherwise every part gets a new name from what it does, in the same style. Record every new heading in the plan; TESTS.md follows the new headings.
@@ -101,7 +104,8 @@ On the branch, in this order — each step constrains the next, as in a new buil
 
 Run VALIDATION.md in full, then these migration checks:
 
-- `inventory.py` reports no `MISSING`, no `LEGACY` lines (a "the model" hit is acceptable only where it means something other than the reference ontology — a pricing model, a risk model), and no `EXTRA` except retained supporting files indexed in SKILL.md. Every label, type or property it reports as written by a query is declared and mapped, or defined in SKILL.md.
+- `inventory.py` reports no `MISSING`, no `OVERSIZE`, no `LEGACY` lines (a "the model" hit is acceptable only where it means something other than the reference ontology — a pricing model, a risk model), and no `EXTRA` except retained supporting files indexed in SKILL.md. Every label, type or property it reports as written by a query is declared and mapped, or defined in SKILL.md. A `NEAR-LIMIT` file goes in the PR description with its size.
+- `check_annotations.py`, the spec-library check and the runtime gate all pass — the gate on the destination's current main branch, with both `REGISTER OK` and `IMPORT CONVERT OK`. A legacy file converted faithfully can still fail the gate on the two destination-enforced rules, so a migration is not done until the gate has run on the converted package.
 - `compare_ontology.py` against the base commit's legacy file shows only approved differences.
 - Every query in the base commit's QUERIES.md and duplicate query files is either in the new QUERIES.md with identical Cypher, or recorded in the content map as a duplicate:
 
@@ -143,7 +147,7 @@ PY
    - **Ontology**: entity-key renames (internal, not breaking), annotations added, description edits.
    - **Queries**: annotation blocks added, queries brought in from deleted files, confirmation that existing Cypher is unchanged, and any proposed query fixes (approved ones applied, the rest listed).
    - **Breaking changes**: normally "None — labels, relationship types, directions, properties and keys are unchanged".
-   - **Checks run**: VALIDATION.md results, `compare_ontology.py` output, the spec-library check, and the runtime gate result — including, until the destination adopts the ontology graph spec, the expected failure on `schema`/`extensions` and the exact error.
+   - **Checks run**: VALIDATION.md results, `compare_ontology.py` output, the spec-library check with the npm release it ran, and the runtime gate result (`REGISTER`, `IMPORT CONVERT`) with the destination commit it ran against and the spec-library release that destination embeds.
    - **Manual testing**: point the tester at TESTS.md.
    - **Remaining `TODO(review)`** items, with paths.
    - **For the reviewer**: human_description.md and every folded section need a human read.
