@@ -1,0 +1,8 @@
+productId,name,marketCategory,creditType,amortizationType,termMonths,isSecured
+LP-01,30-year fixed-rate mortgage,mortgage loan,closed-end,fixed rate,360,true
+LP-02,15-year fixed-rate mortgage,mortgage loan,closed-end,fixed rate,180,true
+LP-03,5/1 adjustable-rate mortgage,mortgage loan,closed-end,adjustable rate,360,true
+LP-04,Home equity line of credit,mortgage loan,open-end,adjustable rate,240,true
+LP-05,Fixed-rate home equity loan,mortgage loan,closed-end,fixed rate,180,true
+LP-06,Unsecured personal loan,personal loan,closed-end,fixed rate,60,false
+LP-07,Construction-to-permanent mortgage,construction loan,closed-end,fixed rate,360,true
