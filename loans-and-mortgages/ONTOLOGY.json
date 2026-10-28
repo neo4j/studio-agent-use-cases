@@ -34,8 +34,8 @@
           "key": true
         },
         "applicationDate": {
-          "type": "DATE",
-          "description": "Calendar date the application was signed and submitted, ISO 8601. e.g. `2024-10-04`.",
+          "type": "ZONED DATETIME",
+          "description": "Calendar date the application was signed and submitted, as an ISO 8601 zoned datetime at midnight UTC; only the calendar date carries meaning. e.g. `2024-10-04T00:00:00Z`.",
           "must_exist": true
         },
         "requestedAmount": {
@@ -92,8 +92,8 @@
           "reference": "https://spec.edmcouncil.org/fibo/ontology/LOAN/RealEstateLoans/HomeMortgageDisclosureActCoveredMortgages/HMDA-Disposition"
         },
         "dispositionDate": {
-          "type": "DATE",
-          "description": "Calendar date the disposition was made, ISO 8601. For an originated loan it is the origination (closing) date. e.g. `2024-12-05`."
+          "type": "ZONED DATETIME",
+          "description": "Calendar date the disposition was made, as an ISO 8601 zoned datetime at midnight UTC; only the calendar date carries meaning. For an originated loan it is the origination (closing) date. e.g. `2024-12-05T00:00:00Z`."
         },
         "denialReason": {
           "type": "STRING",
@@ -192,13 +192,13 @@
           "description": "Annual note interest rate at origination, as a percentage, so 6.25 means 6.25% a year. For adjustable-rate products, the initial rate. e.g. `6.750`."
         },
         "originationDate": {
-          "type": "DATE",
-          "description": "Calendar date the loan closed and funds were advanced, ISO 8601. The first payment is due on the first day of the second month after it. e.g. `2024-12-05`.",
+          "type": "ZONED DATETIME",
+          "description": "Calendar date the loan closed and funds were advanced, as an ISO 8601 zoned datetime at midnight UTC; only the calendar date carries meaning. The first payment is due on the first day of the second month after it. e.g. `2024-12-05T00:00:00Z`.",
           "must_exist": true
         },
         "maturityDate": {
-          "type": "DATE",
-          "description": "Calendar date the final scheduled payment is due, ISO 8601. e.g. `2055-01-01`."
+          "type": "ZONED DATETIME",
+          "description": "Calendar date the final scheduled payment is due, as an ISO 8601 zoned datetime at midnight UTC; only the calendar date carries meaning. e.g. `2055-01-01T00:00:00Z`."
         },
         "lienPosition": {
           "type": "STRING",
@@ -218,8 +218,8 @@
           "must_exist": true
         },
         "balanceAsOfDate": {
-          "type": "DATE",
-          "description": "Calendar date the servicer snapshot (currentBalance and status) was taken, ISO 8601. e.g. `2026-09-30`."
+          "type": "ZONED DATETIME",
+          "description": "Calendar date the servicer snapshot (currentBalance and status) was taken, as an ISO 8601 zoned datetime at midnight UTC; only the calendar date carries meaning. e.g. `2026-09-30T00:00:00Z`."
         },
         "status": {
           "type": "STRING",
@@ -283,8 +283,8 @@
           "key": true
         },
         "appraisalDate": {
-          "type": "DATE",
-          "description": "Calendar date the value was established (the effective date of the appraisal), ISO 8601. e.g. `2017-09-14`.",
+          "type": "ZONED DATETIME",
+          "description": "Calendar date the value was established (the effective date of the appraisal), as an ISO 8601 zoned datetime at midnight UTC; only the calendar date carries meaning. e.g. `2017-09-14T00:00:00Z`.",
           "must_exist": true
         },
         "appraisedValue": {
@@ -307,8 +307,8 @@
           "key": true
         },
         "dueDate": {
-          "type": "DATE",
-          "description": "Calendar date the installment was due, ISO 8601. e.g. `2025-10-01`.",
+          "type": "ZONED DATETIME",
+          "description": "Calendar date the installment was due, as an ISO 8601 zoned datetime at midnight UTC; only the calendar date carries meaning. e.g. `2025-10-01T00:00:00Z`.",
           "must_exist": true
         },
         "amountDue": {
@@ -322,8 +322,8 @@
           "must_exist": true
         },
         "paidDate": {
-          "type": "DATE",
-          "description": "Calendar date the payment was received, ISO 8601. Empty when nothing has been paid. e.g. `2025-10-06`."
+          "type": "ZONED DATETIME",
+          "description": "Calendar date the payment was received, as an ISO 8601 zoned datetime at midnight UTC; only the calendar date carries meaning. Empty when nothing has been paid. e.g. `2025-10-06T00:00:00Z`."
         },
         "daysLate": {
           "type": "INTEGER",

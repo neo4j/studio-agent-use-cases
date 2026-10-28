@@ -6,7 +6,7 @@ Cypher for the `loans-and-mortgages` use case. Every query references only label
 
 - Neo4j 5.x and Cypher 5, at a release that supports `COUNT {}` and `COLLECT {}` subqueries (5.6 or later). No APOC or Graph Data Science required.
 - The graph is loaded through the Import flow from `ONTOLOGY.json` — the bundled `sample-data/` CSVs, or the user's own data mapped onto the reference ontology.
-- Types matter to the queries: amounts, rates and ratios are FLOAT, `creditScore`, `termMonths`, `dwellingUnits` and `daysLate` are INTEGER, and every date is a DATE, so the comparisons and `duration` arithmetic below work without conversion.
+- Types matter to the queries: amounts, rates and ratios are FLOAT; `creditScore`, `termMonths`, `dwellingUnits` and `daysLate` are INTEGER; and every date is a ZONED DATETIME at midnight UTC, because Import does not accept DATE for local CSV files. Only the calendar date carries meaning. Comparisons and `duration` arithmetic work directly; compare against `datetime(...)`, never `date(...)` (a datetime compared with a date is null), and wrap a value in `date()` to display it.
 - Amounts are US dollars and assume a single-currency portfolio. Percentages (`interestRate`, `ltvAtOrigination`, `dtiRatio`) are held as percentages, so 80 means 80%.
 - A missed installment is a `Payment` with `amountPaid` below `amountDue`; `Loan.status` is the servicer's own snapshot as of `balanceAsOfDate`. The queries use each for what it is: payment-level questions read `Payment`, status questions read `Loan.status`.
 - No `SETUP.md` statements are needed, and no query creates a label, relationship type, or property.
@@ -58,8 +58,8 @@ OPTIONAL MATCH (app)-[:HANDLED_BY]->(officer:LoanOfficer)
 OPTIONAL MATCH (l)-[:SECURED_BY]->(prop:Property)
 RETURN l.loanId AS loanId, prod.name AS product, l.status AS status,
        l.principalAmount AS principalAmount, l.currentBalance AS currentBalance,
-       l.balanceAsOfDate AS balanceAsOfDate, l.interestRate AS interestRate,
-       l.originationDate AS originationDate, l.maturityDate AS maturityDate,
+       date(l.balanceAsOfDate) AS balanceAsOfDate, l.interestRate AS interestRate,
+       date(l.originationDate) AS originationDate, date(l.maturityDate) AS maturityDate,
        l.lienPosition AS lienPosition, l.ltvAtOrigination AS ltvAtOrigination,
        lender.name AS lender, servicer.name AS servicer, officer.name AS loanOfficer,
        prop.address + ', ' + prop.city + ', ' + prop.state AS property,
@@ -251,7 +251,7 @@ ORDER BY denials DESC
  */
 MATCH (l:Loan)-[:HAS_PAYMENT]->(p:Payment)
 WHERE p.amountPaid < p.amountDue
-WITH l, count(p) AS missedPayments, min(p.dueDate) AS oldestMissedDue
+WITH l, count(p) AS missedPayments, date(min(p.dueDate)) AS oldestMissedDue
 WHERE missedPayments >= $minMissed
 MATCH (l)-[:SERVICED_BY]->(servicer:FinancialInstitution)
 OPTIONAL MATCH (b:Person)-[:BORROWER_ON {borrowerRole: 'primary borrower'}]->(l)
@@ -342,7 +342,7 @@ RETURN prop.propertyId AS propertyId,
        prop.address + ', ' + prop.city + ', ' + prop.state AS property,
        openLiens, round(combinedBalance, 2) AS combinedBalance,
        latest.appraisedValue AS latestAppraisedValue,
-       latest.appraisalDate AS latestAppraisalDate, combinedLtv
+       date(latest.appraisalDate) AS latestAppraisalDate, combinedLtv
 ORDER BY combinedLtv DESC
 ```
 
@@ -390,8 +390,8 @@ WHERE earlier.appraisalDate < later.appraisalDate
   AND later.appraisedValue >= earlier.appraisedValue * (1 + $minIncreasePct / 100.0)
 RETURN prop.propertyId AS propertyId,
        prop.address + ', ' + prop.city + ', ' + prop.state AS property,
-       earlier.appraisalDate AS earlierDate, earlier.appraisedValue AS earlierValue,
-       later.appraisalDate AS laterDate, later.appraisedValue AS laterValue,
+       date(earlier.appraisalDate) AS earlierDate, earlier.appraisedValue AS earlierValue,
+       date(later.appraisalDate) AS laterDate, later.appraisedValue AS laterValue,
        round(100.0 * (later.appraisedValue / earlier.appraisedValue - 1), 1) AS increasePct,
        COLLECT {
          MATCH (prop)<-[:SECURED_BY]-(l:Loan)
@@ -495,7 +495,7 @@ ORDER BY personId, exposedLoan
  *                 and returns officers whose EPD rate is a multiple of the
  *                 rate across all officers' loans in the same cohort.
  * @params         fromDate - Earliest originationDate in the cohort, as an
- *                     ISO date string. Set it one month before the
+ *                     ISO date string, read as midnight UTC. Set it one month before the
  *                     earliest Payment.dueDate in the database, so every
  *                     loan counted has its first payments recorded.
  *                 months - Length of the early window after origination.
@@ -528,7 +528,7 @@ ORDER BY personId, exposedLoan
  *                 loans each (38.9% against 15.8%).
  */
 MATCH (o:LoanOfficer)<-[:HANDLED_BY]-(:LoanApplication)-[:RESULTED_IN]->(l:Loan)
-WHERE l.originationDate >= date($fromDate)
+WHERE l.originationDate >= datetime($fromDate)
 WITH o, l, COUNT {
   (l)-[:HAS_PAYMENT]->(p:Payment)
   WHERE p.dueDate < l.originationDate + duration({months: $months})

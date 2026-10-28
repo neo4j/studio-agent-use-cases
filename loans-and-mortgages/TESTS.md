@@ -8,7 +8,8 @@ What each query in `QUERIES.md` should return on the bundled sample data. This f
 2. Import the CSVs in `sample-data/` through the Import flow, using `ONTOLOGY.json` as the import definition. This also creates the node-key constraints.
 3. No `SETUP.md` statements are needed.
 4. Run each query in `QUERIES.md` with the parameters given in its section below, and compare the result with the Invariant first and the Expected values second.
-5. Empty CSV cells (`propertyId` on unsecured loans, `paidDate` and `daysLate` on missed payments, `occupancy`, `lienPosition`, `ltvAtOrigination` and `denialReason` where they do not apply) are expected to import as absent properties, and an empty `propertyId` creates no `SECURED_BY`. If the import instead writes empty strings, the type conversions fail first — check that before reading any query result.
+5. Every date column holds an ISO 8601 zoned datetime at midnight UTC (`2025-10-08T00:00:00Z`) and imports as `ZONED DATETIME`: Import does not accept `DATE` for local CSV files and flags such a property "Not supported in local imports". The queries display dates with `date()`, so the values below are written as plain dates.
+6. Empty CSV cells (`propertyId` on unsecured loans, `paidDate` and `daysLate` on missed payments, `occupancy`, `lienPosition`, `ltvAtOrigination` and `denialReason` where they do not apply) are expected to import as absent properties, and an empty `propertyId` creates no `SECURED_BY`. If the import instead writes empty strings, the type conversions fail first — check that before reading any query result.
 
 ## Sample-data profile
 
@@ -72,6 +73,7 @@ Synthetic US consumer-lending portfolio in the Midwest: four lenders, two of whi
 - `minMissed = 2` is the conventional 30-plus-day delinquency mark. On this sample any value of 2 separates the delinquent and defaulted loans from the near-miss current loans exactly, because the generator only ever misses consecutive installments up to the snapshot.
 - The `maxCltv = 90` start comes from typical home-equity policy limits (80–90%). The seed-B combined LTVs were deliberately placed just under 90 so that the ceiling has something to reject.
 - The appraisal-jump thresholds (20%, 12 months) came from the domain; the background was then generated so that ordinary appreciation stays below them.
+- Dates were first typed `DATE` and were changed to `ZONED DATETIME` after Import rejected them for local CSV files; the data itself did not change, only the `T00:00:00Z` suffix was added. Keep the suffix if you regenerate.
 - `minLoans = 5` and `minRatio = 2.0` have no strong prior, and the `@params` text says so. On this sample any `minRatio` above 1.27 and up to 2.46 returns the two seeded officers, as does any `minLoans` from 4 to 18.
 
 ## Loan overview

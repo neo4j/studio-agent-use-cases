@@ -37,7 +37,7 @@ Everything surfaced this way is a lead for a credit or fraud analyst, not a deci
 
 The reference ontology follows a loan from application to repayment. A **person** applies for a **loan product** through an **application** handled by a **loan officer**; an approved application becomes a **loan**, made by one **financial institution** and serviced by another or the same one. Mortgages and home equity loans are secured on a **property**, which is valued by **appraisals** over time. Each loan's repayment record is a series of **payments**. Roles such as borrower, guarantor, lender and servicer are connections, not separate kinds of thing, so one person or institution carries all of its roles at once.
 
-Conventions throughout: amounts are in US dollars, and rates and ratios are percentages, so 80 means 80%.
+Conventions throughout: amounts are in US dollars; rates and ratios are percentages, so 80 means 80%; and dates are held as datetimes at midnight UTC, where only the calendar date matters.
 
 ### Entities
 
@@ -60,7 +60,7 @@ Conventions throughout: amounts are in US dollars, and rates and ratios are perc
 | `Person` | `personId` | String | Unique identifier for the person, after duplicate identities have been resolved |
 | `Person` | `name` | String | Full name as recorded on applications |
 | `LoanApplication` | `applicationId` | String | Unique identifier for the application |
-| `LoanApplication` | `applicationDate` | Date | Date the application was signed and submitted |
+| `LoanApplication` | `applicationDate` | Datetime | Date the application was signed and submitted |
 | `LoanApplication` | `requestedAmount` | Float | Amount the applicants asked to borrow |
 | `LoanApplication` | `loanPurpose` | String | What the funds are for: real property purchase, loan refinancing, home improvement, dwelling construction, business or commercial, mortgage modification, or personal expenditure |
 | `LoanApplication` | `occupancy` | String | How the property will be used — primary residence, second home or investment; blank when no property is involved |
@@ -68,7 +68,7 @@ Conventions throughout: amounts are in US dollars, and rates and ratios are perc
 | `LoanApplication` | `monthlyIncome` | Float | Gross monthly qualifying income of all applicants combined |
 | `LoanApplication` | `dtiRatio` | Float | Debt-to-income ratio: all monthly debt payments, including the new loan, as a percentage of gross monthly income |
 | `LoanApplication` | `disposition` | String | Outcome in US mortgage-reporting (HMDA) terms: loan originated, approved but not accepted, denied, withdrawn, file closed for incompleteness, loan purchased, or a preapproval outcome |
-| `LoanApplication` | `dispositionDate` | Date | Date of the outcome; for an originated loan, the closing date |
+| `LoanApplication` | `dispositionDate` | Datetime | Date of the outcome; for an originated loan, the closing date |
 | `LoanApplication` | `denialReason` | String | Main reason for a denial, such as debt-to-income ratio, insufficient credit history or insufficient collateral value; blank unless denied |
 | `LoanProduct` | `productId` | String | Unique identifier for the product |
 | `LoanProduct` | `name` | String | Product name as marketed |
@@ -80,12 +80,12 @@ Conventions throughout: amounts are in US dollars, and rates and ratios are perc
 | `Loan` | `loanId` | String | Unique identifier for the loan |
 | `Loan` | `principalAmount` | Float | Amount advanced at origination |
 | `Loan` | `interestRate` | Float | Annual note rate at origination, as a percentage; the initial rate for adjustable loans |
-| `Loan` | `originationDate` | Date | Date the loan closed and funds were advanced |
-| `Loan` | `maturityDate` | Date | Date the final scheduled payment is due |
+| `Loan` | `originationDate` | Datetime | Date the loan closed and funds were advanced |
+| `Loan` | `maturityDate` | Datetime | Date the final scheduled payment is due |
 | `Loan` | `lienPosition` | String | Whether the lender has first claim on the property (primary) or stands behind another lien (subordinate); blank when unsecured |
 | `Loan` | `ltvAtOrigination` | Float | Loan-to-value at origination: this loan's principal as a percentage of the property's appraised value, ignoring other liens |
 | `Loan` | `currentBalance` | Float | Outstanding principal at the snapshot date; zero once paid in full |
-| `Loan` | `balanceAsOfDate` | Date | Date the balance and status were reported |
+| `Loan` | `balanceAsOfDate` | Datetime | Date the balance and status were reported |
 | `Loan` | `status` | String | Current (under 30 days past due), delinquent (30–89 days), in default (90 days or more), or paid in full |
 | `Property` | `propertyId` | String | Unique identifier for the property |
 | `Property` | `address` | String | Street address |
@@ -95,13 +95,13 @@ Conventions throughout: amounts are in US dollars, and rates and ratios are perc
 | `Property` | `constructionType` | String | How the dwelling was built: site built, manufactured, modular, on-frame modular or mobile home |
 | `Property` | `dwellingUnits` | Integer | Number of separate homes in the building; 1 for a single-family house |
 | `Appraisal` | `appraisalId` | String | Unique identifier for the appraisal |
-| `Appraisal` | `appraisalDate` | Date | Date the value was established |
+| `Appraisal` | `appraisalDate` | Datetime | Date the value was established |
 | `Appraisal` | `appraisedValue` | Float | Market value of the whole property on that date |
 | `Payment` | `paymentId` | String | Unique identifier for the installment |
-| `Payment` | `dueDate` | Date | Date the installment was due |
+| `Payment` | `dueDate` | Datetime | Date the installment was due |
 | `Payment` | `amountDue` | Float | Scheduled principal and interest |
 | `Payment` | `amountPaid` | Float | Amount actually paid; zero for a missed installment |
-| `Payment` | `paidDate` | Date | Date payment was received; blank when nothing was paid |
+| `Payment` | `paidDate` | Datetime | Date payment was received; blank when nothing was paid |
 | `Payment` | `daysLate` | Integer | Days between due date and payment; zero when on time, blank when unpaid |
 | `FinancialInstitution` | `institutionId` | String | Unique identifier for the institution |
 | `FinancialInstitution` | `name` | String | Legal or trading name |
