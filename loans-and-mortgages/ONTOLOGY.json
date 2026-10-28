@@ -1,0 +1,873 @@
+{
+  "schema": "https://neo4j.com/docs/ontology-graph-spec/1.0.0/schema.json",
+  "id": "loans-and-mortgages",
+  "version": "1",
+  "name": "Loans and Mortgages",
+  "description": "A pragmatic reading of the FIBO Loans (LOAN) domain for consumer lending in the US: applicants and their applications, the products applied for, funded loans with their lenders, servicers, originating officers and payment histories, and the residential properties and appraisals that secure mortgages and home equity lending. Answers portfolio, delinquency and origination-quality questions, combined loan-to-value across stacked liens, rapid re-appraisal of collateral, and how far one borrower's default reaches through the loans they co-borrow or guarantee. Adapted from FIBO (Financial Industry Business Ontology), LOAN domain, https://github.com/edmcouncil/fibo, Copyright (c) 2015-2026 EDM Council, Inc. and Copyright (c) 2015-2025 Object Management Group, Inc., used under the MIT License (https://opensource.org/licenses/MIT). A simplification for demonstration, not FIBO itself, and not endorsed by the EDM Council.",
+  "nodes": {
+    "Person": {
+      "label": "Person",
+      "description": "A natural person who applies for, borrows on, or guarantees loans. Borrower, co-borrower, applicant and guarantor are roles a person plays, carried by relationships rather than by separate labels, so one person's whole position across the portfolio is a single node.",
+      "aliases": ["Individual", "Party", "Customer"],
+      "properties": {
+        "personId": {
+          "type": "STRING",
+          "description": "Unique identifier for the person across the portfolio. Identity is expected to be resolved before import, so one real person is one node. e.g. `P-0002`.",
+          "key": true
+        },
+        "name": {
+          "type": "STRING",
+          "description": "The person's full name as recorded on their applications. e.g. `Patricia Hughes`."
+        }
+      },
+      "extensions": {"display": {"x": -300, "y": 100}}
+    },
+    "LoanApplication": {
+      "label": "LoanApplication",
+      "description": "A request by one or more applicants to a lender to borrow money, carrying the information used to decide it and the outcome. Every originated loan comes from exactly one application; applications that are denied, withdrawn or closed lead to no loan.",
+      "aliases": ["Credit application", "Mortgage application"],
+      "reference": "https://spec.edmcouncil.org/fibo/ontology/LOAN/LoansGeneral/LoanApplications/LoanApplication",
+      "properties": {
+        "applicationId": {
+          "type": "STRING",
+          "description": "Unique identifier for the application. e.g. `A-00002`.",
+          "key": true
+        },
+        "applicationDate": {
+          "type": "ZONED DATETIME",
+          "description": "Calendar date the application was signed and submitted, as an ISO 8601 zoned datetime at midnight UTC; only the calendar date carries meaning. e.g. `2024-10-04T00:00:00Z`.",
+          "must_exist": true
+        },
+        "requestedAmount": {
+          "type": "FLOAT",
+          "description": "Amount the applicants asked to borrow, in US dollars. For an originated loan the principal may differ slightly from the request. e.g. `311800.00`."
+        },
+        "loanPurpose": {
+          "type": "STRING",
+          "description": "What the borrowed funds are for, using FIBO's mortgage loan purposes plus `personal expenditure` for consumer loans that are not secured on real property. e.g. `loan refinancing`.",
+          "one_of": [
+            "real property purchase",
+            "loan refinancing",
+            "home improvement",
+            "dwelling construction",
+            "business or commercial",
+            "mortgage modification",
+            "personal expenditure"
+          ]
+        },
+        "occupancy": {
+          "type": "STRING",
+          "description": "How the applicants intend to use the property securing the loan (FIBO property usage). Empty for applications with no property, such as unsecured personal loans. e.g. `primary residence`.",
+          "one_of": ["primary residence", "second home", "investment"]
+        },
+        "creditScore": {
+          "type": "INTEGER",
+          "description": "FICO-style credit score of the primary applicant at the time of application, on the 300-850 scale; higher is lower risk. A point-in-time value, not a current score. e.g. `742`."
+        },
+        "monthlyIncome": {
+          "type": "FLOAT",
+          "description": "Gross monthly qualifying income of all applicants combined, in US dollars, as relied on for the credit decision (FIBO all borrowers' monthly income). e.g. `7910.00`."
+        },
+        "dtiRatio": {
+          "type": "FLOAT",
+          "description": "Debt-to-income (DTI) ratio at application: all applicants' monthly debt payments, including the proposed loan, as a percentage of their gross monthly income. A percentage, so 36.5 means 36.5%. e.g. `36.50`.",
+          "aliases": ["Debt-to-income ratio", "DTI", "Total debt expense ratio"],
+          "reference": "https://spec.edmcouncil.org/fibo/ontology/LOAN/LoansGeneral/LoanApplications/TotalDebtExpenseRatio"
+        },
+        "disposition": {
+          "type": "STRING",
+          "description": "The action taken on the application, using the HMDA disposition categories (also called action taken). Only `loan originated` leads to a loan. e.g. `loan originated`.",
+          "one_of": [
+            "loan originated",
+            "application approved but not accepted",
+            "application denied",
+            "application withdrawn",
+            "file closed for incompleteness",
+            "loan purchased by your institution",
+            "preapproval request denied",
+            "preapproval request approved but not accepted"
+          ],
+          "aliases": ["Action taken"],
+          "must_exist": true,
+          "reference": "https://spec.edmcouncil.org/fibo/ontology/LOAN/RealEstateLoans/HomeMortgageDisclosureActCoveredMortgages/HMDA-Disposition"
+        },
+        "dispositionDate": {
+          "type": "ZONED DATETIME",
+          "description": "Calendar date the disposition was made, as an ISO 8601 zoned datetime at midnight UTC; only the calendar date carries meaning. For an originated loan it is the origination (closing) date. e.g. `2024-12-05T00:00:00Z`."
+        },
+        "denialReason": {
+          "type": "STRING",
+          "description": "Primary reason for a denial, using FIBO's denial reasons plus HMDA's `debt-to-income ratio` and `other`. One reason per application; empty unless the disposition is a denial. e.g. `debt-to-income ratio`.",
+          "one_of": [
+            "debt-to-income ratio",
+            "insufficient credit history",
+            "insufficient income",
+            "insufficient cash",
+            "insufficient employment history",
+            "insufficient collateral value",
+            "unverifiable information",
+            "credit application incomplete",
+            "mortgage insurance denied",
+            "other"
+          ]
+        }
+      },
+      "extensions": {"display": {"x": -300, "y": -250}}
+    },
+    "LoanProduct": {
+      "label": "LoanProduct",
+      "description": "A loan product a lender offers, with fixed characteristics and terms that every loan written under it shares: market, open- or closed-end credit, amortization, term and whether it is secured.",
+      "aliases": ["Credit product", "Loan program"],
+      "reference": "https://spec.edmcouncil.org/fibo/ontology/LOAN/LoansSpecific/LoanProducts/LoanProduct",
+      "properties": {
+        "productId": {
+          "type": "STRING",
+          "description": "Unique identifier for the product. e.g. `LP-02`.",
+          "key": true
+        },
+        "name": {
+          "type": "STRING",
+          "description": "The product's name as marketed. e.g. `15-year fixed-rate mortgage`."
+        },
+        "marketCategory": {
+          "type": "STRING",
+          "description": "Market in which the product is offered, using FIBO's loan market categories. Home equity products secured on a home are `mortgage loan`. e.g. `mortgage loan`.",
+          "one_of": [
+            "auto loan",
+            "commercial loan",
+            "construction loan",
+            "education loan",
+            "mortgage loan",
+            "personal loan",
+            "small business loan"
+          ]
+        },
+        "creditType": {
+          "type": "STRING",
+          "description": "Whether the principal is fixed once the loan closes (`closed-end`) or can be drawn and repaid up to a credit limit (`open-end`, as in a home equity line of credit). e.g. `closed-end`.",
+          "one_of": ["closed-end", "open-end"]
+        },
+        "amortizationType": {
+          "type": "STRING",
+          "description": "How the interest rate and repayments behave over the term, using FIBO's amortization types. e.g. `fixed rate`.",
+          "one_of": [
+            "fixed rate",
+            "adjustable rate",
+            "graduated payment",
+            "graduated payment adjustable",
+            "growing equity",
+            "rate improvement",
+            "step"
+          ]
+        },
+        "termMonths": {
+          "type": "INTEGER",
+          "description": "Contractual term in months from the first scheduled payment to maturity. e.g. `180`."
+        },
+        "isSecured": {
+          "type": "BOOLEAN",
+          "description": "True when loans under the product are secured by collateral; here that collateral is always real property. e.g. `true`."
+        }
+      },
+      "extensions": {"display": {"x": -700, "y": -250}}
+    },
+    "Loan": {
+      "label": "Loan",
+      "description": "A funded loan: the credit agreement and its servicing account folded into one node. It carries the contractual terms set at origination and a servicer snapshot of balance and status as of one date. A loan is a mortgage when it is secured by a property.",
+      "aliases": ["Credit agreement", "Loan account"],
+      "reference": "https://spec.edmcouncil.org/fibo/ontology/LOAN/LoansGeneral/Loans/Loan",
+      "properties": {
+        "loanId": {
+          "type": "STRING",
+          "description": "Unique identifier for the loan. e.g. `L-00002`.",
+          "key": true
+        },
+        "principalAmount": {
+          "type": "FLOAT",
+          "description": "Original principal advanced at origination, in US dollars. For an open-end line, the amount drawn at origination. e.g. `311800.00`.",
+          "must_exist": true
+        },
+        "interestRate": {
+          "type": "FLOAT",
+          "description": "Annual note interest rate at origination, as a percentage, so 6.25 means 6.25% a year. For adjustable-rate products, the initial rate. e.g. `6.750`."
+        },
+        "originationDate": {
+          "type": "ZONED DATETIME",
+          "description": "Calendar date the loan closed and funds were advanced, as an ISO 8601 zoned datetime at midnight UTC; only the calendar date carries meaning. The first payment is due on the first day of the second month after it. e.g. `2024-12-05T00:00:00Z`.",
+          "must_exist": true
+        },
+        "maturityDate": {
+          "type": "ZONED DATETIME",
+          "description": "Calendar date the final scheduled payment is due, as an ISO 8601 zoned datetime at midnight UTC; only the calendar date carries meaning. e.g. `2055-01-01T00:00:00Z`."
+        },
+        "lienPosition": {
+          "type": "STRING",
+          "description": "The lender's claim on the securing property relative to other liens, using FIBO's lender lien positions: first claim (`primary lien position`) or behind another lien (`subordinate lien position`). Empty for unsecured loans. e.g. `primary lien position`.",
+          "one_of": ["primary lien position", "subordinate lien position"],
+          "reference": "https://spec.edmcouncil.org/fibo/ontology/LOAN/LoansGeneral/Loans/LenderLienPosition"
+        },
+        "ltvAtOrigination": {
+          "type": "FLOAT",
+          "description": "Loan-to-value (LTV) ratio at origination: this loan's principal as a percentage of the appraised value relied on at origination, so 80 means 80%. This loan alone, not combined with other liens. Empty for unsecured loans. e.g. `64.02`.",
+          "aliases": ["Loan-to-value ratio", "LTV"],
+          "reference": "https://spec.edmcouncil.org/fibo/ontology/LOAN/LoansGeneral/Loans/LoanToValueRatio"
+        },
+        "currentBalance": {
+          "type": "FLOAT",
+          "description": "Outstanding principal in US dollars as of balanceAsOfDate; zero once paid in full. Unpaid interest and fees are not included. e.g. `306134.09`.",
+          "must_exist": true
+        },
+        "balanceAsOfDate": {
+          "type": "ZONED DATETIME",
+          "description": "Calendar date the servicer snapshot (currentBalance and status) was taken, as an ISO 8601 zoned datetime at midnight UTC; only the calendar date carries meaning. e.g. `2026-09-30T00:00:00Z`."
+        },
+        "status": {
+          "type": "STRING",
+          "description": "Servicer-reported status as of balanceAsOfDate, from the oldest unpaid scheduled payment: `current` (none, or under 30 days past due), `delinquent` (30-89 days past due), `in default` (90 days or more), or `paid in full`. e.g. `current`.",
+          "one_of": ["current", "delinquent", "in default", "paid in full"],
+          "must_exist": true
+        }
+      },
+      "extensions": {"display": {"x": 150, "y": -100}}
+    },
+    "Property": {
+      "label": "Property",
+      "description": "A parcel of residential real property pledged as collateral for one or more loans. Several loans, from different lenders and of different lien positions, can be secured on the same property.",
+      "aliases": ["Real property", "Collateral", "Subject property"],
+      "properties": {
+        "propertyId": {
+          "type": "STRING",
+          "description": "Unique identifier for the property. e.g. `PR-0002`.",
+          "key": true
+        },
+        "address": {
+          "type": "STRING",
+          "description": "Street address of the property. e.g. `4533 Garfield Dr`."
+        },
+        "city": {
+          "type": "STRING",
+          "description": "City in which the property lies. e.g. `Madison`."
+        },
+        "state": {
+          "type": "STRING",
+          "description": "US state, as its two-letter USPS code. e.g. `WI`.",
+          "pattern": "^[A-Z]{2}$"
+        },
+        "postalCode": {
+          "type": "STRING",
+          "description": "Five-digit US ZIP code, held as text to keep leading zeros. e.g. `53720`.",
+          "pattern": "^[0-9]{5}$",
+          "aliases": ["ZIP code"]
+        },
+        "constructionType": {
+          "type": "STRING",
+          "description": "How the dwelling was built, using FIBO's HMDA construction types. e.g. `site built`.",
+          "one_of": ["site built", "manufactured", "modular", "on frame modular", "mobile home"]
+        },
+        "dwellingUnits": {
+          "type": "INTEGER",
+          "description": "Number of separate dwelling units in the property; 1 for a single-family home, 2-4 for small multi-family. e.g. `1`."
+        }
+      },
+      "extensions": {"display": {"x": 150, "y": 300}}
+    },
+    "Appraisal": {
+      "label": "Appraisal",
+      "description": "A valuation of a property on one date, made when a loan or an application needed the property's value. A property gathers appraisals over time, and they need not agree; the most recent is the usual basis for combined loan-to-value.",
+      "aliases": ["Collateral valuation", "Valuation"],
+      "reference": "https://spec.edmcouncil.org/fibo/ontology/LOAN/LoansGeneral/LoanEvents/CollateralValuation",
+      "properties": {
+        "appraisalId": {
+          "type": "STRING",
+          "description": "Unique identifier for the appraisal. e.g. `AP-00003`.",
+          "key": true
+        },
+        "appraisalDate": {
+          "type": "ZONED DATETIME",
+          "description": "Calendar date the value was established (the effective date of the appraisal), as an ISO 8601 zoned datetime at midnight UTC; only the calendar date carries meaning. e.g. `2017-09-14T00:00:00Z`.",
+          "must_exist": true
+        },
+        "appraisedValue": {
+          "type": "FLOAT",
+          "description": "Market value of the whole property on appraisalDate, in US dollars. e.g. `186500.00`.",
+          "must_exist": true
+        }
+      },
+      "extensions": {"display": {"x": 600, "y": 300}}
+    },
+    "Payment": {
+      "label": "Payment",
+      "description": "One scheduled monthly installment on a loan and what was actually paid against it. Together a loan's payments form its payment history; a missed installment is still a payment record, with nothing paid.",
+      "aliases": ["Installment", "Loan payment"],
+      "reference": "https://spec.edmcouncil.org/fibo/ontology/LOAN/LoansGeneral/Loans/IndividualPaymentTransaction",
+      "properties": {
+        "paymentId": {
+          "type": "STRING",
+          "description": "Unique identifier for the scheduled payment. e.g. `PM-000001`.",
+          "key": true
+        },
+        "dueDate": {
+          "type": "ZONED DATETIME",
+          "description": "Calendar date the installment was due, as an ISO 8601 zoned datetime at midnight UTC; only the calendar date carries meaning. e.g. `2025-10-01T00:00:00Z`.",
+          "must_exist": true
+        },
+        "amountDue": {
+          "type": "FLOAT",
+          "description": "Scheduled installment of principal and interest, in US dollars. e.g. `2022.33`.",
+          "must_exist": true
+        },
+        "amountPaid": {
+          "type": "FLOAT",
+          "description": "Amount actually paid against this installment, in US dollars. Zero for a missed installment; less than amountDue for a partial payment. e.g. `2022.33`.",
+          "must_exist": true
+        },
+        "paidDate": {
+          "type": "ZONED DATETIME",
+          "description": "Calendar date the payment was received, as an ISO 8601 zoned datetime at midnight UTC; only the calendar date carries meaning. Empty when nothing has been paid. e.g. `2025-10-06T00:00:00Z`."
+        },
+        "daysLate": {
+          "type": "INTEGER",
+          "description": "Days from dueDate to paidDate; 0 when paid on or before the due date, empty when nothing has been paid. e.g. `5`."
+        }
+      },
+      "extensions": {"display": {"x": 600, "y": -100}}
+    },
+    "FinancialInstitution": {
+      "label": "FinancialInstitution",
+      "description": "A lending institution or loan servicer. Lender and servicer are roles carried by relationships: one institution can lend, service, or both, and a lender's loans may be serviced elsewhere.",
+      "aliases": ["Lender", "Servicer", "Financial service provider"],
+      "properties": {
+        "institutionId": {
+          "type": "STRING",
+          "description": "Unique identifier for the institution. e.g. `FI-02`.",
+          "key": true
+        },
+        "name": {
+          "type": "STRING",
+          "description": "The institution's legal or trading name. e.g. `Prairie State Credit Union`."
+        },
+        "lei": {
+          "type": "STRING",
+          "description": "ISO 17442 Legal Entity Identifier: 18 alphanumeric characters and two check digits. e.g. `NDDV00FNCFM5D8WJJJ14`.",
+          "pattern": "^[A-Z0-9]{18}[0-9]{2}$",
+          "aliases": ["Legal Entity Identifier"]
+        }
+      },
+      "extensions": {"display": {"x": 350, "y": -500}}
+    },
+    "LoanOfficer": {
+      "label": "LoanOfficer",
+      "description": "An individual loan originator who takes and handles applications on behalf of the institution employing them.",
+      "aliases": ["Mortgage loan originator", "Loan originator"],
+      "properties": {
+        "officerId": {
+          "type": "STRING",
+          "description": "Unique identifier for the loan officer within the portfolio. e.g. `LO-005`.",
+          "key": true
+        },
+        "name": {
+          "type": "STRING",
+          "description": "The loan officer's full name. e.g. `Matthew Kim`."
+        },
+        "nmlsId": {
+          "type": "STRING",
+          "description": "Identifier permanently assigned to the individual by the Nationwide Mortgage Licensing System and Registry (NMLSR ID). Numeric, held as text. e.g. `1778379`.",
+          "aliases": ["NMLSR ID", "NMLS ID"],
+          "reference": "https://spec.edmcouncil.org/fibo/ontology/LOAN/RealEstateLoans/MortgageOrigination/NMLSR-ID"
+        }
+      },
+      "extensions": {"display": {"x": -300, "y": -500}}
+    }
+  },
+  "relationships": {
+    "appliedFor": {
+      "type": "APPLIED_FOR",
+      "description": "Records that the person is a party to the application. Every application has at least one applicant; a person may make many applications, or none.",
+      "from": {"node": "Person"},
+      "to": {"node": "LoanApplication", "min_count": 1},
+      "properties": {
+        "applicantRole": {
+          "type": "STRING",
+          "description": "The person's role on the application, as in HMDA reporting: the main `applicant` or a `co-applicant`. Expected to be exactly one `applicant` per application. e.g. `applicant`.",
+          "one_of": ["applicant", "co-applicant"]
+        }
+      }
+    },
+    "forProduct": {
+      "type": "FOR_PRODUCT",
+      "description": "Records the product the application is for. Exactly one product per application; a product may have many applications, or none. The loan an application results in is written under this product.",
+      "from": {"node": "LoanApplication", "count": 1},
+      "to": {"node": "LoanProduct"}
+    },
+    "handledBy": {
+      "type": "HANDLED_BY",
+      "description": "Records the loan officer who took and handled the application, and so originated any loan it results in. At most one officer per application; an officer may handle many applications, or none.",
+      "aliases": ["Originated by"],
+      "from": {"node": "LoanApplication", "max_count": 1},
+      "to": {"node": "LoanOfficer"}
+    },
+    "resultedIn": {
+      "type": "RESULTED_IN",
+      "description": "Links an application to the loan originated from it. Every loan results from exactly one application; an application results in at most one loan, and only when its disposition is `loan originated`.",
+      "from": {"node": "LoanApplication", "max_count": 1},
+      "to": {"node": "Loan", "count": 1}
+    },
+    "borrowerOn": {
+      "type": "BORROWER_ON",
+      "description": "Records that the person is a borrower on the loan and liable for repaying it. Every loan has at least one borrower; a person may borrow on many loans, or none. Co-borrowers are treated as jointly and severally liable, so each is exposed to the full balance.",
+      "aliases": ["Obligor on"],
+      "from": {"node": "Person"},
+      "to": {"node": "Loan", "min_count": 1},
+      "properties": {
+        "borrowerRole": {
+          "type": "STRING",
+          "description": "The person's role on the loan: the `primary borrower` or a `co-borrower`. Expected to be exactly one `primary borrower` per loan. e.g. `co-borrower`.",
+          "one_of": ["primary borrower", "co-borrower"]
+        }
+      }
+    },
+    "guarantees": {
+      "type": "GUARANTEES",
+      "description": "Records that the person guarantees repayment of the loan if its borrowers do not pay. Taken as a guarantee of the full outstanding balance; partial or capped guarantees are not distinguished. A loan may have several guarantors, or none; a person may guarantee many loans, or none.",
+      "aliases": ["Guaranty", "Surety"],
+      "from": {"node": "Person"},
+      "to": {"node": "Loan"}
+    },
+    "lentBy": {
+      "type": "LENT_BY",
+      "description": "Records the institution that made the loan and holds the credit agreement. Exactly one lender per loan; an institution may lend on many loans, or none.",
+      "from": {"node": "Loan", "count": 1},
+      "to": {"node": "FinancialInstitution"}
+    },
+    "servicedBy": {
+      "type": "SERVICED_BY",
+      "description": "Records the institution that services the loan, collecting payments and managing delinquency on the lender's behalf. Exactly one servicer per loan, which may be the lender itself; an institution may service many loans, or none.",
+      "from": {"node": "Loan", "count": 1},
+      "to": {"node": "FinancialInstitution"}
+    },
+    "employedBy": {
+      "type": "EMPLOYED_BY",
+      "description": "Records the institution the loan officer currently originates for. Exactly one institution per officer; an institution may employ many officers, or none. Represents current employment, not a history.",
+      "from": {"node": "LoanOfficer", "count": 1},
+      "to": {"node": "FinancialInstitution"}
+    },
+    "securedBy": {
+      "type": "SECURED_BY",
+      "description": "Records that the loan is secured by a lien on the property, in the position given by the loan's lienPosition. At most one property per loan, and none for an unsecured loan; a property may secure several loans at once, which is what makes combined loan-to-value a property-level measure.",
+      "aliases": ["Collateralized by", "Lien on"],
+      "reference": "https://spec.edmcouncil.org/fibo/ontology/LOAN/RealEstateLoans/Mortgages/LoanSecuredByRealEstate",
+      "from": {"node": "Loan", "max_count": 1},
+      "to": {"node": "Property"}
+    },
+    "values": {
+      "type": "VALUES",
+      "description": "Records that the appraisal established a value for the property. Exactly one property per appraisal; a property may have many appraisals over time, or none.",
+      "from": {"node": "Appraisal", "count": 1},
+      "to": {"node": "Property"}
+    },
+    "hasPayment": {
+      "type": "HAS_PAYMENT",
+      "description": "Links a loan to one of its scheduled payments, forming its payment history. Every payment belongs to exactly one loan; a loan has one payment per scheduled installment in the period covered, and none before its first due date.",
+      "from": {"node": "Loan"},
+      "to": {"node": "Payment", "count": 1}
+    }
+  },
+  "extensions": {
+    "data_source_tables": {
+      "persons.csv": {
+        "source": "local",
+        "columns": [{"name": "personId", "type": "string"}, {"name": "name", "type": "string"}]
+      },
+      "financial_institutions.csv": {
+        "source": "local",
+        "columns": [
+          {"name": "institutionId", "type": "string"},
+          {"name": "name", "type": "string"},
+          {"name": "lei", "type": "string"}
+        ]
+      },
+      "loan_officers.csv": {
+        "source": "local",
+        "columns": [
+          {"name": "officerId", "type": "string"},
+          {"name": "name", "type": "string"},
+          {"name": "nmlsId", "type": "string"},
+          {"name": "institutionId", "type": "string"}
+        ]
+      },
+      "loan_products.csv": {
+        "source": "local",
+        "columns": [
+          {"name": "productId", "type": "string"},
+          {"name": "name", "type": "string"},
+          {"name": "marketCategory", "type": "string"},
+          {"name": "creditType", "type": "string"},
+          {"name": "amortizationType", "type": "string"},
+          {"name": "termMonths", "type": "string"},
+          {"name": "isSecured", "type": "string"}
+        ]
+      },
+      "loan_applications.csv": {
+        "source": "local",
+        "columns": [
+          {"name": "applicationId", "type": "string"},
+          {"name": "productId", "type": "string"},
+          {"name": "officerId", "type": "string"},
+          {"name": "applicationDate", "type": "string"},
+          {"name": "requestedAmount", "type": "string"},
+          {"name": "loanPurpose", "type": "string"},
+          {"name": "occupancy", "type": "string"},
+          {"name": "creditScore", "type": "string"},
+          {"name": "monthlyIncome", "type": "string"},
+          {"name": "dtiRatio", "type": "string"},
+          {"name": "disposition", "type": "string"},
+          {"name": "dispositionDate", "type": "string"},
+          {"name": "denialReason", "type": "string"}
+        ]
+      },
+      "applicants.csv": {
+        "source": "local",
+        "columns": [
+          {"name": "personId", "type": "string"},
+          {"name": "applicationId", "type": "string"},
+          {"name": "applicantRole", "type": "string"}
+        ]
+      },
+      "loans.csv": {
+        "source": "local",
+        "columns": [
+          {"name": "loanId", "type": "string"},
+          {"name": "applicationId", "type": "string"},
+          {"name": "lenderId", "type": "string"},
+          {"name": "servicerId", "type": "string"},
+          {"name": "propertyId", "type": "string"},
+          {"name": "principalAmount", "type": "string"},
+          {"name": "interestRate", "type": "string"},
+          {"name": "originationDate", "type": "string"},
+          {"name": "maturityDate", "type": "string"},
+          {"name": "lienPosition", "type": "string"},
+          {"name": "ltvAtOrigination", "type": "string"},
+          {"name": "currentBalance", "type": "string"},
+          {"name": "balanceAsOfDate", "type": "string"},
+          {"name": "status", "type": "string"}
+        ]
+      },
+      "borrowers.csv": {
+        "source": "local",
+        "columns": [
+          {"name": "personId", "type": "string"},
+          {"name": "loanId", "type": "string"},
+          {"name": "borrowerRole", "type": "string"}
+        ]
+      },
+      "guarantees.csv": {
+        "source": "local",
+        "columns": [{"name": "personId", "type": "string"}, {"name": "loanId", "type": "string"}]
+      },
+      "properties.csv": {
+        "source": "local",
+        "columns": [
+          {"name": "propertyId", "type": "string"},
+          {"name": "address", "type": "string"},
+          {"name": "city", "type": "string"},
+          {"name": "state", "type": "string"},
+          {"name": "postalCode", "type": "string"},
+          {"name": "constructionType", "type": "string"},
+          {"name": "dwellingUnits", "type": "string"}
+        ]
+      },
+      "appraisals.csv": {
+        "source": "local",
+        "columns": [
+          {"name": "appraisalId", "type": "string"},
+          {"name": "propertyId", "type": "string"},
+          {"name": "appraisalDate", "type": "string"},
+          {"name": "appraisedValue", "type": "string"}
+        ]
+      },
+      "payments.csv": {
+        "source": "local",
+        "columns": [
+          {"name": "paymentId", "type": "string"},
+          {"name": "loanId", "type": "string"},
+          {"name": "dueDate", "type": "string"},
+          {"name": "amountDue", "type": "string"},
+          {"name": "amountPaid", "type": "string"},
+          {"name": "paidDate", "type": "string"},
+          {"name": "daysLate", "type": "string"}
+        ]
+      }
+    },
+    "data_source_mappings": {
+      "mapping0": [
+        {
+          "type": "NODE",
+          "node": "Person",
+          "table": "persons.csv",
+          "mode": "MERGE",
+          "key": ["personId"],
+          "properties": {"personId": {"column": "personId"}, "name": {"column": "name"}}
+        },
+        {
+          "type": "NODE",
+          "node": "FinancialInstitution",
+          "table": "financial_institutions.csv",
+          "mode": "MERGE",
+          "key": ["institutionId"],
+          "properties": {
+            "institutionId": {"column": "institutionId"},
+            "name": {"column": "name"},
+            "lei": {"column": "lei"}
+          }
+        },
+        {
+          "type": "NODE",
+          "node": "LoanOfficer",
+          "table": "loan_officers.csv",
+          "mode": "MERGE",
+          "key": ["officerId"],
+          "properties": {
+            "officerId": {"column": "officerId"},
+            "name": {"column": "name"},
+            "nmlsId": {"column": "nmlsId"}
+          }
+        },
+        {
+          "type": "NODE",
+          "node": "LoanProduct",
+          "table": "loan_products.csv",
+          "mode": "MERGE",
+          "key": ["productId"],
+          "properties": {
+            "productId": {"column": "productId"},
+            "name": {"column": "name"},
+            "marketCategory": {"column": "marketCategory"},
+            "creditType": {"column": "creditType"},
+            "amortizationType": {"column": "amortizationType"},
+            "termMonths": {"column": "termMonths"},
+            "isSecured": {"column": "isSecured"}
+          }
+        },
+        {
+          "type": "NODE",
+          "node": "LoanApplication",
+          "table": "loan_applications.csv",
+          "mode": "MERGE",
+          "key": ["applicationId"],
+          "properties": {
+            "applicationId": {"column": "applicationId"},
+            "applicationDate": {"column": "applicationDate"},
+            "requestedAmount": {"column": "requestedAmount"},
+            "loanPurpose": {"column": "loanPurpose"},
+            "occupancy": {"column": "occupancy"},
+            "creditScore": {"column": "creditScore"},
+            "monthlyIncome": {"column": "monthlyIncome"},
+            "dtiRatio": {"column": "dtiRatio"},
+            "disposition": {"column": "disposition"},
+            "dispositionDate": {"column": "dispositionDate"},
+            "denialReason": {"column": "denialReason"}
+          }
+        },
+        {
+          "type": "NODE",
+          "node": "Loan",
+          "table": "loans.csv",
+          "mode": "MERGE",
+          "key": ["loanId"],
+          "properties": {
+            "loanId": {"column": "loanId"},
+            "principalAmount": {"column": "principalAmount"},
+            "interestRate": {"column": "interestRate"},
+            "originationDate": {"column": "originationDate"},
+            "maturityDate": {"column": "maturityDate"},
+            "lienPosition": {"column": "lienPosition"},
+            "ltvAtOrigination": {"column": "ltvAtOrigination"},
+            "currentBalance": {"column": "currentBalance"},
+            "balanceAsOfDate": {"column": "balanceAsOfDate"},
+            "status": {"column": "status"}
+          }
+        },
+        {
+          "type": "NODE",
+          "node": "Property",
+          "table": "properties.csv",
+          "mode": "MERGE",
+          "key": ["propertyId"],
+          "properties": {
+            "propertyId": {"column": "propertyId"},
+            "address": {"column": "address"},
+            "city": {"column": "city"},
+            "state": {"column": "state"},
+            "postalCode": {"column": "postalCode"},
+            "constructionType": {"column": "constructionType"},
+            "dwellingUnits": {"column": "dwellingUnits"}
+          }
+        },
+        {
+          "type": "NODE",
+          "node": "Appraisal",
+          "table": "appraisals.csv",
+          "mode": "MERGE",
+          "key": ["appraisalId"],
+          "properties": {
+            "appraisalId": {"column": "appraisalId"},
+            "appraisalDate": {"column": "appraisalDate"},
+            "appraisedValue": {"column": "appraisedValue"}
+          }
+        },
+        {
+          "type": "NODE",
+          "node": "Payment",
+          "table": "payments.csv",
+          "mode": "MERGE",
+          "key": ["paymentId"],
+          "properties": {
+            "paymentId": {"column": "paymentId"},
+            "dueDate": {"column": "dueDate"},
+            "amountDue": {"column": "amountDue"},
+            "amountPaid": {"column": "amountPaid"},
+            "paidDate": {"column": "paidDate"},
+            "daysLate": {"column": "daysLate"}
+          }
+        },
+        {
+          "type": "RELATIONSHIP",
+          "relationship": "appliedFor",
+          "table": "applicants.csv",
+          "mode": "MERGE",
+          "key": [],
+          "from_node": {"label": "Person", "properties": {"personId": {"column": "personId"}}},
+          "to_node": {
+            "label": "LoanApplication",
+            "properties": {"applicationId": {"column": "applicationId"}}
+          },
+          "properties": {"applicantRole": {"column": "applicantRole"}}
+        },
+        {
+          "type": "RELATIONSHIP",
+          "relationship": "forProduct",
+          "table": "loan_applications.csv",
+          "mode": "MERGE",
+          "key": [],
+          "from_node": {
+            "label": "LoanApplication",
+            "properties": {"applicationId": {"column": "applicationId"}}
+          },
+          "to_node": {"label": "LoanProduct", "properties": {"productId": {"column": "productId"}}}
+        },
+        {
+          "type": "RELATIONSHIP",
+          "relationship": "handledBy",
+          "table": "loan_applications.csv",
+          "mode": "MERGE",
+          "key": [],
+          "from_node": {
+            "label": "LoanApplication",
+            "properties": {"applicationId": {"column": "applicationId"}}
+          },
+          "to_node": {"label": "LoanOfficer", "properties": {"officerId": {"column": "officerId"}}}
+        },
+        {
+          "type": "RELATIONSHIP",
+          "relationship": "resultedIn",
+          "table": "loans.csv",
+          "mode": "MERGE",
+          "key": [],
+          "from_node": {
+            "label": "LoanApplication",
+            "properties": {"applicationId": {"column": "applicationId"}}
+          },
+          "to_node": {"label": "Loan", "properties": {"loanId": {"column": "loanId"}}}
+        },
+        {
+          "type": "RELATIONSHIP",
+          "relationship": "borrowerOn",
+          "table": "borrowers.csv",
+          "mode": "MERGE",
+          "key": [],
+          "from_node": {"label": "Person", "properties": {"personId": {"column": "personId"}}},
+          "to_node": {"label": "Loan", "properties": {"loanId": {"column": "loanId"}}},
+          "properties": {"borrowerRole": {"column": "borrowerRole"}}
+        },
+        {
+          "type": "RELATIONSHIP",
+          "relationship": "guarantees",
+          "table": "guarantees.csv",
+          "mode": "MERGE",
+          "key": [],
+          "from_node": {"label": "Person", "properties": {"personId": {"column": "personId"}}},
+          "to_node": {"label": "Loan", "properties": {"loanId": {"column": "loanId"}}}
+        },
+        {
+          "type": "RELATIONSHIP",
+          "relationship": "lentBy",
+          "table": "loans.csv",
+          "mode": "MERGE",
+          "key": [],
+          "from_node": {"label": "Loan", "properties": {"loanId": {"column": "loanId"}}},
+          "to_node": {
+            "label": "FinancialInstitution",
+            "properties": {"institutionId": {"column": "lenderId"}}
+          }
+        },
+        {
+          "type": "RELATIONSHIP",
+          "relationship": "servicedBy",
+          "table": "loans.csv",
+          "mode": "MERGE",
+          "key": [],
+          "from_node": {"label": "Loan", "properties": {"loanId": {"column": "loanId"}}},
+          "to_node": {
+            "label": "FinancialInstitution",
+            "properties": {"institutionId": {"column": "servicerId"}}
+          }
+        },
+        {
+          "type": "RELATIONSHIP",
+          "relationship": "employedBy",
+          "table": "loan_officers.csv",
+          "mode": "MERGE",
+          "key": [],
+          "from_node": {
+            "label": "LoanOfficer",
+            "properties": {"officerId": {"column": "officerId"}}
+          },
+          "to_node": {
+            "label": "FinancialInstitution",
+            "properties": {"institutionId": {"column": "institutionId"}}
+          }
+        },
+        {
+          "type": "RELATIONSHIP",
+          "relationship": "securedBy",
+          "table": "loans.csv",
+          "mode": "MERGE",
+          "key": [],
+          "from_node": {"label": "Loan", "properties": {"loanId": {"column": "loanId"}}},
+          "to_node": {"label": "Property", "properties": {"propertyId": {"column": "propertyId"}}}
+        },
+        {
+          "type": "RELATIONSHIP",
+          "relationship": "values",
+          "table": "appraisals.csv",
+          "mode": "MERGE",
+          "key": [],
+          "from_node": {
+            "label": "Appraisal",
+            "properties": {"appraisalId": {"column": "appraisalId"}}
+          },
+          "to_node": {"label": "Property", "properties": {"propertyId": {"column": "propertyId"}}}
+        },
+        {
+          "type": "RELATIONSHIP",
+          "relationship": "hasPayment",
+          "table": "payments.csv",
+          "mode": "MERGE",
+          "key": [],
+          "from_node": {"label": "Loan", "properties": {"loanId": {"column": "loanId"}}},
+          "to_node": {"label": "Payment", "properties": {"paymentId": {"column": "paymentId"}}}
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,1062 @@
+personId,loanId,borrowerRole
+P-0001,L-00001,primary borrower
+P-0001,L-00002,primary borrower
+P-0002,L-00003,primary borrower
+P-0003,L-00003,co-borrower
+P-0002,L-00004,primary borrower
+P-0003,L-00004,co-borrower
+P-0004,L-00005,primary borrower
+P-0004,L-00006,primary borrower
+P-0005,L-00007,primary borrower
+P-0006,L-00007,co-borrower
+P-0007,L-00008,primary borrower
+P-0008,L-00008,co-borrower
+P-0007,L-00009,primary borrower
+P-0008,L-00009,co-borrower
+P-0009,L-00010,primary borrower
+P-0010,L-00011,primary borrower
+P-0010,L-00012,primary borrower
+P-0011,L-00013,primary borrower
+P-0012,L-00013,co-borrower
+P-0013,L-00014,primary borrower
+P-0014,L-00014,co-borrower
+P-0015,L-00015,primary borrower
+P-0016,L-00016,primary borrower
+P-0017,L-00016,co-borrower
+P-0018,L-00017,primary borrower
+P-0019,L-00017,co-borrower
+P-0020,L-00018,primary borrower
+P-0021,L-00018,co-borrower
+P-0020,L-00019,primary borrower
+P-0021,L-00019,co-borrower
+P-0022,L-00020,primary borrower
+P-0023,L-00020,co-borrower
+P-0022,L-00021,primary borrower
+P-0023,L-00021,co-borrower
+P-0024,L-00022,primary borrower
+P-0025,L-00022,co-borrower
+P-0026,L-00023,primary borrower
+P-0027,L-00023,co-borrower
+P-0028,L-00024,primary borrower
+P-0029,L-00024,co-borrower
+P-0028,L-00025,primary borrower
+P-0029,L-00025,co-borrower
+P-0030,L-00026,primary borrower
+P-0031,L-00026,co-borrower
+P-0032,L-00027,primary borrower
+P-0032,L-00028,primary borrower
+P-0033,L-00029,primary borrower
+P-0034,L-00030,primary borrower
+P-0035,L-00030,co-borrower
+P-0034,L-00031,primary borrower
+P-0035,L-00031,co-borrower
+P-0036,L-00032,primary borrower
+P-0037,L-00032,co-borrower
+P-0038,L-00033,primary borrower
+P-0039,L-00034,primary borrower
+P-0040,L-00035,primary borrower
+P-0041,L-00035,co-borrower
+P-0040,L-00036,primary borrower
+P-0041,L-00036,co-borrower
+P-0042,L-00037,primary borrower
+P-0043,L-00038,primary borrower
+P-0044,L-00039,primary borrower
+P-0045,L-00039,co-borrower
+P-0046,L-00040,primary borrower
+P-0047,L-00040,co-borrower
+P-0048,L-00041,primary borrower
+P-0049,L-00041,co-borrower
+P-0050,L-00042,primary borrower
+P-0051,L-00042,co-borrower
+P-0052,L-00043,primary borrower
+P-0052,L-00044,primary borrower
+P-0053,L-00045,primary borrower
+P-0054,L-00046,primary borrower
+P-0055,L-00046,co-borrower
+P-0056,L-00047,primary borrower
+P-0057,L-00047,co-borrower
+P-0056,L-00048,primary borrower
+P-0057,L-00048,co-borrower
+P-0058,L-00049,primary borrower
+P-0059,L-00050,primary borrower
+P-0059,L-00051,primary borrower
+P-0060,L-00052,primary borrower
+P-0061,L-00053,primary borrower
+P-0062,L-00053,co-borrower
+P-0063,L-00054,primary borrower
+P-0064,L-00054,co-borrower
+P-0065,L-00055,primary borrower
+P-0066,L-00055,co-borrower
+P-0067,L-00056,primary borrower
+P-0068,L-00057,primary borrower
+P-0068,L-00058,primary borrower
+P-0069,L-00059,primary borrower
+P-0070,L-00059,co-borrower
+P-0069,L-00060,primary borrower
+P-0070,L-00060,co-borrower
+P-0071,L-00061,primary borrower
+P-0072,L-00061,co-borrower
+P-0073,L-00062,primary borrower
+P-0074,L-00062,co-borrower
+P-0075,L-00063,primary borrower
+P-0076,L-00064,primary borrower
+P-0077,L-00064,co-borrower
+P-0076,L-00065,primary borrower
+P-0077,L-00065,co-borrower
+P-0078,L-00066,primary borrower
+P-0078,L-00067,primary borrower
+P-0079,L-00068,primary borrower
+P-0080,L-00069,primary borrower
+P-0081,L-00070,primary borrower
+P-0082,L-00070,co-borrower
+P-0081,L-00071,primary borrower
+P-0082,L-00071,co-borrower
+P-0083,L-00072,primary borrower
+P-0084,L-00072,co-borrower
+P-0085,L-00073,primary borrower
+P-0086,L-00073,co-borrower
+P-0087,L-00074,primary borrower
+P-0088,L-00075,primary borrower
+P-0089,L-00076,primary borrower
+P-0090,L-00076,co-borrower
+P-0091,L-00077,primary borrower
+P-0092,L-00078,primary borrower
+P-0093,L-00078,co-borrower
+P-0092,L-00079,primary borrower
+P-0093,L-00079,co-borrower
+P-0094,L-00080,primary borrower
+P-0095,L-00081,primary borrower
+P-0096,L-00082,primary borrower
+P-0097,L-00083,primary borrower
+P-0098,L-00084,primary borrower
+P-0099,L-00084,co-borrower
+P-0098,L-00085,primary borrower
+P-0099,L-00085,co-borrower
+P-0100,L-00086,primary borrower
+P-0101,L-00086,co-borrower
+P-0100,L-00087,primary borrower
+P-0101,L-00087,co-borrower
+P-0102,L-00088,primary borrower
+P-0103,L-00089,primary borrower
+P-0104,L-00089,co-borrower
+P-0105,L-00090,primary borrower
+P-0106,L-00090,co-borrower
+P-0107,L-00091,primary borrower
+P-0108,L-00091,co-borrower
+P-0109,L-00092,primary borrower
+P-0109,L-00093,primary borrower
+P-0110,L-00094,primary borrower
+P-0111,L-00094,co-borrower
+P-0110,L-00095,primary borrower
+P-0111,L-00095,co-borrower
+P-0112,L-00096,primary borrower
+P-0113,L-00096,co-borrower
+P-0112,L-00097,primary borrower
+P-0113,L-00097,co-borrower
+P-0114,L-00098,primary borrower
+P-0115,L-00098,co-borrower
+P-0116,L-00099,primary borrower
+P-0117,L-00099,co-borrower
+P-0118,L-00100,primary borrower
+P-0119,L-00101,primary borrower
+P-0119,L-00102,primary borrower
+P-0120,L-00103,primary borrower
+P-0121,L-00104,primary borrower
+P-0122,L-00105,primary borrower
+P-0123,L-00105,co-borrower
+P-0124,L-00106,primary borrower
+P-0125,L-00106,co-borrower
+P-0124,L-00107,primary borrower
+P-0125,L-00107,co-borrower
+P-0126,L-00108,primary borrower
+P-0127,L-00109,primary borrower
+P-0128,L-00110,primary borrower
+P-0129,L-00110,co-borrower
+P-0130,L-00111,primary borrower
+P-0131,L-00111,co-borrower
+P-0130,L-00112,primary borrower
+P-0131,L-00112,co-borrower
+P-0132,L-00113,primary borrower
+P-0133,L-00113,co-borrower
+P-0134,L-00114,primary borrower
+P-0135,L-00114,co-borrower
+P-0136,L-00115,primary borrower
+P-0137,L-00115,co-borrower
+P-0136,L-00116,primary borrower
+P-0137,L-00116,co-borrower
+P-0138,L-00117,primary borrower
+P-0139,L-00118,primary borrower
+P-0140,L-00118,co-borrower
+P-0141,L-00119,primary borrower
+P-0142,L-00120,primary borrower
+P-0143,L-00120,co-borrower
+P-0144,L-00121,primary borrower
+P-0145,L-00122,primary borrower
+P-0146,L-00122,co-borrower
+P-0147,L-00123,primary borrower
+P-0148,L-00123,co-borrower
+P-0149,L-00124,primary borrower
+P-0149,L-00125,primary borrower
+P-0150,L-00126,primary borrower
+P-0151,L-00127,primary borrower
+P-0152,L-00128,primary borrower
+P-0153,L-00129,primary borrower
+P-0154,L-00129,co-borrower
+P-0155,L-00130,primary borrower
+P-0156,L-00131,primary borrower
+P-0157,L-00131,co-borrower
+P-0158,L-00132,primary borrower
+P-0159,L-00133,primary borrower
+P-0160,L-00134,primary borrower
+P-0161,L-00134,co-borrower
+P-0162,L-00135,primary borrower
+P-0163,L-00135,co-borrower
+P-0164,L-00136,primary borrower
+P-0165,L-00137,primary borrower
+P-0166,L-00137,co-borrower
+P-0167,L-00138,primary borrower
+P-0168,L-00138,co-borrower
+P-0167,L-00139,primary borrower
+P-0168,L-00139,co-borrower
+P-0169,L-00140,primary borrower
+P-0170,L-00141,primary borrower
+P-0171,L-00141,co-borrower
+P-0172,L-00142,primary borrower
+P-0172,L-00143,primary borrower
+P-0173,L-00144,primary borrower
+P-0174,L-00144,co-borrower
+P-0175,L-00145,primary borrower
+P-0176,L-00145,co-borrower
+P-0177,L-00146,primary borrower
+P-0178,L-00146,co-borrower
+P-0179,L-00147,primary borrower
+P-0180,L-00148,primary borrower
+P-0181,L-00148,co-borrower
+P-0182,L-00149,primary borrower
+P-0182,L-00150,primary borrower
+P-0183,L-00151,primary borrower
+P-0184,L-00152,primary borrower
+P-0184,L-00153,primary borrower
+P-0185,L-00154,primary borrower
+P-0186,L-00154,co-borrower
+P-0187,L-00155,primary borrower
+P-0188,L-00156,primary borrower
+P-0189,L-00156,co-borrower
+P-0190,L-00157,primary borrower
+P-0191,L-00158,primary borrower
+P-0192,L-00158,co-borrower
+P-0193,L-00159,primary borrower
+P-0194,L-00160,primary borrower
+P-0194,L-00161,primary borrower
+P-0195,L-00162,primary borrower
+P-0196,L-00162,co-borrower
+P-0197,L-00163,primary borrower
+P-0198,L-00163,co-borrower
+P-0199,L-00164,primary borrower
+P-0200,L-00165,primary borrower
+P-0201,L-00166,primary borrower
+P-0201,L-00167,primary borrower
+P-0202,L-00168,primary borrower
+P-0203,L-00169,primary borrower
+P-0204,L-00169,co-borrower
+P-0205,L-00170,primary borrower
+P-0205,L-00171,primary borrower
+P-0206,L-00172,primary borrower
+P-0207,L-00173,primary borrower
+P-0208,L-00174,primary borrower
+P-0209,L-00174,co-borrower
+P-0210,L-00175,primary borrower
+P-0211,L-00175,co-borrower
+P-0210,L-00176,primary borrower
+P-0211,L-00176,co-borrower
+P-0212,L-00177,primary borrower
+P-0212,L-00178,primary borrower
+P-0213,L-00179,primary borrower
+P-0214,L-00179,co-borrower
+P-0215,L-00180,primary borrower
+P-0216,L-00180,co-borrower
+P-0217,L-00181,primary borrower
+P-0218,L-00182,primary borrower
+P-0219,L-00182,co-borrower
+P-0220,L-00183,primary borrower
+P-0221,L-00184,primary borrower
+P-0222,L-00184,co-borrower
+P-0223,L-00185,primary borrower
+P-0224,L-00185,co-borrower
+P-0225,L-00186,primary borrower
+P-0226,L-00187,primary borrower
+P-0227,L-00187,co-borrower
+P-0228,L-00188,primary borrower
+P-0229,L-00188,co-borrower
+P-0230,L-00189,primary borrower
+P-0231,L-00190,primary borrower
+P-0232,L-00191,primary borrower
+P-0233,L-00192,primary borrower
+P-0234,L-00193,primary borrower
+P-0235,L-00194,primary borrower
+P-0236,L-00194,co-borrower
+P-0237,L-00195,primary borrower
+P-0238,L-00195,co-borrower
+P-0239,L-00196,primary borrower
+P-0240,L-00197,primary borrower
+P-0240,L-00198,primary borrower
+P-0241,L-00199,primary borrower
+P-0242,L-00200,primary borrower
+P-0243,L-00200,co-borrower
+P-0244,L-00201,primary borrower
+P-0245,L-00201,co-borrower
+P-0244,L-00202,primary borrower
+P-0245,L-00202,co-borrower
+P-0246,L-00203,primary borrower
+P-0247,L-00203,co-borrower
+P-0246,L-00204,primary borrower
+P-0247,L-00204,co-borrower
+P-0248,L-00205,primary borrower
+P-0248,L-00206,primary borrower
+P-0249,L-00207,primary borrower
+P-0250,L-00207,co-borrower
+P-0249,L-00208,primary borrower
+P-0250,L-00208,co-borrower
+P-0251,L-00209,primary borrower
+P-0251,L-00210,primary borrower
+P-0252,L-00211,primary borrower
+P-0253,L-00212,primary borrower
+P-0254,L-00212,co-borrower
+P-0255,L-00213,primary borrower
+P-0256,L-00213,co-borrower
+P-0257,L-00214,primary borrower
+P-0257,L-00215,primary borrower
+P-0258,L-00216,primary borrower
+P-0259,L-00217,primary borrower
+P-0260,L-00217,co-borrower
+P-0261,L-00218,primary borrower
+P-0261,L-00219,primary borrower
+P-0262,L-00220,primary borrower
+P-0263,L-00221,primary borrower
+P-0264,L-00221,co-borrower
+P-0263,L-00222,primary borrower
+P-0264,L-00222,co-borrower
+P-0265,L-00223,primary borrower
+P-0266,L-00224,primary borrower
+P-0267,L-00225,primary borrower
+P-0268,L-00225,co-borrower
+P-0269,L-00226,primary borrower
+P-0270,L-00227,primary borrower
+P-0271,L-00227,co-borrower
+P-0272,L-00228,primary borrower
+P-0273,L-00229,primary borrower
+P-0274,L-00230,primary borrower
+P-0275,L-00230,co-borrower
+P-0274,L-00231,primary borrower
+P-0275,L-00231,co-borrower
+P-0276,L-00232,primary borrower
+P-0277,L-00232,co-borrower
+P-0278,L-00233,primary borrower
+P-0279,L-00234,primary borrower
+P-0279,L-00235,primary borrower
+P-0280,L-00236,primary borrower
+P-0281,L-00237,primary borrower
+P-0282,L-00237,co-borrower
+P-0281,L-00238,primary borrower
+P-0282,L-00238,co-borrower
+P-0283,L-00239,primary borrower
+P-0284,L-00239,co-borrower
+P-0283,L-00240,primary borrower
+P-0284,L-00240,co-borrower
+P-0285,L-00241,primary borrower
+P-0286,L-00241,co-borrower
+P-0287,L-00242,primary borrower
+P-0288,L-00242,co-borrower
+P-0289,L-00243,primary borrower
+P-0290,L-00243,co-borrower
+P-0289,L-00244,primary borrower
+P-0290,L-00244,co-borrower
+P-0291,L-00245,primary borrower
+P-0292,L-00245,co-borrower
+P-0291,L-00246,primary borrower
+P-0292,L-00246,co-borrower
+P-0293,L-00247,primary borrower
+P-0294,L-00248,primary borrower
+P-0295,L-00248,co-borrower
+P-0296,L-00249,primary borrower
+P-0296,L-00250,primary borrower
+P-0297,L-00251,primary borrower
+P-0297,L-00252,primary borrower
+P-0298,L-00253,primary borrower
+P-0299,L-00254,primary borrower
+P-0300,L-00255,primary borrower
+P-0301,L-00255,co-borrower
+P-0300,L-00256,primary borrower
+P-0301,L-00256,co-borrower
+P-0302,L-00257,primary borrower
+P-0303,L-00258,primary borrower
+P-0303,L-00259,primary borrower
+P-0304,L-00260,primary borrower
+P-0305,L-00261,primary borrower
+P-0306,L-00262,primary borrower
+P-0307,L-00262,co-borrower
+P-0306,L-00263,primary borrower
+P-0307,L-00263,co-borrower
+P-0308,L-00264,primary borrower
+P-0309,L-00264,co-borrower
+P-0308,L-00265,primary borrower
+P-0309,L-00265,co-borrower
+P-0310,L-00266,primary borrower
+P-0311,L-00266,co-borrower
+P-0312,L-00267,primary borrower
+P-0312,L-00268,primary borrower
+P-0313,L-00269,primary borrower
+P-0314,L-00269,co-borrower
+P-0315,L-00270,primary borrower
+P-0316,L-00270,co-borrower
+P-0317,L-00271,primary borrower
+P-0317,L-00272,primary borrower
+P-0318,L-00273,primary borrower
+P-0319,L-00273,co-borrower
+P-0318,L-00274,primary borrower
+P-0319,L-00274,co-borrower
+P-0320,L-00275,primary borrower
+P-0321,L-00275,co-borrower
+P-0320,L-00276,primary borrower
+P-0321,L-00276,co-borrower
+P-0322,L-00277,primary borrower
+P-0323,L-00277,co-borrower
+P-0324,L-00278,primary borrower
+P-0325,L-00279,primary borrower
+P-0326,L-00279,co-borrower
+P-0325,L-00280,primary borrower
+P-0326,L-00280,co-borrower
+P-0327,L-00281,primary borrower
+P-0327,L-00282,primary borrower
+P-0328,L-00283,primary borrower
+P-0329,L-00283,co-borrower
+P-0328,L-00284,primary borrower
+P-0329,L-00284,co-borrower
+P-0330,L-00285,primary borrower
+P-0331,L-00286,primary borrower
+P-0332,L-00287,primary borrower
+P-0332,L-00288,primary borrower
+P-0333,L-00289,primary borrower
+P-0334,L-00289,co-borrower
+P-0335,L-00290,primary borrower
+P-0335,L-00291,primary borrower
+P-0336,L-00292,primary borrower
+P-0337,L-00293,primary borrower
+P-0338,L-00293,co-borrower
+P-0337,L-00294,primary borrower
+P-0338,L-00294,co-borrower
+P-0339,L-00295,primary borrower
+P-0339,L-00296,primary borrower
+P-0340,L-00297,primary borrower
+P-0341,L-00298,primary borrower
+P-0342,L-00298,co-borrower
+P-0343,L-00299,primary borrower
+P-0344,L-00299,co-borrower
+P-0345,L-00300,primary borrower
+P-0346,L-00301,primary borrower
+P-0347,L-00302,primary borrower
+P-0348,L-00302,co-borrower
+P-0347,L-00303,primary borrower
+P-0348,L-00303,co-borrower
+P-0349,L-00304,primary borrower
+P-0350,L-00304,co-borrower
+P-0349,L-00305,primary borrower
+P-0350,L-00305,co-borrower
+P-0351,L-00306,primary borrower
+P-0352,L-00306,co-borrower
+P-0353,L-00307,primary borrower
+P-0354,L-00308,primary borrower
+P-0355,L-00309,primary borrower
+P-0356,L-00310,primary borrower
+P-0357,L-00311,primary borrower
+P-0358,L-00311,co-borrower
+P-0359,L-00312,primary borrower
+P-0360,L-00313,primary borrower
+P-0360,L-00314,primary borrower
+P-0361,L-00315,primary borrower
+P-0362,L-00316,primary borrower
+P-0363,L-00316,co-borrower
+P-0364,L-00317,primary borrower
+P-0365,L-00317,co-borrower
+P-0366,L-00318,primary borrower
+P-0367,L-00319,primary borrower
+P-0368,L-00319,co-borrower
+P-0367,L-00320,primary borrower
+P-0368,L-00320,co-borrower
+P-0369,L-00321,primary borrower
+P-0370,L-00321,co-borrower
+P-0371,L-00322,primary borrower
+P-0372,L-00322,co-borrower
+P-0371,L-00323,primary borrower
+P-0372,L-00323,co-borrower
+P-0373,L-00324,primary borrower
+P-0374,L-00325,primary borrower
+P-0375,L-00325,co-borrower
+P-0374,L-00326,primary borrower
+P-0375,L-00326,co-borrower
+P-0376,L-00327,primary borrower
+P-0377,L-00328,primary borrower
+P-0378,L-00329,primary borrower
+P-0379,L-00330,primary borrower
+P-0380,L-00331,primary borrower
+P-0381,L-00331,co-borrower
+P-0382,L-00332,primary borrower
+P-0383,L-00332,co-borrower
+P-0382,L-00333,primary borrower
+P-0383,L-00333,co-borrower
+P-0384,L-00334,primary borrower
+P-0385,L-00335,primary borrower
+P-0386,L-00336,primary borrower
+P-0386,L-00337,primary borrower
+P-0387,L-00338,primary borrower
+P-0388,L-00338,co-borrower
+P-0389,L-00339,primary borrower
+P-0390,L-00339,co-borrower
+P-0391,L-00340,primary borrower
+P-0392,L-00341,primary borrower
+P-0393,L-00342,primary borrower
+P-0394,L-00342,co-borrower
+P-0395,L-00343,primary borrower
+P-0396,L-00344,primary borrower
+P-0396,L-00345,primary borrower
+P-0397,L-00346,primary borrower
+P-0398,L-00346,co-borrower
+P-0397,L-00347,primary borrower
+P-0398,L-00347,co-borrower
+P-0399,L-00348,primary borrower
+P-0400,L-00349,primary borrower
+P-0400,L-00350,primary borrower
+P-0401,L-00351,primary borrower
+P-0402,L-00351,co-borrower
+P-0403,L-00352,primary borrower
+P-0404,L-00352,co-borrower
+P-0405,L-00353,primary borrower
+P-0406,L-00353,co-borrower
+P-0407,L-00354,primary borrower
+P-0408,L-00354,co-borrower
+P-0409,L-00355,primary borrower
+P-0409,L-00356,primary borrower
+P-0410,L-00357,primary borrower
+P-0411,L-00358,primary borrower
+P-0412,L-00358,co-borrower
+P-0413,L-00359,primary borrower
+P-0414,L-00360,primary borrower
+P-0415,L-00360,co-borrower
+P-0416,L-00361,primary borrower
+P-0417,L-00361,co-borrower
+P-0418,L-00362,primary borrower
+P-0419,L-00363,primary borrower
+P-0419,L-00364,primary borrower
+P-0420,L-00365,primary borrower
+P-0421,L-00365,co-borrower
+P-0420,L-00366,primary borrower
+P-0421,L-00366,co-borrower
+P-0422,L-00367,primary borrower
+P-0423,L-00368,primary borrower
+P-0424,L-00369,primary borrower
+P-0425,L-00370,primary borrower
+P-0425,L-00371,primary borrower
+P-0426,L-00372,primary borrower
+P-0427,L-00373,primary borrower
+P-0428,L-00374,primary borrower
+P-0429,L-00374,co-borrower
+P-0428,L-00375,primary borrower
+P-0429,L-00375,co-borrower
+P-0430,L-00376,primary borrower
+P-0430,L-00377,primary borrower
+P-0431,L-00378,primary borrower
+P-0431,L-00379,primary borrower
+P-0432,L-00380,primary borrower
+P-0433,L-00381,primary borrower
+P-0433,L-00382,primary borrower
+P-0434,L-00383,primary borrower
+P-0435,L-00384,primary borrower
+P-0435,L-00385,primary borrower
+P-0436,L-00386,primary borrower
+P-0437,L-00386,co-borrower
+P-0438,L-00387,primary borrower
+P-0439,L-00387,co-borrower
+P-0440,L-00388,primary borrower
+P-0441,L-00389,primary borrower
+P-0442,L-00389,co-borrower
+P-0443,L-00390,primary borrower
+P-0444,L-00391,primary borrower
+P-0445,L-00391,co-borrower
+P-0446,L-00392,primary borrower
+P-0447,L-00393,primary borrower
+P-0448,L-00393,co-borrower
+P-0449,L-00394,primary borrower
+P-0450,L-00395,primary borrower
+P-0451,L-00395,co-borrower
+P-0452,L-00396,primary borrower
+P-0453,L-00396,co-borrower
+P-0454,L-00397,primary borrower
+P-0455,L-00398,primary borrower
+P-0456,L-00398,co-borrower
+P-0457,L-00399,primary borrower
+P-0458,L-00400,primary borrower
+P-0459,L-00401,primary borrower
+P-0460,L-00401,co-borrower
+P-0459,L-00402,primary borrower
+P-0460,L-00402,co-borrower
+P-0461,L-00403,primary borrower
+P-0462,L-00404,primary borrower
+P-0463,L-00404,co-borrower
+P-0462,L-00405,primary borrower
+P-0463,L-00405,co-borrower
+P-0464,L-00406,primary borrower
+P-0464,L-00407,primary borrower
+P-0465,L-00408,primary borrower
+P-0466,L-00409,primary borrower
+P-0467,L-00409,co-borrower
+P-0468,L-00410,primary borrower
+P-0469,L-00411,primary borrower
+P-0470,L-00411,co-borrower
+P-0471,L-00412,primary borrower
+P-0472,L-00413,primary borrower
+P-0473,L-00414,primary borrower
+P-0474,L-00414,co-borrower
+P-0473,L-00415,primary borrower
+P-0474,L-00415,co-borrower
+P-0475,L-00416,primary borrower
+P-0475,L-00417,primary borrower
+P-0476,L-00418,primary borrower
+P-0477,L-00419,primary borrower
+P-0478,L-00419,co-borrower
+P-0479,L-00420,primary borrower
+P-0480,L-00420,co-borrower
+P-0479,L-00421,primary borrower
+P-0480,L-00421,co-borrower
+P-0481,L-00422,primary borrower
+P-0482,L-00423,primary borrower
+P-0483,L-00424,primary borrower
+P-0484,L-00425,primary borrower
+P-0485,L-00425,co-borrower
+P-0486,L-00426,primary borrower
+P-0487,L-00427,primary borrower
+P-0488,L-00428,primary borrower
+P-0489,L-00429,primary borrower
+P-0490,L-00429,co-borrower
+P-0491,L-00430,primary borrower
+P-0492,L-00431,primary borrower
+P-0493,L-00431,co-borrower
+P-0492,L-00432,primary borrower
+P-0493,L-00432,co-borrower
+P-0494,L-00433,primary borrower
+P-0495,L-00433,co-borrower
+P-0494,L-00434,primary borrower
+P-0495,L-00434,co-borrower
+P-0496,L-00435,primary borrower
+P-0497,L-00436,primary borrower
+P-0498,L-00436,co-borrower
+P-0499,L-00437,primary borrower
+P-0500,L-00438,primary borrower
+P-0501,L-00439,primary borrower
+P-0502,L-00439,co-borrower
+P-0503,L-00440,primary borrower
+P-0503,L-00441,primary borrower
+P-0504,L-00442,primary borrower
+P-0505,L-00443,primary borrower
+P-0505,L-00444,primary borrower
+P-0506,L-00445,primary borrower
+P-0507,L-00445,co-borrower
+P-0508,L-00446,primary borrower
+P-0509,L-00446,co-borrower
+P-0510,L-00447,primary borrower
+P-0511,L-00447,co-borrower
+P-0512,L-00448,primary borrower
+P-0513,L-00448,co-borrower
+P-0514,L-00449,primary borrower
+P-0515,L-00449,co-borrower
+P-0516,L-00450,primary borrower
+P-0517,L-00451,primary borrower
+P-0518,L-00451,co-borrower
+P-0519,L-00452,primary borrower
+P-0520,L-00453,primary borrower
+P-0521,L-00453,co-borrower
+P-0520,L-00454,primary borrower
+P-0521,L-00454,co-borrower
+P-0522,L-00455,primary borrower
+P-0523,L-00455,co-borrower
+P-0524,L-00456,primary borrower
+P-0525,L-00456,co-borrower
+P-0526,L-00457,primary borrower
+P-0526,L-00458,primary borrower
+P-0527,L-00459,primary borrower
+P-0528,L-00460,primary borrower
+P-0528,L-00461,primary borrower
+P-0529,L-00462,primary borrower
+P-0530,L-00462,co-borrower
+P-0531,L-00463,primary borrower
+P-0532,L-00463,co-borrower
+P-0533,L-00464,primary borrower
+P-0534,L-00464,co-borrower
+P-0533,L-00465,primary borrower
+P-0534,L-00465,co-borrower
+P-0535,L-00466,primary borrower
+P-0536,L-00467,primary borrower
+P-0537,L-00467,co-borrower
+P-0536,L-00468,primary borrower
+P-0537,L-00468,co-borrower
+P-0538,L-00469,primary borrower
+P-0539,L-00469,co-borrower
+P-0540,L-00470,primary borrower
+P-0541,L-00471,primary borrower
+P-0542,L-00471,co-borrower
+P-0543,L-00472,primary borrower
+P-0544,L-00472,co-borrower
+P-0543,L-00473,primary borrower
+P-0544,L-00473,co-borrower
+P-0545,L-00474,primary borrower
+P-0546,L-00474,co-borrower
+P-0547,L-00475,primary borrower
+P-0548,L-00475,co-borrower
+P-0549,L-00476,primary borrower
+P-0549,L-00477,primary borrower
+P-0550,L-00478,primary borrower
+P-0551,L-00478,co-borrower
+P-0552,L-00479,primary borrower
+P-0553,L-00480,primary borrower
+P-0554,L-00480,co-borrower
+P-0555,L-00481,primary borrower
+P-0556,L-00481,co-borrower
+P-0555,L-00482,primary borrower
+P-0556,L-00482,co-borrower
+P-0557,L-00483,primary borrower
+P-0558,L-00484,primary borrower
+P-0559,L-00485,primary borrower
+P-0560,L-00485,co-borrower
+P-0561,L-00486,primary borrower
+P-0562,L-00487,primary borrower
+P-0563,L-00487,co-borrower
+P-0564,L-00488,primary borrower
+P-0565,L-00489,primary borrower
+P-0566,L-00490,primary borrower
+P-0566,L-00491,primary borrower
+P-0567,L-00492,primary borrower
+P-0568,L-00493,primary borrower
+P-0569,L-00494,primary borrower
+P-0570,L-00495,primary borrower
+P-0571,L-00495,co-borrower
+P-0570,L-00496,primary borrower
+P-0571,L-00496,co-borrower
+P-0572,L-00497,primary borrower
+P-0573,L-00497,co-borrower
+P-0574,L-00498,primary borrower
+P-0575,L-00499,primary borrower
+P-0576,L-00499,co-borrower
+P-0577,L-00500,primary borrower
+P-0577,L-00501,primary borrower
+P-0578,L-00502,primary borrower
+P-0579,L-00503,primary borrower
+P-0580,L-00503,co-borrower
+P-0579,L-00504,primary borrower
+P-0580,L-00504,co-borrower
+P-0581,L-00505,primary borrower
+P-0582,L-00506,primary borrower
+P-0583,L-00506,co-borrower
+P-0584,L-00507,primary borrower
+P-0585,L-00507,co-borrower
+P-0586,L-00508,primary borrower
+P-0587,L-00508,co-borrower
+P-0296,L-00509,primary borrower
+P-0085,L-00510,primary borrower
+P-0086,L-00510,co-borrower
+P-0353,L-00511,primary borrower
+P-0252,L-00512,primary borrower
+P-0124,L-00513,primary borrower
+P-0125,L-00513,co-borrower
+P-0399,L-00514,primary borrower
+P-0069,L-00515,primary borrower
+P-0070,L-00515,co-borrower
+P-0347,L-00516,primary borrower
+P-0348,L-00516,co-borrower
+P-0026,L-00517,primary borrower
+P-0027,L-00517,co-borrower
+P-0010,L-00518,primary borrower
+P-0568,L-00519,primary borrower
+P-0065,L-00520,primary borrower
+P-0355,L-00521,primary borrower
+P-0588,L-00522,primary borrower
+P-0589,L-00523,primary borrower
+P-0364,L-00524,primary borrower
+P-0590,L-00524,co-borrower
+P-0303,L-00525,primary borrower
+P-0592,L-00526,primary borrower
+P-0593,L-00526,co-borrower
+P-0595,L-00527,primary borrower
+P-0105,L-00528,primary borrower
+P-0597,L-00529,primary borrower
+P-0300,L-00530,primary borrower
+P-0565,L-00531,primary borrower
+P-0598,L-00532,primary borrower
+P-0600,L-00533,primary borrower
+P-0601,L-00534,primary borrower
+P-0602,L-00535,primary borrower
+P-0603,L-00536,primary borrower
+P-0557,L-00537,primary borrower
+P-0258,L-00538,primary borrower
+P-0028,L-00539,primary borrower
+P-0604,L-00540,primary borrower
+P-0220,L-00541,primary borrower
+P-0605,L-00542,primary borrower
+P-0481,L-00543,primary borrower
+P-0476,L-00544,primary borrower
+P-0432,L-00545,primary borrower
+P-0606,L-00546,primary borrower
+P-0607,L-00547,primary borrower
+P-0608,L-00548,primary borrower
+P-0609,L-00549,primary borrower
+P-0354,L-00550,primary borrower
+P-0610,L-00551,primary borrower
+P-0312,L-00552,primary borrower
+P-0392,L-00553,primary borrower
+P-0611,L-00553,co-borrower
+P-0179,L-00554,primary borrower
+P-0367,L-00555,primary borrower
+P-0612,L-00556,primary borrower
+P-0280,L-00557,primary borrower
+P-0613,L-00558,primary borrower
+P-0615,L-00559,primary borrower
+P-0215,L-00560,primary borrower
+P-0212,L-00561,primary borrower
+P-0231,L-00562,primary borrower
+P-0616,L-00563,primary borrower
+P-0400,L-00564,primary borrower
+P-0127,L-00565,primary borrower
+P-0150,L-00566,primary borrower
+P-0619,L-00566,co-borrower
+P-0621,L-00567,primary borrower
+P-0622,L-00568,primary borrower
+P-0623,L-00568,co-borrower
+P-0624,L-00569,primary borrower
+P-0327,L-00570,primary borrower
+P-0625,L-00571,primary borrower
+P-0528,L-00572,primary borrower
+P-0626,L-00573,primary borrower
+P-0627,L-00574,primary borrower
+P-0628,L-00575,primary borrower
+P-0124,L-00576,primary borrower
+P-0630,L-00577,primary borrower
+P-0631,L-00578,primary borrower
+P-0632,L-00579,primary borrower
+P-0633,L-00580,primary borrower
+P-0160,L-00581,primary borrower
+P-0634,L-00581,co-borrower
+P-0582,L-00582,primary borrower
+P-0636,L-00583,primary borrower
+P-0637,L-00583,co-borrower
+P-0042,L-00584,primary borrower
+P-0638,L-00585,primary borrower
+P-0639,L-00586,primary borrower
+P-0641,L-00587,primary borrower
+P-0642,L-00588,primary borrower
+P-0643,L-00589,primary borrower
+P-0644,L-00590,primary borrower
+P-0645,L-00591,primary borrower
+P-0646,L-00592,primary borrower
+P-0647,L-00593,primary borrower
+P-0558,L-00594,primary borrower
+P-0508,L-00595,primary borrower
+P-0648,L-00596,primary borrower
+P-0141,L-00597,primary borrower
+P-0650,L-00598,primary borrower
+P-0651,L-00599,primary borrower
+P-0652,L-00600,primary borrower
+P-0130,L-00601,primary borrower
+P-0162,L-00602,primary borrower
+P-0654,L-00603,primary borrower
+P-0655,L-00604,primary borrower
+P-0656,L-00604,co-borrower
+P-0083,L-00605,primary borrower
+P-0305,L-00606,primary borrower
+P-0553,L-00607,primary borrower
+P-0657,L-00608,primary borrower
+P-0658,L-00608,co-borrower
+P-0242,L-00609,primary borrower
+P-0158,L-00610,primary borrower
+P-0297,L-00611,primary borrower
+P-0486,L-00612,primary borrower
+P-0330,L-00613,primary borrower
+P-0177,L-00614,primary borrower
+P-0660,L-00614,co-borrower
+P-0661,L-00615,primary borrower
+P-0662,L-00616,primary borrower
+P-0481,L-00617,primary borrower
+P-0663,L-00618,primary borrower
+P-0053,L-00619,primary borrower
+P-0664,L-00620,primary borrower
+P-0665,L-00620,co-borrower
+P-0126,L-00621,primary borrower
+P-0433,L-00622,primary borrower
+P-0566,L-00623,primary borrower
+P-0569,L-00624,primary borrower
+P-0179,L-00625,primary borrower
+P-0666,L-00626,primary borrower
+P-0667,L-00627,primary borrower
+P-0668,L-00628,primary borrower
+P-0520,L-00629,primary borrower
+P-0669,L-00630,primary borrower
+P-0331,L-00631,primary borrower
+P-0081,L-00632,primary borrower
+P-0455,L-00633,primary borrower
+P-0670,L-00634,primary borrower
+P-0671,L-00635,primary borrower
+P-0479,L-00636,primary borrower
+P-0324,L-00637,primary borrower
+P-0526,L-00638,primary borrower
+P-0672,L-00639,primary borrower
+P-0673,L-00640,primary borrower
+P-0674,L-00641,primary borrower
+P-0675,L-00642,primary borrower
+P-0676,L-00643,primary borrower
+P-0677,L-00644,primary borrower
+P-0374,L-00645,primary borrower
+P-0175,L-00646,primary borrower
+P-0399,L-00647,primary borrower
+P-0680,L-00648,primary borrower
+P-0024,L-00649,primary borrower
+P-0681,L-00650,primary borrower
+P-0048,L-00651,primary borrower
+P-0494,L-00652,primary borrower
+P-0422,L-00653,primary borrower
+P-0683,L-00654,primary borrower
+P-0141,L-00655,primary borrower
+P-0684,L-00656,primary borrower
+P-0685,L-00656,co-borrower
+P-0686,L-00657,primary borrower
+P-0237,L-00658,primary borrower
+P-0687,L-00659,primary borrower
+P-0688,L-00660,primary borrower
+P-0065,L-00661,primary borrower
+P-0690,L-00661,co-borrower
+P-0438,L-00662,primary borrower
+P-0692,L-00663,primary borrower
+P-0693,L-00663,co-borrower
+P-0489,L-00664,primary borrower
+P-0569,L-00665,primary borrower
+P-0438,L-00666,primary borrower
+P-0694,L-00667,primary borrower
+P-0695,L-00668,primary borrower
+P-0696,L-00669,primary borrower
+P-0697,L-00670,primary borrower
+P-0698,L-00670,co-borrower
+P-0699,L-00671,primary borrower
+P-0701,L-00672,primary borrower
+P-0190,L-00673,primary borrower
+P-0703,L-00674,primary borrower
+P-0704,L-00675,primary borrower
+P-0096,L-00676,primary borrower
+P-0705,L-00677,primary borrower
+P-0419,L-00678,primary borrower
+P-0706,L-00679,primary borrower
+P-0707,L-00679,co-borrower
+P-0218,L-00680,primary borrower
+P-0708,L-00681,primary borrower
+P-0709,L-00682,primary borrower
+P-0162,L-00683,primary borrower
+P-0067,L-00684,primary borrower
+P-0710,L-00685,primary borrower
+P-0444,L-00686,primary borrower
+P-0267,L-00687,primary borrower
+P-0711,L-00688,primary borrower
+P-0712,L-00689,primary borrower
+P-0392,L-00690,primary borrower
+P-0714,L-00691,primary borrower
+P-0715,L-00692,primary borrower
+P-0424,L-00693,primary borrower
+P-0717,L-00694,primary borrower
+P-0718,L-00694,co-borrower
+P-0719,L-00695,primary borrower
+P-0719,L-00696,primary borrower
+P-0720,L-00697,primary borrower
+P-0720,L-00698,primary borrower
+P-0721,L-00699,primary borrower
+P-0721,L-00700,primary borrower
+P-0722,L-00701,primary borrower
+P-0722,L-00702,primary borrower
+P-0723,L-00703,primary borrower
+P-0723,L-00704,primary borrower
+P-0724,L-00705,primary borrower
+P-0724,L-00706,primary borrower
+P-0725,L-00707,primary borrower
+P-0725,L-00708,primary borrower
+P-0726,L-00709,primary borrower
+P-0726,L-00710,primary borrower
+P-0727,L-00711,primary borrower
+P-0727,L-00712,primary borrower
+P-0728,L-00713,primary borrower
+P-0728,L-00714,primary borrower
+P-0729,L-00715,primary borrower
+P-0729,L-00716,primary borrower
+P-0730,L-00717,primary borrower
+P-0730,L-00718,primary borrower
+P-0731,L-00719,primary borrower
+P-0731,L-00720,primary borrower
+P-0732,L-00721,primary borrower
+P-0732,L-00722,primary borrower
+P-0733,L-00723,primary borrower
+P-0733,L-00724,primary borrower
+P-0734,L-00725,primary borrower
+P-0734,L-00726,primary borrower
+P-0735,L-00727,primary borrower
+P-0735,L-00728,primary borrower
+P-0736,L-00729,primary borrower
+P-0741,L-00730,primary borrower
+P-0742,L-00731,primary borrower
+P-0737,L-00732,primary borrower
+P-0743,L-00733,primary borrower
+P-0737,L-00733,co-borrower
+P-0738,L-00734,primary borrower
+P-0744,L-00735,primary borrower
+P-0739,L-00736,primary borrower
+P-0745,L-00737,primary borrower
+P-0739,L-00737,co-borrower
+P-0746,L-00738,primary borrower
+P-0740,L-00739,primary borrower
+P-0747,L-00740,primary borrower
+P-0748,L-00741,primary borrower
+P-0749,L-00742,primary borrower
+P-0750,L-00743,primary borrower
+P-0751,L-00744,primary borrower
+P-0752,L-00745,primary borrower
+P-0753,L-00746,primary borrower
+P-0754,L-00747,primary borrower
+P-0754,L-00748,primary borrower
+P-0755,L-00749,primary borrower
+P-0756,L-00750,primary borrower
+P-0757,L-00751,primary borrower
+P-0758,L-00752,primary borrower
+P-0759,L-00753,primary borrower
+P-0760,L-00754,primary borrower
+P-0761,L-00755,primary borrower
+P-0762,L-00756,primary borrower
+P-0763,L-00757,primary borrower
+P-0764,L-00758,primary borrower
+P-0765,L-00759,primary borrower
+P-0766,L-00760,primary borrower
+P-0767,L-00761,primary borrower
+P-0768,L-00762,primary borrower
+P-0769,L-00763,primary borrower
+P-0770,L-00764,primary borrower
+P-0771,L-00765,primary borrower
+P-0772,L-00766,primary borrower
+P-0773,L-00767,primary borrower
+P-0774,L-00768,primary borrower
+P-0775,L-00769,primary borrower
+P-0776,L-00770,primary borrower
+P-0777,L-00771,primary borrower
+P-0778,L-00772,primary borrower
+P-0779,L-00773,primary borrower
+P-0780,L-00774,primary borrower
+P-0781,L-00775,primary borrower
+P-0782,L-00776,primary borrower
+P-0783,L-00777,primary borrower
+P-0784,L-00778,primary borrower
+P-0785,L-00779,primary borrower
+P-0786,L-00780,primary borrower
+P-0787,L-00781,primary borrower
+P-0788,L-00782,primary borrower
+P-0789,L-00783,primary borrower
+P-0790,L-00784,primary borrower
+P-0791,L-00785,primary borrower

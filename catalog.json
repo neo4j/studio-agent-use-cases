@@ -162,6 +162,31 @@
         ],
         "markdown": "SKILL.md"
       }
+    },
+    {
+      "skillId": "loans-and-mortgages",
+      "files": {
+        "graph": "ONTOLOGY.json",
+        "skill": [
+          "sample-data/applicants.csv",
+          "sample-data/appraisals.csv",
+          "sample-data/borrowers.csv",
+          "sample-data/financial_institutions.csv",
+          "sample-data/guarantees.csv",
+          "sample-data/loan_applications.csv",
+          "sample-data/loan_officers.csv",
+          "sample-data/loan_products.csv",
+          "sample-data/loans.csv",
+          "sample-data/payments.csv",
+          "sample-data/persons.csv",
+          "sample-data/properties.csv",
+          "human_description.md",
+          "QUERIES.md",
+          "TESTS.md",
+          "NOTICE.md"
+        ],
+        "markdown": "SKILL.md"
+      }
     }
   ]
 }
