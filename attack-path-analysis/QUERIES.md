@@ -1,6 +1,8 @@
-# Attack Path Analysis — Queries
+# Attack Path Analysis — Query Guidance
 
-Runnable Cypher for the model in `GRAPH_MODEL.json`. The queries move outward
+Cypher for the `attack-path-analysis` use case. Every query references only
+labels, relationship types, and properties defined in the reference ontology
+(`ONTOLOGY.json`). No query writes to the database. The queries move outward
 from a single exposure to a whole route: which exposed hosts are worth
 attacking, where an attacker could go from one, what the route terminates at,
 and which hosts most routes depend on.
@@ -11,8 +13,13 @@ and which hosts most routes depend on.
   plain Cypher. Graph Data Science would be the better tool for choke-point
   ranking on a large estate — see the `@usage` note on *Choke points on
   crown-jewel attack paths* — but nothing here requires it.
-- The model imported from `GRAPH_MODEL.json`, either with the bundled CSVs or
-  with the user's own data mapped onto the same model.
+- The graph is loaded through the Import flow from `ONTOLOGY.json` — the
+  bundled `sample-data/` CSVs, or the user's own data mapped onto the reference
+  ontology.
+- The node keys in `ONTOLOGY.json` make `Endpoint.endpointId`,
+  `ComputeInstance.instanceId`, `CVE.cveId`, `Application.applicationId`,
+  `Identity.identityId`, `IAMPolicy.policyId` and `CloudService.serviceId`
+  unique, so every lookup anchored on one of them is an index seek.
 - The index in `SETUP.md` is recommended, not required. Without it the
   crown-jewel queries scan the `Application` label instead of seeking; results
   are identical.
@@ -26,26 +33,24 @@ and which hosts most routes depend on.
   inside it. The parameter tunes the bound; the literal is the hard limit. To
   search beyond the ceiling, edit the literal in the pattern — and expect the
   cost to climb steeply when you do.
+- Anchors are parameters, never hardcoded IDs. Before running an anchored query,
+  ask the user which instance or identity they mean, or take one from an earlier
+  query's output — the foothold query names instances, the reachability query
+  names identities. Do not invent IDs.
 
 ## Adapting these queries
 
-These queries assume the model in `GRAPH_MODEL.json`. When the user's schema
-differs — their own model, a modified one, or a database that predates this
-package — the queries are patterns to rebuild, not Cypher to run.
+These queries assume the reference ontology in `ONTOLOGY.json`. When the user's
+database differs — their own ontology, a modified one, or a database that
+predates this package — the queries are patterns to rebuild, not Cypher to run.
 
 1. Read the live schema (`CALL db.schema.visualization()`, `SHOW CONSTRAINTS`)
-   rather than assuming this model applies.
+   rather than assuming the reference ontology applies.
 2. Map their labels onto the role map in `SKILL.md`. A role with no counterpart
    means the pattern below it has no analogue — say so rather than forcing a
    fit.
 3. Rewrite from the pattern, and update the annotation block to describe what
    the rewritten query actually does.
-
-The role to check first is the reachability edge. A model that records network
-topology as shared-segment membership rather than as a directed permission
-between two hosts cannot answer any of the path questions below without first
-deriving that edge, and deriving it from segment membership alone overstates
-reachability in both directions.
 
 ## Exposed hosts carrying an exploited vulnerability
 
@@ -64,7 +69,7 @@ reachability in both directions.
  *                     already restricts to observed-in-the-wild exploitation,
  *                     so the score is a second filter on an already narrow set
  *                     and 7.0 is often a reasonable widening.
- * @prerequisites  None beyond the imported model.
+ * @prerequisites  None beyond the imported reference ontology.
  * @returns        One row per exposed instance and qualifying CVE: instance
  *                 identifier, hostname, environment, network segment, the
  *                 public names and ports it is exposed on, the CVE identifier
@@ -81,7 +86,11 @@ reachability in both directions.
  *                 and CVSS a severity — a low CVSS with a high EPSS is a weak
  *                 flaw actively being used, and belongs in the queue.
  * @tags           exposure, foothold, vulnerability, kev, triage
- * TODO(review): unproven query — not executed against a live database.
+ * @sample         Bundled sample data only: $minCvss = 9.0 returns 5 rows
+ *                 over 4 instances, led by staging-web-01 (CVE-2024-3400,
+ *                 10.0), a staging host that leads nowhere, then
+ *                 vpn-gateway-01, build-runner-01 (two CVEs) and
+ *                 legacy-portal-01 (CVE-2023-4966, 9.4).
  */
 MATCH (e:Endpoint)-[:RESOLVES_TO]->(i:ComputeInstance)-[f:HAS_VULNERABILITY]->(v:CVE)
 WHERE v.knownExploited = true
@@ -113,8 +122,8 @@ ORDER BY cvssScore DESC, epssScore DESC, instanceId
  *                     vulnerability. Start at 9.0, as in the foothold query.
  *                 crownJewelTier - Criticality tier that counts as a crown
  *                     jewel. Start at 'P0', the most critical band in this
- *                     model's encoding; substitute the top band of whatever
- *                     scheme the portfolio uses.
+ *                     reference ontology's encoding; substitute the top band
+ *                     of whatever scheme the portfolio uses.
  *                 maxLateralHops - Maximum CAN_REACH hops between foothold and
  *                     crown-jewel host. Start at 4 and raise one hop at a time.
  *                     Each extra hop multiplies the routes considered by the
@@ -122,8 +131,9 @@ ORDER BY cvssScore DESC, epssScore DESC, instanceId
  *                     result size climb sharply; stop at the point where the
  *                     output is no longer reviewable by hand. The pattern's
  *                     literal ceiling is 8.
- * @prerequisites  None beyond the imported model. The Application.tier index in
- *                 SETUP.md improves the anchor lookup.
+ * @prerequisites  None beyond the imported reference ontology. The
+ *                 Application.tier index in SETUP.md improves the anchor
+ *                 lookup.
  * @returns        One row per foothold, foothold CVE and crown jewel: the
  *                 public name the foothold is exposed on, the foothold host and
  *                 its CVE, the crown-jewel application with its tier and host,
@@ -144,7 +154,12 @@ ORDER BY cvssScore DESC, epssScore DESC, instanceId
  *                 result is not necessarily safe, only unreached within the
  *                 current bound and threshold.
  * @tags           kill-chain, lateral-movement, crown-jewel, path, prioritisation
- * TODO(review): unproven query — not executed against a live database.
+ * @sample         Bundled sample data only: $minCvss = 9.0,
+ *                 $crownJewelTier = 'P0', $maxLateralHops = 4 returns 8
+ *                 rows from the three production footholds to Card
+ *                 Tokenization Service and Payment Ledger, led by
+ *                 build-runner-01 to app-payments-01 at 1 hop. HR Records
+ *                 never appears.
  */
 MATCH (e:Endpoint)-[:RESOLVES_TO]->(entry:ComputeInstance)-[:HAS_VULNERABILITY]->(v:CVE)
 WHERE v.knownExploited = true
@@ -183,7 +198,7 @@ ORDER BY lateralHops ASC, footholdCvss DESC, crownJewel
  *                     and raise one hop at a time, watching the result size;
  *                     the reachable set grows with the out-degree at each
  *                     depth. The pattern's literal ceiling is 8.
- * @prerequisites  None beyond the imported model.
+ * @prerequisites  None beyond the imported reference ontology.
  * @returns        One row per reachable instance, ordered by hop distance: the
  *                 hop count, instance identifier, hostname, network segment,
  *                 the applications it runs with their tiers, and the identities
@@ -201,10 +216,15 @@ ORDER BY lateralHops ASC, footholdCvss DESC, crownJewel
  *                 blast-radius query rather than assuming the damage ends at
  *                 the host.
  * @tags           lateral-movement, blast-radius, incident-response, segmentation
- * TODO(review): unproven query — not executed against a live database.
+ * @sample         Bundled sample data only: $instanceId = 'CI-007'
+ *                 (legacy-portal-01), $maxLateralHops = 4 returns 10
+ *                 instances at 1 to 3 hops, starting with app-crm-01 and
+ *                 build-runner-01 (inheritable role-ci-deployer) at 1 hop.
  */
 MATCH (origin:ComputeInstance {instanceId: $instanceId})
-MATCH path = shortestPath((origin)-[:CAN_REACH*1..8]->(reached:ComputeInstance))
+MATCH (reached:ComputeInstance)
+WHERE reached <> origin
+MATCH path = shortestPath((origin)-[:CAN_REACH*1..8]->(reached))
 WHERE length(path) <= $maxLateralHops
 WITH reached, length(path) AS hops
 OPTIONAL MATCH (reached)-[:RUNS]->(app:Application)
@@ -232,7 +252,7 @@ ORDER BY hops ASC, hostname
  *                     applies: this is a selector, taken from the reachability
  *                     query's inheritable-identities column or from the identity
  *                     provider.
- * @prerequisites  None beyond the imported model.
+ * @prerequisites  None beyond the imported reference ontology.
  * @returns        One row per reachable resource, most sensitive first: the
  *                 identity name, whether the resource is a cloud service or an
  *                 application, its name, its data classification or criticality
@@ -252,7 +272,10 @@ ORDER BY hops ASC, hostname
  *                 than either alone, since it shows which credential is the
  *                 over-privileged one.
  * @tags           blast-radius, identity, iam, exfiltration, least-privilege
- * TODO(review): unproven query — not executed against a live database.
+ * @sample         Bundled sample data only: $identityId = 'ID-006'
+ *                 (role-ci-deployer) returns 12 rows: 6 cloud services led
+ *                 by customer-pii-db (restricted, admin), then 6
+ *                 applications.
  */
 MATCH (identity:Identity {identityId: $identityId})-[:ASSUMES]->(policy:IAMPolicy)
 MATCH (policy)-[:HAS_ACCESS_TO]->(resource)
@@ -287,12 +310,12 @@ ORDER BY sensitivityRank ASC, highestGrantRank ASC, resourceName
 ```cypher
 /*
  * @name           Full kill chain from the internet to sensitive cloud data
- * @description    Joins the network and identity halves of the model into one
- *                 route: from a public endpoint, to an exposed host carrying an
- *                 exploited vulnerability, across CAN_REACH to a pivot host, to
- *                 the workload identity that host runs as, through that
- *                 identity's policies, to a cloud service in one of the given
- *                 data classifications.
+ * @description    Joins the network and identity halves of the reference
+ *                 ontology into one route: from a public endpoint, to an
+ *                 exposed host carrying an exploited vulnerability, across
+ *                 CAN_REACH to a pivot host, to the workload identity that
+ *                 host runs as, through that identity's policies, to a cloud
+ *                 service in one of the given data classifications.
  * @params         minCvss - Minimum CVSS v3.1 base score for the entry
  *                     vulnerability. Start at 9.0, as in the foothold query.
  *                 maxLateralHops - Maximum CAN_REACH hops between the entry
@@ -300,33 +323,38 @@ ORDER BY sensitivityRank ASC, highestGrantRank ASC, resourceName
  *                     a time. The pattern's literal ceiling is 8.
  *                 classifications - List of data classifications that count as
  *                     sensitive. Start at ['restricted'], the most sensitive
- *                     band in this model's encoding, which keeps the result to
- *                     chains ending somewhere reportable. Widen to
+ *                     band in this reference ontology's encoding, which keeps
+ *                     the result to chains ending somewhere reportable. Widen to
  *                     ['restricted','confidential'] when the question is what
  *                     an attacker could see at all rather than what would
  *                     trigger a disclosure obligation.
- * @prerequisites  None beyond the imported model.
+ * @prerequisites  None beyond the imported reference ontology.
  * @returns        One row per complete chain: the public name and entry host,
  *                 the entry CVE, the hop count and route to the pivot host, the
  *                 identity inherited there, the policy granting access, its
  *                 permission level, and the target resource with its type and
  *                 classification.
- * @usage          The most complete statement the model can make, and the one
- *                 to lead with when explaining why connected data is worth the
- *                 trouble: no single inventory holds all four of exposure,
- *                 vulnerability, network permission and IAM grant, so this
- *                 chain is invisible to each of them separately. A zero-hop
+ * @usage          The most complete statement the reference ontology can make,
+ *                 and the one to lead with when explaining why connected data is
+ *                 worth the trouble: no single inventory holds all four of
+ *                 exposure, vulnerability, network permission and IAM grant, so
+ *                 this chain is invisible to each of them separately. A zero-hop
  *                 result is the worst case — the exposed host itself runs as an
  *                 identity that reaches sensitive data, with no lateral movement
  *                 required. Expect several rows per entry host where more than
  *                 one pivot or policy reaches the same resource; aggregate on
  *                 the target resource when the question is what is exposed
- *                 rather than how many ways. Breaking any single link breaks
- *                 the chain, which is what makes the route more actionable than
- *                 its endpoints: the cheapest fix is often the policy, not the
+ *                 rather than how many ways. Breaking any single link breaks the
+ *                 chain, which is what makes the route more actionable than its
+ *                 endpoints: the cheapest fix is often the policy, not the
  *                 patch.
  * @tags           kill-chain, exfiltration, identity, cloud, end-to-end
- * TODO(review): unproven query — not executed against a live database.
+ * @sample         Bundled sample data only: $minCvss = 9.0,
+ *                 $maxLateralHops = 4, $classifications = ['restricted']
+ *                 returns 44 rows from 3 entry hosts to payment-card-vault,
+ *                 customer-pii-db and db-backups, 6 of them zero-hop from
+ *                 build-runner-01 as role-ci-deployer. hr-records-db never
+ *                 appears.
  */
 MATCH (e:Endpoint)-[:RESOLVES_TO]->(entry:ComputeInstance)-[:HAS_VULNERABILITY]->(v:CVE)
 WHERE v.knownExploited = true
@@ -376,7 +404,7 @@ ORDER BY lateralHops ASC, entryHost, targetResource
  *                     one route is not a choke point, it is simply on the
  *                     route. Raise it until the result names a handful of hosts
  *                     whose re-segmentation could actually be justified.
- * @prerequisites  None beyond the imported model.
+ * @prerequisites  None beyond the imported reference ontology.
  * @returns        One row per intermediate host meeting the threshold, busiest
  *                 first: instance identifier, hostname, network segment, the
  *                 number of distinct crown-jewel routes through it, and the
@@ -397,7 +425,11 @@ ORDER BY lateralHops ASC, entryHost, targetResource
  *                 oversight: it would add a plugin dependency, and this query
  *                 covers the use case without one.
  * @tags           choke-point, segmentation, remediation, prioritisation
- * TODO(review): unproven query — not executed against a live database.
+ * @sample         Bundled sample data only: $minCvss = 9.0,
+ *                 $crownJewelTier = 'P0', $maxLateralHops = 3,
+ *                 $minPathsThrough = 2 returns 3 rows: bastion-01 and
+ *                 build-runner-01 with 4 routes each, then app-payments-01
+ *                 with 3.
  */
 MATCH (e:Endpoint)-[:RESOLVES_TO]->(entry:ComputeInstance)-[:HAS_VULNERABILITY]->(v:CVE)
 WHERE v.knownExploited = true
@@ -437,8 +469,9 @@ ORDER BY pathsThrough DESC, hostname
  *                 maxLateralHops - Maximum CAN_REACH hops from foothold to
  *                     crown-jewel host. Start at 4. The pattern's literal
  *                     ceiling is 8.
- * @prerequisites  None beyond the imported model. The Application.tier index in
- *                 SETUP.md improves the anchor lookup.
+ * @prerequisites  None beyond the imported reference ontology. The
+ *                 Application.tier index in SETUP.md improves the anchor
+ *                 lookup.
  * @returns        One row per crown-jewel application, most exposed first:
  *                 application identifier, name, owning business unit, the count
  *                 of distinct footholds reaching it, the fewest lateral hops
@@ -458,7 +491,11 @@ ORDER BY pathsThrough DESC, hostname
  *                 foothold is worse than three from a hard one, and this
  *                 summary does not weigh that.
  * @tags           reporting, crown-jewel, coverage, exposure, prioritisation
- * TODO(review): unproven query — not executed against a live database.
+ * @sample         Bundled sample data only: $minCvss = 9.0,
+ *                 $crownJewelTier = 'P0', $maxLateralHops = 4 returns 3
+ *                 rows: Card Tokenization Service reached by 3 footholds at
+ *                 1 hop, Payment Ledger by 3 at 2 hops, and HR Records by
+ *                 0, with a null hop count and an empty host list.
  */
 MATCH (e:Endpoint)-[:RESOLVES_TO]->(entry:ComputeInstance)-[:HAS_VULNERABILITY]->(v:CVE)
 WHERE v.knownExploited = true
@@ -488,12 +525,12 @@ RETURN target.applicationId AS applicationId,
 ORDER BY reachableFromFootholds DESC, fewestLateralHops ASC, crownJewel
 ```
 
-## Node-key constraints implied by the model
+## Node-key constraints
 
-Import creates these from the key definitions in `GRAPH_MODEL.json`. They are
-listed here to verify the expected schema, not to build it — run them only
-against a database whose data arrived by some other route and which needs
-bringing into line with the model.
+Import creates these node-key constraints from the key definitions in
+`ONTOLOGY.json`. They are listed as a reference for checking the live database
+(`SHOW CONSTRAINTS`), not as statements to run: recreating them, or adding
+`UNIQUE` variants, conflicts with the existing `KEY` constraints.
 
 ```cypher
 CREATE CONSTRAINT endpoint_key IF NOT EXISTS

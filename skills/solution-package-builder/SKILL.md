@@ -1,27 +1,33 @@
 ---
 name: create-solution-package
-description: Build a Neo4j industry solution package — a graph model (graph spec JSON), sample CSV data with import mappings, proven Cypher queries, agent guidance, and a human-readable description of the package — for Aura's onboarding agent. Use whenever a user wants to create, draft, scaffold, rebuild, or review a solution package, industry use case, or vertical quick start, e.g. "make a package like insurance-claims-fraud for telecoms". The output is a starting point for human curation, not a finished product.
+description: Build a Neo4j industry solution package — a reference ontology (ontology graph spec JSON, also called a graph model or model), sample CSV data with import mappings, proven Cypher queries, agent guidance, and a human-readable description of the package — for Aura's onboarding agent. Use whenever a user wants to create, draft, scaffold, rebuild, or review a solution package, industry use case, or vertical quick start, e.g. "make a package like insurance-claims-fraud for telecoms" — and to update, migrate, upgrade or clean up an existing package to the latest package spec, e.g. "update patient-journey to the latest package spec". The output is a starting point for human curation, not a finished product.
 ---
 
 # Create a Solution Package
 
-A solution package is an agent skill that Aura's onboarding agent loads to help a user get started with Neo4j in a specific industry. It bundles a graph model, sample data matching that model, proven Cypher queries, and guidance that steers the agent. The same model doubles as a template for the user to map and import their own data via Neo4j's Import tool.
+A solution package is an agent skill that Aura's onboarding agent loads to help a user get started with Neo4j in a specific industry. It bundles a reference ontology, sample data matching it, proven Cypher queries, and guidance that steers the agent. The same reference ontology doubles as a template for the user to map and import their own data via Neo4j's Import tool.
 
 Your job: take the user's raw inputs and produce a complete, consistent draft package. An engineer will curate it — flag anything you're unsure about with `TODO(review):` rather than silently guessing.
 
-Companion skills: [GRAPH_SPEC_FORMAT.md](GRAPH_SPEC_FORMAT.md) is the contract for `GRAPH_MODEL.json` — follow it exactly; its authority is `graph-spec.schema.json`, bundled here. [VALIDATION.md](VALIDATION.md) is the check suite to run before handing off.
+Companion skills: [ONTOLOGY_SPEC_FORMAT.md](ONTOLOGY_SPEC_FORMAT.md) is the contract for `ONTOLOGY.json` — follow it exactly; its authority is `ontology-graph-spec.schema.json`, bundled here. [VALIDATION.md](VALIDATION.md) is the check suite to run before handing off. [MIGRATION.md](MIGRATION.md) is the procedure for updating an existing package, and `scripts/` holds the tools it and VALIDATION.md use.
 
-**The bundled schema is the only graph spec.** Never fetch one over the network or reason from a remembered version — the bundled file is pinned deliberately, and packages are bound to it. GRAPH_SPEC_FORMAT.md carries the pinned version; every package you build records it.
+**The bundled schema is the only ontology graph spec.** Never fetch one over the network or reason from a remembered version — the bundled file is pinned deliberately, and packages are bound to it. ONTOLOGY_SPEC_FORMAT.md carries the pinned version and its provenance; every package you build declares it in `ONTOLOGY.json`'s `schema` field.
+
+## Terminology
+
+The package's ontology is its **reference ontology**, written in the **ontology graph spec** and stored as `ONTOLOGY.json`. Say "reference ontology" in everything you write — the package files, your messages, your handoff. The user, older packages and older tooling may say "model", "graph model", "data model" or "ontology"; treat all of them as meaning the same thing (and "graph spec" as the older name of the format) and answer in the preferred term without correcting anyone. Reserve "schema" for the live database and for the JSON Schema file.
+
+The word claims less than it might suggest. A reference ontology here is typed node, relationship and property definitions with descriptions and constraints — not OWL or RDF, no reasoning or inference, no T-Box/A-Box split, and queries are not "axioms". Never describe a package in those terms.
 
 ## Who reads what
 
 This is the constraint that shapes every decision below. A package has three audiences and they need different things.
 
-**The consuming agent** receives SKILL.md's body directly in its instruction prompt and loads QUERIES.md when it needs Cypher. Everything it reads costs context, and everything it reads it may repeat to a user whose data is not yours. It needs the model's meaning, the query patterns, and honest caveats — stated so they stay true whatever data is in the database.
+**The consuming agent** receives SKILL.md's body directly in its instruction prompt and loads QUERIES.md when it needs Cypher. Everything it reads costs context, and everything it reads it may repeat to a user whose data is not yours. It needs the reference ontology's meaning, the query patterns, and honest caveats — stated so they stay true whatever data is in the database.
 
 **The curating engineer**, and any agent verifying the package, needs the opposite: concrete row counts, the exact composition of the seeded rings, what happens at other thresholds, which query returned what on which day. All of that is real work product and none of it belongs anywhere the consuming agent can read it, because on the user's own data it is not merely useless but wrong.
 
-**The person evaluating the package** — someone reading a rendered page in a UI, deciding whether this is the package for their problem — needs neither. They need the industry, the problem, and what the ontology represents, in prose and tables they can scan. No Cypher, no JSON, no filenames, no agent instructions.
+**The person evaluating the package** — someone reading a rendered page in a UI, deciding whether this is the package for their problem — needs neither. They need the industry, the problem, and what the reference ontology represents, in prose and tables they can scan. No Cypher, no JSON, no filenames, no agent instructions.
 
 TESTS.md serves the second audience; `human_description.md` serves the third. Keep the lines clean and most authoring questions answer themselves.
 
@@ -32,22 +38,22 @@ Seven parts, six of them required. Keep packages this small where possible — e
 ```text
 <package-name>/            # kebab-case; the folder name becomes the skillId
 ├── SKILL.md               # agent guidance: frontmatter + body (see below)
-├── GRAPH_MODEL.json       # graph spec per GRAPH_SPEC_FORMAT.md
+├── ONTOLOGY.json          # reference ontology per ONTOLOGY_SPEC_FORMAT.md
 ├── QUERIES.md             # runnable Cypher with @-annotation blocks
 ├── human_description.md   # the package explained to a person — rendered as HTML in a UI, never read by an agent
 ├── TESTS.md               # expected results on the sample data — never loaded by the runtime
 ├── SETUP.md               # optional — post-import statements the queries depend on
 └── sample-data/
-    └── *.csv              # one CSV per table in GRAPH_MODEL.json
+    └── *.csv              # one CSV per table in ONTOLOGY.json
 ```
 
-A package with no sample data is a model template, not a working demo, and needs no TESTS.md. Assume you are building the working demo unless the user says otherwise. `human_description.md` is required either way — a model template still needs explaining to a person.
+A package with no sample data is a reference-ontology template, not a working demo, and needs no TESTS.md. Assume you are building the working demo unless the user says otherwise. `human_description.md` is required either way — a template still needs explaining to a person.
 
 There is no INTRODUCTION.md. The agent introduces the package from guidance inside SKILL.md (see the template below), not from a canned document. `human_description.md` is not that document and is not a substitute for it: no agent ever reads it, and it is never the script for a spoken introduction. It is a page a person reads with their eyes, in a UI, possibly before any agent is involved at all.
 
-Complex packages may add supporting files (`.md` or `.cypher` only) when they are justified in explaining the package to the agent and how to use it effectively — for example a multi-step workflow, detailed model rationale, or honest caveats that would bloat SKILL.md (see `identity-validation` for a worked example). Each one must earn its place: add it only when the content is too large or too specialised for SKILL.md or QUERIES.md, and index every one in a "Supporting files" table in SKILL.md stating when the agent should load it. Simple packages need none. Keep each readable file under ~50,000 characters as a working target — this is guidance, not an enforced limit, but larger files consume more of the consuming agent's context and increase the need for a more powerful model, so justify any file that exceeds it and note it in the handoff. Paths must be relative with forward slashes.
+Complex packages may add supporting files (`.md` or `.cypher` only) when they are justified in explaining the package to the agent and how to use it effectively — for example a multi-step workflow, detailed design rationale, or honest caveats that would bloat SKILL.md (see `identity-validation` for a worked example). Each one must earn its place: add it only when the content is too large or too specialised for SKILL.md or QUERIES.md, and index every one in a "Supporting files" table in SKILL.md stating when the agent should load it. Simple packages need none. **Every file the agent can load must stay at or under 50,000 characters** — QUERIES.md, SETUP.md, ONTOLOGY.json and every supporting file. That is a hard limit: the destination's file-reading tools refuse anything longer, so the agent cannot read the file at all. Aim for 45,000 or less so the next query or annotation does not tip it over, count characters rather than bytes, and note any file near the limit in the handoff. A QUERIES.md that grows past it usually needs its sample detail moved to TESTS.md or its annotation prose tightened; failing that, an optional query group can move to an indexed supporting file. Paths must be relative with forward slashes.
 
-`TESTS.md`, `human_description.md` and the sample-data CSVs are exempt from both rules: none of them is indexed in SKILL.md, and none counts against the size target, because none reaches the consuming agent. `human_description.md` has a length constraint of its own — a reader's patience rather than a context window. See step 7.
+`TESTS.md`, `human_description.md` and the sample-data CSVs are exempt from both rules: none of them is indexed in SKILL.md, and none counts against the size limit, because none reaches the consuming agent. `human_description.md` has a length constraint of its own — a reader's patience rather than a context window. See step 7.
 
 ## Identity and metadata
 
@@ -58,17 +64,22 @@ Complex packages may add supporting files (`.md` or `.cypher` only) when they ar
 | Card title    | `metadata.neo4j-card-title`    | Human-readable catalog title             |
 | Card category | `metadata.neo4j-card-category` | Catalog grouping — a closed set; see PACKAGE_FORMAT.md for the allowed values |
 | Card blurb    | `metadata.neo4j-card-description` | One-sentence user-facing value statement |
-| Spec version  | `metadata.neo4j-graph-spec-version` | The graph spec the model was built against — copy the pin from GRAPH_SPEC_FORMAT.md verbatim |
+| Ontology id   | `ONTOLOGY.json` `id`           | Equal to `skillId`                       |
+| Spec version  | `ONTOLOGY.json` `schema`       | The ontology graph spec URI for the pin in ONTOLOGY_SPEC_FORMAT.md |
 
-Parser contract for SKILL.md: begins with YAML frontmatter delimited by `---`; `name` is 1–64 chars matching `^[a-z0-9]+(?:-[a-z0-9]+)*$`; `description` is non-empty, specific, and at most 1024 characters (it is the trigger text — state the industry, the use cases, and the capabilities); all `metadata` values are strings and the `neo4j-card-*` fields are non-empty; `neo4j-graph-spec-version` is present and equals the pin in GRAPH_SPEC_FORMAT.md; the Markdown body after frontmatter is non-empty.
+Parser contract for SKILL.md: begins with YAML frontmatter delimited by `---`; `name` is 1–64 chars matching `^[a-z0-9]+(?:-[a-z0-9]+)*$`; `description` is non-empty, specific, and at most 1024 characters (it is the trigger text — state the industry, the use cases, and the capabilities); all `metadata` values are strings and the `neo4j-card-*` fields are non-empty; there is no `neo4j-graph-spec-version` key (retired — the spec version lives in `ONTOLOGY.json`); the Markdown body after frontmatter is non-empty.
+
+## Updating an existing package
+
+When the request is to update, migrate, upgrade or clean up a package that already exists, follow [MIGRATION.md](MIGRATION.md) instead of the build order below. The deliverable is one branch and one pull request against `neo4j/studio-agent-use-cases` per package. The short version: inventory the package without changing it, convert the ontology with the bundled script and prove nothing changed in meaning, fold everything outside the format into the files the format defines, present the plan and wait for approval, then execute, validate and open the PR. Preserve curated content; never rename what users depend on; never delete a file without saying where its content went.
 
 ## Inputs to gather
 
 Ask for whatever is missing, but don't block — draft and flag instead:
 
 1. **Industry links** — pages explaining the industry and use cases (neo4j.com/developer/industry-use-cases/ pages are ideal). Fetch and read them; they drive the use cases, terminology, and caveats.
-2. **Graph model** — ideally graph-spec JSON. From a description or diagram, build the spec yourself and mark it `TODO(review)`.
-3. **Sample Cypher** — proven queries. If none provided, draft a small set from the use cases and mark each `TODO(review): unproven query`.
+2. **Reference ontology** — ideally ontology graph spec JSON; the user may call it a model or graph model. From a description or diagram, build it yourself and mark it `TODO(review)`. From a legacy package's `GRAPH_MODEL.json`, convert it using ONTOLOGY_SPEC_FORMAT.md's "Converting a legacy graph model".
+3. **Sample Cypher** — proven queries. If none provided, draft a small set from the use cases.
 
 Also confirm: package name (kebab-case), a one-line industry qualifier, and the primary use cases (3–5).
 
@@ -76,34 +87,38 @@ Also confirm: package name (kebab-case), a one-line industry qualifier, and the 
 
 Each artifact constrains the next — build in this order.
 
-### 1. GRAPH_MODEL.json
+### 1. ONTOLOGY.json
 
-Follow [GRAPH_SPEC_FORMAT.md](GRAPH_SPEC_FORMAT.md) exactly, and build against the bundled `graph-spec.schema.json` — read it if you need to settle a question the format doc leaves open, and never substitute a remote or remembered version. Record its pinned version in the package's `metadata.neo4j-graph-spec-version` when you write SKILL.md at step 6. Every property a query will touch must exist with the correct graph type; every node identifier is marked `key: true` (composite keys via an explicit `KEY` constraint); every CSV is declared in `tables` and bound in `mappings` (`NodeMapping`/`RelationshipMapping`, mode `MERGE`, `key` arrays); every node gets display coordinates.
+Follow [ONTOLOGY_SPEC_FORMAT.md](ONTOLOGY_SPEC_FORMAT.md) exactly, and build against the bundled `ontology-graph-spec.schema.json` — read it if you need to settle a question the format doc leaves open, and never substitute a remote or remembered version. Set `schema` to the pinned spec URI, `id` to the package folder name, and `version` to `"1"` for a new package. Every property a query will touch must exist with the correct graph type; every node identifier is marked `key: true` (composite keys via an explicit `KEY` constraint); every CSV is declared in `extensions.data_source_tables` and bound in `extensions.data_source_mappings.mapping0` (`NODE`/`RELATIONSHIP`, mode `MERGE`, `key` arrays); every node gets `extensions.display` coordinates. Those three are the only extensions a package writes — no `custom`, no `indexes`, nothing else.
 
-**Declare only what Import can load.** Every node and relationship the model declares must have a mapping — Import treats the model as an import job definition and flags anything unmapped as `Must be specified`, leaving the import stuck. So a relationship or label that a *query* creates rather than loads (a resolution or selection edge, a computed similarity, an algorithm-written link) must not be declared at all: define it in SKILL.md at step 6 instead, and never invent a CSV to make it mappable. GRAPH_SPEC_FORMAT.md's [Declare only what Import can load](GRAPH_SPEC_FORMAT.md) has the rule and what it costs to get wrong.
+Two rules the schema and the spec library do not enforce but the destination does, both learned the hard way: **a `must_exist`, `unique` or `key` flag goes on one entry per relationship type or label** — where a type is reused between node pairs, flag it on one entry and say "Expected on every `<TYPE>` relationship" in the others' descriptions, or the duplicate constraint names get the whole package dropped; and **parallel relationships need a mapping `key`** — several relationships of one type between the same two nodes (charging options at a site) collapse into one under `MERGE` unless the relationship mapping's `key` names the property that tells them apart. ONTOLOGY_SPEC_FORMAT.md's "Constraint flags on shared labels and types" and "Relationship mappings" have the details.
 
-**Annotate the model as you build it, not afterwards.** The spec root, every node, every relationship, and every property gets a `description` — and all annotation lives there. Numeric and coded property descriptions end with a `` e.g. `...` `` sample value (backfilled verbatim from the CSVs in step 2). Descriptions are the semantic contract the sample data and queries must satisfy, and they travel into the user's database with the model — they are what a downstream agent reasons from. Relationship descriptions state what the connection means in the from→to direction and its multiplicity in both directions; where one relationship type is reused between node pairs, each entry's description states its distinct meaning. **Never write an `extensions` block** — the pinned runtime rejects every encoding of it and silently drops the whole package. GRAPH_SPEC_FORMAT.md's Annotations section has the full rules.
+**Declare only what Import can load.** Every node and relationship the reference ontology declares must have a mapping — Import treats it as an import job definition and flags anything unmapped as `Must be specified`, leaving the import stuck. So a relationship or label that a *query* creates rather than loads (a resolution or selection edge, a computed similarity, an algorithm-written link) must not be declared at all: define it in SKILL.md at step 6 instead, and never invent a CSV to make it mappable. ONTOLOGY_SPEC_FORMAT.md's [Declare only what Import can load](ONTOLOGY_SPEC_FORMAT.md#declare-only-what-import-can-load) has the rule and what it costs to get wrong.
 
-**Descriptions you inferred need the user's confirmation.** Source material rarely defines meaning down to the property level — a source page will name `dosage` on a prescription without saying per-administration or per-day, mg or mL. Use the full context you have (the domain, the model structure, the use cases, the queries you plan) to draft the most reasonable reading, then put the uncertain ones to the user before generating sample data:
+**Annotate the reference ontology as you build it, not afterwards.** The root, every node, every relationship, and every property gets a `description`, and the description carries the meaning. Numeric and coded property descriptions end with a `` e.g. `...` `` sample value (backfilled verbatim from the CSVs in step 2). Descriptions are the semantic contract the sample data and queries must satisfy, and they travel into the user's database with the reference ontology — they are what a downstream agent reasons from. Relationship descriptions state what the connection means in the from→to direction and its multiplicity in both directions; where one relationship type is reused between node pairs, each entry's description states its distinct meaning. The spec's structured fields restate parts of that meaning in checkable form, and you use them: `one_of` or `pattern` where the domain fixes a property's values, `count`/`min_count`/`max_count` on relationship targets matching the prose multiplicity, `aliases` for the industry's other names for a node or relationship, and `reference` for a real external definition. Keep every description to 1,024 characters. ONTOLOGY_SPEC_FORMAT.md's Annotations, Value restrictions, Multiplicity, and Aliases and references sections have the full rules.
 
-- Batch the uncertain descriptions into one prompt: for each, state the property (or relationship), your proposed description (with unit/encoding/scope), and why you chose that reading.
+**Annotations you inferred need the user's confirmation.** Source material rarely defines meaning down to the property level — a source page will name `dosage` on a prescription without saying per-administration or per-day, mg or mL. Use the full context you have (the domain, the structure, the use cases, the queries you plan) to draft the most reasonable reading, then put the uncertain ones to the user before generating sample data:
+
+- Batch the uncertain annotations into one prompt: for each, state the property (or relationship), your proposed description (with unit/encoding/scope) and any value list, pattern, counts or aliases you propose, and why you chose that reading.
 - Invite overrides explicitly — the user can accept all, or reply with corrections in their own words, which you then apply verbatim in spirit.
-- Definitional glosses that follow directly from the label and model structure don't need confirmation. Units, encodings, scopes, and code systems that the source doesn't state always do.
+- Definitional glosses that follow directly from the label and structure don't need confirmation. Units, encodings, scopes, code systems, value lists, patterns, counts and aliases that the source doesn't state always do.
 - If the user is unavailable or defers, keep your best guess and mark it `TODO(review): inferred description` — never present an unconfirmed stipulation as settled.
 
 This confirmation happens at step 1 deliberately: once CSVs and queries exist, a wrong reading is baked into data and thresholds, not just prose.
 
 ### 2. sample-data/ CSVs
 
-One CSV per table in the spec. Headers must match the table's field keys exactly, including case — the Import tool depends on it. **Deliberately seed the patterns the queries detect**: a fraud package contains an actual ring, a routing package contains a reachable route. Size the data so results are meaningful rather than trivial (working packages range from tens of rows to a few thousand), and keep signal rows distinguishable from a realistic non-matching background. A query that returns zero rows against the sample data is a broken package.
+One CSV per table in the spec. The header row must match the table's `columns` names exactly, in order and including case — the Import tool depends on it. **Deliberately seed the patterns the queries detect**: a fraud package contains an actual ring, a routing package contains a reachable route. Size the data so results are meaningful rather than trivial, and keep signal rows distinguishable from a realistic non-matching background. A query that returns zero rows against the sample data is a broken package, and so, less obviously, is one that returns only the seeded pattern because nothing else exists: a sample with no non-matching activity shows what the pattern looks like but never shows a filter removing anything. Where the queries search activity — transactions, encounters, claims — aim for a few thousand rows of it, the scale at which a demo starts to look like real data. Structural reference data (a bill of materials, a regulatory sourcebook) needs only as many rows as the structure being demonstrated, which is often tens. Either way, include for each filter a query applies a seeded near-miss that the earlier, broader query catches and the stricter one rejects.
 
-The data must also satisfy the model's annotations: every value conforms to its property's confirmed `description` (unit, encoding, scope), and any multiplicity claim stated in a relationship description holds. Once the CSVs exist, backfill each property description's trailing `` e.g. `...` `` with a real value taken verbatim from the mapped column.
+**Scale the entities with the activity.** Density, not row count, decides whether path and cycle queries stay usable: five thousand transactions over forty accounts puts every account in thousands of rings, and the queries stop meaning anything. Size the node counts so the broad queries return a result a person could review, check it by simulating each query over the generated CSVs before writing TESTS.md, and thin the background until it does. Generate with a seeded, deterministic script kept outside the package, and say in TESTS.md how the data was designed.
+
+The data must also satisfy the reference ontology's annotations: every value conforms to its property's confirmed `description` (unit, encoding, scope) and to its `one_of` or `pattern`, and every relationship's counts and prose multiplicity hold. Once the CSVs exist, backfill each property description's trailing `` e.g. `...` `` with a real value taken verbatim from the mapped column — from an unremarkable background row, never a seeded ring member or anchor, because the sample is there to show a value's shape and should carry no signal.
 
 Keep a working note of what you seeded as you go — ring composition, deliberate background noise, the counts each pattern produces. That note becomes TESTS.md at step 4. Do not put it in QUERIES.md.
 
 ### 3. QUERIES.md
 
-The agent runs these as-is when the schema matches and rewrites them when it doesn't, so correctness beats cleverness — and everything in the file must stay true on data that isn't yours.
+The agent runs these as-is when the database matches the reference ontology and rewrites them when it doesn't, so correctness beats cleverness — and everything in the file must stay true on data that isn't yours.
 
 - Open with a short preamble: prerequisites in one place (Neo4j/Cypher version, APOC or GDS needs). **No sample-data profile** — row counts, seeded signals and noise statistics go in TESTS.md.
 - Follow it with a short **"Adapting these queries"** section — see below.
@@ -116,7 +131,7 @@ The agent runs these as-is when the schema matches and rewrites them when it doe
    * @description    Returns all products associated with a given customer
    *                 node, traversing up to three relationship hops.
    * @params         customerId - The internal ID of the customer node.
-   * @prerequisites  None beyond the imported model.
+   * @prerequisites  None beyond the imported reference ontology.
    * @returns        Product nodes with name, category, and purchase date.
    * @usage          Use when building customer-product recommendation
    *                 context. Widen the traversal depth only as far as the
@@ -128,7 +143,7 @@ The agent runs these as-is when the schema matches and rewrites them when it doe
   RETURN p.name, p.category, p.purchaseDate
   ```
 
-  Required tags: `@name` (matching the `##` heading), `@description`, `@params`, `@prerequisites`, `@returns` (the shape of the result), `@usage` (constraints and tuning guidance), `@tags`. Omit `@version` — the package versions as a whole. The set is extensible per the RFC; add a new @tag only when it earns its place.
+  Required tags: `@name` (matching the `##` heading), `@description`, `@params`, `@prerequisites`, `@returns` (the shape of the result), `@usage` (constraints and tuning guidance), `@tags`. Optional: `@sample` (below) and `@pattern` (see "Adapting these queries"). Omit `@version` — the package versions as a whole. The set is extensible per the RFC; add a new @tag only when it earns its place.
 
   **`@params` is one line per parameter**, starting at the parameter name, with any wrapped text indented past it. A second parameter that begins at the same indent as the first one's continuation lines is unparseable — no checker can tell it from a fourth line of prose. Write `None` when the query takes none.
 
@@ -137,17 +152,27 @@ The agent runs these as-is when the schema matches and rewrites them when it doe
    *                     raise until the result is reviewable by hand.
    *                 minExposure - Minimum summed value across those claims.
    ```
-- **The whole file is data-agnostic, not just the annotation blocks.** No row counts, no seeded-entity names, no thresholds justified by the bundled data, anywhere in QUERIES.md. The file travels with the package into editors and customers' databases, and the Solution Agent's show/run tooling surfaces annotation blocks to help the user understand a query — a sample-data claim is false the moment the data is the user's own, and conspicuously so.
+- **The whole file is data-agnostic, not just the annotation blocks — except `@sample`.** No row counts, no seeded-entity names, no thresholds justified by the bundled data, anywhere else in QUERIES.md: not in prose, not in Cypher comments, not in example `:param` lines. The file travels with the package into editors and customers' databases, and the Solution Agent's show/run tooling surfaces annotation blocks to help the user understand a query — an unlabelled sample-data claim is false the moment the data is the user's own, and conspicuously so.
+- **`@sample` is the one place the bundled data appears in QUERIES.md.** An optional tag, at most one per query, after `@tags`. It gives the runtime agent what `@returns` cannot: concrete parameter values that are valid on the sample, and what the query returns with them — so that after a sample import the agent can smoke-test the import and start from a real anchor instead of inventing an ID. It always opens with the literal phrase `Bundled sample data only:`, so no reader can take it as a claim about other data:
+
+  ```text
+   * @sample         Bundled sample data only: $patientId = 'fd65a941-3fa1-…'
+   *                 (Gerardo Covarrubias) returns 1 row with 4 distinct
+   *                 conditions — Hypertension, Coronary Heart Disease,
+   *                 Dyspnea (finding), Cough (finding).
+  ```
+
+  Give one value for every parameter the query takes, and the expected result in a sentence: row count, and the key values where they fit on a line or two. Prefer the anchors the query is designed to find (the seeded ring, the reachable route), so a correct result also shows the pattern works. An anchor the query looks up must exist in the CSVs; a threshold, a date, or a name for something the query itself creates (a variant identifier a resolution query writes) need not. Everything in `@sample` must agree with the query's TESTS.md section, which stays the complete specification; `@sample` is a short, agent-usable extract of it. Omit the tag where no concrete example helps — a parameterless count, a schema check.
 - **Every parameter that gates a result needs a starting point, stated data-agnostically.** A threshold with no suggested value is unusable without opening the test file. Give either a concrete value justified by what the parameter does — "start at 4 and raise until the result is a reviewable size" — or a procedure for deriving one where no number could transfer between datasets: "take the portfolio's upper quartile of claims per professional and start there". Both travel; "4 returns the seeded ring" does not.
 
   The trap here is subtler than a row count, and no grep catches it. A justification can be phrased data-agnostically and still be a fact about your generator: "start at 4, which clears ordinary household size" sounds like domain knowledge, but if you picked 4 because your noise generator caps legitimate groups at 3, it is the seed talking. Test each one by asking whether you would write the same sentence having never seen the CSVs. If not, either find the real domain reason or say plainly that the value is a starting point with no strong prior behind it. The tuned value, and the honest note about where it came from, go in TESTS.md.
-- Reference only labels, relationship types, directions, and properties defined in GRAPH_MODEL.json — or, for entities the queries themselves create, defined in SKILL.md's Model section. Those two are the whole permitted vocabulary; anything else is drift.
-- **Where a query writes an entity the model cannot declare**, say so in the preamble's prerequisites: name it, and state that it does not exist in a freshly imported database. A reader who runs the queries in isolation has no other way to know.
-- **Annotation blocks inherit the model's vocabulary.** When `@description`, `@params`, or `@usage` explains a property or relationship, use the wording, unit, scope, and direction from its GRAPH_MODEL.json `description` — never a paraphrase that could drift (if the model says dose per administration in milligrams, the annotation doesn't say "daily dosage"). The model's descriptions, the query annotations, and the queries themselves must read as one coherent artifact.
-- Bound every variable-length traversal.
-- Mark anything not executed against a live database with a literal `TODO(review): unproven query` line inside the annotation block, and isolate optional APOC/GDS material in its own clearly labelled section.
-- **Design rationale is not query material.** Why the model diverges from a published source page, why a query differs from the one on that page — that is a line or two in SKILL.md's Model section, or a supporting rationale file if it genuinely needs more. It does not belong between the queries.
-- End with the node-key constraints implied by GRAPH_MODEL.json (`key: true` properties and any composite `KEY` constraints), framed as a schema reference. Import creates them from GRAPH_MODEL.json, so they are there to verify the expected schema, not to build it. Section prose introduces them; the individual statements need no annotation blocks.
+- Reference only labels, relationship types, directions, and properties defined in ONTOLOGY.json — or, for entities the queries themselves create, defined in SKILL.md's Reference ontology section. Those two are the whole permitted vocabulary; anything else is drift.
+- **Where a query writes an entity the reference ontology cannot declare**, say so in the preamble's prerequisites: name it, and state that it does not exist in a freshly imported database. A reader who runs the queries in isolation has no other way to know.
+- **Annotation blocks inherit the reference ontology's vocabulary.** When `@description`, `@params`, or `@usage` explains a property or relationship, use the wording, unit, scope, allowed values, and direction from its ONTOLOGY.json annotations — never a paraphrase that could drift (if the reference ontology says dose per administration in milligrams, the annotation doesn't say "daily dosage"). The reference ontology's descriptions, the query annotations, and the queries themselves must read as one coherent artifact.
+- Bound every variable-length traversal. The exception is a walk over a structure that is acyclic by construction (a bill of materials, a containment hierarchy), where a fixed bound would silently drop deep branches and report them as false results: leave it unbounded and say in `@usage` that the walk is unbounded and relies on the structure being acyclic.
+- Isolate optional APOC/GDS material in its own clearly labelled section: a divider heading such as `## Graph Data Science (optional)` carrying only section prose — the plugin requirement, the projection's lifecycle, and the order the statements run in (project, run, drop) — followed by each statement under its own `##` heading with the requirement repeated in `@prerequisites`. When the package's queries must run in a stated order, label each APOC/GDS query in place instead ("(requires APOC)" in its heading and in `@prerequisites`) rather than moving it. Algorithm queries that stream one row per node need a `$limit` or an aggregation, or they return the whole graph. Do not mark queries as unproven: testing against a database is a manual step outside package creation, and TESTS.md is what the tester works from. Do not mark queries as unproven: testing against a database is a manual step outside package creation, and TESTS.md is what the tester works from.
+- **Design rationale is not query material.** Why the reference ontology diverges from a published source page, why a query differs from the one on that page — that is a line or two in SKILL.md's Reference ontology section, or a supporting rationale file if it genuinely needs more. It does not belong between the queries.
+- End with the node-key constraints implied by ONTOLOGY.json (`key: true` properties and any composite `KEY` constraints), framed as a reference for checking the live database. Import creates them from ONTOLOGY.json, so they are there to verify the expected constraints, not to build them. Section prose introduces them; the individual statements need no annotation blocks.
 
 #### The "Adapting these queries" section
 
@@ -156,13 +181,13 @@ A dozen lines or so near the top of QUERIES.md, stating the procedure once for t
 ```markdown
 ## Adapting these queries
 
-These queries assume the model in `GRAPH_MODEL.json`. When the user's
-schema differs — their own model, a modified one, or a database that
-predates this package — the queries are patterns to rebuild, not Cypher
-to run.
+These queries assume the reference ontology in `ONTOLOGY.json`. When the
+user's database differs — their own ontology, a modified one, or a database
+that predates this package — the queries are patterns to rebuild, not
+Cypher to run.
 
 1. Read the live schema (`CALL db.schema.visualization()`, `SHOW CONSTRAINTS`)
-   rather than assuming this model applies.
+   rather than assuming the reference ontology applies.
 2. Map their labels onto the role map in `SKILL.md`. A role with no
    counterpart means the pattern below it has no analogue — say so
    rather than forcing a fit.
@@ -176,11 +201,13 @@ That is the whole investment. Do not add per-query rewrite prose: it is boilerpl
 
 Everything concrete about the bundled sample data, in one file the runtime never loads.
 
-Write it immediately after QUERIES.md, from the working note kept at step 2 and the results of actually running the queries. It is the oracle VALIDATION.md checks against and the reference an engineer curating the package needs, and it is exempt from the size target — detail is free here, because none of it reaches the consuming agent.
+Write it immediately after QUERIES.md, from the working note kept at step 2 and from reading the CSVs: it states what each query should return on the bundled data, derived from the seeded design. It is the specification the manual tester works from, the oracle VALIDATION.md checks for completeness, and the reference an engineer curating the package needs. It is exempt from the size limit — detail is free here, because none of it reaches the consuming agent.
+
+Package creation does not run the queries. Testing against a database is manual and outside this skill's scope, so do not run imports, do not mark queries as unproven, and do not invent observed results.
 
 Structure:
 
-- **How to run** — that a disposable database is required, that the CSVs import through the Import flow from GRAPH_MODEL.json first, and any SETUP.md statements that must run before the queries.
+- **How to run** — for the manual tester: that a disposable database is required, that the CSVs import through the Import flow from ONTOLOGY.json first, and any SETUP.md statements that must run before the queries.
 - **Sample-data profile** — row counts per label and relationship type, the deliberately seeded signals in full, and the deliberate background noise that keeps any single query from being a clean detector. Say why key choices were made where the data drove them.
 - **One `##` section per query, heading matching QUERIES.md exactly** so the two files pair mechanically.
 
@@ -188,22 +215,22 @@ Each query section carries:
 
 | Field | Content |
 | ----- | ------- |
-| Parameters | The values used for this run. |
+| Parameters | The values the tester should use. |
 | Invariant | What must hold whatever the generator produces, in terms of the seeded design: "returns the twelve Ring A claimants and no unseeded claimant". |
-| Observed | The concrete snapshot — row counts, returned values, date or data version of the run. |
-| Sensitivity | Optional. What other threshold values do, and where the signal stops separating from the noise. |
+| Expected | Optional. Concrete expectations derivable from the CSVs — the seeded entities and counts the query should return. |
+| Sensitivity | Optional. What other threshold values should do, and where the signal stops separating from the noise. |
 
-**Distinguishing invariant from observed is the point of the file.** An oracle made only of row counts breaks the first time anyone regenerates the CSVs, and the breakage looks like a query fault rather than a stale expectation. The invariant is the contract; the observed numbers are evidence for it.
+**Distinguishing invariant from expected counts is the point of the file.** An oracle made only of row counts breaks the first time anyone regenerates the CSVs, and the breakage looks like a query fault rather than a stale expectation. The invariant is the contract; the counts are a convenience for the tester.
 
 Sensitivity is also where you are honest about where a shipped threshold came from. If the value in `@params` was reverse-engineered from the seed, say so here, next to the value the honest derivation would have given. That admission is useful to the next engineer and would be misleading to a customer — which is the whole reason these are two files.
 
-A query you could not execute still gets its own `##` section, saying what it was not run against and why, and carries the matching `TODO(review): unproven query` in its QUERIES.md annotation block. Do not collect them under one "queries not executed" heading — that breaks heading parity and hides which query is unverified.
+Every query gets its own `##` section. Do not collect any under a shared heading — that breaks heading parity.
 
 ### 5. SETUP.md (only when needed)
 
 If any query depends on schema or derived data the Import flow does not create — a fulltext or point index, a query-applied label — put the minimal statements in SETUP.md. Most packages need none.
 
-- **Never include node-key constraints.** Import creates them from GRAPH_MODEL.json's key definitions; recreating them (or `UNIQUE` variants) conflicts with the existing `KEY` constraints. Constraints belong at the end of QUERIES.md as a schema reference.
+- **Never include node-key constraints.** Import creates them from ONTOLOGY.json's key definitions; recreating them (or `UNIQUE` variants) conflicts with the existing `KEY` constraints. Constraints belong at the end of QUERIES.md as a reference.
 - One statement per ```` ```cypher ```` block — the agent runs one statement per call.
 - Each statement opens with the same `/* @... */` annotation block as QUERIES.md queries: `@name`, `@description` (what the statement creates and why), and `@usage` naming the dependent queries and the effect if skipped (fails outright vs. silently degraded results). `@params`/`@returns`/`@tags` only where meaningful.
 - Order required statements first; mark recommended and optional ones clearly. Keep the total to a handful — a growing SETUP.md means the package is over-engineered.
@@ -213,9 +240,9 @@ If any query depends on schema or derived data the Import flow does not create �
 
 Terse and agent-facing — the onboarding agent receives the body directly in its instruction prompt.
 
-The one new piece of thinking here is the **role map**. The package's durable value is its analytical patterns, not its labels, and a user who arrives with their own schema needs those patterns to survive the rename. The roles fall out of writing the queries: each is an abstract part some node plays in the patterns — the party, the financial event, the shared attribute — and the third column states what a substitute in someone else's model would have to supply for the pattern to work at all.
+The one new piece of thinking here is the **role map**. The package's durable value is its analytical patterns, not its labels, and a user who arrives with their own ontology needs those patterns to survive the rename. The roles fall out of writing the queries: each is an abstract part some node plays in the patterns — the party, the financial event, the shared attribute — and the third column states what a substitute in someone else's data would have to supply for the pattern to work at all.
 
-Keep it to roles a user could recognise in their own data. Five or six rows is typical. A row per node label is not a map, it is the model restated.
+Keep it to roles a user could recognise in their own data. Five or six rows is typical. A row per node label is not a map, it is the reference ontology restated.
 
 Skeleton:
 
@@ -227,7 +254,6 @@ metadata:
   neo4j-card-title: <Short title>
   neo4j-card-category: <one of PACKAGE_FORMAT.md's allowed values, verbatim>
   neo4j-card-description: <One-sentence value statement.>
-  neo4j-graph-spec-version: <the pin from GRAPH_SPEC_FORMAT.md, verbatim>
 ---
 
 # <Use Case Title>
@@ -250,44 +276,61 @@ introduction in your own words — don't recite this file. Convey:
   specifics from the domain.>
 - <What the sample data contains, that it is synthetic, and that it
   deliberately seeds the patterns the bundled queries look for.>
-- What you can help with: explaining the model, walking through the query
+- What you can help with: explaining the reference ontology, walking through the query
   patterns, importing the sample data or their own, and running Cypher
   once a database is connected.
 
 End with a clear next step, such as asking whether they'd like to explore
-the model or start importing data.
+the reference ontology or start importing data.
 
-## Model
+## Reference ontology
 
 - <Nodes and relationships in one or two lines each; key properties.
-  Summarise — the authoritative definitions are the `description`
-  annotations in `GRAPH_MODEL.json`, on relationships as well as nodes
-  and properties.>
-- <One or two lines of design rationale where the model departs from the
-  source material, and why.>
-- <Only when a bundled query creates a relationship or label rather than
-  loading it: define it here, because GRAPH_MODEL.json cannot. Give the
-  node pairs or labels it connects, every property with its graph type,
+  Summarise — the authoritative definitions are the annotations in
+  `ONTOLOGY.json`, on relationships as well as nodes and properties.>
+- <One or two lines of design rationale where the reference ontology
+  departs from the source material, and why.>
+- <Only when a bundled query creates a relationship, label or property
+  rather than loading it: define it here, because ONTOLOGY.json cannot. Give
+  the node pairs or labels it connects (for a property, the label it sits
+  on), every property with its graph type,
   which queries write it and which remove it, and say plainly that it is
-  absent from a freshly imported database and absent from the model by
-  design. A small table reads better than prose. Omit this bullet
-  entirely when every entity the queries touch is in the model.>
-- Full schema and mappings are in `GRAPH_MODEL.json`; runnable Cypher is
-  in `QUERIES.md`.
-- Treat the model's `description` annotations as the authoritative meaning
-  of each term — quote them when explaining the model, rely on them when
-  adapting queries to the user's own data, and never contradict them.
+  absent from a freshly imported database and absent from the reference
+  ontology by design. A small table reads better than prose — columns
+  Entity | On | Shape | Written by | Removed by. Omit this bullet when
+  every entity the queries touch is declared, and say instead: "Every node,
+  relationship and property the queries use is loaded by Import; no query
+  creates anything.">
+- The full reference ontology, with its import mappings, is in
+  `ONTOLOGY.json`; runnable Cypher is in `QUERIES.md`.
+- Call it the reference ontology. Users may say "model", "graph model",
+  "data model" or "ontology" — treat these as the same thing.
+- Treat its annotations as the authoritative meaning of each term —
+  `description` above all, plus `aliases`, allowed values (`one_of`,
+  `pattern`) and relationship counts. Quote them when explaining the
+  reference ontology, rely on them when adapting queries to the user's
+  own data (an alias often names the user's equivalent label), and never
+  contradict them.
 
 ### Roles
 
-| Role | In this model | What a substitute needs |
-| ---- | ------------- | ----------------------- |
+| Role | In the reference ontology | What a substitute needs |
+| ---- | ------------------------- | ----------------------- |
 | <Abstract role> | `<Label>` | <The property or connection the patterns depend on> |
 
-When the user's schema differs from this model, map their labels onto
-these roles before rewriting anything from `QUERIES.md`. A role with no
+When the user's database differs from the reference ontology, map their
+labels onto these roles before rewriting anything from `QUERIES.md`. A role with no
 counterpart in their data means the patterns resting on it have no
 analogue — say so plainly rather than forcing a fit.
+
+## Supporting files
+
+<Only when the package keeps supporting files; omit the section otherwise.
+Never list TESTS.md or human_description.md.>
+
+| File | Load when |
+| ---- | --------- |
+| `<file>.md` | <The task or question that makes it worth loading> |
 
 ## Operational Constraints
 
@@ -309,6 +352,13 @@ analogue — say so plainly rather than forcing a fit.
 - Starting parameter values in `@params` are starting points, not
   defaults that fit any dataset. Read the result and retune before
   presenting anything as a finding.
+- `@sample` describes the bundled sample data only. Use it only when the
+  connected database holds that sample — you imported it in this
+  conversation, or a lookup of the `@sample` anchor (for example its
+  `$patientId`) finds it. Then use its values as starting parameters, and
+  treat a result that differs from it as a sign the import went wrong.
+  Otherwise ignore it: never present it, or anything derived from it, as
+  an expectation of the user's own data.
 - <Package-specific gotchas: version needs, APOC/GDS dependencies,
   traversal rules, threshold tuning.>
 
@@ -317,7 +367,7 @@ analogue — say so plainly rather than forcing a fit.
 When returning guidance, keep output structured:
 
 ```text
-Model assumptions
+Reference ontology assumptions
 Cypher (if requested)
 What this <detects|optimizes|surfaces>
 Tuning options
@@ -325,7 +375,7 @@ Validation approach
 ```
 ````
 
-Notes on the introduction guidance: it is direction, not a script — trust the agent to phrase it. Include a real model-image URL as an extra bullet only if one exists; never fabricate one. Keep the whole section under ten lines. Note that it describes the sample data in general terms only — the introduction is spoken to a user who may be about to import something else entirely.
+Notes on the introduction guidance: it is direction, not a script — trust the agent to phrase it. Include a real image URL of the reference ontology as an extra bullet only if one exists; never fabricate one. Keep the whole section under ten lines. Note that it describes the sample data in general terms only — the introduction is spoken to a user who may be about to import something else entirely.
 
 **Do not index TESTS.md or human_description.md in SKILL.md.** Every other non-required file gets a Supporting files entry; these two deliberately do not, because the agent must never load either.
 
@@ -333,14 +383,14 @@ Notes on the introduction guidance: it is direction, not a script — trust the 
 
 The package explained to a person, in clean Markdown, rendered as HTML in a UI. No agent reads it. Write it last, because it restates in plain language what the preceding six steps settled — and writing it is a useful check on whether the package actually makes sense.
 
-Its reader is evaluating, not operating: someone who has landed on this package and wants to know what industry it is for, what problem it solves, and what the ontology holds. They may never open the folder. Write for the screen — short paragraphs, bullet summaries, and tables, with no wall of prose anywhere in the file.
+Its reader is evaluating, not operating: someone who has landed on this package and wants to know what industry it is for, what problem it solves, and what the reference ontology holds. They may never open the folder. Write for the screen — short paragraphs, bullet summaries, and tables, with no wall of prose anywhere in the file.
 
-**This file calls the model the reference ontology.** It is the first and, for now, the only place that term is used. Do not write "graph model", "graph data model", "schema", or "data model" anywhere in it, and do not rename anything else: SKILL.md, QUERIES.md, GRAPH_MODEL.json, TESTS.md and the rest keep their current wording and their current filenames. This is a deliberate single-file change, not the start of a sweep — do not "helpfully" propagate it.
+**This file calls it the reference ontology**, as every package file does. Do not write "graph model", "graph data model", "schema", or "data model" anywhere in it — here even less than elsewhere, because the reader is a person forming a view of the package from this page alone.
 
 Four rules on content:
 
-- **No filenames, no Cypher, no JSON.** Never name `GRAPH_MODEL.json`, `QUERIES.md`, `SKILL.md`, `sample-data/`, or any other file. The reader is looking at a rendered page, not a directory listing. Describe what the ontology contains; don't point at where it lives.
-- **No sample data, at all.** Not counts, not seeded entities, not "the bundled synthetic dataset". The file describes the industry and the ontology; the data is out of scope. This is a stricter rule than SKILL.md's, which permits a general mention.
+- **No filenames, no Cypher, no JSON.** Never name `ONTOLOGY.json`, `QUERIES.md`, `SKILL.md`, `sample-data/`, or any other file. The reader is looking at a rendered page, not a directory listing. Describe what the reference ontology contains; don't point at where it lives.
+- **No sample data, at all.** Not counts, not seeded entities, not "the bundled synthetic dataset". The file describes the industry and the reference ontology; the data is out of scope. This is a stricter rule than SKILL.md's, which permits a general mention.
 - **No agent instructions.** No "the agent can help you with", no response shapes, no operational constraints. Nothing in this file addresses a machine.
 - **Plain professional language.** Someone in the industry should recognise their own vocabulary; someone outside it should still follow. Expand a term of art on first use.
 
@@ -377,13 +427,13 @@ pieces hang together — the shape of it, in words, before the tables.>
 
 | Entity | What it represents |
 | ------ | ------------------ |
-| <Label> | <Plain-language meaning, from the model's own description> |
+| <Label> | <Plain-language meaning, from the reference ontology's own description> |
 
 ### Properties
 
 | Entity | Property | Type | What it holds |
 | ------ | -------- | ---- | ------------- |
-| <Label> | <property> | <Type> | <Meaning, including unit, encoding or scope where the model states one> |
+| <Label> | <property> | <Type> | <Meaning, including unit, encoding or scope where the reference ontology states one, and the allowed values where it lists them> |
 
 ### Relationships
 
@@ -400,18 +450,18 @@ pieces hang together — the shape of it, in words, before the tables.>
 
 Notes on the tables:
 
-- **The descriptions come from `description` annotations in the model** — they are the authoritative meaning and this file must not contradict them. Shorten and plain-English them for a reader; never restate them with a different unit, scope or direction. Drop the trailing `` e.g. `...` `` sample values: they are sample data.
-- **Every node, relationship and property in the model appears.** Completeness is the point of the Ontology section — a reader deciding whether the ontology fits their data needs the whole of it, and a table that omits a property is worse than no table.
+- **The descriptions come from `description` annotations in the reference ontology** — they are the authoritative meaning and this file must not contradict them. Shorten and plain-English them for a reader; never restate them with a different unit, scope or direction. Drop the trailing `` e.g. `...` `` sample values: they are sample data.
+- **Every node, relationship and property in the reference ontology appears.** Completeness is the point of the Ontology section — a reader deciding whether the reference ontology fits their data needs the whole of it, and a table that omits a property is worse than no table.
 - **Where one relationship type is used between more than one pair of nodes, give each pair its own row** with its own meaning. The type name alone is not the distinction; the direction column is.
 - Omit the **Relationship properties** table entirely when no relationship carries a property. Never leave an empty table or an "N/A" row.
 - Use the published label and relationship-type names as they appear in the graph, in code formatting. They are what the reader will see in the browser.
 
-Aim for something a reader gets through in two or three minutes — roughly 400 to 900 words for a typical package, the Ontology tables aside, which are as long as the ontology is. A `human_description.md` that runs long is usually explaining Neo4j rather than the domain.
+Aim for something a reader gets through in two or three minutes — roughly 400 to 900 words for a typical package, the Ontology tables aside, which are as long as the reference ontology is. A `human_description.md` that runs long is usually explaining Neo4j rather than the domain.
 
 ## Validate and hand off
 
-Run [VALIDATION.md](VALIDATION.md) in full. Inconsistency between model, data, and queries is the most common failure — and annotations widen that check: descriptions, sample values, query annotations, and CSVs must all tell the same story. The second most common failure is now sample-data detail leaking into a file the consuming agent reads; check QUERIES.md and SKILL.md for it specifically.
+Run [VALIDATION.md](VALIDATION.md) in full. Inconsistency between reference ontology, data, and queries is the most common failure — and annotations widen that check: descriptions, sample values, allowed values, counts, query annotations, and CSVs must all tell the same story. The second most common failure is now sample-data detail leaking into a file the consuming agent reads; check QUERIES.md and SKILL.md for it specifically.
 
-Your handoff summary must list every remaining `TODO(review):` with its path (including `inferred description` items the user hasn't confirmed), every query not executed against sample data, whether the model validated against the bundled schema and was accepted by the destination runtime, the graph spec version the package declares, whether `human_description.md` covers every node, relationship and property in the model, and any assumption that needs domain-owner review.
+Your handoff summary must list every remaining `TODO(review):` with its path (including `inferred description` items the user hasn't confirmed), whether the reference ontology validated against the bundled schema, passed the spec-library check (and with which npm release), and was accepted by the destination runtime — registration and Import conversion both — the ontology graph spec version its `schema` field declares, any agent-loadable file near the 50,000-character limit, whether `human_description.md` covers every node, relationship and property in the reference ontology, and any assumption that needs domain-owner review. In `neo4j/studio-agent-use-cases`, also run `scripts/validate-new-packages.py` and the unit tests, which CI runs on the pull request.
 
 `human_description.md` is the one part of the package nothing downstream verifies — no schema rejects it, no query fails against it, and no agent ever reads it back. Say plainly in the handoff that it needs a human read before the package ships.

@@ -1,5 +1,7 @@
 target-version = "py312"
 line-length = 88
+# The bundled create-solution-package skill is vendored verbatim.
+extend-exclude = ["skills"]
 
 [lint]
 select = ["E", "F", "I", "B", "UP"]

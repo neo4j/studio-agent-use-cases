@@ -1,128 +1,61 @@
-# Attack Path Analysis — test oracle
+# Attack Path Analysis — Tests
 
-Authoring-side reference for the bundled sample data. Never loaded by the
-runtime and never shown to the consuming agent: everything here is a concrete
-claim about the bundled CSVs, which would be false against a user's own estate.
-
-## Status of these expectations
-
-**No query in `QUERIES.md` has been executed against a Neo4j database.** No
-database or container runtime was available in the authoring environment. Every
-"Expected" figure below was instead derived by reimplementing each query's
-semantics over the bundled CSVs in Python — BFS for `shortestPath`,
-relationship-uniqueness (trail) enumeration for the unbounded path walk, and the
-same predicates, grouping and ordering the Cypher uses.
-
-What that does and does not establish:
-
-- **Established:** the sample data really does contain the patterns the queries
-  look for, the seeded signals separate from the noise as designed, and the
-  result shapes and orderings are the intended ones.
-- **Not established:** that the Cypher parses, that the planner behaves as
-  expected, or that Neo4j's evaluation of the aggregations, list slices and
-  `shortestPath` bounds matches the simulation in every corner. Three
-  constructs are worth checking first on a real run — see *Constructs to verify
-  first* below.
-
-Every query therefore carries `TODO(review): unproven query` in its
-`QUERIES.md` annotation block. Clear those markers, and replace "Expected" with
-"Observed" plus a run date, once the queries have run.
-
-### Constructs to verify first
-
-| Where | Construct | What to check |
-| ----- | --------- | ------------- |
-| Every path query | `shortestPath((a)-[:CAN_REACH*0..8]->(b))` with a lower bound of 0 | That a zero-length path is returned when `a = b`, which is what makes a foothold that runs the crown jewel itself appear at zero hops. If the planner rejects `*0..` inside `shortestPath`, split the query on the zero-hop case. |
-| Choke points | `UNWIND nodes(path)[1..-1]` and `count(DISTINCT path)` | That the slice excludes both endpoints and that distinct path counting behaves as assumed. Under relationship-uniqueness a path may revisit a node (see the `artifact-store-01` note in the profile), which the simulation reproduces deliberately. |
-| Crown-jewel exposure summary | `collect({app: exposed, …})` over zero rows, then `[entry IN exposure WHERE entry.app = target][0]` | That the collect still yields one row with an empty list when no crown jewel is reachable at all, so unreached applications are still returned. This is the construct the whole negative case rests on. The comprehension variable is deliberately not named `row`, to avoid shadowing the alias it feeds. |
-
-## Editing notes
-
-Two things in this model will break the package if changed carelessly. Both are
-defects that have actually occurred in this repository, not hypotheticals.
-
-### Temporal properties must be `ZONED DATETIME`, never `DATE`
-
-`CVE.publishedDate` and `HAS_VULNERABILITY.detectedOn` are typed
-`ZONED DATETIME`, and the CSV columns carry a full ISO 8601 zoned datetime
-(`2026-08-14T00:00:00Z`) rather than a bare `2026-08-14`.
-
-This is not a modelling preference. **The Import tool does not support `DATE` for
-local CSV imports**: it flags the property with "Not supported in local imports"
-and the load cannot proceed, which is exactly the failure this package shipped
-with before the type was changed. Every other package in this repository
-carrying a temporal property uses `ZONED DATETIME` for the same reason.
-
-Only the calendar date is meaningful. The time component is always midnight UTC
-and should be treated as padding. If you regenerate the sample data, keep the
-`T00:00:00Z` suffix on both columns, and keep the trailing sample values in the
-two property descriptions in the same form — they are checked verbatim against
-the columns.
-
-No bundled query filters on either property, so no expected result in this file
-depends on a date value; that is why the type change required no re-derivation.
-A query added later should compare with `datetime($value)`, not `date($value)`.
-
-### The reused relationship type carries no properties
-
-`HAS_ACCESS_TO` is declared twice — `policyAccessesService` and
-`policyAccessesApplication` — and **neither entry carries any properties**. Keep
-it that way unless you understand the consequence.
-
-A `mustExist` on a relationship property generates an existence constraint
-scoped to the *relationship type*, not to the node pair. Declaring the same
-constrained property on both entries of a reused type therefore mints two
-constraints with the same name, and the package fails to load. This is a real
-defect that has already been fixed once in another package in this repository.
-
-If a property is ever needed on `HAS_ACCESS_TO`, declare any `mustExist` on
-exactly one of the two entries and say so in both descriptions, rather than
-declaring it on each. The relationship-property constraints currently in the
-model — `HAS_VULNERABILITY.detectedOn` and `CAN_REACH.port` — are safe because
-both types are declared exactly once. No node label is reused.
+What each query in `QUERIES.md` should return on the bundled sample data. This
+file is for the manual tester and the curating engineer; the runtime never loads
+it. Everything below was derived from the CSVs in `sample-data/`, not from a
+database run.
 
 ## How to run
 
-1. **Use a disposable database.** Every query here reads, but the schema
-   statement in `SETUP.md` and the constraints at the end of `QUERIES.md` write.
-   Never run this against anything but a throwaway target.
-2. **Import the CSVs through the Import flow from `GRAPH_MODEL.json`.** That is
-   the only supported loading route; there is no seed script, and none should be
-   written. Import creates the seven node-key constraints from the model's key
-   definitions.
+1. **Use a disposable database.** Every query in `QUERIES.md` reads; the one
+   statement in `SETUP.md` writes schema. Never run this against anything but a
+   throwaway Neo4j 5.x target.
+2. **Import the CSVs in `sample-data/` through the Import flow, using
+   `ONTOLOGY.json` as the import definition.** That is the only supported
+   loading route; there is no seed script, and none should be written. Import
+   also creates the seven node-key constraints from the reference ontology's key
+   definitions. Expected totals after import: **88 nodes, 144 relationships.**
 3. **Optionally run the one statement in `SETUP.md`** — a range index on
    `Application.tier`. Nothing below depends on it: results are identical with
    and without, and only the crown-jewel anchor lookup changes speed. Run it if
-   you want the package exercised as a user would see it.
-4. **Run the queries with the parameters each section states.** Where a section
-   gives more than one parameter set, the first is the headline case.
-
-Expected totals after import: **88 nodes, 144 relationships.**
+   you want the package exercised as a user would see it. No APOC or GDS is
+   needed.
+4. **Run each query with the parameters given in its section below**, and
+   compare the result with the Invariant first and the Expected values second.
+   Where a section gives more than one parameter set, the first is the headline
+   case.
 
 ## Sample-data profile
 
 A synthetic estate for a fictional retailer, sized so that every query returns a
 reviewable result and no query is a clean detector on its own.
 
-### Row counts
+### Nodes and relationships
 
-| Table | Rows | Becomes |
-| ----- | ---- | ------- |
-| `endpoints.csv` | 9 | `Endpoint` |
-| `compute_instances.csv` | 23 | `ComputeInstance` |
-| `cves.csv` | 14 | `CVE` |
-| `applications.csv` | 9 | `Application` |
-| `identities.csv` | 11 | `Identity` |
-| `iam_policies.csv` | 12 | `IAMPolicy` |
-| `cloud_services.csv` | 10 | `CloudService` |
-| `endpoint_resolves_to.csv` | 11 | `RESOLVES_TO` |
-| `instance_has_vulnerability.csv` | 18 | `HAS_VULNERABILITY` |
-| `instance_can_reach.csv` | 34 | `CAN_REACH` |
-| `instance_runs.csv` | 13 | `RUNS` |
-| `instance_runs_as.csv` | 20 | `RUNS_AS` |
-| `identity_assumes.csv` | 20 | `ASSUMES` |
-| `policy_accesses_service.csv` | 15 | `HAS_ACCESS_TO` (to `CloudService`) |
-| `policy_accesses_application.csv` | 13 | `HAS_ACCESS_TO` (to `Application`) |
+**Nodes**
+
+| Label | Count | Source |
+| ----- | ----- | ------ |
+| `Endpoint` | 9 | `endpoints.csv` |
+| `ComputeInstance` | 23 | `compute_instances.csv` |
+| `CVE` | 14 | `cves.csv` |
+| `Application` | 9 | `applications.csv` |
+| `Identity` | 11 | `identities.csv` |
+| `IAMPolicy` | 12 | `iam_policies.csv` |
+| `CloudService` | 10 | `cloud_services.csv` |
+
+**Relationships**
+
+| Type | Count | Source |
+| ---- | ----- | ------ |
+| `RESOLVES_TO` | 11 | `endpoint_resolves_to.csv` |
+| `HAS_VULNERABILITY` | 18 | `instance_has_vulnerability.csv` |
+| `CAN_REACH` | 34 | `instance_can_reach.csv` |
+| `RUNS` | 13 | `instance_runs.csv` |
+| `RUNS_AS` | 20 | `instance_runs_as.csv` |
+| `ASSUMES` | 20 | `identity_assumes.csv` |
+| `HAS_ACCESS_TO` (to `CloudService`) | 15 | `policy_accesses_service.csv` |
+| `HAS_ACCESS_TO` (to `Application`) | 13 | `policy_accesses_application.csv` |
 
 88 nodes, 144 relationships.
 
@@ -149,7 +82,7 @@ single path.
 ### Seeded signals
 
 **Four qualifying footholds** — internet-facing via `RESOLVES_TO`, carrying a
-CISA-KEV-listed CVE at CVSS ≥ 9.0:
+CISA-KEV-listed CVE at CVSS ≥ 9.0 (five rows, because CI-016 carries two):
 
 | Instance | Host | Env | CVE | CVSS | EPSS | Reaches a P0 app? |
 | -------- | ---- | --- | --- | ---- | ---- | ----------------- |
@@ -180,8 +113,8 @@ two policies, two resources, nothing restricted. A second broad identity, ID-008
 VPN foothold.
 
 **One shared policy.** POL-012 `shared-config-read` is attached to six
-identities, so that the model exercises a policy-level hub as well as
-host-level ones.
+identities, so that the reference ontology exercises a policy-level hub as well
+as host-level ones.
 
 ### Deliberate background noise
 
@@ -203,286 +136,375 @@ wrong answer.
 
 | Relationship | Claim | Holds because |
 | ------------ | ----- | ------------- |
-| `RESOLVES_TO` | each endpoint resolves to ≥1 instance; several where load balanced; an instance may serve many or none | all 9 endpoints resolve; EP-001 and EP-005 resolve to 2 each; CI-004 serves 2 endpoints; 13 instances serve none |
+| `RESOLVES_TO` | each endpoint resolves to ≥1 instance (`from.min_count: 1`); several where load balanced; an instance may serve many or none | all 9 endpoints resolve; EP-001 and EP-005 resolve to 2 each; CI-004 serves 2 endpoints; 13 instances serve none |
 | `HAS_VULNERABILITY` | an instance may carry many or none; one CVE may affect many instances | max 2 per instance; 7 instances carry none; CVE-2024-6387, CVE-2024-2961 and CVE-2023-29491 each affect 2–3 |
 | `CAN_REACH` | directed; mutual reachability is two rows; may reach many or none | CI-016↔CI-017 is the only mutual pair, present as two rows; CI-013, CI-014, CI-015, CI-021, CI-023 reach nothing |
 | `RUNS` | an instance may run many or none; an app may run on many instances | 10 instances run nothing; APP-003 runs on 5 |
-| `RUNS_AS` | **at most one** workload identity per instance | every instance appears at most once in the table; ID-001, ID-003, ID-004, ID-006, ID-007 and ID-009 are each shared by 2–3 instances |
+| `RUNS_AS` | **at most one** workload identity per instance (`from.max_count: 1`) | every instance appears at most once in the table; ID-001, ID-003, ID-004, ID-006, ID-007 and ID-009 are each shared by 2–3 instances |
 | `ASSUMES` | an identity may hold many; a policy may be attached to many identities | ID-006 holds 5; POL-004, POL-006, POL-007 and POL-012 are each attached to 2–6 identities |
 | `HAS_ACCESS_TO` → `CloudService` | may grant many, or none | all 12 policies grant at least one service, so the "none" branch is an allowance this data does not exercise |
 | `HAS_ACCESS_TO` → `Application` | may grant many, or none; an app may be granted by none | POL-006 grants 5; POL-001, POL-002, POL-004, POL-007 and POL-012 grant none; APP-006 is granted by none |
 
 Two claims are allowances the data does not exercise: an application running on
 no instance, and an identity held by no instance. Both are legitimate for a
-template model and neither can fail.
+template and neither can fail. The two counts in `ONTOLOGY.json` are checked
+mechanically by the skill's `check_annotations.py` (9 endpoints and 23 instances
+tested, no violations).
+
+### Reference anchors
+
+- Foothold instance CI-007 `legacy-portal-01` — the unremarkable P3 portal whose
+  reach is the package's central point; used for lateral reachability.
+- Identity ID-006 `role-ci-deployer` — the over-privileged identity; ID-002
+  `svc-legacy-portal` is its contrast. Used for blast radius.
+- Crown jewels APP-001 Payment Ledger, APP-002 Card Tokenization Service and the
+  unreachable APP-009 HR Records, all `tier = 'P0'`.
+- Restricted service CS-009 `hr-records-db` — never on a kill chain at any
+  setting.
+
+### Editing notes
+
+#### Temporal properties must be `ZONED DATETIME`, never `DATE`
+
+`CVE.publishedDate` and `HAS_VULNERABILITY.detectedOn` are typed
+`ZONED DATETIME`, and the CSV columns carry a full ISO 8601 zoned datetime
+(`2026-08-14T00:00:00Z`) rather than a bare `2026-08-14`.
+
+This is not a modelling preference. **The Import tool does not support `DATE` for
+local CSV imports**: it flags the property with "Not supported in local imports"
+and the load cannot proceed, which is exactly the failure this package shipped
+with before the type was changed. Every other package in this repository
+carrying a temporal property uses `ZONED DATETIME` for the same reason.
+
+Only the calendar date is meaningful. The time component is always midnight UTC
+and should be treated as padding. If you regenerate the sample data, keep the
+`T00:00:00Z` suffix on both columns, and keep the trailing sample values in the
+two property descriptions in the same form — they are checked verbatim against
+the columns.
+
+No bundled query filters on either property, so no expected result in this file
+depends on a date value; that is why the type change required no re-derivation.
+A query added later should compare with `datetime($value)`, not `date($value)`.
+
+#### The reused relationship type carries no properties
+
+`HAS_ACCESS_TO` is declared twice — `policyAccessesService` and
+`policyAccessesApplication` — and **neither entry carries any properties**. Keep
+it that way unless you understand the consequence.
+
+A `must_exist` on a relationship property generates an existence constraint
+scoped to the *relationship type*, not to the node pair. Declaring the same
+constrained property on both entries of a reused type therefore mints two
+constraints with the same name, and the package fails to load. This is a real
+defect that has already been fixed once in another package in this repository.
+
+If a property is ever needed on `HAS_ACCESS_TO`, declare any `must_exist` on
+exactly one of the two entries and say so in both descriptions, rather than
+declaring it on each. The relationship-property constraints currently in the
+reference ontology — `HAS_VULNERABILITY.detectedOn` and `CAN_REACH.port` — are
+safe because both types are declared exactly once. No node label is reused.
+
+#### Constructs to check first on a run
+
+The expected results below were computed by reimplementing each query's
+semantics over the CSVs — BFS for `shortestPath`, relationship-uniqueness
+(trail) enumeration for the unbounded path walk, and the same predicates,
+grouping and ordering the Cypher uses. Three constructs carry the most semantic
+weight; if a result differs from this file, check these first.
+
+| Where | Construct | What to check |
+| ----- | --------- | ------------- |
+| Every path query | `shortestPath((a)-[:CAN_REACH*0..8]->(b))` with a lower bound of 0 | That a zero-length path is returned when `a = b`, which is what makes a foothold that runs the crown jewel itself, or a zero-hop kill chain, appear at zero hops. |
+| Choke points | `UNWIND nodes(path)[1..-1]` and `count(DISTINCT path)` | That the slice excludes both endpoints and that distinct path counting behaves as assumed. Under relationship-uniqueness a path may revisit a node (see the `artifact-store-01` note in Topology). |
+| Crown-jewel exposure summary | `collect({app: exposed, …})` over zero rows, then `[entry IN exposure WHERE entry.app = target][0]` | That the collect still yields one row with an empty list when no crown jewel is reachable at all, so unreached applications are still returned. This is the construct the whole negative case rests on. The comprehension variable is deliberately not named `row`, to avoid shadowing the alias it feeds. |
+
+#### Where the shipped starting values came from
+
+- `minCvss` 9.0 is the published lower bound of the CVSS v3.1 CRITICAL band.
+- `minPathsThrough` 2 is definitional: one route through a host is not a choke
+  point.
+- `maxLateralHops` 4 (3 for the choke-point query) is a general starting depth,
+  not tuned to these rows. On this data it is slightly generous: every shortest
+  route to a crown-jewel host is at most 3 hops, so 3 and 4 give the same
+  result for the crown-jewel queries, and only the kill chain and lateral
+  reachability from `vpn-gateway-01` reach a host at 4 hops. The choke-point
+  query starts one lower because its enumeration is combinatorial, not because
+  3 flatters the data.
+
+#### Migration notes
+
+- Migrated to the current package format: the legacy graph-spec file was
+  converted to `ONTOLOGY.json` (ontology graph spec 1.0.0) and the two
+  relationship counts were added restating existing prose. The former "Status of
+  these expectations" section has gone; its tester guidance is the table above.
+- Annotations added in the migration: aliases `Host` and `Server` on
+  `ComputeInstance` and `Vulnerability` on `CVE`, from the source pages; a
+  `reference` on `CVE.knownExploited` to the CISA KEV catalogue; and `one_of`
+  on `CVE.severity` with the full CVSS v3.1 qualitative scale (`NONE`, `LOW`,
+  `MEDIUM`, `HIGH`, `CRITICAL`). Every `severity` value in `cves.csv` is on the
+  scale; `NONE` does not occur in this data.
+- One query changed in the migration. *Lateral reachability from a compromised
+  host* now matches the candidate `reached` instances first and excludes the
+  origin (`WHERE reached <> origin`) before calling `shortestPath`. Before, the
+  end node was left unbound inside `shortestPath`, so one candidate row had the
+  origin as both ends; with a lower bound of 1, Neo4j's default
+  `dbms.cypher.forbid_shortestpath_common_nodes` setting raises an error for
+  such a row instead of skipping it. The expected results are unchanged. Every
+  other query's Cypher is unchanged.
+- Two legacy sensitivity figures were wrong against the CSVs and are recomputed
+  below: lateral reachability from `CI-003` returns 11 hosts at a bound of 4,
+  not 8; and the blast radius of ID-008 `role-platform-admin` is 10 resources,
+  not 6. The kill-chain widening to `['restricted','confidential']` is now
+  stated exactly (69 rows) rather than as "roughly half again".
 
 ## Exposed hosts carrying an exploited vulnerability
 
-**Parameters** — `minCvss: 9.0`.
+- **Parameters:** `$minCvss = 9.0`.
+- **Invariant:** returns exactly the internet-facing instances carrying a
+  KEV-listed CVE at or above the threshold, one row per instance and CVE. The
+  staging foothold appears, and its row sorts first on CVSS despite leading
+  nowhere. No instance without an inbound `RESOLVES_TO` appears, and no non-KEV
+  CVE appears, whatever the generator produces.
+- **Expected:** 5 rows over 4 distinct instances, in this order:
 
-**Invariant** — returns exactly the internet-facing instances carrying a
-KEV-listed CVE at or above the threshold, one row per instance and CVE. The
-staging foothold appears, and its row sorts first on CVSS despite leading
-nowhere. No instance without an inbound `RESOLVES_TO` appears, and no non-KEV
-CVE appears, whatever the generator produces.
+  | # | instanceId | hostname | environment | cveId | cvssScore | epssScore |
+  | - | ---------- | -------- | ----------- | ----- | --------- | --------- |
+  | 1 | CI-020 | staging-web-01 | staging | CVE-2024-3400 | 10.0 | 0.96 |
+  | 2 | CI-003 | vpn-gateway-01 | production | CVE-2024-21762 | 9.8 | 0.94 |
+  | 3 | CI-016 | build-runner-01 | production | CVE-2024-27198 | 9.8 | 0.91 |
+  | 4 | CI-016 | build-runner-01 | production | CVE-2024-23897 | 9.8 | 0.72 |
+  | 5 | CI-007 | legacy-portal-01 | production | CVE-2023-4966 | 9.4 | 0.97 |
 
-**Expected (hand-traced, not executed)** — 5 rows over 4 distinct instances, in
-this order:
-
-| # | instanceId | hostname | environment | cveId | cvssScore | epssScore |
-| - | ---------- | -------- | ----------- | ----- | --------- | --------- |
-| 1 | CI-020 | staging-web-01 | staging | CVE-2024-3400 | 10.0 | 0.96 |
-| 2 | CI-003 | vpn-gateway-01 | production | CVE-2024-21762 | 9.8 | 0.94 |
-| 3 | CI-016 | build-runner-01 | production | CVE-2024-27198 | 9.8 | 0.91 |
-| 4 | CI-016 | build-runner-01 | production | CVE-2024-23897 | 9.8 | 0.72 |
-| 5 | CI-007 | legacy-portal-01 | production | CVE-2023-4966 | 9.4 | 0.97 |
-
-Excluded and worth confirming: CI-021 and CI-022 (KEV at 10.0 and 9.8 but not
-internet-facing), CI-001, CI-002, CI-004 and CI-019 (internet-facing, non-KEV).
-
-**Sensitivity** — at `minCvss: 7.0` the result is unchanged, because every
-KEV-listed CVE in the data already scores 9.4 or above; the widening only starts
-to matter on data with mid-scoring KEV entries. At `minCvss: 10.0` only CI-020
-and its dead-end finding survive, which is the sharpest illustration in the
-package of why a score threshold alone is the wrong instrument. The 9.0 shipped
-in `@params` is the published lower bound of the CVSS v3.1 CRITICAL band, not a
-value tuned to these rows.
+  Excluded and worth confirming: CI-021 and CI-022 (KEV at 10.0 and 9.8 but not
+  internet-facing), CI-001, CI-002, CI-004 and CI-019 (internet-facing,
+  non-KEV).
+- **Sensitivity:** at `$minCvss = 7.0` the result is unchanged, because every
+  KEV-listed CVE in the data already scores 9.4 or above; the widening only
+  starts to matter on data with mid-scoring KEV entries. At `$minCvss = 10.0`
+  only CI-020 and its dead-end finding survive, which is the sharpest
+  illustration in the package of why a score threshold alone is the wrong
+  instrument.
 
 ## Attack paths from an exposed foothold to a crown-jewel application
 
-**Parameters** — `minCvss: 9.0`, `crownJewelTier: 'P0'`, `maxLateralHops: 4`.
+- **Parameters:** `$minCvss = 9.0`, `$crownJewelTier = 'P0'`,
+  `$maxLateralHops = 4`.
+- **Invariant:** returns one shortest route per foothold, foothold CVE and crown
+  jewel, for the three production footholds only. APP-009 HR Records never
+  appears, because CI-023 has no inbound `CAN_REACH`. CI-020 staging-web-01
+  never appears, because its segment reaches no crown-jewel host. Every returned
+  route is directed and traversable end to end.
+- **Expected:** 8 rows, ordered by hops then CVSS then crown jewel:
 
-**Invariant** — returns one shortest route per foothold, foothold CVE and crown
-jewel, for the three production footholds only. APP-009 HR Records never
-appears, because CI-023 has no inbound `CAN_REACH`. CI-020 staging-web-01 never
-appears, because its segment reaches no crown-jewel host. Every returned route
-is directed and traversable end to end.
+  | # | foothold | via CVE | crown jewel | crown-jewel host | hops |
+  | - | -------- | ------- | ----------- | ---------------- | ---- |
+  | 1 | build-runner-01 | CVE-2024-27198 | Card Tokenization Service | app-payments-01 | 1 |
+  | 2 | build-runner-01 | CVE-2024-23897 | Card Tokenization Service | app-payments-01 | 1 |
+  | 3 | vpn-gateway-01 | CVE-2024-21762 | Card Tokenization Service | app-payments-01 | 2 |
+  | 4 | build-runner-01 | CVE-2024-27198 | Payment Ledger | db-payments-01 | 2 |
+  | 5 | build-runner-01 | CVE-2024-23897 | Payment Ledger | db-payments-01 | 2 |
+  | 6 | vpn-gateway-01 | CVE-2024-21762 | Payment Ledger | db-payments-01 | 2 |
+  | 7 | legacy-portal-01 | CVE-2023-4966 | Card Tokenization Service | app-payments-01 | 2 |
+  | 8 | legacy-portal-01 | CVE-2023-4966 | Payment Ledger | db-payments-01 | 3 |
 
-**Expected (hand-traced, not executed)** — 8 rows, ordered by hops then CVSS
-then crown jewel:
-
-| # | foothold | via CVE | crown jewel | crown-jewel host | hops |
-| - | -------- | ------- | ----------- | ---------------- | ---- |
-| 1 | build-runner-01 | CVE-2024-27198 | Card Tokenization Service | app-payments-01 | 1 |
-| 2 | build-runner-01 | CVE-2024-23897 | Card Tokenization Service | app-payments-01 | 1 |
-| 3 | vpn-gateway-01 | CVE-2024-21762 | Card Tokenization Service | app-payments-01 | 2 |
-| 4 | build-runner-01 | CVE-2024-27198 | Payment Ledger | db-payments-01 | 2 |
-| 5 | build-runner-01 | CVE-2024-23897 | Payment Ledger | db-payments-01 | 2 |
-| 6 | vpn-gateway-01 | CVE-2024-21762 | Payment Ledger | db-payments-01 | 2 |
-| 7 | legacy-portal-01 | CVE-2023-4966 | Card Tokenization Service | app-payments-01 | 2 |
-| 8 | legacy-portal-01 | CVE-2023-4966 | Payment Ledger | db-payments-01 | 3 |
-
-Routes: `legacy-portal-01 → build-runner-01 → app-payments-01`, extended by
-`→ db-payments-01` for the ledger; `vpn-gateway-01 → bastion-01 → …` for both.
-
-**Sensitivity** — `maxLateralHops: 1` leaves only the two build-runner rows to
-the tokenization service. `2` drops row 8 only. `4` and above adds nothing: 3 is
-the longest shortest-route in the data, so the bound stops mattering. No value
-of the bound makes APP-009 appear.
+  Routes: `legacy-portal-01 → build-runner-01 → app-payments-01`, extended by
+  `→ db-payments-01` for the ledger; `vpn-gateway-01 → bastion-01 → …` for both.
+  Rows 3 to 6 tie on hops and CVSS, so they order by crown jewel name only;
+  their relative order within each crown jewel is not fixed.
+- **Sensitivity:** `$maxLateralHops = 1` leaves only the two build-runner rows to
+  the tokenization service. `2` drops row 8 only. `3` and above returns all 8: 3
+  is the longest shortest route in the data, so the bound stops mattering. No
+  value of the bound makes APP-009 appear.
 
 ## Lateral reachability from a compromised host
 
-**Parameters** — `instanceId: 'CI-007'`, `maxLateralHops: 4`. CI-007 is the
-headline case: the low-value legacy portal whose reach is the package's central
-point.
+- **Parameters:** `$instanceId = 'CI-007'`, `$maxLateralHops = 4`. CI-007 is the
+  headline case: the low-value legacy portal whose reach is the package's
+  central point.
+- **Invariant:** returns every instance reachable from the origin by directed
+  `CAN_REACH` within the bound, with the shortest hop count to each, and
+  excludes the origin itself. No DMZ, `mgmt`, staging, development or `hr-tier`
+  host is reachable from CI-007 at any bound, because no edge leads back out of
+  the application estate.
+- **Expected:** 10 of the 22 other instances, at hop distances 1 to 3:
 
-**Invariant** — returns every instance reachable from the origin by directed
-`CAN_REACH` within the bound, with the shortest hop count to each, and excludes
-the origin itself. No DMZ, `mgmt`, staging, development or `hr-tier` host is
-reachable from CI-007 at any bound, because no edge leads back out of the
-application estate.
+  | hops | instances |
+  | ---- | --------- |
+  | 1 | CI-012 app-crm-01, CI-016 build-runner-01 |
+  | 2 | CI-008 app-orders-01, CI-009 app-orders-02, CI-010 app-payments-01, CI-011 app-inventory-01, CI-015 db-analytics-01, CI-017 artifact-store-01 |
+  | 3 | CI-013 db-orders-01, CI-014 db-payments-01 |
 
-**Expected (hand-traced, not executed)** — 10 of the 22 other instances, at hop
-distances 1 to 3:
-
-| hops | instances |
-| ---- | --------- |
-| 1 | CI-012 app-crm-01, CI-016 build-runner-01 |
-| 2 | CI-008 app-orders-01, CI-009 app-orders-02, CI-010 app-payments-01, CI-011 app-inventory-01, CI-015 db-analytics-01, CI-017 artifact-store-01 |
-| 3 | CI-013 db-orders-01, CI-014 db-payments-01 |
-
-Not reachable: CI-001 to CI-006, CI-018 to CI-023. Two reached hosts run P0
-applications (CI-010 at 2 hops, CI-014 at 3). Five distinct identities are
-inheritable across the reachable set, including `role-ci-deployer` at one hop —
-the finding that should send the reader to the blast-radius query.
-
-**Sensitivity** — the reachable set is complete at 3 hops; raising the bound to
-4 or beyond adds nothing. At 1 hop the result is two hosts and still includes
-`role-ci-deployer`, so even the tightest bound surfaces the important identity.
-Running from `CI-003` instead returns a different 8-host set through
-`bastion-01`; running from `CI-020` returns 2 hosts and no production host at
-all.
+  Not reachable: CI-001 to CI-006, CI-018 to CI-023. Two reached hosts run P0
+  applications (CI-010 at 2 hops, CI-014 at 3). Five distinct identities are
+  inheritable across the reachable set — `svc-app-orders`, `role-ci-deployer`,
+  `svc-inventory`, `svc-app-payments`, `svc-db-backup` — including
+  `role-ci-deployer` at one hop, the finding that should send the reader to the
+  blast-radius query.
+- **Sensitivity:** the reachable set is complete at 3 hops; raising the bound to
+  4 or beyond adds nothing. At 1 hop the result is two hosts and still includes
+  `role-ci-deployer`, so even the tightest bound surfaces the important
+  identity. Running from `CI-003` instead returns 11 hosts through `bastion-01`
+  at a bound of 4 (6 within 2 hops, 10 within 3, and CI-015 db-analytics-01 at
+  4); running from `CI-020` returns 2 hosts (CI-022, CI-021) and no production
+  host at all.
 
 ## Blast radius of a compromised identity
 
-**Parameters** — `identityId: 'ID-006'`. The contrast case is
-`identityId: 'ID-002'`.
+- **Parameters:** `$identityId = 'ID-006'`. The contrast case is
+  `$identityId = 'ID-002'`.
+- **Invariant:** returns one row per distinct resource the identity reaches
+  through any of its policies, cloud services before applications (applications
+  have no data classification and sort last), most sensitive first, with the
+  highest permission level any granting policy carries. Nothing in the result
+  depends on network reachability.
+- **Expected:** ID-006 `role-ci-deployer`, 5 policies, **12 resources**: 6 cloud
+  services and 6 applications.
 
-**Invariant** — returns one row per distinct resource the identity reaches
-through any of its policies, cloud services before applications (applications
-have no data classification and sort last), most sensitive first, with the
-highest permission level any granting policy carries. Nothing in the result
-depends on network reachability.
+  | resourceKind | resourceName | classification / tier | highestGrant | via |
+  | ------------ | ------------ | --------------------- | ------------ | --- |
+  | CloudService | customer-pii-db | restricted | admin | ci-deploy-all-prod |
+  | CloudService | db-backups | restricted | write | backup-bucket-write |
+  | CloudService | payment-card-vault | restricted | read | payment-vault-read |
+  | CloudService | order-event-stream | confidential | admin | ci-deploy-all-prod |
+  | CloudService | build-artifacts | internal | admin | ci-artifact-admin |
+  | CloudService | shared-config | internal | read | shared-config-read |
+  | Application | Build Orchestrator | P1 | admin | ci-artifact-admin |
+  | Application | Card Tokenization Service | P0 | admin | ci-deploy-all-prod |
+  | Application | Customer CRM | P1 | admin | ci-deploy-all-prod |
+  | Application | Inventory Sync | P2 | admin | ci-deploy-all-prod |
+  | Application | Order Management | P1 | admin | ci-deploy-all-prod |
+  | Application | Payment Ledger | P0 | admin | ci-deploy-all-prod |
 
-**Expected (hand-traced, not executed)** — ID-006 `role-ci-deployer`, 5
-policies, **12 resources**: 6 cloud services and 6 applications.
+  Three of the four restricted services and both exposed P0 applications.
+  Within the application block, ordering is by highest grant then name; all six
+  are `admin`, so they fall back to alphabetical.
 
-| resourceKind | resourceName | classification / tier | highestGrant | via |
-| ------------ | ------------ | --------------------- | ------------ | --- |
-| CloudService | customer-pii-db | restricted | admin | ci-deploy-all-prod |
-| CloudService | db-backups | restricted | write | backup-bucket-write |
-| CloudService | payment-card-vault | restricted | read | payment-vault-read |
-| CloudService | order-event-stream | confidential | admin | ci-deploy-all-prod |
-| CloudService | build-artifacts | internal | admin | ci-artifact-admin |
-| CloudService | shared-config | internal | read | shared-config-read |
-| Application | Build Orchestrator | P1 | admin | ci-artifact-admin |
-| Application | Card Tokenization Service | P0 | admin | ci-deploy-all-prod |
-| Application | Customer CRM | P1 | admin | ci-deploy-all-prod |
-| Application | Inventory Sync | P2 | admin | ci-deploy-all-prod |
-| Application | Order Management | P1 | admin | ci-deploy-all-prod |
-| Application | Payment Ledger | P0 | admin | ci-deploy-all-prod |
-
-Three of the four restricted services and both exposed P0 applications. Within
-the application block, ordering is by highest grant then name; all six are
-`admin`, so they fall back to alphabetical.
-
-ID-002 `svc-legacy-portal`, the contrast: **2 resources**, `shared-config`
-(internal, read) then `portal-static-assets` (public, read). No restricted
-service, no application, nothing at write or above. The pair is the package's
-argument that the host an attacker lands on matters far less than the credential
-it runs as.
-
-**Sensitivity** — not threshold-driven; this query has no tunable parameter. The
-informative variation is the identity chosen. ID-008 `role-platform-admin`
-returns 6 resources including all three reachable restricted services at
-`admin`; ID-011 `svc-hr-records` returns 2, including the otherwise unreachable
-`hr-records-db`.
+  ID-002 `svc-legacy-portal`, the contrast: **2 resources**, `shared-config`
+  (internal, read) then `portal-static-assets` (public, read). No restricted
+  service, no application, nothing at write or above. The pair is the package's
+  argument that the host an attacker lands on matters far less than the
+  credential it runs as.
+- **Sensitivity:** not threshold-driven; this query has no tunable parameter.
+  The informative variation is the identity chosen. ID-008
+  `role-platform-admin` returns 10 resources — 4 cloud services (all three
+  reachable restricted services and `order-event-stream`, every one at `admin`)
+  and 6 applications; ID-011 `svc-hr-records` returns 2, including the
+  otherwise unreachable `hr-records-db`.
 
 ## Full kill chain from the internet to sensitive cloud data
 
-**Parameters** — `minCvss: 9.0`, `maxLateralHops: 4`,
-`classifications: ['restricted']`.
+- **Parameters:** `$minCvss = 9.0`, `$maxLateralHops = 4`,
+  `$classifications = ['restricted']`.
+- **Invariant:** returns only complete chains: public endpoint, exploitable
+  exposed host, directed lateral route, pivot host, inherited identity, granting
+  policy, restricted cloud service. CS-009 `hr-records-db` never appears at any
+  bound, because its only granting policy is held by an identity on an
+  unreachable host. CI-020 staging-web-01 never appears, because no host in its
+  segment has a `RUNS_AS` edge. At least one chain is zero-hop.
+- **Expected:** **44 rows** across 3 entry hosts and 3 restricted services. The
+  row count is high because the query deliberately does not aggregate: each
+  distinct combination of entry CVE, pivot host and granting policy is its own
+  row, which is what lets a reader see that there are many ways to the same data
+  rather than one.
 
-**Invariant** — returns only complete chains: public endpoint, exploitable
-exposed host, directed lateral route, pivot host, inherited identity, granting
-policy, restricted cloud service. CS-009 `hr-records-db` never appears at any
-bound, because its only granting policy is held by an identity on an unreachable
-host. CI-020 staging-web-01 never appears, because no host in its segment has a
-`RUNS_AS` edge. At least one chain is zero-hop.
+  | entry host | hop range | restricted services reached | via identities |
+  | ---------- | --------- | --------------------------- | -------------- |
+  | build-runner-01 | 0–2 | payment-card-vault, customer-pii-db, db-backups | role-ci-deployer, svc-app-payments, svc-db-backup |
+  | legacy-portal-01 | 1–3 | payment-card-vault, customer-pii-db, db-backups | role-ci-deployer, svc-app-payments, svc-db-backup |
+  | vpn-gateway-01 | 1–4 | payment-card-vault, customer-pii-db, db-backups | role-platform-admin, role-ci-deployer, svc-app-payments, svc-db-backup |
 
-**Expected (hand-traced, not executed)** — **44 rows** across 3 entry hosts and
-3 restricted services. The row count is high because the query deliberately does
-not aggregate: each distinct combination of entry CVE, pivot host and granting
-policy is its own row, which is what lets a reader see that there are many ways
-to the same data rather than one.
+  The six zero-hop rows all belong to build-runner-01, whose own workload
+  identity `role-ci-deployer` reaches all three restricted services with no
+  lateral movement at all — the worst case in the data, and the one to lead with
+  when demonstrating the package.
 
-Summary of the shape:
-
-| entry host | hop range | restricted services reached | via identities |
-| ---------- | --------- | --------------------------- | -------------- |
-| build-runner-01 | 0–2 | payment-card-vault, customer-pii-db, db-backups | role-ci-deployer, svc-app-payments, svc-db-backup |
-| legacy-portal-01 | 1–3 | payment-card-vault, customer-pii-db, db-backups | role-ci-deployer, svc-app-payments, svc-db-backup |
-| vpn-gateway-01 | 1–4 | payment-card-vault, customer-pii-db, db-backups | role-platform-admin, role-ci-deployer, svc-app-payments, svc-db-backup |
-
-The six zero-hop rows all belong to build-runner-01, whose own workload identity
-`role-ci-deployer` reaches all three restricted services with no lateral
-movement at all — the worst case in the data, and the one to lead with when
-demonstrating the package.
-
-The shortest chain from the *unremarkable* foothold is the more interesting
-result: `legacy.northwind.example → legacy-portal-01 (CVE-2023-4966) →
-build-runner-01 → role-ci-deployer → ci-deploy-all-prod → customer-pii-db`, one
-lateral hop from a P3 portal to restricted customer data.
-
-**Sensitivity** — at `maxLateralHops: 0` only the six build-runner rows survive.
-At `1` the count reaches 21. Widening `classifications` to
-`['restricted','confidential']` adds `order-event-stream` chains and roughly
-half again as many rows. No setting of either parameter reaches
-`hr-records-db`, which is the invariant worth protecting when the data is
-regenerated.
+  The shortest chain from the *unremarkable* foothold is the more interesting
+  result: `legacy.northwind.example → legacy-portal-01 (CVE-2023-4966) →
+  build-runner-01 → role-ci-deployer → ci-deploy-all-prod → customer-pii-db`,
+  one lateral hop from a P3 portal to restricted customer data.
+- **Sensitivity:** at `$maxLateralHops = 0` only the six build-runner rows
+  survive. At `1` the count reaches 21, at `2` 38, at `3` 43. Widening
+  `$classifications` to `['restricted','confidential']` adds
+  `order-event-stream` chains, for 69 rows at a bound of 4. No setting of either
+  parameter reaches `hr-records-db`, which is the invariant worth protecting
+  when the data is regenerated.
 
 ## Choke points on crown-jewel attack paths
 
-**Parameters** — `minCvss: 9.0`, `crownJewelTier: 'P0'`, `maxLateralHops: 3`,
-`minPathsThrough: 2`. Note the hop bound is one lower than elsewhere: this query
-enumerates every route rather than the shortest.
+- **Parameters:** `$minCvss = 9.0`, `$crownJewelTier = 'P0'`,
+  `$maxLateralHops = 3`, `$minPathsThrough = 2`. Note the hop bound is one lower
+  than elsewhere: this query enumerates every route rather than the shortest.
+- **Invariant:** returns only hosts strictly between a foothold and a
+  crown-jewel host, never a foothold and never a crown-jewel host itself, ranked
+  by the number of distinct enumerated routes through them. The two deliberate
+  hubs rank jointly first.
 
-**Invariant** — returns only hosts strictly between a foothold and a
-crown-jewel host, never a foothold and never a crown-jewel host itself, ranked
-by the number of distinct enumerated routes through them. The two deliberate
-hubs rank jointly first.
+  The walk enumerates **9 distinct routes** in total at this bound, from the
+  three production footholds (the `WITH DISTINCT entry` clause collapses
+  CI-016's two qualifying CVEs to one entry, so a foothold is not counted twice
+  for carrying two vulnerabilities — an easy thing to get wrong when
+  reimplementing this).
+- **Expected:** 3 rows above the threshold, ordered by route count then
+  hostname:
 
-The walk enumerates **9 distinct routes** in total at this bound, from the three
-production footholds (the `WITH DISTINCT entry` clause collapses CI-016's two
-qualifying CVEs to one entry, so a foothold is not counted twice for carrying
-two vulnerabilities — an easy thing to get wrong when reimplementing this).
+  | instanceId | hostname | segment | pathsThrough | gates access to |
+  | ---------- | -------- | ------- | ------------ | --------------- |
+  | CI-018 | bastion-01 | mgmt | 4 | Card Tokenization Service, Payment Ledger |
+  | CI-016 | build-runner-01 | ci-cd | 4 | Card Tokenization Service, Payment Ledger |
+  | CI-010 | app-payments-01 | app-tier | 3 | Payment Ledger |
 
-**Expected (hand-traced, not executed)** — 3 rows above the threshold, ordered
-by route count then hostname:
+  The two hubs tie on 4, so `bastion-01` sorts first on hostname. CI-017
+  `artifact-store-01` sits on exactly 1 route and is correctly excluded by the
+  threshold. That route —
+  `build-runner-01 → artifact-store-01 → build-runner-01 → app-payments-01` —
+  revisits CI-016 and is legal under relationship-uniqueness semantics. It is
+  deliberate: a run either reproduces it, confirming the expected traversal
+  semantics, or does not, telling you the semantics differ from the derivation.
+  Check this row first.
+- **Sensitivity:** this query is the most bound-sensitive in the package, and
+  the ranking itself moves, so treat the numbers as comparable only within one
+  run.
 
-| instanceId | hostname | segment | pathsThrough | gates access to |
-| ---------- | -------- | ------- | ------------ | --------------- |
-| CI-018 | bastion-01 | mgmt | 4 | Card Tokenization Service, Payment Ledger |
-| CI-016 | build-runner-01 | ci-cd | 4 | Card Tokenization Service, Payment Ledger |
-| CI-010 | app-payments-01 | app-tier | 3 | Payment Ledger |
+  | `$maxLateralHops` | Route counts | Rows at `$minPathsThrough = 2` |
+  | ----------------- | ------------ | ------------------------------ |
+  | 2 | bastion-01 2, app-payments-01 1, build-runner-01 1 | 1 |
+  | 3 | bastion-01 4, build-runner-01 4, app-payments-01 3, artifact-store-01 1 | 3 |
+  | 4 | build-runner-01 7, app-payments-01 5, bastion-01 5, artifact-store-01 3 | 4 |
 
-The two hubs tie on 4, so `bastion-01` sorts first on hostname. CI-017
-`artifact-store-01` sits on exactly 1 route and is correctly excluded by the
-threshold. That route —
-`build-runner-01 → artifact-store-01 → build-runner-01 → app-payments-01` —
-revisits CI-016 and is legal under relationship-uniqueness semantics. It is
-deliberate: it is there so that a real run either reproduces it, confirming the
-expected traversal semantics, or does not, telling you the semantics differ
-from the simulation. Check this row first.
-
-**Sensitivity** — this query is the most bound-sensitive in the package, and the
-ranking itself moves, so treat the numbers as comparable only within one run.
-
-| `maxLateralHops` | Route counts | Rows at `minPathsThrough: 2` |
-| ---------------- | ------------ | ---------------------------- |
-| 2 | bastion-01 2, app-payments-01 1, build-runner-01 1 | 1 |
-| 3 | bastion-01 4, build-runner-01 4, app-payments-01 3, artifact-store-01 1 | 3 |
-| 4 | build-runner-01 7, app-payments-01 5, bastion-01 5, artifact-store-01 3 | 4 |
-
-At `minPathsThrough: 1` and a bound of 3, CI-017 joins the result with a count
-of 1. The `minPathsThrough: 2` shipped in `@params` is definitional — one route
-through a host is not a choke point — rather than reverse-engineered from these
-counts. The `maxLateralHops: 3` shipped for this query is one lower than the
-package default because the enumeration is combinatorial, not because 3
-flatters the data.
+  At `$minPathsThrough = 1` and a bound of 3, CI-017 joins the result with a
+  count of 1.
 
 ## Crown-jewel exposure summary
 
-**Parameters** — `minCvss: 9.0`, `crownJewelTier: 'P0'`, `maxLateralHops: 4`.
+- **Parameters:** `$minCvss = 9.0`, `$crownJewelTier = 'P0'`,
+  `$maxLateralHops = 4`.
+- **Invariant:** returns every P0 application, whether or not any foothold
+  reaches it. APP-009 HR Records is always present with a foothold count of
+  zero, a null hop count and an empty host list; this is the single most
+  important expectation in the file, because it is the only check that the outer
+  join survives. The other two P0 applications are reached by all three
+  production footholds and never by the staging one.
+- **Expected:** exactly 3 rows:
 
-**Invariant** — returns every P0 application, whether or not any foothold
-reaches it. APP-009 HR Records is always present with a foothold count of zero,
-a null hop count and an empty host list; this is the single most important
-expectation in the file, because it is the only check that the outer join
-survives. The other two P0 applications are reached by all three production
-footholds and never by the staging one.
+  | applicationId | crownJewel | businessUnit | footholds | fewestHops | foothold hosts |
+  | ------------- | ---------- | ------------ | --------- | ---------- | -------------- |
+  | APP-002 | Card Tokenization Service | Finance | 3 | 1 | build-runner-01, legacy-portal-01, vpn-gateway-01 |
+  | APP-001 | Payment Ledger | Finance | 3 | 2 | build-runner-01, legacy-portal-01, vpn-gateway-01 |
+  | APP-009 | HR Records | People | 0 | null | (empty) |
 
-**Expected (hand-traced, not executed)** — exactly 3 rows:
+- **Sensitivity:** the row count is always 3; only the exposure figures move.
 
-| applicationId | crownJewel | businessUnit | footholds | fewestHops | foothold hosts |
-| ------------- | ---------- | ------------ | --------- | ---------- | -------------- |
-| APP-002 | Card Tokenization Service | Finance | 3 | 1 | build-runner-01, legacy-portal-01, vpn-gateway-01 |
-| APP-001 | Payment Ledger | Finance | 3 | 2 | build-runner-01, legacy-portal-01, vpn-gateway-01 |
-| APP-009 | HR Records | People | 0 | null | (empty) |
+  | Parameters | Card Tokenization Service | Payment Ledger | HR Records |
+  | ---------- | ------------------------- | -------------- | ---------- |
+  | `$maxLateralHops = 1` | 1 foothold, 1 hop | **0 footholds, null** | 0, null |
+  | `$maxLateralHops = 2` | 3 footholds, 1 hop | 2 footholds, 2 hops | 0, null |
+  | `$maxLateralHops = 4` (shipped) | 3 footholds, 1 hop | 3 footholds, 2 hops | 0, null |
+  | `$minCvss = 10.0` | 0 footholds, null | 0 footholds, null | 0, null |
 
-**Sensitivity** — the row count is always 3; only the exposure figures move.
-
-| Parameters | Card Tokenization Service | Payment Ledger | HR Records |
-| ---------- | ------------------------- | -------------- | ---------- |
-| `maxLateralHops: 1` | 1 foothold, 1 hop | **0 footholds, null** | 0, null |
-| `maxLateralHops: 2` | 3 footholds, 1 hop | 2 footholds, 2 hops | 0, null |
-| `maxLateralHops: 4` (shipped) | 3 footholds, 1 hop | 3 footholds, 2 hops | 0, null |
-| `minCvss: 10.0` | 0 footholds, null | 0 footholds, null | 0, null |
-
-At a bound of 1 the ledger joins HR Records on zero, which is the case to watch:
-two zero rows for quite different reasons — one unreachable at any bound, one
-merely beyond this one. That distinction is exactly what the `@usage` warning
-about reading a zero as a clean bill of health is for. At `minCvss: 10.0` all
-three rows read zero, since the only 10.0 KEV finding in the data sits on the
-staging host that reaches nothing. APP-009's zero row is invariant under every
-parameter combination.
+  At a bound of 1 the ledger joins HR Records on zero, which is the case to
+  watch: two zero rows for quite different reasons — one unreachable at any
+  bound, one merely beyond this one. That distinction is exactly what the
+  `@usage` warning about reading a zero as a clean bill of health is for. At
+  `$minCvss = 10.0` all three rows read zero, since the only 10.0 KEV finding in
+  the data sits on the staging host that reaches nothing. APP-009's zero row is
+  invariant under every parameter combination.

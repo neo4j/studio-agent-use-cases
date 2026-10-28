@@ -1,0 +1,269 @@
+{
+  "schema": "https://neo4j.com/docs/ontology-graph-spec/1.0.0/schema.json",
+  "id": "regulatory-dependency-mapping",
+  "version": "1",
+  "name": "Regulatory Dependency Mapping",
+  "description": "Models a regulator's handbook as a graph: standards, the hierarchy of sections beneath them, and the cross-references sections make to one another. Answers which parts of a rulebook a proposed change reaches, which text is most expensive to change, and where one standard depends on another.",
+  "nodes": {
+    "Standard": {
+      "label": "Standard",
+      "description": "A named regulatory standard, handbook or sourcebook published by a supervisory authority — the highest level of the regulatory hierarchy. Sections hang beneath it.",
+      "aliases": [
+        "Sourcebook",
+        "Handbook"
+      ],
+      "properties": {
+        "id": {
+          "type": "STRING",
+          "description": "Short identifier for the standard as the regulator publishes it, typically the sourcebook code. Expected to be the prefix from which section identifiers in this standard are built. e.g. `MIFIDPRU`.",
+          "key": true
+        }
+      },
+      "extensions": {
+        "display": {
+          "x": -110,
+          "y": 0
+        }
+      }
+    },
+    "Section": {
+      "label": "Section",
+      "description": "A single addressable unit of regulatory text — a chapter, section or subsection of a standard. Sections form the hierarchy of a handbook, cross-reference one another, and are the level at which regulatory change is tracked.",
+      "properties": {
+        "id": {
+          "type": "STRING",
+          "description": "Section identifier exactly as the regulator cites it, including the standard prefix — a sourcebook code followed by chapter and section numbers. Expected to be unique across every standard, not merely within one. e.g. `COBS 4.2`.",
+          "key": true
+        },
+        "title": {
+          "type": "STRING",
+          "description": "Long heading of the section as published, conventionally repeating the section identifier before the heading text. e.g. `COBS 4.2 Reporting timetable`.",
+          "must_exist": true
+        },
+        "lastUpdated": {
+          "type": "ZONED DATETIME",
+          "description": "Date on which the section's current text took effect in the handbook — the in-force date of the most recent amendment, not the date that amendment was announced or published. ISO 8601 zoned datetime; the time and zone carry no meaning beyond the calendar date, kept only because local imports require a zoned datetime rather than a bare date. This is the property regulatory-change analysis filters on. e.g. `2025-02-01T00:00:00Z`.",
+          "must_exist": true
+        }
+      },
+      "extensions": {
+        "display": {
+          "x": 80,
+          "y": 0
+        }
+      }
+    }
+  },
+  "relationships": {
+    "sectionInStandard": {
+      "type": "DEPENDS_ON",
+      "description": "Places a top-level section directly beneath the standard that publishes it. Only sections at the top of a handbook's hierarchy carry this; deeper sections reach their standard through their parent section instead. A section sits directly beneath at most one standard, and carries either this or a DEPENDS_ON to a parent section, never both; a standard may have many top-level sections.",
+      "from": {
+        "node": "Section",
+        "max_count": 1
+      },
+      "to": {
+        "node": "Standard"
+      }
+    },
+    "sectionInSection": {
+      "type": "DEPENDS_ON",
+      "description": "Places a section beneath its immediate parent section in the handbook hierarchy, read child to parent. Chaining these from a top-level section reconstructs the full depth of a handbook. A section has at most one parent section, and carries either this or a DEPENDS_ON to a standard, never both; a section may have many child sections, or none.",
+      "from": {
+        "node": "Section",
+        "max_count": 1
+      },
+      "to": {
+        "node": "Section"
+      }
+    },
+    "sectionRelated": {
+      "type": "RELATED",
+      "description": "Records a cross-reference made by the citing (from) section to the cited (to) section, so that a change to the cited text is known to reach the citing text. Direction is the direction of the citation, not of influence; two sections that cite each other carry one of these each way. A section may cite many others, or none, and be cited by many, or by none.",
+      "aliases": [
+        "Cross-reference",
+        "Citation"
+      ],
+      "from": {
+        "node": "Section"
+      },
+      "to": {
+        "node": "Section"
+      },
+      "properties": {
+        "subsection": {
+          "type": "STRING",
+          "description": "The specific rule within the cited (to) section that the citing section refers to, in the regulator's own rule notation. Where a section is cited as a whole this is expected to be the cited section's own identifier. e.g. `COBS 3.1.1.5R`.",
+          "must_exist": true
+        }
+      }
+    }
+  },
+  "extensions": {
+    "data_source_tables": {
+      "standards.csv": {
+        "source": "local",
+        "columns": [
+          {
+            "name": "standardId",
+            "type": "string"
+          }
+        ]
+      },
+      "sections.csv": {
+        "source": "local",
+        "columns": [
+          {
+            "name": "sectionId",
+            "type": "string"
+          },
+          {
+            "name": "title",
+            "type": "string"
+          },
+          {
+            "name": "lastUpdated",
+            "type": "string"
+          },
+          {
+            "name": "standardId",
+            "type": "string"
+          },
+          {
+            "name": "parentSectionId",
+            "type": "string"
+          }
+        ]
+      },
+      "section_references.csv": {
+        "source": "local",
+        "columns": [
+          {
+            "name": "citingSectionId",
+            "type": "string"
+          },
+          {
+            "name": "citedSectionId",
+            "type": "string"
+          },
+          {
+            "name": "subsection",
+            "type": "string"
+          }
+        ]
+      }
+    },
+    "data_source_mappings": {
+      "mapping0": [
+        {
+          "type": "NODE",
+          "node": "Standard",
+          "table": "standards.csv",
+          "mode": "MERGE",
+          "key": [
+            "id"
+          ],
+          "properties": {
+            "id": {
+              "column": "standardId"
+            }
+          }
+        },
+        {
+          "type": "NODE",
+          "node": "Section",
+          "table": "sections.csv",
+          "mode": "MERGE",
+          "key": [
+            "id"
+          ],
+          "properties": {
+            "id": {
+              "column": "sectionId"
+            },
+            "title": {
+              "column": "title"
+            },
+            "lastUpdated": {
+              "column": "lastUpdated"
+            }
+          }
+        },
+        {
+          "type": "RELATIONSHIP",
+          "relationship": "sectionInStandard",
+          "table": "sections.csv",
+          "mode": "MERGE",
+          "key": [],
+          "from_node": {
+            "label": "Section",
+            "properties": {
+              "id": {
+                "column": "sectionId"
+              }
+            }
+          },
+          "to_node": {
+            "label": "Standard",
+            "properties": {
+              "id": {
+                "column": "standardId"
+              }
+            }
+          }
+        },
+        {
+          "type": "RELATIONSHIP",
+          "relationship": "sectionInSection",
+          "table": "sections.csv",
+          "mode": "MERGE",
+          "key": [],
+          "from_node": {
+            "label": "Section",
+            "properties": {
+              "id": {
+                "column": "sectionId"
+              }
+            }
+          },
+          "to_node": {
+            "label": "Section",
+            "properties": {
+              "id": {
+                "column": "parentSectionId"
+              }
+            }
+          }
+        },
+        {
+          "type": "RELATIONSHIP",
+          "relationship": "sectionRelated",
+          "table": "section_references.csv",
+          "mode": "MERGE",
+          "key": [],
+          "from_node": {
+            "label": "Section",
+            "properties": {
+              "id": {
+                "column": "citingSectionId"
+              }
+            }
+          },
+          "to_node": {
+            "label": "Section",
+            "properties": {
+              "id": {
+                "column": "citedSectionId"
+              }
+            }
+          },
+          "properties": {
+            "subsection": {
+              "column": "subsection"
+            }
+          }
+        }
+      ]
+    }
+  }
+}

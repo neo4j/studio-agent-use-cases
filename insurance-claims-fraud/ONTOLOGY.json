@@ -1,0 +1,439 @@
+{
+  "schema": "https://neo4j.com/docs/ontology-graph-spec/1.0.0/schema.json",
+  "id": "insurance-claims-fraud",
+  "version": "1",
+  "name": "Insurance Claims Fraud",
+  "description": "Models motor and personal-injury claims as a graph of claimants, the vehicles they own, the claims they file, and the medical professionals attached to those claims. Answers which claimants file repeatedly, which vehicles recur across otherwise unrelated claims, and which professionals are attached to an unusual share of claim volume or value — the repetition across records that organised fraud produces and that per-claim scoring cannot see.",
+  "nodes": {
+    "Claimant": {
+      "label": "Claimant",
+      "description": "A person who has filed one or more claims against a policy. Identified by name alone, so the reference ontology treats a spelling variant as a different claimant: real deployments are expected to resolve identity before import rather than rely on this label to do it.",
+      "properties": {
+        "name": {
+          "type": "STRING",
+          "description": "Full name of the claimant, and the identifier by which the same person is recognised across separate claims. Expected to be already normalised, since the reference ontology performs no fuzzy matching. e.g. `Richard Sanders`.",
+          "key": true
+        }
+      },
+      "extensions": {
+        "display": {
+          "x": -150,
+          "y": 0
+        }
+      }
+    },
+    "MedicalProfessional": {
+      "label": "MedicalProfessional",
+      "description": "A clinician who assesses or treats claimants and whose assessment supports a claim for injury. Concentration of claims on one professional is a fraud signal in its own right, so this is a first-class entity rather than a property of the claim.",
+      "aliases": [
+        "Doctor"
+      ],
+      "properties": {
+        "name": {
+          "type": "STRING",
+          "description": "Full name of the medical professional, including any title as recorded by the insurer, and the identifier by which they are recognised across separate claims. e.g. `Dr. Steven Fisher`.",
+          "key": true
+        }
+      },
+      "extensions": {
+        "display": {
+          "x": 150,
+          "y": -125
+        }
+      }
+    },
+    "Claim": {
+      "label": "Claim",
+      "description": "A single claim submitted for settlement following an incident. The unit at which money is sought and at which fraud is ultimately assessed, though rarely the unit at which it is detectable.",
+      "properties": {
+        "claimID": {
+          "type": "STRING",
+          "description": "The insurer's reference for the claim, unique across the portfolio. e.g. `CL-000001`.",
+          "key": true
+        },
+        "date": {
+          "type": "STRING",
+          "description": "Calendar date of the incident the claim relates to, as an ISO 8601 date in YYYY-MM-DD form. Held as a string rather than a temporal type, so comparisons are lexicographic — which orders correctly for this format but requires an explicit conversion before any date arithmetic. e.g. `2024-01-25`."
+        },
+        "amountClaimed": {
+          "type": "INTEGER",
+          "description": "Amount sought on the claim, as a whole currency unit with no minor units. The reference ontology carries no currency code and assumes a single-currency portfolio, so totals across claims are only meaningful under that assumption. e.g. `1447`.",
+          "must_exist": true
+        }
+      },
+      "extensions": {
+        "display": {
+          "x": 50,
+          "y": 0
+        }
+      }
+    },
+    "Vehicle": {
+      "label": "Vehicle",
+      "description": "A motor vehicle that can be owned by a claimant and named in claims. Held separately from the claim so that a single vehicle appearing across several otherwise unconnected incidents becomes visible — the classic staged-accident signal.",
+      "properties": {
+        "VIN": {
+          "type": "STRING",
+          "description": "Vehicle identification number — the manufacturer's 17-character serial for the vehicle. Expected to be the identifier that survives a change of registration plate or of owner, which is what makes it usable for linking claims. e.g. `PYXLNVHK732U50J1C`.",
+          "key": true
+        }
+      },
+      "extensions": {
+        "display": {
+          "x": -150,
+          "y": -125
+        }
+      }
+    }
+  },
+  "relationships": {
+    "hasClaim": {
+      "type": "HAS_CLAIM",
+      "description": "Records that the claimant filed this claim. Exactly one claimant per claim; a claimant may file many claims, and in the general case none. Counting and totalling along this link is the simplest repeat-claimant check the reference ontology supports.",
+      "from": {
+        "node": "Claimant"
+      },
+      "to": {
+        "node": "Claim",
+        "count": 1
+      }
+    },
+    "treatedBy": {
+      "type": "TREATED_BY",
+      "description": "Records that this medical professional was attached to the claim and provided the clinical assessment it rests on. Exactly one professional per claim; a professional may be attached to many claims, or to none. Concentration of claim count or claim value on one professional is what marks them an outlier against their peers.",
+      "from": {
+        "node": "Claim",
+        "count": 1
+      },
+      "to": {
+        "node": "MedicalProfessional"
+      }
+    },
+    "owns": {
+      "type": "OWNS",
+      "description": "Records that the claimant owns this vehicle. Exactly one owner per vehicle in this reference ontology, which therefore represents current ownership rather than an ownership history; a claimant may own several vehicles, or none.",
+      "from": {
+        "node": "Claimant"
+      },
+      "to": {
+        "node": "Vehicle",
+        "count": 1
+      }
+    },
+    "involvedIn": {
+      "type": "INVOLVED_IN",
+      "description": "Records that this vehicle featured in the incident behind the claim. Exactly one vehicle per claim; a vehicle may be involved in several claims, or in none. A vehicle implausibly often involved is the entry point to a staged-accident ring.",
+      "from": {
+        "node": "Vehicle"
+      },
+      "to": {
+        "node": "Claim",
+        "count": 1
+      }
+    },
+    "treats": {
+      "type": "TREATS",
+      "description": "Records a care relationship between the professional and the person, independent of any particular claim. Many-to-many in both directions: a professional may treat many claimants and a claimant may be treated by several professionals. Held separately from the claim link so the two can be compared — a professional treating someone whose claim they were never attached to is a different situation from one with a simply large caseload.",
+      "from": {
+        "node": "MedicalProfessional"
+      },
+      "to": {
+        "node": "Claimant"
+      }
+    }
+  },
+  "extensions": {
+    "data_source_tables": {
+      "claimants.csv": {
+        "source": "local",
+        "columns": [
+          {
+            "name": "name",
+            "type": "string"
+          }
+        ]
+      },
+      "medical_professionals.csv": {
+        "source": "local",
+        "columns": [
+          {
+            "name": "name",
+            "type": "string"
+          }
+        ]
+      },
+      "claims.csv": {
+        "source": "local",
+        "columns": [
+          {
+            "name": "claimID",
+            "type": "string"
+          },
+          {
+            "name": "date",
+            "type": "string"
+          },
+          {
+            "name": "amountClaimed",
+            "type": "string"
+          }
+        ]
+      },
+      "vehicles.csv": {
+        "source": "local",
+        "columns": [
+          {
+            "name": "VIN",
+            "type": "string"
+          }
+        ]
+      },
+      "has_claim.csv": {
+        "source": "local",
+        "columns": [
+          {
+            "name": "claimantName",
+            "type": "string"
+          },
+          {
+            "name": "claimID",
+            "type": "string"
+          }
+        ]
+      },
+      "treated_by.csv": {
+        "source": "local",
+        "columns": [
+          {
+            "name": "claimID",
+            "type": "string"
+          },
+          {
+            "name": "medicalProfessionalName",
+            "type": "string"
+          }
+        ]
+      },
+      "owns.csv": {
+        "source": "local",
+        "columns": [
+          {
+            "name": "claimantName",
+            "type": "string"
+          },
+          {
+            "name": "VIN",
+            "type": "string"
+          }
+        ]
+      },
+      "involved_in.csv": {
+        "source": "local",
+        "columns": [
+          {
+            "name": "VIN",
+            "type": "string"
+          },
+          {
+            "name": "claimID",
+            "type": "string"
+          }
+        ]
+      },
+      "treats.csv": {
+        "source": "local",
+        "columns": [
+          {
+            "name": "medicalProfessionalName",
+            "type": "string"
+          },
+          {
+            "name": "claimantName",
+            "type": "string"
+          }
+        ]
+      }
+    },
+    "data_source_mappings": {
+      "mapping0": [
+        {
+          "type": "NODE",
+          "node": "Claimant",
+          "table": "claimants.csv",
+          "mode": "MERGE",
+          "key": [
+            "name"
+          ],
+          "properties": {
+            "name": {
+              "column": "name"
+            }
+          }
+        },
+        {
+          "type": "NODE",
+          "node": "MedicalProfessional",
+          "table": "medical_professionals.csv",
+          "mode": "MERGE",
+          "key": [
+            "name"
+          ],
+          "properties": {
+            "name": {
+              "column": "name"
+            }
+          }
+        },
+        {
+          "type": "NODE",
+          "node": "Claim",
+          "table": "claims.csv",
+          "mode": "MERGE",
+          "key": [
+            "claimID"
+          ],
+          "properties": {
+            "claimID": {
+              "column": "claimID"
+            },
+            "date": {
+              "column": "date"
+            },
+            "amountClaimed": {
+              "column": "amountClaimed"
+            }
+          }
+        },
+        {
+          "type": "NODE",
+          "node": "Vehicle",
+          "table": "vehicles.csv",
+          "mode": "MERGE",
+          "key": [
+            "VIN"
+          ],
+          "properties": {
+            "VIN": {
+              "column": "VIN"
+            }
+          }
+        },
+        {
+          "type": "RELATIONSHIP",
+          "relationship": "hasClaim",
+          "table": "has_claim.csv",
+          "mode": "MERGE",
+          "key": [],
+          "from_node": {
+            "label": "Claimant",
+            "properties": {
+              "name": {
+                "column": "claimantName"
+              }
+            }
+          },
+          "to_node": {
+            "label": "Claim",
+            "properties": {
+              "claimID": {
+                "column": "claimID"
+              }
+            }
+          }
+        },
+        {
+          "type": "RELATIONSHIP",
+          "relationship": "treatedBy",
+          "table": "treated_by.csv",
+          "mode": "MERGE",
+          "key": [],
+          "from_node": {
+            "label": "Claim",
+            "properties": {
+              "claimID": {
+                "column": "claimID"
+              }
+            }
+          },
+          "to_node": {
+            "label": "MedicalProfessional",
+            "properties": {
+              "name": {
+                "column": "medicalProfessionalName"
+              }
+            }
+          }
+        },
+        {
+          "type": "RELATIONSHIP",
+          "relationship": "owns",
+          "table": "owns.csv",
+          "mode": "MERGE",
+          "key": [],
+          "from_node": {
+            "label": "Claimant",
+            "properties": {
+              "name": {
+                "column": "claimantName"
+              }
+            }
+          },
+          "to_node": {
+            "label": "Vehicle",
+            "properties": {
+              "VIN": {
+                "column": "VIN"
+              }
+            }
+          }
+        },
+        {
+          "type": "RELATIONSHIP",
+          "relationship": "involvedIn",
+          "table": "involved_in.csv",
+          "mode": "MERGE",
+          "key": [],
+          "from_node": {
+            "label": "Vehicle",
+            "properties": {
+              "VIN": {
+                "column": "VIN"
+              }
+            }
+          },
+          "to_node": {
+            "label": "Claim",
+            "properties": {
+              "claimID": {
+                "column": "claimID"
+              }
+            }
+          }
+        },
+        {
+          "type": "RELATIONSHIP",
+          "relationship": "treats",
+          "table": "treats.csv",
+          "mode": "MERGE",
+          "key": [],
+          "from_node": {
+            "label": "MedicalProfessional",
+            "properties": {
+              "name": {
+                "column": "medicalProfessionalName"
+              }
+            }
+          },
+          "to_node": {
+            "label": "Claimant",
+            "properties": {
+              "name": {
+                "column": "claimantName"
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

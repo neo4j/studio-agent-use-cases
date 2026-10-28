@@ -4,19 +4,13 @@
     {
       "skillId": "retail-banking",
       "files": {
-        "graph": "GRAPH_MODEL.json",
+        "graph": "ONTOLOGY.json",
         "skill": [
           "sample-data/accounts.csv",
           "sample-data/transactions.csv",
-          "caveats.md",
-          "detection-workflow.md",
-          "graph-model.md",
-          "implementation-guidance.md",
-          "INTRODUCTION.md",
-          "overview.md",
-          "query-patterns.md",
-          "query-templates.md",
-          "human_description.md"
+          "human_description.md",
+          "QUERIES.md",
+          "TESTS.md"
         ],
         "markdown": "SKILL.md"
       }
@@ -24,7 +18,7 @@
     {
       "skillId": "insurance-claims-fraud",
       "files": {
-        "graph": "GRAPH_MODEL.json",
+        "graph": "ONTOLOGY.json",
         "skill": [
           "sample-data/claimants.csv",
           "sample-data/claims.csv",
@@ -35,9 +29,9 @@
           "sample-data/treated_by.csv",
           "sample-data/treats.csv",
           "sample-data/vehicles.csv",
-          "INTRODUCTION.md",
           "QUERIES.md",
-          "human_description.md"
+          "human_description.md",
+          "TESTS.md"
         ],
         "markdown": "SKILL.md"
       }
@@ -45,7 +39,7 @@
     {
       "skillId": "patient-journey",
       "files": {
-        "graph": "GRAPH_MODEL.json",
+        "graph": "ONTOLOGY.json",
         "skill": [
           "sample-data/conditions.csv",
           "sample-data/drugs.csv",
@@ -54,10 +48,9 @@
           "sample-data/organisations.csv",
           "sample-data/patients.csv",
           "sample-data/providers.csv",
-          "INTRODUCTION.md",
-          "queries.cypher",
           "QUERIES.md",
-          "human_description.md"
+          "human_description.md",
+          "TESTS.md"
         ],
         "markdown": "SKILL.md"
       }
@@ -65,7 +58,7 @@
     {
       "skillId": "regulatory-dependency-mapping",
       "files": {
-        "graph": "GRAPH_MODEL.json",
+        "graph": "ONTOLOGY.json",
         "skill": [
           "sample-data/section_references.csv",
           "sample-data/sections.csv",
@@ -80,7 +73,7 @@
     {
       "skillId": "configurable-bom",
       "files": {
-        "graph": "GRAPH_MODEL.json",
+        "graph": "ONTOLOGY.json",
         "skill": [
           "sample-data/assemblies.csv",
           "sample-data/assembly_has_part.csv",
@@ -103,7 +96,7 @@
     {
       "skillId": "identity-validation",
       "files": {
-        "graph": "GRAPH_MODEL.json",
+        "graph": "ONTOLOGY.json",
         "skill": [
           "sample-data/addresses.csv",
           "sample-data/dobs.csv",
@@ -114,19 +107,11 @@
           "sample-data/names.csv",
           "sample-data/phones.csv",
           "sample-data/ssns.csv",
-          "caveats.md",
-          "graph-model.md",
           "implementation-guidance.md",
-          "indexes.cypher",
-          "INTRODUCTION.md",
-          "overview.md",
           "QUERIES.md",
-          "query-patterns.md",
-          "query-templates.md",
-          "resolution-workflow.md",
-          "sample-data.md",
           "SETUP.md",
-          "human_description.md"
+          "human_description.md",
+          "TESTS.md"
         ],
         "markdown": "SKILL.md"
       }
@@ -134,7 +119,7 @@
     {
       "skillId": "ev-route-planning",
       "files": {
-        "graph": "GRAPH_MODEL.json",
+        "graph": "ONTOLOGY.json",
         "skill": [
           "sample-data/cars.csv",
           "sample-data/charges.csv",
@@ -144,7 +129,8 @@
           "sample-data/roads-city-station.csv",
           "sample-data/roads-station-city.csv",
           "QUERIES.md",
-          "human_description.md"
+          "human_description.md",
+          "TESTS.md"
         ],
         "markdown": "SKILL.md"
       }
@@ -152,7 +138,7 @@
     {
       "skillId": "attack-path-analysis",
       "files": {
-        "graph": "GRAPH_MODEL.json",
+        "graph": "ONTOLOGY.json",
         "skill": [
           "sample-data/applications.csv",
           "sample-data/cloud_services.csv",

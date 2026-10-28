@@ -105,7 +105,7 @@ appears once a variant has been resolved, and disappears when it is discarded.
 | `Part` | `weight` | Float | Mass of one unit in kilograms. Per unit, not per assembly — a rollup multiplies it by the quantities on the path down from the product |
 | `Part` | `material` | String | Option attribute. The material the component is made from, as a catalog term matched exactly by permitted and excluded lists. Present only on components offered as alternatives of a decision that varies by material |
 | `Part` | `pattern` | String | Option attribute. The tread pattern of a tire, as a catalog term matched exactly. Present only on components offered as alternatives of a decision that varies by tread |
-| `Part` | `gearSystem` | String | Option attribute. The gearing standard a drivetrain component belongs to. Components sharing a value are compatible with one another, which is how one rule keeps several matched components in step |
+| `Part` | `gearSystem` | String | Option attribute. The gearing standard a drivetrain component belongs to. Components sharing a value are compatible with one another, so allowing the same value on each matched decision keeps them in step |
 | `Part` | `color` | String | Option attribute. The finish colour, as a catalog term matched exactly. Present only on components offered as alternatives of a decision that varies by colour |
 | `Part` | `brakeType` | String | Option attribute. The braking technology the component implements. Present only on components offered as alternatives of a decision that varies by braking technology |
 
