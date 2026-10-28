@@ -1,0 +1,441 @@
+propertyId,address,city,state,postalCode,constructionType,dwellingUnits
+PR-0001,6477 Sunset Blvd,Naperville,IL,60537,site built,1
+PR-0002,4533 Garfield Dr,Madison,WI,53720,site built,1
+PR-0003,1917 Madison Pl,St. Louis,MO,63193,site built,1
+PR-0004,3162 Brookside Rd,Grand Rapids,MI,49550,site built,1
+PR-0005,3422 Lexington Rd,Indianapolis,IN,46264,site built,2
+PR-0006,2647 Magnolia Pl,Minneapolis,MN,55454,site built,1
+PR-0007,9221 Oak Ct,Omaha,NE,68115,site built,1
+PR-0008,9456 Madison Rd,Naperville,IL,60542,site built,2
+PR-0009,5375 Ash Way,Naperville,IL,60522,site built,2
+PR-0010,8695 Magnolia Ln,Ann Arbor,MI,48108,site built,1
+PR-0011,2715 Poplar Dr,Madison,WI,53744,site built,2
+PR-0012,222 Spruce Blvd,St. Louis,MO,63182,site built,1
+PR-0013,7143 Madison Ave,Ann Arbor,MI,48110,site built,1
+PR-0014,3838 Pine Dr,Madison,WI,53795,site built,1
+PR-0015,3315 Highland Ct,Chicago,IL,60655,site built,3
+PR-0016,5716 Birch Dr,Des Moines,IA,50342,site built,1
+PR-0017,5810 Glenwood Ct,Grand Rapids,MI,49593,site built,1
+PR-0018,2677 Hill Pl,Madison,WI,53760,site built,1
+PR-0019,4118 Cedar Ct,Naperville,IL,60550,site built,1
+PR-0020,3727 Cleveland Ave,Minneapolis,MN,55438,site built,1
+PR-0021,514 Elm Blvd,Chicago,IL,60624,site built,1
+PR-0022,1660 Cedar Rd,Columbus,OH,43293,site built,1
+PR-0023,9601 Hickory Pl,Omaha,NE,68198,site built,1
+PR-0024,3902 Poplar Rd,Naperville,IL,60543,site built,1
+PR-0025,5353 Sunset Rd,Des Moines,IA,50357,site built,2
+PR-0026,9558 Madison Ave,Omaha,NE,68132,site built,1
+PR-0027,8269 Hickory Rd,Chicago,IL,60619,site built,1
+PR-0028,5870 Canterbury Pl,Minneapolis,MN,55489,site built,1
+PR-0029,5869 Park Ln,Milwaukee,WI,53215,site built,1
+PR-0030,6361 Willow Way,Ann Arbor,MI,48156,site built,1
+PR-0031,389 Brookside Ln,Kansas City,MO,64129,site built,1
+PR-0032,8034 Garfield Ave,Naperville,IL,60583,site built,1
+PR-0033,2649 Willow Way,Louisville,KY,40245,site built,1
+PR-0034,3798 Ridge Dr,Naperville,IL,60526,manufactured,1
+PR-0035,2517 Cedar Ct,Cleveland,OH,44154,site built,1
+PR-0036,4828 Hill Rd,Grand Rapids,MI,49542,site built,1
+PR-0037,9406 Ridge Rd,Naperville,IL,60579,manufactured,1
+PR-0038,3148 Hickory Ave,Louisville,KY,40213,site built,1
+PR-0039,8947 Monroe Ct,Ann Arbor,MI,48164,site built,1
+PR-0040,6687 Sunset Dr,Kansas City,MO,64110,site built,1
+PR-0041,2284 Meadow St,Madison,WI,53760,site built,1
+PR-0042,2261 Hill Rd,Milwaukee,WI,53227,site built,1
+PR-0043,9455 Maple Ln,Madison,WI,53761,site built,1
+PR-0044,2443 Spring Ct,Milwaukee,WI,53242,site built,1
+PR-0045,9639 Madison Dr,Grand Rapids,MI,49510,site built,1
+PR-0046,9815 Adams Pl,Madison,WI,53711,site built,1
+PR-0047,9708 Hill Pl,Louisville,KY,40289,site built,1
+PR-0048,5771 Park Blvd,Madison,WI,53740,site built,1
+PR-0049,8123 Fairview Ln,Kansas City,MO,64125,site built,1
+PR-0050,7948 Garfield Pl,Ann Arbor,MI,48122,site built,1
+PR-0051,9007 Willow St,Milwaukee,WI,53250,site built,1
+PR-0052,6636 Chestnut Pl,Milwaukee,WI,53273,site built,1
+PR-0053,4838 Ash Rd,Omaha,NE,68145,site built,1
+PR-0054,2191 Hickory Rd,Chicago,IL,60647,site built,1
+PR-0055,4474 Magnolia St,Omaha,NE,68120,site built,2
+PR-0056,7135 Cleveland Ln,Chicago,IL,60694,site built,1
+PR-0057,4244 Franklin Dr,Madison,WI,53709,site built,1
+PR-0058,3026 Lexington Ave,Ann Arbor,MI,48102,site built,1
+PR-0059,5318 Willow Dr,Minneapolis,MN,55416,site built,1
+PR-0060,8720 Magnolia Ct,Grand Rapids,MI,49553,site built,2
+PR-0061,9251 Spruce St,St. Louis,MO,63144,site built,2
+PR-0062,5073 Adams Ln,St. Louis,MO,63111,site built,1
+PR-0063,4543 Brookside St,Des Moines,IA,50391,site built,1
+PR-0064,4551 Park Ave,Madison,WI,53765,site built,1
+PR-0065,7373 Hickory Rd,Louisville,KY,40210,site built,1
+PR-0066,7393 Poplar Ct,Des Moines,IA,50322,site built,1
+PR-0067,2532 Lake Ln,St. Louis,MO,63196,site built,1
+PR-0068,9855 Franklin Rd,Louisville,KY,40238,site built,1
+PR-0069,941 Garfield Blvd,Naperville,IL,60525,site built,1
+PR-0070,717 Brookside Dr,Ann Arbor,MI,48136,site built,1
+PR-0071,166 Maple Ct,Columbus,OH,43250,site built,1
+PR-0072,2554 Franklin Ave,Ann Arbor,MI,48156,site built,1
+PR-0073,2491 Kensington Ct,Indianapolis,IN,46258,site built,2
+PR-0074,2098 Lexington Dr,Grand Rapids,MI,49580,site built,1
+PR-0075,2620 Elm St,Chicago,IL,60663,site built,1
+PR-0076,9507 Ridge Rd,Louisville,KY,40269,site built,1
+PR-0077,779 Walnut St,Milwaukee,WI,53263,site built,2
+PR-0078,3403 Cleveland Dr,Kansas City,MO,64139,site built,1
+PR-0079,5986 Pine Rd,Minneapolis,MN,55499,site built,1
+PR-0080,4742 Madison St,Indianapolis,IN,46238,site built,1
+PR-0081,4028 Monroe Way,Minneapolis,MN,55461,site built,1
+PR-0082,5867 Harrison Ave,Minneapolis,MN,55482,site built,1
+PR-0083,5543 Maple Ln,Milwaukee,WI,53248,manufactured,1
+PR-0084,8757 Adams Rd,St. Louis,MO,63190,site built,1
+PR-0085,347 Garfield Ct,Omaha,NE,68131,site built,1
+PR-0086,3759 Concord Dr,Des Moines,IA,50341,site built,1
+PR-0087,9013 Hickory Dr,Omaha,NE,68142,site built,1
+PR-0088,5746 Cedar Ln,Kansas City,MO,64124,manufactured,1
+PR-0089,6606 Lexington Ln,Chicago,IL,60612,site built,1
+PR-0090,4563 Maple Ln,Naperville,IL,60529,site built,1
+PR-0091,3779 Sunset Ct,Grand Rapids,MI,49507,site built,1
+PR-0092,1398 Lexington Ave,Louisville,KY,40277,site built,1
+PR-0093,5320 Elm St,Kansas City,MO,64146,site built,1
+PR-0094,6120 Ash Pl,Columbus,OH,43246,site built,1
+PR-0095,2582 Birch Blvd,St. Louis,MO,63159,site built,1
+PR-0096,2557 Ash St,Ann Arbor,MI,48145,site built,1
+PR-0097,8035 Ash Ct,Madison,WI,53732,site built,1
+PR-0098,2777 Harrison St,Ann Arbor,MI,48141,site built,2
+PR-0099,2865 Magnolia Pl,Indianapolis,IN,46204,site built,1
+PR-0100,7403 Meadow Way,Cleveland,OH,44199,manufactured,1
+PR-0101,2843 Brookside Rd,Chicago,IL,60622,manufactured,1
+PR-0102,7935 Brookside Ln,Kansas City,MO,64195,site built,1
+PR-0103,7960 Lexington Ln,Kansas City,MO,64177,site built,1
+PR-0104,7236 Hill Ln,Milwaukee,WI,53207,site built,1
+PR-0105,6952 Birch Rd,Grand Rapids,MI,49552,site built,1
+PR-0106,597 Canterbury Way,Cleveland,OH,44197,site built,1
+PR-0107,327 Prairie St,Ann Arbor,MI,48123,site built,2
+PR-0108,5211 Hickory St,Columbus,OH,43204,site built,1
+PR-0109,4765 Lexington Rd,Omaha,NE,68143,site built,1
+PR-0110,2712 Harrison Way,Milwaukee,WI,53251,site built,3
+PR-0111,9661 Cedar Way,Kansas City,MO,64113,site built,1
+PR-0112,3217 Meadow Way,Chicago,IL,60690,site built,1
+PR-0113,900 Maple St,Louisville,KY,40270,site built,1
+PR-0114,7752 Concord Ave,Indianapolis,IN,46222,site built,1
+PR-0115,194 Park Blvd,Des Moines,IA,50375,site built,2
+PR-0116,9616 Spruce Blvd,Cleveland,OH,44103,site built,1
+PR-0117,9558 Lincoln Ct,Columbus,OH,43265,manufactured,1
+PR-0118,2411 Jefferson Ln,Louisville,KY,40244,site built,1
+PR-0119,4816 Chestnut Dr,St. Louis,MO,63180,site built,1
+PR-0120,1195 Chestnut Ct,Naperville,IL,60593,site built,1
+PR-0121,3841 Canterbury Dr,St. Louis,MO,63148,mobile home,1
+PR-0122,6284 Jefferson Blvd,Cleveland,OH,44156,site built,1
+PR-0123,8515 River Ct,Naperville,IL,60557,site built,1
+PR-0124,955 Cleveland Ln,Louisville,KY,40241,site built,1
+PR-0125,4851 Cleveland Dr,Chicago,IL,60628,site built,1
+PR-0126,3008 Forest Blvd,Chicago,IL,60636,site built,1
+PR-0127,4403 Prairie Ln,Minneapolis,MN,55429,site built,1
+PR-0128,9269 Adams Rd,Des Moines,IA,50330,site built,2
+PR-0129,5522 Oak Pl,Grand Rapids,MI,49594,site built,1
+PR-0130,9004 Washington Blvd,Cleveland,OH,44187,site built,1
+PR-0131,9375 Glenwood Rd,Grand Rapids,MI,49571,site built,1
+PR-0132,4829 Magnolia Dr,Grand Rapids,MI,49544,site built,1
+PR-0133,8016 Highland Ln,Madison,WI,53757,site built,1
+PR-0134,2098 Walnut Blvd,Naperville,IL,60559,modular,1
+PR-0135,225 Madison Blvd,Cleveland,OH,44196,site built,1
+PR-0136,2213 Jefferson Blvd,Louisville,KY,40294,site built,1
+PR-0137,941 Grant Pl,Indianapolis,IN,46221,modular,1
+PR-0138,1663 Harrison Dr,Louisville,KY,40244,site built,1
+PR-0139,140 Spring Rd,Naperville,IL,60503,site built,1
+PR-0140,6479 Oak Dr,Chicago,IL,60661,site built,1
+PR-0141,7155 Ridge Way,Columbus,OH,43208,site built,1
+PR-0142,8097 Hill Blvd,Kansas City,MO,64182,site built,1
+PR-0143,8480 Lincoln Way,Des Moines,IA,50389,site built,1
+PR-0144,9195 Grant Way,Ann Arbor,MI,48141,site built,1
+PR-0145,7208 Jackson Ct,Des Moines,IA,50325,site built,1
+PR-0146,7013 Cedar Ct,St. Louis,MO,63191,site built,1
+PR-0147,8855 Sycamore Pl,Ann Arbor,MI,48110,site built,1
+PR-0148,5174 Canterbury Dr,Chicago,IL,60669,site built,1
+PR-0149,5262 Spring Blvd,Des Moines,IA,50382,site built,1
+PR-0150,6914 Ridge Blvd,Minneapolis,MN,55418,site built,1
+PR-0151,2020 Grant Dr,Des Moines,IA,50389,site built,1
+PR-0152,4885 Elm Pl,Columbus,OH,43226,site built,1
+PR-0153,9312 Walnut Ct,Indianapolis,IN,46235,site built,1
+PR-0154,2154 Meadow Rd,Cleveland,OH,44111,site built,1
+PR-0155,4538 Forest Pl,Indianapolis,IN,46280,site built,1
+PR-0156,8520 Jefferson Pl,Des Moines,IA,50399,site built,1
+PR-0157,3434 Lake Blvd,Minneapolis,MN,55413,site built,1
+PR-0158,4465 Brookside Ave,Milwaukee,WI,53248,site built,1
+PR-0159,2491 Lexington Way,Milwaukee,WI,53201,site built,1
+PR-0160,4231 Madison Blvd,Omaha,NE,68187,site built,1
+PR-0161,9219 Walnut Way,Columbus,OH,43244,site built,1
+PR-0162,340 River Dr,Kansas City,MO,64133,site built,1
+PR-0163,4372 Cedar Ct,Kansas City,MO,64164,site built,1
+PR-0164,2516 Hill Rd,Chicago,IL,60627,site built,1
+PR-0165,1050 Jefferson Way,Ann Arbor,MI,48116,site built,1
+PR-0166,7533 Ash Way,Grand Rapids,MI,49584,site built,1
+PR-0167,1609 Magnolia Ct,Ann Arbor,MI,48119,site built,1
+PR-0168,1181 Oak Pl,Columbus,OH,43281,site built,1
+PR-0169,4023 Forest Blvd,Milwaukee,WI,53211,site built,1
+PR-0170,3716 Cedar Way,Naperville,IL,60597,site built,1
+PR-0171,6436 Prairie Way,St. Louis,MO,63172,site built,1
+PR-0172,5285 Willow St,Kansas City,MO,64187,site built,1
+PR-0173,5726 Ash Blvd,Kansas City,MO,64197,site built,1
+PR-0174,2571 Highland Ct,Grand Rapids,MI,49577,site built,1
+PR-0175,4677 Washington Dr,Cleveland,OH,44158,site built,1
+PR-0176,4831 Sunset Pl,Indianapolis,IN,46257,site built,2
+PR-0177,8912 Washington Ct,Grand Rapids,MI,49591,site built,1
+PR-0178,2830 Birch Dr,Louisville,KY,40277,manufactured,1
+PR-0179,8433 Jefferson Way,Naperville,IL,60511,site built,1
+PR-0180,774 Lincoln Ln,Cleveland,OH,44172,site built,1
+PR-0181,7238 Prairie Blvd,Columbus,OH,43264,site built,1
+PR-0182,4371 Concord Ln,Minneapolis,MN,55434,site built,1
+PR-0183,2359 Sycamore Ave,Minneapolis,MN,55416,site built,1
+PR-0184,5687 Walnut Blvd,Naperville,IL,60598,site built,1
+PR-0185,4635 Maple Pl,St. Louis,MO,63138,site built,1
+PR-0186,6475 Magnolia Way,Cleveland,OH,44113,site built,1
+PR-0187,8232 Brookside Ct,Minneapolis,MN,55499,site built,3
+PR-0188,4427 River St,Chicago,IL,60615,site built,1
+PR-0189,4354 Meadow St,Cleveland,OH,44156,site built,1
+PR-0190,6543 Oak Ct,Ann Arbor,MI,48109,mobile home,1
+PR-0191,8668 Franklin St,Naperville,IL,60528,site built,1
+PR-0192,6503 Grant Ln,Kansas City,MO,64132,site built,2
+PR-0193,3466 Chestnut St,Des Moines,IA,50338,site built,1
+PR-0194,4357 Park Ave,Louisville,KY,40255,site built,1
+PR-0195,9209 Ash Ave,Louisville,KY,40268,site built,1
+PR-0196,2499 Chestnut Pl,Columbus,OH,43223,site built,1
+PR-0197,4653 Ridge Rd,Chicago,IL,60603,site built,2
+PR-0198,7484 Cedar Blvd,Grand Rapids,MI,49588,site built,1
+PR-0199,4346 Magnolia Dr,Cleveland,OH,44136,manufactured,4
+PR-0200,680 Walnut Dr,Naperville,IL,60516,site built,3
+PR-0201,4935 Hill Way,St. Louis,MO,63197,manufactured,1
+PR-0202,5856 Magnolia St,Louisville,KY,40271,site built,2
+PR-0203,5414 Hickory Blvd,Columbus,OH,43222,site built,1
+PR-0204,975 Fairview Pl,Ann Arbor,MI,48148,site built,1
+PR-0205,609 Maple Way,Naperville,IL,60572,site built,1
+PR-0206,4064 Madison Ct,Naperville,IL,60511,site built,1
+PR-0207,596 Elm Pl,Kansas City,MO,64123,site built,2
+PR-0208,8325 Madison St,Milwaukee,WI,53207,site built,1
+PR-0209,436 Jefferson Ave,Minneapolis,MN,55436,modular,1
+PR-0210,5824 Poplar Blvd,Naperville,IL,60518,site built,1
+PR-0211,775 Meadow Dr,Ann Arbor,MI,48146,site built,1
+PR-0212,383 Park Way,St. Louis,MO,63152,site built,1
+PR-0213,7988 Maple Way,Ann Arbor,MI,48119,site built,1
+PR-0214,8188 Spruce Ave,Des Moines,IA,50349,site built,3
+PR-0215,2850 Concord Rd,Indianapolis,IN,46284,site built,1
+PR-0216,7681 Ash St,Ann Arbor,MI,48135,site built,1
+PR-0217,6110 Sycamore Dr,Indianapolis,IN,46218,site built,1
+PR-0218,9815 Meadow Ave,Chicago,IL,60661,site built,1
+PR-0219,7048 Poplar St,Columbus,OH,43226,site built,1
+PR-0220,1642 Magnolia Ln,Naperville,IL,60513,site built,1
+PR-0221,5940 Spruce Way,Ann Arbor,MI,48127,site built,1
+PR-0222,6885 Elm Rd,Omaha,NE,68143,site built,1
+PR-0223,1421 Willow Blvd,Des Moines,IA,50397,site built,1
+PR-0224,4463 Lexington Ave,Milwaukee,WI,53239,site built,4
+PR-0225,527 Maple Blvd,Ann Arbor,MI,48195,site built,1
+PR-0226,2298 Magnolia Rd,Cleveland,OH,44198,mobile home,1
+PR-0227,9428 Glenwood Ln,Milwaukee,WI,53273,site built,1
+PR-0228,6209 Chestnut Ave,Omaha,NE,68183,site built,1
+PR-0229,210 Jefferson Ave,Minneapolis,MN,55485,site built,1
+PR-0230,783 Cedar Ave,Louisville,KY,40231,site built,1
+PR-0231,5291 Sycamore Rd,Ann Arbor,MI,48178,site built,1
+PR-0232,3332 Monroe Rd,Kansas City,MO,64159,site built,1
+PR-0233,1657 Canterbury Rd,Naperville,IL,60502,site built,1
+PR-0234,1505 Pine Rd,Grand Rapids,MI,49531,site built,1
+PR-0235,7335 Lake Ct,Indianapolis,IN,46216,site built,1
+PR-0236,5732 Birch Blvd,Milwaukee,WI,53288,site built,2
+PR-0237,4079 Harrison Pl,Columbus,OH,43236,site built,1
+PR-0238,1707 Chestnut Rd,Minneapolis,MN,55417,site built,1
+PR-0239,5065 Fairview Ct,Milwaukee,WI,53232,site built,1
+PR-0240,4723 Madison Dr,Madison,WI,53711,site built,1
+PR-0241,5202 Ridge Ln,Des Moines,IA,50343,site built,1
+PR-0242,8406 Canterbury Ave,Louisville,KY,40287,site built,1
+PR-0243,733 Lincoln Way,Grand Rapids,MI,49539,site built,1
+PR-0244,9405 Lincoln Rd,Indianapolis,IN,46202,site built,1
+PR-0245,2317 Maple Ave,Ann Arbor,MI,48178,site built,1
+PR-0246,1269 Hill Ln,Minneapolis,MN,55435,site built,1
+PR-0247,5154 Glenwood Dr,Madison,WI,53747,site built,1
+PR-0248,3475 Meadow Ct,Indianapolis,IN,46243,site built,1
+PR-0249,2031 Garfield Ct,St. Louis,MO,63102,site built,1
+PR-0250,8009 River Ct,Des Moines,IA,50367,site built,1
+PR-0251,4992 Chestnut Blvd,Omaha,NE,68103,site built,1
+PR-0252,7259 Lincoln Pl,Indianapolis,IN,46281,modular,1
+PR-0253,6702 Concord Ln,Kansas City,MO,64107,site built,1
+PR-0254,8010 Birch Blvd,Ann Arbor,MI,48146,site built,1
+PR-0255,4808 Hickory Way,Columbus,OH,43278,manufactured,1
+PR-0256,2553 Park Dr,Minneapolis,MN,55449,site built,1
+PR-0257,2138 Adams Dr,Omaha,NE,68133,site built,1
+PR-0258,5353 Lincoln St,Naperville,IL,60564,on frame modular,1
+PR-0259,4638 Jefferson Pl,Grand Rapids,MI,49599,site built,3
+PR-0260,3184 Walnut Pl,Madison,WI,53739,site built,1
+PR-0261,6810 Spruce St,Chicago,IL,60664,site built,1
+PR-0262,5751 Highland Dr,Minneapolis,MN,55471,site built,1
+PR-0263,973 Brookside Ct,Minneapolis,MN,55448,site built,1
+PR-0264,4445 Forest Ct,Madison,WI,53793,site built,1
+PR-0265,7370 Pine Ct,Omaha,NE,68145,site built,1
+PR-0266,1730 Grant Ct,Omaha,NE,68191,manufactured,2
+PR-0267,5238 Lexington Pl,Columbus,OH,43273,site built,1
+PR-0268,1024 Concord Way,Des Moines,IA,50369,site built,1
+PR-0269,4043 Ridge Way,Cleveland,OH,44104,site built,1
+PR-0270,5833 Meadow Ct,Kansas City,MO,64183,site built,1
+PR-0271,1285 Sunset Way,Des Moines,IA,50398,site built,1
+PR-0272,4850 Canterbury Ct,Chicago,IL,60682,site built,1
+PR-0273,5344 Prairie Ave,Louisville,KY,40209,site built,2
+PR-0274,688 Maple Dr,Kansas City,MO,64139,site built,2
+PR-0275,7934 Spring Ln,Minneapolis,MN,55466,site built,1
+PR-0276,116 Canterbury Ct,Cleveland,OH,44124,site built,1
+PR-0277,2492 Kensington Pl,Columbus,OH,43234,site built,1
+PR-0278,6950 Hill St,Indianapolis,IN,46208,site built,1
+PR-0279,6786 Magnolia Ln,Louisville,KY,40278,site built,4
+PR-0280,3275 Kensington Way,Kansas City,MO,64125,site built,1
+PR-0281,7202 Concord Ave,Ann Arbor,MI,48143,site built,1
+PR-0282,5149 Willow Ct,Chicago,IL,60651,site built,1
+PR-0283,9863 Elm Pl,Cleveland,OH,44148,site built,1
+PR-0284,6765 Elm Ct,Madison,WI,53762,site built,1
+PR-0285,4455 Prairie Blvd,Grand Rapids,MI,49534,site built,1
+PR-0286,8164 Brookside Blvd,St. Louis,MO,63165,modular,4
+PR-0287,8939 Poplar Way,Columbus,OH,43211,site built,2
+PR-0288,178 Franklin Ct,Madison,WI,53789,site built,1
+PR-0289,3388 Oak Dr,Indianapolis,IN,46263,site built,1
+PR-0290,7312 Chestnut Ave,Louisville,KY,40263,site built,1
+PR-0291,4083 River Blvd,Kansas City,MO,64144,site built,1
+PR-0292,706 Spring St,St. Louis,MO,63131,site built,1
+PR-0293,8307 Forest St,Cleveland,OH,44147,site built,1
+PR-0294,7658 Maple Blvd,Cleveland,OH,44153,site built,1
+PR-0295,3961 Forest Ave,Chicago,IL,60679,site built,1
+PR-0296,9128 Sunset Ave,Louisville,KY,40232,site built,1
+PR-0297,2698 Magnolia Ln,Kansas City,MO,64187,site built,1
+PR-0298,8438 Sunset Rd,Indianapolis,IN,46296,site built,1
+PR-0299,7779 Birch Way,Grand Rapids,MI,49526,mobile home,1
+PR-0300,2549 Ash Ct,Cleveland,OH,44152,site built,1
+PR-0301,4125 Sycamore Rd,St. Louis,MO,63167,modular,1
+PR-0302,8323 Sycamore Dr,Columbus,OH,43286,mobile home,1
+PR-0303,1003 Harrison Ave,Louisville,KY,40290,site built,1
+PR-0304,1478 Jackson Ln,Chicago,IL,60632,site built,1
+PR-0305,4372 Ridge Rd,Milwaukee,WI,53276,site built,1
+PR-0306,1656 Washington Ct,Chicago,IL,60628,site built,1
+PR-0307,2155 Concord Way,St. Louis,MO,63163,site built,1
+PR-0308,2585 Pine Blvd,Madison,WI,53744,manufactured,1
+PR-0309,1348 Poplar Way,Minneapolis,MN,55486,site built,1
+PR-0310,5663 Glenwood Ct,Madison,WI,53787,site built,4
+PR-0311,8759 Pine Rd,Milwaukee,WI,53299,site built,1
+PR-0312,8174 Chestnut Ln,Des Moines,IA,50359,site built,1
+PR-0313,6854 Chestnut Ct,Naperville,IL,60507,site built,1
+PR-0314,5346 Fairview Dr,Ann Arbor,MI,48124,site built,1
+PR-0315,8577 Jackson Ave,Des Moines,IA,50354,site built,1
+PR-0316,4644 Lexington Way,Indianapolis,IN,46218,site built,1
+PR-0317,3418 Prairie Ave,Minneapolis,MN,55434,site built,1
+PR-0318,2973 Poplar Dr,Ann Arbor,MI,48143,site built,1
+PR-0319,6177 Pine Pl,Columbus,OH,43254,site built,1
+PR-0320,2144 Franklin Way,Omaha,NE,68154,site built,1
+PR-0321,7048 River Pl,Grand Rapids,MI,49525,site built,1
+PR-0322,7143 Cedar Ct,Chicago,IL,60692,site built,1
+PR-0323,1623 Meadow Blvd,Des Moines,IA,50344,site built,2
+PR-0324,3910 River Way,Omaha,NE,68144,site built,2
+PR-0325,6234 Willow Ln,Naperville,IL,60521,site built,1
+PR-0326,770 Hill Blvd,Chicago,IL,60613,site built,1
+PR-0327,2722 Ridge Blvd,Indianapolis,IN,46297,site built,2
+PR-0328,7505 Lincoln Ln,Kansas City,MO,64136,site built,1
+PR-0329,5137 Grant Blvd,Indianapolis,IN,46281,site built,2
+PR-0330,4005 Elm Dr,Naperville,IL,60580,site built,1
+PR-0331,9034 Spring Blvd,Omaha,NE,68170,site built,1
+PR-0332,2624 Park Way,Madison,WI,53795,site built,1
+PR-0333,8680 Ridge Dr,St. Louis,MO,63196,site built,4
+PR-0334,1584 Sycamore Blvd,Indianapolis,IN,46208,site built,1
+PR-0335,7440 Walnut Blvd,Indianapolis,IN,46250,site built,1
+PR-0336,8886 Maple Ct,Madison,WI,53783,site built,1
+PR-0337,1911 Birch Rd,Ann Arbor,MI,48189,site built,1
+PR-0338,7771 Harrison St,Grand Rapids,MI,49502,site built,1
+PR-0339,5008 Sunset Way,Louisville,KY,40277,site built,1
+PR-0340,9494 Glenwood Ct,Chicago,IL,60611,site built,1
+PR-0341,4876 Chestnut Pl,Louisville,KY,40245,site built,1
+PR-0342,9234 Washington St,Madison,WI,53758,site built,1
+PR-0343,737 Maple Pl,Ann Arbor,MI,48122,site built,1
+PR-0344,4273 Concord Rd,Naperville,IL,60554,site built,1
+PR-0345,2094 Prairie Rd,Chicago,IL,60656,site built,1
+PR-0346,9494 Sunset Rd,Naperville,IL,60528,site built,1
+PR-0347,6517 Hickory Pl,Kansas City,MO,64168,site built,1
+PR-0348,8408 Spruce Pl,Omaha,NE,68134,site built,1
+PR-0349,1331 Jackson St,Chicago,IL,60602,site built,1
+PR-0350,2721 Poplar Pl,Naperville,IL,60504,site built,1
+PR-0351,4198 Prairie Ln,Indianapolis,IN,46279,site built,1
+PR-0352,2600 Hickory Dr,Louisville,KY,40270,modular,3
+PR-0353,5000 Highland St,Cleveland,OH,44194,site built,1
+PR-0354,8902 Grant Ave,St. Louis,MO,63140,site built,2
+PR-0355,2754 Elm Rd,Milwaukee,WI,53291,site built,1
+PR-0356,8069 Grant Ln,Cleveland,OH,44185,site built,1
+PR-0357,3646 Magnolia Ln,Kansas City,MO,64164,modular,1
+PR-0358,1929 Fairview Way,Omaha,NE,68171,site built,1
+PR-0359,854 Monroe Ave,Omaha,NE,68154,site built,1
+PR-0360,8382 Willow Ct,Grand Rapids,MI,49586,site built,1
+PR-0361,3930 River St,Indianapolis,IN,46253,site built,1
+PR-0362,7249 Lincoln St,Minneapolis,MN,55428,site built,2
+PR-0363,1004 Madison Ct,Milwaukee,WI,53234,site built,1
+PR-0364,9343 Concord St,Madison,WI,53710,site built,1
+PR-0365,1619 Ridge Ave,Omaha,NE,68175,site built,2
+PR-0366,5259 River Pl,Kansas City,MO,64192,site built,2
+PR-0367,844 Walnut Dr,Ann Arbor,MI,48158,site built,1
+PR-0368,8344 Hill Ct,Minneapolis,MN,55491,modular,1
+PR-0369,1842 Forest Dr,Ann Arbor,MI,48168,site built,1
+PR-0370,8601 Jefferson Ct,Milwaukee,WI,53265,site built,1
+PR-0371,6697 River Ave,Indianapolis,IN,46286,site built,4
+PR-0372,8865 Maple Way,Ann Arbor,MI,48107,manufactured,1
+PR-0373,5665 Elm Ct,Omaha,NE,68187,site built,1
+PR-0374,7088 Hill Way,Ann Arbor,MI,48185,site built,1
+PR-0375,9743 River Rd,St. Louis,MO,63153,site built,1
+PR-0376,3637 Spruce Rd,Kansas City,MO,64133,modular,1
+PR-0377,9013 Jackson Ct,Kansas City,MO,64127,site built,2
+PR-0378,8279 Ash Blvd,St. Louis,MO,63144,site built,1
+PR-0379,628 Cleveland Pl,Madison,WI,53730,site built,1
+PR-0380,2051 Park Way,Omaha,NE,68194,site built,1
+PR-0381,7753 Madison St,Ann Arbor,MI,48198,site built,1
+PR-0382,6576 Hickory Pl,Naperville,IL,60579,site built,1
+PR-0383,4211 Magnolia St,Madison,WI,53795,site built,1
+PR-0384,4021 Fairview St,St. Louis,MO,63148,site built,1
+PR-0385,1421 Hickory Rd,Indianapolis,IN,46271,site built,1
+PR-0386,3605 Adams Rd,Des Moines,IA,50387,site built,1
+PR-0387,6337 Oak Ave,St. Louis,MO,63191,site built,1
+PR-0388,6585 Elm Ct,Louisville,KY,40287,site built,1
+PR-0389,2210 Birch Blvd,Des Moines,IA,50361,site built,1
+PR-0390,4112 Pine Way,Columbus,OH,43260,site built,1
+PR-0391,2938 Oak Ct,Grand Rapids,MI,49506,site built,1
+PR-0392,7128 Washington Blvd,Columbus,OH,43216,site built,2
+PR-0393,8355 Meadow St,Indianapolis,IN,46240,site built,1
+PR-0394,8222 Jackson Dr,Kansas City,MO,64194,site built,1
+PR-0395,2461 Chestnut Ct,Louisville,KY,40255,site built,2
+PR-0396,3804 Cedar Ave,Columbus,OH,43211,site built,1
+PR-0397,4974 Willow Ave,Madison,WI,53780,site built,1
+PR-0398,4629 Lincoln Ln,Omaha,NE,68155,site built,1
+PR-0399,4002 Walnut Dr,Chicago,IL,60609,site built,1
+PR-0400,5821 Spring Way,Cleveland,OH,44106,site built,1
+PR-0401,1168 Elm Way,Minneapolis,MN,55464,site built,1
+PR-0402,1520 Oak Ct,Des Moines,IA,50377,site built,1
+PR-0403,7723 Pine Pl,Naperville,IL,60547,site built,1
+PR-0404,4594 Lexington Blvd,Indianapolis,IN,46207,site built,1
+PR-0405,8939 Maple Rd,St. Louis,MO,63165,site built,1
+PR-0406,153 Magnolia Dr,Chicago,IL,60684,modular,1
+PR-0407,8346 Lexington Blvd,Indianapolis,IN,46260,site built,1
+PR-0408,9435 Cedar Ct,St. Louis,MO,63169,site built,1
+PR-0409,3530 Lake Ave,Chicago,IL,60661,manufactured,1
+PR-0410,7388 Forest Pl,Columbus,OH,43234,site built,1
+PR-0411,5000 Sunset Dr,Naperville,IL,60578,site built,1
+PR-0412,7944 Chestnut Pl,Ann Arbor,MI,48193,site built,1
+PR-0413,5998 Cleveland Ct,Kansas City,MO,64145,site built,1
+PR-0414,342 Poplar St,Omaha,NE,68184,site built,1
+PR-0415,9004 Spruce Dr,Omaha,NE,68163,modular,1
+PR-0416,8102 Washington St,Chicago,IL,60668,site built,1
+PR-0417,4779 River St,Kansas City,MO,64181,site built,1
+PR-0418,2416 Hill Ct,Naperville,IL,60573,site built,1
+PR-0419,9211 Kensington Dr,Naperville,IL,60537,site built,4
+PR-0420,6091 Maple Ave,Minneapolis,MN,55410,site built,1
+PR-0421,4046 Maple Rd,St. Louis,MO,63157,site built,1
+PR-0422,3850 Jackson Rd,Columbus,OH,43210,site built,1
+PR-0423,8942 Park Ave,Columbus,OH,43234,site built,1
+PR-0424,465 Harrison Way,Cleveland,OH,44113,site built,1
+PR-0425,4841 Adams Ln,Indianapolis,IN,46222,manufactured,1
+PR-0426,2705 Glenwood Pl,Madison,WI,53766,site built,1
+PR-0427,567 Spruce Ct,St. Louis,MO,63191,site built,1
+PR-0428,9338 Jefferson Rd,Cleveland,OH,44146,site built,1
+PR-0429,6605 Harrison Pl,Grand Rapids,MI,49591,site built,1
+PR-0430,5225 Chestnut St,Grand Rapids,MI,49571,site built,1
+PR-0431,4433 Grant Ln,Milwaukee,WI,53213,site built,1
+PR-0432,8053 Harrison Blvd,Columbus,OH,43293,site built,1
+PR-0433,4362 Glenwood Way,St. Louis,MO,63101,site built,1
+PR-0434,8716 Poplar Way,Chicago,IL,60668,site built,1
+PR-0435,3045 Poplar St,Cleveland,OH,44150,site built,1
+PR-0436,7102 Birch St,St. Louis,MO,63144,site built,1
+PR-0437,2010 Maple Dr,Kansas City,MO,64187,site built,1
+PR-0438,2310 Monroe St,Grand Rapids,MI,49564,site built,1
+PR-0439,9857 Ash St,Chicago,IL,60633,site built,1
+PR-0440,5984 Madison St,Cleveland,OH,44131,site built,1
