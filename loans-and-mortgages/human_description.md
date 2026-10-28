@@ -8,7 +8,9 @@ Connect borrowers, loans, collateral and originators to see combined exposure, s
 
 Banks, credit unions and mortgage companies lend to households against two kinds of security: the borrower's promise to repay, and — for mortgages and home equity lending — a lien on their home. A loan starts as an application, is underwritten and originated by a loan officer, and is then often serviced by a different institution that collects payments and manages arrears for years afterwards.
 
-The vocabulary in this package follows the **Financial Industry Business Ontology (FIBO)**, the industry-standard description of financial concepts maintained by the EDM Council, and specifically its Loans domain. FIBO is deliberately formal; this package keeps its terms and code lists but simplifies its structure so the result is easy to explore.
+The vocabulary in this package follows the **Financial Industry Business Ontology (FIBO)**, the shared description of financial concepts developed by the EDM Council (Enterprise Data Management Council) with industry experts, and specifically its Loans domain. FIBO is open source, rigorously governed and used by financial institutions worldwide, so practitioners who already work with it will recognise the terms. It is also deliberately formal: this package keeps FIBO's concepts, definitions and code lists but simplifies its structure so the result is easy to explore. It is an adaptation, not FIBO itself, and is not endorsed by the EDM Council.
+
+*Source and license: adapted from the Loans (LOAN) domain of FIBO, Copyright (c) 2015-2026 EDM Council, Inc. and Copyright (c) 2015-2025 Object Management Group, Inc., used under the [MIT License](https://opensource.org/licenses/MIT). FIBO is available at [github.com/edmcouncil/fibo](https://github.com/edmcouncil/fibo).*
 
 Most lending systems are organised around one loan at a time, which leaves the hard risk questions spread across several of them:
 

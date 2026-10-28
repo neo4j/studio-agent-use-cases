@@ -3,7 +3,7 @@
   "id": "loans-and-mortgages",
   "version": "1",
   "name": "Loans and Mortgages",
-  "description": "A pragmatic reading of the FIBO Loans (LOAN) domain for consumer lending in the US: applicants and their applications, the products applied for, funded loans with their lenders, servicers, originating officers and payment histories, and the residential properties and appraisals that secure mortgages and home equity lending. Answers portfolio, delinquency and origination-quality questions, combined loan-to-value across stacked liens, rapid re-appraisal of collateral, and how far one borrower's default reaches through the loans they co-borrow or guarantee.",
+  "description": "A pragmatic reading of the FIBO Loans (LOAN) domain for consumer lending in the US: applicants and their applications, the products applied for, funded loans with their lenders, servicers, originating officers and payment histories, and the residential properties and appraisals that secure mortgages and home equity lending. Answers portfolio, delinquency and origination-quality questions, combined loan-to-value across stacked liens, rapid re-appraisal of collateral, and how far one borrower's default reaches through the loans they co-borrow or guarantee. Adapted from FIBO (Financial Industry Business Ontology), LOAN domain, https://github.com/edmcouncil/fibo, Copyright (c) 2015-2026 EDM Council, Inc. and Copyright (c) 2015-2025 Object Management Group, Inc., used under the MIT License (https://opensource.org/licenses/MIT). A simplification for demonstration, not FIBO itself, and not endorsed by the EDM Council.",
   "nodes": {
     "Person": {
       "label": "Person",

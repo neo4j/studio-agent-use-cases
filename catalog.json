@@ -182,7 +182,8 @@
           "sample-data/properties.csv",
           "human_description.md",
           "QUERIES.md",
-          "TESTS.md"
+          "TESTS.md",
+          "NOTICE.md"
         ],
         "markdown": "SKILL.md"
       }

@@ -1,10 +1,10 @@
 ---
 name: loans-and-mortgages
-description: Analyse consumer lending — mortgages, home equity lines and loans, and personal loans — as a connected graph of applicants, applications, products, loans, lenders, servicers, loan officers, payments, properties and appraisals, based on the FIBO Loans (LOAN) ontology. Provides a reference ontology, bundled sample data, and Cypher for loan and borrower lookups, portfolio and application-pipeline views, delinquency by servicer, combined loan-to-value across stacked liens, rapid re-appraisal of collateral, connected-party exposure and default contagion through co-borrowers and guarantors, and early payment default by loan officer.
+description: Analyse consumer lending — mortgages, home equity lines and loans, and personal loans — as a connected graph of applicants, applications, products, loans, lenders, servicers, loan officers, payments, properties and appraisals, built from the Loans (LOAN) domain of the EDM Council's Financial Industry Business Ontology (FIBO), the open-source, governed ontology of financial concepts used by institutions worldwide. Provides a reference ontology, bundled sample data, and Cypher for loan and borrower lookups, portfolio and application-pipeline views, delinquency by servicer, combined loan-to-value across stacked liens, rapid re-appraisal of collateral, connected-party exposure and default contagion through co-borrowers and guarantors, and early payment default by loan officer.
 metadata:
   neo4j-card-title: Loans and Mortgages
   neo4j-card-category: Financial Services
-  neo4j-card-description: Connect borrowers, loans, collateral and originators to see combined exposure, stacked liens and early-default patterns that loan-by-loan reporting misses.
+  neo4j-card-description: Built on the EDM Council's FIBO Loans ontology, connect borrowers, loans, collateral and originators to see combined exposure, stacked liens and early-default patterns that loan-by-loan reporting misses.
 ---
 
 # Loans and Mortgages
@@ -13,17 +13,24 @@ Use this skill for lending risk, credit portfolio and mortgage operations teams,
 
 Source references:
 
-- <https://github.com/edmcouncil/fibo/tree/master/LOAN>
-- <https://spec.edmcouncil.org/fibo/ontology/LOAN/LoansGeneral/Loans/Loan>
+- <https://github.com/edmcouncil/fibo/tree/master/LOAN> — FIBO Loans (LOAN) domain, EDM Council
+- <https://spec.edmcouncil.org/fibo/ontology/LOAN/LoansGeneral/Loans/Loan> — the FIBO Loan concept
+- <https://edmcouncil.org/frameworks/industry-models/fibo/> — about FIBO
 
 Disclaimer: this is an illustrative reference ontology with synthetic data, for demonstration. It is not a credit model, an underwriting policy, or a regulatory (HMDA) report. Treat query results as leads for a credit or fraud analyst to review, never as credit decisions or findings of misconduct, and do not present design choices or thresholds as proven guidance.
+
+## Source ontology and license
+
+The reference ontology is adapted from the Loans (LOAN) domain of the **Financial Industry Business Ontology (FIBO)**, the open-source, rigorously governed ontology of financial concepts developed by the **EDM Council** (Enterprise Data Management Council) with industry subject-matter experts, used by financial institutions worldwide, and published under the MIT License. Its concepts, definitions and code lists — loan purposes, HMDA dispositions, denial reasons, lien positions, market categories, amortization types — come from FIBO, and `reference` fields in `ONTOLOGY.json` link to the FIBO concepts they draw on. Users who already work with FIBO will recognise the vocabulary.
+
+Be precise about the relationship: this is a simplification of FIBO for a graph demo, not FIBO itself, and it is not endorsed by the EDM Council. Credit FIBO as the source when explaining the reference ontology. The attribution, the copyright notices of the FIBO files used, the MIT License text, and exactly what was taken and changed are in `NOTICE.md`.
 
 ## Introducing this package
 
 When the user first opens this package, greet them with a short introduction in your own words — don't recite this file. Convey:
 
 - The core idea: lending risk sits in the connections between loans — one person borrowing on some loans and guaranteeing others, two liens from different lenders on the same house, a run of early defaults behind one loan officer — and loan-by-loan reporting does not see them.
-- The reference ontology is a pragmatic reading of the industry-standard FIBO Loans ontology, simplified for a demo: roles such as borrower, guarantor, lender and servicer become relationships.
+- The reference ontology is built from a real-world, governed source: the Loans domain of the EDM Council's Financial Industry Business Ontology (FIBO), used by financial institutions worldwide. It keeps FIBO's concepts and code lists but is simplified for a demo — roles such as borrower, guarantor, lender and servicer become relationships.
 - The bundled sample data is a synthetic US consumer loan book that deliberately seeds each pattern the queries look for, alongside ordinary loans and near misses.
 - What you can help with: explaining the reference ontology, walking through the query patterns, importing the sample data or their own, and running Cypher once a database is connected.
 
@@ -55,6 +62,12 @@ End with a clear next step, such as asking whether they'd like to explore the re
 `LoanProduct` and `FinancialInstitution` are grouping dimensions (by product, by servicer) rather than roles; any categorical equivalent in the user's data will do.
 
 When the user's database differs from the reference ontology, map their labels onto these roles before rewriting anything from `QUERIES.md`. A role with no counterpart in their data means the patterns resting on it have no analogue — say so plainly rather than forcing a fit.
+
+## Supporting files
+
+| File | Load when |
+| ---- | --------- |
+| `NOTICE.md` | The user asks about the FIBO source, licensing, copyright or attribution, or exactly which parts of FIBO were used and how they were changed |
 
 ## Operational Constraints
 
