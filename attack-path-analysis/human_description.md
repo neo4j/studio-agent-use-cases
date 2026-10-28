@@ -51,16 +51,16 @@ traversal rather than a reconciliation exercise across separate inventories.
 | "Which of our critical assets is genuinely unreachable?" | Reports critical applications that no viable route reaches, which a route-finding result cannot show — an unreachable target simply produces no result at all |
 | "Is this permission grant over-scoped?" | Exposes permission grants shared across many accounts, where a single over-scoped grant sits on the routes of every account holding it |
 
-The distinction the ontology is built to support is between a severe finding and
-a consequential one. Those are different questions, and only the second can be
-answered by looking at how things connect.
+The distinction the reference ontology is built to support is between a severe
+finding and a consequential one. Those are different questions, and only the
+second can be answered by looking at how things connect.
 
 ## Ontology
 
-The ontology is arranged as a chain, because an attack is a chain. At one end
-sits what the outside world can connect to; at the other, the applications and
-data the business cares about. Between them run two parallel routes to the same
-destination.
+The reference ontology is arranged as a chain, because an attack is a chain. At
+one end sits what the outside world can connect to; at the other, the
+applications and data the business cares about. Between them run two parallel
+routes to the same destination.
 
 The first is the network route: an exposed entry point leads to a machine, that
 machine carries vulnerabilities, and permitted network connections lead from it
@@ -104,7 +104,7 @@ whatever that host happens to run.
 | `ComputeInstance` | `networkSegment` | String | Label of the network zone or subnet the machine sits in, at the granularity segmentation is controlled at. Two machines sharing a segment are not thereby able to reach each other |
 | `CVE` | `cveId` | String | The published vulnerability identifier |
 | `CVE` | `cvssScore` | Float | Severity of the flaw in isolation, from 0.0 to 10.0, taking no account of this estate's exposure, compensating controls or asset value — the context the connections supply separately |
-| `CVE` | `severity` | String | Qualitative severity band derived from the score, upper case. Carried for readability alongside the numeric value |
+| `CVE` | `severity` | String | Qualitative severity band derived from the score, upper case, on the standard five-band scale: none, low, medium, high or critical. Carried for readability alongside the numeric value |
 | `CVE` | `epssScore` | Float | Probability from 0.0 to 1.0 that the vulnerability will be exploited in the wild within the next 30 days. A likelihood, not a severity: a high likelihood on a weak flaw means something actually being used |
 | `CVE` | `knownExploited` | Boolean | True when exploitation has been observed in the wild rather than merely predicted. The strongest single signal for prioritising an entry point |
 | `CVE` | `publishedDate` | Zoned datetime | Date the vulnerability record was first published — first publication, not last modification, and not when the flaw was introduced or discovered. Only the calendar date is meaningful; the time is always midnight UTC |

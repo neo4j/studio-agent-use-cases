@@ -1,40 +1,77 @@
 # Retail Banking — Query Guidance
 
-Cypher for the `retail-banking` use case. Every query references only labels, relationship types, and properties defined in `GRAPH_MODEL.json`. The `//` comments before each query state its purpose, inputs, prerequisites, and the expected result against the bundled `sample-data/` so they act as a lightweight test oracle.
+Cypher for the `retail-banking` use case. Every query references only labels, relationship types, and properties defined in the reference ontology (`ONTOLOGY.json`). No query writes to the database.
 
-Prerequisites for every query below:
+## Prerequisites
 
-- Neo4j 5.9+ / Cypher 5. The ring queries use quantified path patterns (`{3,6}`, `*`), and the decay query uses a chained comparison (`0.80 <= x <= 1.00`).
-- Queries 2 and 3 require APOC (`apoc.coll.toSet`). Query 1 needs no plugin.
-- The graph is loaded via the bundled sample-data Import (`GRAPH_MODEL.json`), which is the only route data takes into the graph.
-- Node-key constraints on `Account.accountNumber` and `Transaction.transactionId` are created by Import, so every anchored lookup is an index seek rather than a label scan.
+- Neo4j 5.9+ and Cypher 5. The ring queries use quantified path patterns (`{3,6}`, `{2,5}`), and the decay query uses a chained comparison (`0.80 <= x <= 1.00`).
+- **Directed ring with distinct accounts** and **Chronological and amount-decay ring** require APOC (`apoc.coll.toSet`) for their distinct-account filter, and say so in their headings. The other queries need no plugin.
+- The graph is loaded through the Import flow from `ONTOLOGY.json` — the bundled `sample-data/` CSVs, or the user's own payments data mapped onto the reference ontology.
+- The node keys in `ONTOLOGY.json` make `Account.accountNumber` and `Transaction.transactionId` unique, so any anchored lookup is an index seek rather than a label scan.
+- No query takes a parameter: every account is tried as the starting point of a ring.
+- The queries are listed in the order to run them. Start with the census, then run the ring queries broad to strict — each one adds a condition to the one before, which shows which condition removes a candidate ring.
 
-Sample-data profile: 4 accounts (`1`–`4`) and 4 transactions forming exactly one closed directed ring, `1 → 2 → 3 → 4 → 1`. Amounts decay by a constant factor of 0.9 (1000.00, 900.00, 810.00, 729.00 GBP) on consecutive days from 2023-10-24 to 2023-10-27. The dataset is deliberately minimal: it contains one positive case and no negative cases, so it proves each query returns the ring and does not demonstrate selectivity.
+## Adapting these queries
 
-> TODO(verify): the expected-result counts below are derived from the sample CSVs by inspection and have not been executed against a live database. Confirm them on a freshly imported instance and remove this note.
+These queries assume the reference ontology in `ONTOLOGY.json`. When the user's database differs — their own ontology, a modified one, or a database that predates this package — the queries are patterns to rebuild, not Cypher to run.
 
-## 0. Graph census
+1. Read the live schema (`CALL db.schema.visualization()`, `SHOW CONSTRAINTS`) rather than assuming the reference ontology applies.
+2. Map their labels onto the role map in `SKILL.md`. A role with no counterpart means the pattern below it has no analogue — say so rather than forcing a fit.
+3. Rewrite from the pattern, and update the annotation block to describe what the rewritten query actually does.
+
+## Graph census
 
 ```cypher
-// Purpose: confirm the import landed before running anything else, and supply a real anchor.
-// Inputs: none.
-// Expected: 1 row — accounts 4, transactions 4.
+/*
+ * @name           Graph census
+ * @description    Counts Account and Transaction nodes to confirm the import
+ *                 landed before running anything else.
+ * @params         None
+ * @prerequisites  None beyond the imported reference ontology.
+ * @returns        One row: accounts (Account count) and transactions
+ *                 (Transaction count).
+ * @usage          Run straight after an import. No row at all means no
+ *                 Transaction nodes were imported. The census counts nodes
+ *                 only; a payment whose account columns did not resolve still
+ *                 counts as a Transaction but sits on no ring.
+ * @tags           sanity-check, import, orientation
+ * @sample         Bundled sample data only: returns 1 row — accounts 1449,
+ *                 transactions 5050.
+ */
 MATCH (a:Account)
 WITH count(a) AS accounts
 MATCH (t:Transaction)
 RETURN accounts, count(t) AS transactions;
 ```
 
-## 1. Directed ring (basic)
+## Directed ring (basic)
 
 ```cypher
-// Purpose: first pass — prove directed cycles of 3 to 6 account hops exist at all.
-// Inputs: none. Every account is tried as the ring's starting point.
-// Prerequisites: none beyond Neo4j 5.9+.
-// Expected: 4 paths against the sample data. The ring is 4 hops long, so only a
-//   4-repetition match closes back on the start; each of the 4 accounts yields the
-//   same ring rotated to start at itself. Repetition counts 3, 5, and 6 land on a
-//   different account and match nothing.
+/*
+ * @name           Directed ring (basic)
+ * @description    First pass: proves directed rings exist at all. Follows
+ *                 money out of an account through PERFORMS to a Transaction
+ *                 and on through BENEFITS_TO to the beneficiary account,
+ *                 three to six times, ending back at the starting account.
+ * @params         None
+ * @prerequisites  None beyond the imported reference ontology and Neo4j 5.9+.
+ * @returns        One row per ring and starting account: path, alternating
+ *                 Account and Transaction nodes from the starting account
+ *                 back to it. A ring of n accounts is returned n times, once
+ *                 rotated to start at each of its accounts.
+ * @usage          The hop bound {3,6} is a literal — Cypher rejects a
+ *                 parameter inside a quantifier, so changing it means editing
+ *                 the query text. Three is the shortest ring that is not a
+ *                 two-account round trip; widen the upper bound one step at a
+ *                 time, because cost grows quickly with ring length on a dense
+ *                 graph, and never remove it. A bare cycle is a weak signal:
+ *                 use this to show rings exist, then tighten with the queries
+ *                 below.
+ * @tags           ring, cycle, layering, fraud
+ * @sample         Bundled sample data only: returns 143 paths covering 37
+ *                 distinct rings, among them 1 → 2 → 3 → 4 → 1 once rotated to
+ *                 start at each of its accounts.
+ */
 MATCH path =
   (start:Account)
   (()-[:PERFORMS]->()-[:BENEFITS_TO]->()){3,6}
@@ -42,16 +79,32 @@ MATCH path =
 RETURN path;
 ```
 
-## 2. Directed ring with distinct accounts
+## Directed ring with distinct accounts (requires APOC)
 
 ```cypher
-// Purpose: drop rings that revisit an intermediate account, which are usually
-//   legitimate back-and-forth activity rather than layering.
-// Inputs: none.
-// Prerequisites: APOC (apoc.coll.toSet).
-// Expected: 4 paths — the same 4 as query 1. Every account in the sample ring is
-//   distinct, so this filter removes nothing here. On real data it is the filter
-//   that does the most work.
+/*
+ * @name           Directed ring with distinct accounts (requires APOC)
+ * @description    The basic directed ring, keeping only rings whose paying
+ *                 accounts are all different. Drops rings that revisit an
+ *                 intermediate account, which are usually legitimate
+ *                 back-and-forth activity rather than layering.
+ * @params         None
+ * @prerequisites  APOC (apoc.coll.toSet) and Neo4j 5.9+.
+ * @returns        One row per ring and starting account: path, as for the
+ *                 basic directed ring, restricted to rings with no repeated
+ *                 account.
+ * @usage          On real payments data this is the filter that does the most
+ *                 work. It uses the same literal {3,6} hop bound as the basic
+ *                 query. Without APOC, replace
+ *                 size(apoc.coll.toSet(source)) = size(source) with a
+ *                 reduce-based distinctness check, or accept the repeats and
+ *                 filter downstream.
+ * @tags           ring, cycle, layering, fraud, apoc
+ * @sample         Bundled sample data only: returns 55 paths covering 15
+ *                 rings, among them 1 → 2 → 3 → 4 → 1 once per account; the
+ *                 other 22 rings from Directed ring (basic) revisit an
+ *                 account.
+ */
 MATCH path =
   (start:Account)
   ((source)-[:PERFORMS]->(tx)-[:BENEFITS_TO]->(target)){3,6}
@@ -60,45 +113,61 @@ WHERE size(apoc.coll.toSet(source)) = size(source)
 RETURN path;
 ```
 
-## 3. Chronological and amount-decay ring
+## Chronological and amount-decay ring (requires APOC)
 
 ```cypher
-// Purpose: the strongest of the three — require the ring to move forward in time
-//   and lose a consistent slice of value at each hop, the signature of a cut being
-//   taken at every step.
-// Inputs: none. The 0.80–1.00 ratio band is the parameter to retune on real data.
-// Prerequisites: APOC (apoc.coll.toSet).
-// Expected: 1 path against the sample data — the ring anchored at account 1.
-//   Amounts decay 1000 → 900 → 810 → 729 (a constant 0.9) on ascending dates, so
-//   only the rotation starting at the largest amount satisfies the band the whole
-//   way round; closing from 729 back to 1000 is a ratio of 1.37 and fails.
-//   This is the query to show when explaining why direction and ordering matter.
+/*
+ * @name           Chronological and amount-decay ring (requires APOC)
+ * @description    The strictest check: a ring of distinct accounts in which
+ *                 each payment executes after the one before it
+ *                 (Transaction.date, the execution timestamp) and carries
+ *                 80–100% of the previous payment's amount (Transaction.amount,
+ *                 in major currency units) — the signature of a cut being
+ *                 taken at every hop.
+ * @params         None
+ * @prerequisites  APOC (apoc.coll.toSet) and Neo4j 5.9+. Every payment on a
+ *                 ring in one currency: the reference ontology performs no
+ *                 conversion.
+ * @returns        One row per qualifying ring: path, from the starting account
+ *                 through each payment and intermediate account back to it.
+ *                 Only the rotation that starts with the ring's earliest
+ *                 payment can qualify, since every other rotation steps back
+ *                 in time.
+ * @usage          The ratio band 0.80–1.00 is a literal, computed as next
+ *                 amount divided by previous amount: it accepts a loss of up
+ *                 to 20% per hop — the fee commonly taken as money passes
+ *                 through a ring — and rejects any growth. Narrow it towards
+ *                 1.00 to target small skims; widen it only with a reason,
+ *                 since ordinary commerce passes a wide band. Validate the
+ *                 direction on a known example: inverting the ratio silently
+ *                 returns amount-growth rings. The repetition bound {2,5} is
+ *                 also a literal: two to five intermediate accounts, so rings
+ *                 of three to six accounts, matching the other ring queries.
+ *                 Its lower bound keeps two-account round trips such as
+ *                 refunds and loan repayments out. Partial payments and
+ *                 currency conversion break the ratio assumption.
+ * @tags           ring, chronology, amount-decay, layering, fraud, apoc
+ * @sample         Bundled sample data only: returns 6 paths, one per ring,
+ *                 among them the ring anchored at account 1, amounts
+ *                 1000.00 → 900.00 → 810.00 → 729.00 on consecutive days.
+ */
 MATCH path =
   (start:Account)-[:PERFORMS]->(firstTx)
   (
     (previousTx)-[:BENEFITS_TO]->(middleAccount)-[:PERFORMS]->(nextTx)
     WHERE previousTx.date < nextTx.date
       AND 0.80 <= nextTx.amount / previousTx.amount <= 1.00
-  )*
+  ){2,5}
   (lastTx)-[:BENEFITS_TO]->(start)
 WHERE size(apoc.coll.toSet([start] + middleAccount)) = size([start] + middleAccount)
 RETURN path;
 ```
 
-## Tuning
+## Node-key constraints
 
-- The ratio band and the `{3,6}` hop bound are the two levers. Widen the band and you catch more layering but also ordinary commerce; widen the hop bound and cost grows quickly.
-- Quantifier bounds are literals. Cypher rejects a parameter inside `{1,n}`, so a configurable depth means generating the query text, not passing a parameter.
-- Always keep an explicit upper hop bound in production. An unbounded quantifier over a dense transaction graph is the most likely way these queries become expensive.
-- Validate the ratio direction against a known example before trusting results. Inverting it silently returns amount-_growth_ rings, which look plausible and mean something different.
-- Without APOC, queries 2 and 3 lose their distinctness filter. Rewrite it with `size(apoc.coll.toSet(x)) = size(x)` replaced by a `reduce`-based check, or accept the duplicates and filter downstream.
-
-## Constraints
-
-The node-key constraints below are created automatically when the sample data is loaded via the Import app from `GRAPH_MODEL.json`, which is the only route data takes into the graph. They are listed here as a schema reference and to verify what the import produced:
+Import creates these node-key constraints from the key definitions in `ONTOLOGY.json`. They are listed as a reference for checking the live database (`SHOW CONSTRAINTS`), not as statements to run: recreating them, or adding `UNIQUE` variants, conflicts with the existing `KEY` constraints.
 
 ```cypher
-// Node-key constraints matching GRAPH_MODEL.json. Schema reference; Import creates these.
 CREATE CONSTRAINT accountNumber_Account_key IF NOT EXISTS
   FOR (a:Account) REQUIRE a.accountNumber IS NODE KEY;
 CREATE CONSTRAINT transactionId_Transaction_key IF NOT EXISTS

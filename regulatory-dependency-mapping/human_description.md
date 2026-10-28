@@ -52,9 +52,9 @@ The two connections are read in opposite spirits. Containment runs from a child 
 
 | Relationship | Direction | What it means |
 | ------------ | --------- | ------------- |
-| `DEPENDS_ON` | `Section` → `Standard` | Places a top-level section directly beneath the standard that publishes it. Only sections at the top of a handbook's hierarchy carry this |
-| `DEPENDS_ON` | `Section` → `Section` | Places a section beneath its immediate parent, read child to parent. Deeper sections reach their standard by chaining through their parents rather than connecting to it directly |
-| `RELATED` | `Section` → `Section` | Records a cross-reference made by the citing section to the cited one, so that a change to the cited text is known to reach the citing text. The direction is the direction of the citation, not of influence; two sections that cite each other carry one of these each way |
+| `DEPENDS_ON` | `Section` → `Standard` | Places a top-level section directly beneath the standard that publishes it. Only sections at the top of a handbook's hierarchy carry this. A section sits beneath at most one standard; a standard has many top-level sections |
+| `DEPENDS_ON` | `Section` → `Section` | Places a section beneath its immediate parent, read child to parent. Deeper sections reach their standard by chaining through their parents rather than connecting to it directly. A section has at most one parent and may have many children, and carries either this or the link to a standard, never both |
+| `RELATED` | `Section` → `Section` | Records a cross-reference made by the citing section to the cited one, so that a change to the cited text is known to reach the citing text. The direction is the direction of the citation, not of influence; two sections that cite each other carry one of these each way. A section may cite many others and be cited by many |
 
 ### Relationship properties
 

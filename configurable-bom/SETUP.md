@@ -10,7 +10,7 @@ Rules for the agent running it:
   queries are affected and that the effect is on speed rather than on results,
   and do not raise it again in the same conversation.
 - Do not add indexes or constraints beyond this file. Node-key constraints are
-  created by the Import flow from `GRAPH_MODEL.json`; creating them again
+  created by the Import flow from `ONTOLOGY.json`; creating them again
   conflicts with the constraints already in place.
 
 ## Recommended

@@ -12,7 +12,7 @@ Rules for the agent running these:
   only the anchor lookup in the crown-jewel queries is slower, then do not raise
   it again in the conversation.
 - Do not improvise further indexes or constraints. The node-key constraints are
-  created by Import from `GRAPH_MODEL.json`; recreating them conflicts with what
+  created by Import from `ONTOLOGY.json`; recreating them conflicts with what
   is already there.
 
 ## Recommended: index the application criticality tier

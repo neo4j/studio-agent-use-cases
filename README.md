@@ -9,8 +9,12 @@ This public repository hosts the versioned skill packages used by Neo4j Studio A
 ├── catalog.json
 ├── <skill-id>/
 │   ├── SKILL.md
-│   ├── GRAPH_MODEL.json
-│   └── ...supporting files and sample-data/
+│   ├── ONTOLOGY.json
+│   ├── QUERIES.md
+│   ├── human_description.md
+│   ├── TESTS.md
+│   └── ...SETUP.md, supporting files and sample-data/
+└── skills/solution-package-builder/   # the create-solution-package skill that defines the package format
 ```
 
 `catalog.json` contains directory of file. It declares `schemaVersion: 1`; each entry contains a `skillId` and the complete, sorted list of files relative to that skill's repository-root directory.
@@ -19,8 +23,10 @@ Every skill must have:
 
 - a safe, unique kebab-case directory name matching the `name` in `SKILL.md` frontmatter;
 - a non-empty `SKILL.md` body and the required Neo4j card metadata;
-- a parseable `GRAPH_MODEL.json`; and
-- every sample CSV referenced by the graph model, with the fields that model uses.
+- a parseable `ONTOLOGY.json` — the package's reference ontology in the ontology graph spec, declaring the pinned spec URI (`https://neo4j.com/docs/ontology-graph-spec/1.0.0/schema.json`) as its `schema` and the directory name as its `id`; and
+- every sample CSV referenced by the reference ontology, with the columns it declares.
+
+The full package format — `QUERIES.md`, `TESTS.md`, `human_description.md`, `SETUP.md` and the validation suite — is defined by the create-solution-package skill in [`skills/solution-package-builder/`](skills/solution-package-builder/SKILL.md). Legacy `GRAPH_MODEL.json` packages are no longer accepted; the skill's `MIGRATION.md` covers converting one.
 
 ## Development
 
@@ -109,12 +115,13 @@ Do not commit directly to `staging` or `production`. Apply fixes to `main` and p
     {
       "skillId": "example-skill",
       "files": {
-        "graph": "GRAPH_MODEL.json",
+        "graph": "ONTOLOGY.json",
         "markdown": "SKILL.md",
         "skill": [
-          "INTRODUCTION.md",
+          "sample-data/example.csv",
+          "human_description.md",
           "QUERIES.md",
-          "sample-data/example.csv"
+          "TESTS.md"
         ]
       }
     }
@@ -127,8 +134,8 @@ Do not commit directly to `staging` or `production`. Apply fixes to `main` and p
 | `schemaVersion` | number | Catalog schema version. Currently `1`. |
 | `skills` | array | One entry per skill package in the repository. |
 | `skills[].skillId` | string | Directory name of the skill at the repository root (kebab-case). |
-| `skills[].files.graph` | string | Path to the graph model file, relative to the skill directory. Always `GRAPH_MODEL.json`. |
+| `skills[].files.graph` | string | Path to the reference ontology, relative to the skill directory. Always `ONTOLOGY.json`. |
 | `skills[].files.markdown` | string | Path to the skill card markdown, relative to the skill directory. Always `SKILL.md`. |
-| `skills[].files.skill` | string[] | Remaining supporting files relative to the skill directory, sorted lexicographically. Includes docs, Cypher, and sample CSVs. |
+| `skills[].files.skill` | string[] | Every other file in the skill directory, relative to it: sample CSVs first, then the rest, each group sorted case-insensitively. Includes docs, Cypher, and sample CSVs. |
 
-Resolve any path in `files` as `<skillId>/<path>` from the repository root. When adding or updating a skill, keep `catalog.json` in sync with the files that skill actually ships.
+Resolve any path in `files` as `<skillId>/<path>` from the repository root. When adding or updating a skill, keep `catalog.json` in sync with the files that skill actually ships — `python3 skills/solution-package-builder/scripts/catalog_entry.py . <skillId> --write` rebuilds one entry from its folder.
