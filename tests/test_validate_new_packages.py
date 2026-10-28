@@ -30,7 +30,15 @@ def load_validator():
 vnp = load_validator()
 
 SKILL_ID = "example-skill"
-VALID_GRAPH_MODEL = json.dumps({"version": "4.0.0", "nodes": {}})
+VALID_ONTOLOGY = json.dumps(
+    {
+        "schema": "https://neo4j.com/docs/ontology-graph-spec/1.0.0/schema.json",
+        "id": SKILL_ID,
+        "version": "1",
+        "nodes": {},
+        "relationships": {},
+    }
+)
 
 
 def skill_md(
@@ -57,7 +65,7 @@ def skill_md(
 
 def catalog_for(skill_id: str, **files) -> dict:
     entry_files = {
-        "graph": "GRAPH_MODEL.json",
+        "graph": "ONTOLOGY.json",
         "markdown": "SKILL.md",
         "skill": [],
     }
@@ -85,8 +93,8 @@ class ValidatorTestCase(unittest.TestCase):
     def write_skill_md(self, content: str) -> None:
         (self.skill_dir / "SKILL.md").write_text(content, encoding="utf-8")
 
-    def write_graph_model(self, content: str = VALID_GRAPH_MODEL) -> None:
-        (self.skill_dir / "GRAPH_MODEL.json").write_text(content, encoding="utf-8")
+    def write_ontology(self, content: str = VALID_ONTOLOGY) -> None:
+        (self.skill_dir / "ONTOLOGY.json").write_text(content, encoding="utf-8")
 
     def write_catalog(self, data: dict | None = None, **files) -> None:
         payload = catalog_for(SKILL_ID, **files) if data is None else data
@@ -103,13 +111,13 @@ class ValidatorTestCase(unittest.TestCase):
         vnp.validate_skill_md(SKILL_ID, self.skill_dir, issues)
         return [issue.message for issue in issues]
 
-    def graph_model_issues(
+    def ontology_issues(
         self, content: str | None = None, *, missing: bool = False
     ) -> list[str]:
         if not missing and content is not None:
-            self.write_graph_model(content)
+            self.write_ontology(content)
         issues: list[vnp.Issue] = []
-        vnp.validate_graph_model(SKILL_ID, self.skill_dir, issues)
+        vnp.validate_ontology(SKILL_ID, self.skill_dir, issues)
         return [issue.message for issue in issues]
 
 
@@ -290,27 +298,122 @@ class TestValidateSkillMd(ValidatorTestCase):
         )
 
 
-class TestValidateGraphModel(ValidatorTestCase):
-    def test_valid_graph_model(self) -> None:
-        self.assertEqual(self.graph_model_issues(VALID_GRAPH_MODEL), [])
+class TestValidateOntology(ValidatorTestCase):
+    def test_valid_ontology(self) -> None:
+        self.assertEqual(self.ontology_issues(VALID_ONTOLOGY), [])
 
     def test_missing_file(self) -> None:
-        messages = self.graph_model_issues(missing=True)
+        messages = self.ontology_issues(missing=True)
         self.assertTrue(
-            any("missing required file GRAPH_MODEL.json" in msg for msg in messages)
+            any("missing required file ONTOLOGY.json" in msg for msg in messages)
         )
 
     def test_empty_file(self) -> None:
-        messages = self.graph_model_issues("   \n")
-        self.assertTrue(any("GRAPH_MODEL.json is empty" in msg for msg in messages))
+        messages = self.ontology_issues("   \n")
+        self.assertTrue(any("ONTOLOGY.json is empty" in msg for msg in messages))
 
     def test_invalid_json(self) -> None:
-        messages = self.graph_model_issues("{not json")
+        messages = self.ontology_issues("{not json")
         self.assertTrue(any("not valid JSON" in msg for msg in messages))
 
     def test_json_must_be_object(self) -> None:
-        messages = self.graph_model_issues("[1, 2]")
+        messages = self.ontology_issues("[1, 2]")
         self.assertTrue(any("must contain a JSON object" in msg for msg in messages))
+
+    def test_schema_must_be_the_pinned_spec(self) -> None:
+        ontology = json.loads(VALID_ONTOLOGY)
+        ontology["schema"] = (
+            "https://neo4j.com/docs/ontology-graph-spec/0.9.0/schema.json"
+        )
+        messages = self.ontology_issues(json.dumps(ontology))
+        self.assertTrue(any("'schema' must be" in msg for msg in messages))
+
+    def test_id_must_match_directory(self) -> None:
+        ontology = json.loads(VALID_ONTOLOGY)
+        ontology["id"] = "other-skill"
+        messages = self.ontology_issues(json.dumps(ontology))
+        self.assertTrue(
+            any("'id' must match the directory name" in msg for msg in messages)
+        )
+
+    def test_rejects_legacy_graph_model(self) -> None:
+        (self.skill_dir / "GRAPH_MODEL.json").write_text("{}", encoding="utf-8")
+        messages = self.ontology_issues(VALID_ONTOLOGY)
+        self.assertTrue(
+            any("legacy GRAPH_MODEL.json is not supported" in msg for msg in messages)
+        )
+
+    def test_accepts_data_source_extension_keys(self) -> None:
+        ontology = json.loads(VALID_ONTOLOGY)
+        ontology["extensions"] = {
+            "data_source_tables": {},
+            "data_source_mappings": {"mapping0": []},
+        }
+        self.assertEqual(self.ontology_issues(json.dumps(ontology)), [])
+
+    def test_rejects_renamed_extension_keys(self) -> None:
+        ontology = json.loads(VALID_ONTOLOGY)
+        ontology["extensions"] = {"tables": {}, "mappings": {"mapping0": []}}
+        messages = self.ontology_issues(json.dumps(ontology))
+        self.assertTrue(
+            any(
+                "'extensions.tables' must be renamed to "
+                "'extensions.data_source_tables'" in msg
+                for msg in messages
+            )
+        )
+        self.assertTrue(
+            any(
+                "'extensions.mappings' must be renamed to "
+                "'extensions.data_source_mappings'" in msg
+                for msg in messages
+            )
+        )
+
+    def test_rejects_constraint_repeated_across_relationship_entries(self) -> None:
+        ontology = json.loads(VALID_ONTOLOGY)
+        road = {"type": "STRING", "must_exist": True}
+        ontology["relationships"] = {
+            "aRoadB": {"type": "ROAD", "properties": {"ref": dict(road)}},
+            "bRoadA": {"type": "ROAD", "properties": {"ref": dict(road)}},
+        }
+        messages = self.ontology_issues(json.dumps(ontology))
+        self.assertTrue(
+            any(
+                "declares 'must_exist' on 'ref' for relationship type 'ROAD'" in msg
+                and "aRoadB, bRoadA" in msg
+                for msg in messages
+            )
+        )
+
+    def test_rejects_constraint_repeated_across_node_entries(self) -> None:
+        ontology = json.loads(VALID_ONTOLOGY)
+        ontology["nodes"] = {
+            "a": {"label": "Place", "properties": {"id": {"key": True}}},
+            "b": {
+                "labels": {"identifier": "Place"},
+                "properties": {"id": {"key": True}},
+            },
+        }
+        messages = self.ontology_issues(json.dumps(ontology))
+        self.assertTrue(
+            any("declares 'key' on 'id' for label 'Place'" in msg for msg in messages)
+        )
+
+    def test_accepts_constraint_declared_once_per_relationship_type(self) -> None:
+        ontology = json.loads(VALID_ONTOLOGY)
+        ontology["relationships"] = {
+            "aRoadB": {
+                "type": "ROAD",
+                "properties": {"ref": {"type": "STRING", "must_exist": True}},
+            },
+            "bRoadA": {"type": "ROAD", "properties": {"ref": {"type": "STRING"}}},
+            "aLinkB": {
+                "type": "LINK",
+                "properties": {"ref": {"type": "STRING", "must_exist": True}},
+            },
+        }
+        self.assertEqual(self.ontology_issues(json.dumps(ontology)), [])
 
 
 class TestValidateCatalogEntry(ValidatorTestCase):
@@ -339,7 +442,7 @@ class TestValidateCatalogEntry(ValidatorTestCase):
         vnp.validate_catalog_entry(SKILL_ID, issues)
         messages = [issue.message for issue in issues]
         self.assertTrue(
-            any("files.graph must be 'GRAPH_MODEL.json'" in msg for msg in messages)
+            any("files.graph must be 'ONTOLOGY.json'" in msg for msg in messages)
         )
         self.assertTrue(
             any("files.markdown must be 'SKILL.md'" in msg for msg in messages)
@@ -354,7 +457,7 @@ class TestValidatePackage(ValidatorTestCase):
 
     def test_valid_package(self) -> None:
         self.write_skill_md(skill_md())
-        self.write_graph_model()
+        self.write_ontology()
         self.write_catalog()
         self.assertEqual(vnp.validate_package(SKILL_ID), [])
 
@@ -365,7 +468,7 @@ class TestValidatePackage(ValidatorTestCase):
             any("missing required file SKILL.md" in msg for msg in messages)
         )
         self.assertTrue(
-            any("missing required file GRAPH_MODEL.json" in msg for msg in messages)
+            any("missing required file ONTOLOGY.json" in msg for msg in messages)
         )
         self.assertTrue(
             any("must be listed in catalog.json" in msg for msg in messages)
@@ -418,7 +521,7 @@ class TestMain(ValidatorTestCase):
 
     def test_main_succeeds_for_a_valid_new_package(self) -> None:
         self.write_skill_md(skill_md())
-        self.write_graph_model()
+        self.write_ontology()
         self.write_catalog()
         stdout = io.StringIO()
         with patch.object(vnp, "discover_new_packages", return_value=[SKILL_ID]):

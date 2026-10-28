@@ -1,6 +1,0 @@
-- Path expansion can be expensive on dense graphs; use ring-length/time bounds.
-- APOC may be unavailable in some deployments.
-- Currency conversion and partial payments can invalidate naive amount-ratio assumptions.
-- Real fraud behavior may branch and not form perfect cycles.
-- Closed loops can also be legitimate (refunds, treasury/internal transfers).
-- Treat matches as risk signals requiring analyst review.

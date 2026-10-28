@@ -1,6 +1,6 @@
 ---
 name: regulatory-dependency-mapping
-description: Investment banking regulatory compliance and change management. Models a regulator's handbook as a graph — standards, the hierarchy of sections beneath them, and the cross-references sections make to one another — so that the dependencies between rules become queryable. Use for regulatory change impact assessment (which other text does this amendment reach), identifying which sections are most expensive to change, sweeping for sections whose text has recently taken effect, prioritising a change backlog by how heavily the changed text is cited, and finding where one sourcebook depends on another. Provides a graph model, import-ready synthetic sample data, and Cypher for hierarchy traversal, citation analysis, blast-radius impact assessment, and optional GDS PageRank and connected-component analytics over the citation graph.
+description: Investment banking regulatory compliance and change management. Models a regulator's handbook as a graph — standards, the hierarchy of sections beneath them, and the cross-references sections make to one another — so that the dependencies between rules become queryable. Use for regulatory change impact assessment (which other text does this amendment reach), identifying which sections are most expensive to change, sweeping for sections whose text has recently taken effect, prioritising a change backlog by how heavily the changed text is cited, and finding where one sourcebook depends on another. Provides a reference ontology, import-ready synthetic sample data, and Cypher for hierarchy traversal, citation analysis, blast-radius impact assessment, and optional GDS PageRank and connected-component analytics over the citation graph.
 metadata:
   neo4j-card-title: Regulatory Dependency Mapping
   neo4j-card-category: Financial Services
@@ -41,14 +41,14 @@ in your own words — don't recite this file. Convey:
   changed section that a lot of other text leans on, a chain of citations that
   only shows up if you follow more than one hop, and citations that cross from
   one sourcebook into another.
-- What you can help with: explaining the model, walking through the query
-  patterns, importing the sample data or mapping their own handbook, and
-  running Cypher once a database is connected.
+- What you can help with: explaining the reference ontology, walking through
+  the query patterns, importing the sample data or mapping their own handbook,
+  and running Cypher once a database is connected.
 
 End with a clear next step, such as asking whether they'd like to explore the
-model or start importing data.
+reference ontology or start importing data.
 
-## Model
+## Reference ontology
 
 - `Standard` — a published handbook or sourcebook, identified by its code.
   `Section` — one addressable unit of regulatory text, carrying its published
@@ -63,27 +63,36 @@ model or start importing data.
   one, carrying `subsection` — the specific rule inside the cited section that
   is being relied on. Two sections that cite each other carry one `RELATED`
   each way.
-- The model is deliberately the source page's, unextended: two labels, two
-  relationship types. The source's business-impact scenario invites nodes for
-  products, services and systems, and this package does not add them — the
-  citation graph on its own answers the change-impact questions, and a
-  narrower model is a cleaner template for a user mapping their own handbook.
-  One departure: the source page names the change date `last_update` in its
-  field list and `last_updated` in its demo Cypher, and this model uses
-  `lastUpdated`. It is typed as `ZONED DATETIME` rather than `DATE` because
-  the Import flow's local-file mapping only accepts zoned datetimes, not
-  bare dates; the time and zone are otherwise meaningless and always
-  midnight UTC.
-- Full schema and mappings are in `GRAPH_MODEL.json`; runnable Cypher is in
-  `QUERIES.md`.
-- Treat the model's `description` annotations as the authoritative meaning of
-  each term — quote them when explaining the model, rely on them when adapting
-  queries to the user's own data, and never contradict them.
+- The reference ontology is deliberately the source page's, unextended: two
+  labels, two relationship types. The source's business-impact scenario
+  invites nodes for products, services and systems, and this package does not
+  add them — the citation graph on its own answers the change-impact
+  questions, and a narrower reference ontology is a cleaner template for a
+  user mapping their own handbook. One departure: the source page names the
+  change date `last_update` in its field list and `last_updated` in its demo
+  Cypher, and this reference ontology uses `lastUpdated`. It is typed as
+  `ZONED DATETIME` rather than `DATE` because the Import flow's local-file
+  mapping only accepts zoned datetimes, not bare dates; the time and zone are
+  otherwise meaningless and always midnight UTC.
+- Every node, relationship and property the queries use is loaded by Import;
+  no query creates anything. The GDS queries hold their scores and community
+  identifiers in an in-memory projection and return them rather than writing
+  them back.
+- The full reference ontology, with its import mappings, is in
+  `ONTOLOGY.json`; runnable Cypher is in `QUERIES.md`.
+- Call it the reference ontology. Users may say "model", "graph model", "data
+  model" or "ontology" — treat these as the same thing.
+- Treat its annotations as the authoritative meaning of each term —
+  `description` above all, plus `aliases` and relationship counts. Quote them
+  when explaining the reference ontology, rely on them when adapting queries
+  to the user's own data (an alias such as `Sourcebook` or `Cross-reference`
+  often names the user's equivalent label or relationship type), and never
+  contradict them.
 
 ### Roles
 
-| Role | In this model | What a substitute needs |
-| ---- | ------------- | ----------------------- |
+| Role | In the reference ontology | What a substitute needs |
+| ---- | ------------------------- | ----------------------- |
 | Regulatory corpus | `Standard` | A node every text unit resolves back to, so that "which rulebook is this from" is answerable — without it, dependency between corpora cannot be counted |
 | Regulatory text unit | `Section` | An addressable node that nests into a hierarchy, cites its peers, and carries a date on which its current wording took effect |
 
@@ -95,12 +104,14 @@ what a change reaches. A schema that merges the two into one relationship
 type, or that stores citations without a direction, cannot support those
 patterns at all.
 
-When the user's schema differs from this model, map their labels onto these
-roles before rewriting anything from `QUERIES.md`. A role with no counterpart
-in their data means the patterns resting on it have no analogue — say so
-plainly rather than forcing a fit.
+When the user's database differs from the reference ontology, map their
+labels onto these roles before rewriting anything from `QUERIES.md`. A role
+with no counterpart in their data means the patterns resting on it have no
+analogue — say so plainly rather than forcing a fit.
 
 ## Operational Constraints
+
+For runnable examples:
 
 - Data loads through the bundled `sample-data/` Import flow, and only through
   it. Never ship or offer a write-based data seed, a `LOAD CSV` statement, or
@@ -109,8 +120,10 @@ plainly rather than forcing a fit.
   confirm with the user before running anything that writes.
 - No post-import setup is required — do not improvise indexes or constraints
   after Import. The node-key constraints on `Standard.id` and `Section.id`
-  come from `GRAPH_MODEL.json`; `QUERIES.md` repeats them at the end purely so
-  the expected schema can be confirmed with `SHOW CONSTRAINTS`.
+  come from `ONTOLOGY.json`; `QUERIES.md` repeats them at the end purely so
+  the expected constraints can be confirmed with `SHOW CONSTRAINTS`.
+- Neo4j 5.x and Cypher 5; no APOC. The GDS queries additionally need the GDS
+  plugin 2.x — see below.
 - Queries open with a `/* @... */` annotation block. Keep the block with the
   query when showing or running it — it exists to help the user understand the
   query — and treat it as context, not ground truth: on any conflict, the
@@ -118,6 +131,13 @@ plainly rather than forcing a fit.
 - Starting parameter values in `@params` are starting points, not defaults
   that fit any dataset. Read the result and retune before presenting anything
   as a finding.
+- `@sample` describes the bundled sample data only. Use it only when the
+  connected database holds that sample — you imported it in this
+  conversation, or a lookup of the `@sample` anchor (for example its
+  `$sectionId`) finds it. Then use its values as starting parameters, and
+  treat a result that differs from it as a sign the import went wrong.
+  Otherwise ignore it: never present it, or anything derived from it, as an
+  expectation of the user's own data.
 - **Traversal depth cannot be parameterised.** Cypher requires a literal bound
   on a variable-length pattern, so there is no `$maxDepth` to pass; tuning a
   depth means editing the query. This matters more than it sounds: a bound of
@@ -145,7 +165,7 @@ plainly rather than forcing a fit.
 When returning guidance, keep output structured:
 
 ```text
-Model assumptions
+Reference ontology assumptions
 Cypher (if requested)
 What this surfaces
 Tuning options
