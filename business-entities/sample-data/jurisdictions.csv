@@ -1,0 +1,28 @@
+jurisdictionId,name,isOffshoreCentre
+GB,United Kingdom,false
+US-DE,"Delaware, United States",false
+US-NY,"New York, United States",false
+US-TX,"Texas, United States",false
+CA,Canada,false
+DE,Germany,false
+FR,France,false
+NL,Netherlands,false
+IE,Ireland,false
+LU,Luxembourg,false
+CH,Switzerland,false
+ES,Spain,false
+IT,Italy,false
+SG,Singapore,false
+HK,Hong Kong,false
+JP,Japan,false
+CY,Cyprus,false
+AE,United Arab Emirates,false
+KY,Cayman Islands,true
+VG,British Virgin Islands,true
+BM,Bermuda,true
+JE,Jersey,true
+GG,Guernsey,true
+IM,Isle of Man,true
+SC,Seychelles,true
+BS,Bahamas,true
+PA,Panama,true

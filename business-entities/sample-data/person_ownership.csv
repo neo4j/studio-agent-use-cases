@@ -1,0 +1,558 @@
+personId,entityId,percentage,interestType
+P-0001,E-0001,50.0,shares
+P-0002,E-0001,50.0,shares
+P-0003,E-0002,40.0,shares
+P-0004,E-0002,30.0,shares
+P-0005,E-0002,30.0,shares
+P-0006,E-0003,50.0,general partner interest
+P-0007,E-0003,50.0,limited partner interest
+P-0008,E-0004,50.0,shares
+P-0009,E-0004,50.0,shares
+P-0010,E-0005,40.0,general partner interest
+P-0011,E-0005,30.0,limited partner interest
+P-0012,E-0005,30.0,limited partner interest
+P-0013,E-0006,40.0,general partner interest
+P-0014,E-0006,30.0,limited partner interest
+P-0015,E-0006,30.0,limited partner interest
+P-0022,E-0007,4.9,shares
+P-0016,E-0007,0.7,shares
+P-0024,E-0007,2.1,shares
+P-0030,E-0013,10.0,shares
+P-0033,E-0015,20.0,shares
+P-0035,E-0016,49.0,shares
+P-0039,E-0019,35.0,shares
+P-0048,E-0020,100.0,shares
+P-0052,E-0024,20.0,shares
+P-0054,E-0025,10.0,shares
+P-0063,E-0026,60.0,shares
+P-0064,E-0026,40.0,shares
+P-0067,E-0029,10.0,shares
+P-0069,E-0030,10.0,shares
+P-0076,E-0036,49.0,shares
+P-0080,E-0039,2.1,shares
+P-0102,E-0047,60.0,shares
+P-0103,E-0047,40.0,shares
+P-0105,E-0049,20.0,membership interest
+P-0107,E-0050,40.0,membership interest
+P-0111,E-0053,20.0,shares
+P-0123,E-0058,100.0,shares
+P-0124,E-0059,10.0,shares
+P-0129,E-0063,25.0,shares
+P-0131,E-0064,40.0,shares
+P-0135,E-0065,4.1,shares
+P-0141,E-0065,4.1,shares
+P-0145,E-0069,49.0,shares
+P-0149,E-0072,25.0,shares
+P-0162,E-0076,60.0,shares
+P-0163,E-0076,40.0,shares
+P-0167,E-0080,49.0,shares
+P-0169,E-0081,49.0,shares
+P-0171,E-0082,25.0,shares
+P-0182,E-0085,60.0,shares
+P-0183,E-0085,40.0,shares
+P-0193,E-0095,40.0,shares
+P-0195,E-0096,35.0,shares
+P-0206,E-0098,4.9,shares
+P-0202,E-0098,5.4,shares
+P-0207,E-0098,4.4,shares
+P-0208,E-0099,20.0,shares
+P-0220,E-0103,40.0,shares
+P-0221,E-0103,30.0,shares
+P-0222,E-0103,30.0,shares
+P-0223,E-0104,35.0,shares
+P-0225,E-0105,25.0,shares
+P-0229,E-0108,10.0,shares
+P-0237,E-0109,100.0,shares
+P-0238,E-0110,35.0,shares
+P-0244,E-0115,35.0,shares
+P-0247,E-0117,35.0,shares
+P-0250,E-0119,25.0,shares
+P-0252,E-0120,49.0,shares
+P-0254,E-0121,10.0,shares
+P-0262,E-0122,5.1,shares
+P-0260,E-0122,4.7,shares
+P-0265,E-0125,20.0,shares
+P-0274,E-0127,100.0,shares
+P-0277,E-0130,20.0,shares
+P-0289,E-0133,50.0,shares
+P-0290,E-0133,50.0,shares
+P-0291,E-0134,25.0,shares
+P-0301,E-0141,4.8,shares
+P-0306,E-0141,4.3,shares
+P-0307,E-0142,25.0,shares
+P-0324,E-0151,50.0,shares
+P-0325,E-0151,50.0,shares
+P-0326,E-0152,40.0,shares
+P-0328,E-0153,20.0,shares
+P-0330,E-0154,25.0,shares
+P-0333,E-0156,25.0,shares
+P-0347,E-0161,100.0,shares
+P-0350,E-0164,25.0,shares
+P-0352,E-0165,49.0,shares
+P-0359,E-0168,3.0,shares
+P-0358,E-0168,0.8,shares
+P-0363,E-0169,10.0,shares
+P-0372,E-0176,4.0,shares
+P-0380,E-0176,2.8,shares
+P-0382,E-0178,10.0,shares
+P-0384,E-0179,49.0,shares
+P-0388,E-0182,49.0,shares
+P-0400,E-0185,10.0,shares
+P-0409,E-0189,2.5,shares
+P-0407,E-0189,1.4,shares
+P-0406,E-0189,4.2,shares
+P-0413,E-0191,35.0,shares
+P-0415,E-0192,49.0,shares
+P-0418,E-0194,30.0,shares
+P-0419,E-0194,25.0,shares
+P-0428,E-0195,50.0,shares
+P-0429,E-0195,50.0,shares
+P-0430,E-0196,20.0,shares
+P-0432,E-0197,25.0,shares
+P-0435,E-0199,10.0,shares
+P-0437,E-0200,40.0,shares
+P-0439,E-0201,40.0,shares
+P-0440,E-0201,30.0,shares
+P-0441,E-0202,60.0,shares
+P-0442,E-0203,65.0,shares
+P-0445,E-0204,2.2,shares
+P-0450,E-0204,1.4,shares
+P-0455,E-0209,25.0,shares
+P-0458,E-0210,3.2,shares
+P-0466,E-0210,1.8,shares
+P-0460,E-0210,0.5,shares
+P-0467,E-0210,4.3,shares
+P-0475,E-0215,100.0,shares
+P-0371,E-0216,40.0,shares
+P-0476,E-0217,30.0,shares
+P-0477,E-0218,12.0,shares
+P-0478,E-0218,8.0,shares
+P-0480,E-0219,100.0,shares
+P-0481,E-0220,100.0,shares
+P-0482,E-0221,100.0,shares
+P-0483,E-0222,100.0,shares
+P-0484,E-0223,100.0,shares
+P-0485,E-0224,100.0,shares
+P-0486,E-0225,100.0,shares
+P-0487,E-0226,100.0,shares
+P-0488,E-0227,100.0,shares
+P-0489,E-0228,100.0,shares
+P-0490,E-0229,100.0,shares
+P-0491,E-0230,100.0,shares
+P-0492,E-0231,100.0,shares
+P-0493,E-0232,100.0,shares
+P-0494,E-0233,100.0,shares
+P-0495,E-0234,100.0,shares
+P-0496,E-0235,100.0,shares
+P-0497,E-0236,100.0,shares
+P-0498,E-0237,100.0,shares
+P-0499,E-0238,100.0,shares
+P-0500,E-0239,100.0,shares
+P-0501,E-0240,100.0,shares
+P-0502,E-0241,100.0,shares
+P-0503,E-0242,100.0,shares
+P-0504,E-0243,100.0,shares
+P-0505,E-0244,100.0,shares
+P-0506,E-0245,100.0,shares
+P-0507,E-0246,100.0,shares
+P-0508,E-0247,100.0,shares
+P-0509,E-0248,100.0,shares
+P-0510,E-0249,100.0,shares
+P-0511,E-0250,100.0,shares
+P-0512,E-0251,100.0,shares
+P-0513,E-0252,100.0,shares
+P-0514,E-0253,100.0,shares
+P-0515,E-0254,100.0,shares
+P-0516,E-0255,100.0,shares
+P-0517,E-0256,100.0,shares
+P-0518,E-0257,100.0,shares
+P-0519,E-0258,100.0,shares
+P-0520,E-0259,100.0,shares
+P-0521,E-0260,100.0,shares
+P-0522,E-0261,100.0,shares
+P-0523,E-0262,100.0,shares
+P-0524,E-0263,100.0,shares
+P-0525,E-0264,100.0,shares
+P-0526,E-0265,100.0,shares
+P-0527,E-0266,75.0,shares
+P-0528,E-0267,60.0,shares
+P-0529,E-0268,70.0,shares
+P-0530,E-0269,60.0,shares
+P-0531,E-0270,80.0,shares
+P-0532,E-0271,65.0,shares
+P-0533,E-0272,55.0,shares
+P-0534,E-0273,75.0,shares
+P-0535,E-0274,65.0,shares
+P-0538,E-0275,30.0,shares
+P-0536,E-0275,15.0,shares
+P-0539,E-0275,15.0,shares
+P-0537,E-0276,60.0,shares
+P-0536,E-0276,30.0,shares
+P-0539,E-0276,10.0,shares
+P-0541,E-0277,12.0,shares
+P-0542,E-0278,100.0,shares
+P-0543,E-0277,9.0,shares
+P-0544,E-0277,10.0,shares
+P-0545,E-0277,9.0,shares
+P-0546,E-0277,30.0,shares
+P-0547,E-0277,19.0,shares
+P-0548,E-0279,50.0,shares
+P-0549,E-0279,50.0,shares
+P-0550,E-0280,50.0,shares
+P-0551,E-0280,50.0,shares
+P-0552,E-0281,50.0,shares
+P-0553,E-0281,50.0,shares
+P-0557,E-0283,35.0,shares
+P-0558,E-0283,20.0,shares
+P-0676,E-0308,100.0,membership interest
+P-0677,E-0314,15.0,shares
+P-0681,E-0316,100.0,shares
+P-0681,E-0317,100.0,shares
+P-0683,E-0318,70.0,membership interest
+P-0684,E-0318,30.0,membership interest
+P-0685,E-0319,70.0,shares
+P-0686,E-0319,30.0,shares
+P-0683,E-0320,100.0,shares
+P-0687,E-0321,40.0,shares
+P-0688,E-0321,30.0,shares
+P-0681,E-0321,30.0,shares
+P-0689,E-0322,75.0,shares
+P-0688,E-0322,25.0,shares
+P-0690,E-0323,70.0,shares
+P-0683,E-0323,30.0,shares
+P-0686,E-0324,60.0,membership interest
+P-0691,E-0324,40.0,membership interest
+P-0692,E-0325,50.0,shares
+P-0693,E-0325,50.0,shares
+P-0694,E-0326,60.0,shares
+P-0695,E-0326,40.0,shares
+P-0696,E-0327,100.0,shares
+P-0697,E-0328,50.0,shares
+P-0698,E-0328,50.0,shares
+P-0686,E-0329,34.0,shares
+P-0699,E-0329,33.0,shares
+P-0692,E-0329,33.0,shares
+P-0700,E-0330,34.0,shares
+P-0701,E-0330,33.0,shares
+P-0702,E-0330,33.0,shares
+P-0703,E-0331,75.0,shares
+P-0704,E-0331,25.0,shares
+P-0705,E-0333,100.0,shares
+P-0707,E-0334,50.0,membership interest
+P-0708,E-0334,50.0,membership interest
+P-0709,E-0335,100.0,shares
+P-0711,E-0337,100.0,membership interest
+P-0689,E-0336,30.0,membership interest
+P-0694,E-0339,100.0,shares
+P-0712,E-0338,50.0,shares
+P-0713,E-0340,75.0,shares
+P-0690,E-0340,25.0,shares
+P-0714,E-0341,75.0,membership interest
+P-0715,E-0341,25.0,membership interest
+P-0716,E-0342,60.0,shares
+P-0717,E-0342,40.0,shares
+P-0718,E-0343,34.0,shares
+P-0719,E-0343,33.0,shares
+P-0720,E-0343,33.0,shares
+P-0721,E-0344,100.0,membership interest
+P-0722,E-0345,50.0,shares
+P-0692,E-0345,50.0,shares
+P-0723,E-0346,50.0,membership interest
+P-0724,E-0346,50.0,membership interest
+P-0725,E-0347,100.0,shares
+P-0726,E-0348,100.0,shares
+P-0727,E-0349,70.0,shares
+P-0728,E-0349,30.0,shares
+P-0730,E-0350,100.0,shares
+P-0731,E-0352,100.0,shares
+P-0733,E-0353,34.0,membership interest
+P-0734,E-0353,33.0,membership interest
+P-0735,E-0353,33.0,membership interest
+P-0736,E-0354,40.0,shares
+P-0737,E-0354,30.0,shares
+P-0738,E-0354,30.0,shares
+P-0681,E-0355,100.0,shares
+P-0737,E-0357,100.0,shares
+P-0741,E-0356,30.0,shares
+P-0742,E-0356,30.0,shares
+P-0743,E-0358,60.0,shares
+P-0744,E-0358,40.0,shares
+P-0745,E-0359,40.0,shares
+P-0746,E-0359,30.0,shares
+P-0747,E-0359,30.0,shares
+P-0748,E-0361,100.0,shares
+P-0713,E-0360,33.0,shares
+P-0749,E-0360,33.0,shares
+P-0750,E-0362,75.0,shares
+P-0751,E-0362,25.0,shares
+P-0753,E-0363,70.0,shares
+P-0754,E-0363,30.0,shares
+P-0756,E-0364,100.0,shares
+P-0757,E-0365,75.0,general partner interest
+P-0758,E-0365,25.0,general partner interest
+P-0712,E-0366,75.0,shares
+P-0759,E-0366,25.0,shares
+P-0761,E-0367,34.0,shares
+P-0720,E-0367,33.0,shares
+P-0707,E-0367,33.0,shares
+P-0738,E-0368,70.0,shares
+P-0762,E-0368,30.0,shares
+P-0765,E-0369,100.0,shares
+P-0695,E-0370,100.0,shares
+P-0697,E-0371,100.0,shares
+P-0766,E-0373,100.0,shares
+P-0767,E-0372,50.0,shares
+P-0769,E-0374,50.0,membership interest
+P-0770,E-0374,50.0,membership interest
+P-0771,E-0375,60.0,shares
+P-0772,E-0375,40.0,shares
+P-0774,E-0377,100.0,shares
+P-0751,E-0376,33.0,shares
+P-0775,E-0376,33.0,shares
+P-0776,E-0378,60.0,shares
+P-0777,E-0378,40.0,shares
+P-0779,E-0379,100.0,shares
+P-0741,E-0380,70.0,shares
+P-0780,E-0380,30.0,shares
+P-0750,E-0381,100.0,shares
+P-0782,E-0382,100.0,shares
+P-0783,E-0383,70.0,membership interest
+P-0784,E-0383,30.0,membership interest
+P-0726,E-0384,100.0,shares
+P-0785,E-0385,100.0,membership interest
+P-0704,E-0386,60.0,shares
+P-0786,E-0386,40.0,shares
+P-0788,E-0388,100.0,membership interest
+P-0789,E-0387,30.0,membership interest
+P-0790,E-0387,30.0,membership interest
+P-0791,E-0390,100.0,shares
+P-0792,E-0389,33.0,shares
+P-0793,E-0389,33.0,shares
+P-0795,E-0391,34.0,shares
+P-0796,E-0391,33.0,shares
+P-0797,E-0391,33.0,shares
+P-0798,E-0392,50.0,general partner interest
+P-0799,E-0392,50.0,general partner interest
+P-0800,E-0393,50.0,shares
+P-0801,E-0393,50.0,shares
+P-0749,E-0394,70.0,shares
+P-0802,E-0394,30.0,shares
+P-0803,E-0395,100.0,membership interest
+P-0804,E-0396,75.0,shares
+P-0805,E-0396,25.0,shares
+P-0789,E-0397,34.0,shares
+P-0806,E-0397,33.0,shares
+P-0807,E-0397,33.0,shares
+P-0809,E-0398,100.0,shares
+P-0810,E-0399,60.0,shares
+P-0699,E-0399,40.0,shares
+P-0811,E-0400,50.0,general partner interest
+P-0812,E-0400,50.0,general partner interest
+P-0813,E-0402,100.0,shares
+P-0790,E-0401,30.0,shares
+P-0815,E-0403,40.0,shares
+P-0816,E-0403,30.0,shares
+P-0817,E-0403,30.0,shares
+P-0819,E-0404,34.0,shares
+P-0820,E-0404,33.0,shares
+P-0821,E-0404,33.0,shares
+P-0802,E-0405,100.0,membership interest
+P-0823,E-0406,100.0,shares
+P-0825,E-0408,100.0,shares
+P-0793,E-0407,33.0,shares
+P-0826,E-0407,33.0,shares
+P-0827,E-0410,100.0,shares
+P-0726,E-0409,30.0,shares
+P-0828,E-0409,30.0,shares
+P-0681,E-0411,100.0,shares
+P-0829,E-0412,100.0,shares
+P-0832,E-0413,70.0,shares
+P-0833,E-0413,30.0,shares
+P-0834,E-0415,100.0,shares
+P-0835,E-0414,25.0,shares
+P-0836,E-0416,100.0,shares
+P-0838,E-0418,100.0,shares
+P-0839,E-0417,25.0,shares
+P-0840,E-0419,100.0,shares
+P-0841,E-0420,70.0,shares
+P-0819,E-0420,30.0,shares
+P-0843,E-0421,34.0,general partner interest
+P-0844,E-0421,33.0,general partner interest
+P-0845,E-0421,33.0,general partner interest
+P-0846,E-0422,70.0,shares
+P-0847,E-0422,30.0,shares
+P-0849,E-0424,100.0,shares
+P-0850,E-0423,40.0,shares
+P-0695,E-0425,100.0,membership interest
+P-0852,E-0426,100.0,shares
+P-0853,E-0427,40.0,general partner interest
+P-0854,E-0427,30.0,general partner interest
+P-0855,E-0427,30.0,general partner interest
+P-0856,E-0428,100.0,shares
+P-0857,E-0429,75.0,shares
+P-0707,E-0429,25.0,shares
+P-0791,E-0430,60.0,membership interest
+P-0858,E-0430,40.0,membership interest
+P-0859,E-0431,50.0,membership interest
+P-0860,E-0431,50.0,membership interest
+P-0785,E-0432,100.0,shares
+P-0861,E-0433,70.0,shares
+P-0862,E-0433,30.0,shares
+P-0863,E-0435,100.0,shares
+P-0711,E-0436,75.0,shares
+P-0865,E-0436,25.0,shares
+P-0866,E-0437,40.0,membership interest
+P-0737,E-0437,30.0,membership interest
+P-0867,E-0437,30.0,membership interest
+P-0868,E-0438,70.0,shares
+P-0836,E-0438,30.0,shares
+P-0716,E-0439,75.0,shares
+P-0869,E-0439,25.0,shares
+P-0716,E-0440,70.0,shares
+P-0871,E-0440,30.0,shares
+P-0872,E-0441,50.0,shares
+P-0873,E-0441,50.0,shares
+P-0874,E-0442,70.0,shares
+P-0807,E-0442,30.0,shares
+P-0876,E-0443,34.0,shares
+P-0877,E-0443,33.0,shares
+P-0878,E-0443,33.0,shares
+P-0879,E-0444,34.0,shares
+P-0738,E-0444,33.0,shares
+P-0880,E-0444,33.0,shares
+P-0881,E-0445,70.0,shares
+P-0882,E-0445,30.0,shares
+P-0883,E-0447,100.0,shares
+P-0884,E-0446,30.0,shares
+P-0885,E-0446,30.0,shares
+P-0886,E-0448,70.0,shares
+P-0887,E-0448,30.0,shares
+P-0889,E-0450,100.0,shares
+P-0780,E-0449,30.0,shares
+P-0891,E-0451,70.0,shares
+P-0892,E-0451,30.0,shares
+P-0867,E-0452,75.0,shares
+P-0757,E-0452,25.0,shares
+P-0893,E-0453,40.0,membership interest
+P-0765,E-0453,30.0,membership interest
+P-0894,E-0453,30.0,membership interest
+P-0874,E-0455,100.0,shares
+P-0895,E-0454,40.0,shares
+P-0896,E-0457,100.0,shares
+P-0897,E-0456,25.0,shares
+P-0898,E-0458,34.0,shares
+P-0899,E-0458,33.0,shares
+P-0754,E-0458,33.0,shares
+P-0900,E-0459,75.0,shares
+P-0901,E-0459,25.0,shares
+P-0902,E-0460,100.0,membership interest
+P-0903,E-0461,75.0,shares
+P-0904,E-0461,25.0,shares
+P-0753,E-0462,100.0,shares
+P-0906,E-0464,100.0,membership interest
+P-0727,E-0463,30.0,membership interest
+P-0907,E-0465,75.0,shares
+P-0908,E-0465,25.0,shares
+P-0839,E-0466,100.0,shares
+P-0909,E-0467,60.0,shares
+P-0910,E-0467,40.0,shares
+P-0911,E-0469,100.0,shares
+P-0912,E-0468,50.0,shares
+P-0913,E-0470,34.0,shares
+P-0817,E-0470,33.0,shares
+P-0914,E-0470,33.0,shares
+P-0898,E-0471,40.0,shares
+P-0915,E-0471,30.0,shares
+P-0916,E-0471,30.0,shares
+P-0713,E-0472,50.0,shares
+P-0919,E-0472,50.0,shares
+P-0921,E-0473,70.0,shares
+P-0922,E-0473,30.0,shares
+P-0924,E-0474,34.0,shares
+P-0925,E-0474,33.0,shares
+P-0926,E-0474,33.0,shares
+P-0730,E-0475,60.0,shares
+P-0927,E-0475,40.0,shares
+P-0928,E-0476,75.0,membership interest
+P-0929,E-0476,25.0,membership interest
+P-0930,E-0477,34.0,shares
+P-0931,E-0477,33.0,shares
+P-0932,E-0477,33.0,shares
+P-0935,E-0479,100.0,shares
+P-0793,E-0478,50.0,shares
+P-0936,E-0481,100.0,shares
+P-0937,E-0480,30.0,shares
+P-0834,E-0482,70.0,membership interest
+P-0940,E-0482,30.0,membership interest
+P-0940,E-0483,50.0,shares
+P-0941,E-0483,50.0,shares
+P-0709,E-0484,34.0,shares
+P-0943,E-0484,33.0,shares
+P-0845,E-0484,33.0,shares
+P-0944,E-0486,100.0,shares
+P-0769,E-0485,30.0,shares
+P-0790,E-0487,50.0,shares
+P-0928,E-0487,50.0,shares
+P-0946,E-0488,60.0,shares
+P-0947,E-0488,40.0,shares
+P-0692,E-0489,100.0,shares
+P-0948,E-0490,60.0,membership interest
+P-0949,E-0490,40.0,membership interest
+P-0950,E-0491,40.0,shares
+P-0951,E-0491,30.0,shares
+P-0952,E-0491,30.0,shares
+P-0954,E-0492,100.0,shares
+P-0955,E-0493,100.0,shares
+P-0957,E-0494,50.0,membership interest
+P-0958,E-0494,50.0,membership interest
+P-0959,E-0495,75.0,shares
+P-0960,E-0495,25.0,shares
+P-0789,E-0496,70.0,shares
+P-0961,E-0496,30.0,shares
+P-0963,E-0498,100.0,shares
+P-0964,E-0497,30.0,shares
+P-0844,E-0499,50.0,shares
+P-0965,E-0499,50.0,shares
+P-0967,E-0500,60.0,membership interest
+P-0968,E-0500,40.0,membership interest
+P-0969,E-0501,40.0,shares
+P-0970,E-0501,30.0,shares
+P-0771,E-0501,30.0,shares
+P-0972,E-0502,75.0,shares
+P-0775,E-0502,25.0,shares
+P-0974,E-0503,60.0,shares
+P-0975,E-0503,40.0,shares
+P-0978,E-0504,34.0,shares
+P-0979,E-0504,33.0,shares
+P-0980,E-0504,33.0,shares
+P-0925,E-0505,70.0,shares
+P-0685,E-0505,30.0,shares
+P-0983,E-0506,100.0,membership interest
+P-0984,E-0507,40.0,shares
+P-0985,E-0507,30.0,shares
+P-0986,E-0507,30.0,shares
+P-0931,E-0508,60.0,shares
+P-0987,E-0508,40.0,shares
+P-0988,E-0509,75.0,shares
+P-0989,E-0509,25.0,shares
+P-0991,E-0510,40.0,shares
+P-0811,E-0510,30.0,shares
+P-0992,E-0510,30.0,shares
+P-0993,E-0511,40.0,shares
+P-0994,E-0511,30.0,shares
+P-0907,E-0511,30.0,shares
+P-0996,E-0512,75.0,shares
+P-0878,E-0512,25.0,shares
+P-0998,E-0513,100.0,shares
+P-0999,E-0515,100.0,shares
+P-1000,E-0516,25.0,shares
+P-1001,E-0517,100.0,shares
+P-1002,E-0519,100.0,shares
+P-1003,E-0520,25.0,shares
+P-1004,E-0521,100.0,shares
+P-1005,E-0522,40.0,shares
+P-1006,E-0523,100.0,shares
+P-1007,E-0525,100.0,shares
+P-1008,E-0526,40.0,shares
+P-1009,E-0527,100.0,shares
+P-1010,E-0528,40.0,shares

@@ -187,6 +187,35 @@
         ],
         "markdown": "SKILL.md"
       }
+    },
+    {
+      "skillId": "business-entities",
+      "files": {
+        "graph": "ONTOLOGY.json",
+        "skill": [
+          "sample-data/addresses.csv",
+          "sample-data/direct_parents.csv",
+          "sample-data/directorships.csv",
+          "sample-data/entity_ownership.csv",
+          "sample-data/entity_trustees.csv",
+          "sample-data/jurisdictions.csv",
+          "sample-data/legal_entities.csv",
+          "sample-data/officers.csv",
+          "sample-data/person_ownership.csv",
+          "sample-data/person_trustees.csv",
+          "sample-data/persons.csv",
+          "sample-data/trust_beneficiaries.csv",
+          "sample-data/trust_ownership.csv",
+          "sample-data/trustors.csv",
+          "sample-data/trusts.csv",
+          "sample-data/ultimate_parents.csv",
+          "human_description.md",
+          "NOTICE.md",
+          "QUERIES.md",
+          "TESTS.md"
+        ],
+        "markdown": "SKILL.md"
+      }
     }
   ]
 }
