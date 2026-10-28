@@ -121,7 +121,7 @@ Each node entry needs:
 
 The key in `properties` is the Neo4j property name. Leave the property's own `name` unset: the spec uses it only for a database name that differs from the key, and packages always key a property by its database name.
 
-- `type` — a value from the spec's `Neo4jType` enum. Common in packages: `STRING`, `INTEGER`, `FLOAT`, `BOOLEAN`, `DATE`, `ZONED DATETIME`, `POINT`. The enum also covers `LIST<...>` (including `LIST<ANY>`), `VECTOR<...>` (with `dimension`), sized numerics (`INTEGER8/16/32`, `FLOAT32`), `DURATION`, times, and `UUID`. Match types to query behaviour: numeric comparisons require numeric types, temporal operations temporal types.
+- `type` — a value from the spec's `Neo4jType` enum, limited by what Import can load; see [Property types Import can load](#property-types-import-can-load). Match types to query behaviour: numeric comparisons require numeric types, temporal operations temporal types.
 - `description` — required by this pipeline on every property; see [Annotations](#annotations-for-agent-reasoning).
 - `key: true` — marks the node's single-property identifier. It implies existence and uniqueness (a node key), so do **not** combine it with `unique` or `must_exist`. Exactly one property per node carries it — or none, when the node's identity is a composite `KEY` constraint, in which case the node mapping's `key` lists that constraint's properties.
 - `must_exist` / `unique` — for non-key requirements. `must_exist: true` means the property is required. (Older revisions spelled this `mustExist`, and older still `nullable` with the inverted sense; neither exists in the spec.) `key`, `must_exist` and `unique` each expand into a database constraint scoped to the label or relationship type, not to the entry — where a label or type is declared by more than one entry, see [Constraint flags on shared labels and types](#constraint-flags-on-shared-labels-and-types).
@@ -129,6 +129,24 @@ The key in `properties` is the Neo4j property name. Leave the property's own `na
 - `aliases` / `reference` — see [Aliases and references](#aliases-and-references).
 - `dimension` — only for `VECTOR<...>` types.
 - A **sample value** in the `description`, as a trailing `` e.g. `...` `` clause taken verbatim from the mapped CSV column. See [Annotations](#annotations-for-agent-reasoning).
+
+### Property types Import can load
+
+A package with bundled CSVs is loaded by Import as a local CSV import, and Import supports only some of the spec's types there. **Every node and relationship property uses one of:**
+
+- `STRING`, `INTEGER`, `FLOAT`, `BOOLEAN`, `ZONED DATETIME`;
+- their list forms `LIST<STRING>`, `LIST<INTEGER>`, `LIST<FLOAT>`, `LIST<BOOLEAN>`, `LIST<ZONED DATETIME>`;
+- `VECTOR<...>` (with `dimension`).
+
+Everything else the enum offers is out. `DATE`, `LOCAL DATETIME`, `LOCAL TIME`, `ZONED TIME`, `DURATION`, `POINT` and their lists are valid against the schema, pass the spec library and convert cleanly to an Import model — and Import then flags every such property "Not supported in local imports", leaving the import job unrunnable. `UUID`, `ANY` and the sized scalars (`INTEGER8/16/32`, `FLOAT32`, and their lists; the sized `VECTOR<...>` forms are fine) fail earlier, in the conversion itself. This is the destination's rule (upx's `SUPPORTED_CSV_TYPE_OPTIONS_COMPLETED`), not a modelling preference.
+
+**Calendar dates are `ZONED DATETIME` at midnight UTC.** A date of birth, an origination date or a published date is typed `ZONED DATETIME`, its CSV column carries `2025-10-08T00:00:00Z` rather than `2025-10-08`, and its description says that only the calendar date carries meaning and the time is always midnight UTC — so the `e.g.` sample is the full `2025-10-08T00:00:00Z`. Queries follow from the type:
+
+- Compare with `datetime(...)`: `WHERE l.originationDate >= datetime('2025-01-01')` or `datetime($from)`. A `ZONED DATETIME` ordered against a `date(...)` is `null` (and equal to one is `false`), so the filter silently drops every row rather than raising an error.
+- Date arithmetic and bucketing use `duration.inDays(...)`, `date.truncate(...)` or `.year`/`.month` on the datetime value directly.
+- Values shown to a user are wrapped in `date()` — `RETURN date(l.originationDate) AS originationDate` — so the padding time never reaches the answer.
+
+A point, a duration or any other unsupported value either becomes one of these types (a `POINT` as two `FLOAT` properties, a `DURATION` as an `INTEGER` count of a stated unit) or is computed by a post-import setup query and documented in SKILL.md like any other query-created property ([Declare only what Import can load](#declare-only-what-import-can-load)).
 
 ### Value restrictions
 
@@ -449,7 +467,7 @@ The script also renames positional entity keys (`n:0` → the node's label; `r:0
 
 1. Define node keys, labels, and identifiers.
 2. Write the root `schema`, `id`, `version`, `name` and `description`.
-3. Add node descriptions and properties (with descriptions and `key: true` identifiers), plus any `one_of`/`pattern` the domain fixes.
+3. Add node descriptions and properties (with descriptions and `key: true` identifiers), plus any `one_of`/`pattern` the domain fixes. Type every property — node and relationship — from the set Import can load locally; a calendar date is `ZONED DATETIME` at midnight UTC, never `DATE` (see [Property types Import can load](#property-types-import-can-load)).
 4. Define relationship keys, types, directions, and properties, with descriptions stating meaning and multiplicity and target counts matching that prose. Decide for each one whether source data exists for it; a relationship a query will create belongs in SKILL.md, not here. Where a type is reused between node pairs, put each `must_exist`/`unique` flag on one entry only and state it in prose on the others.
 5. Add `aliases` and `reference` where the source material supports them.
 6. Draft the property descriptions' sample-value intents — and confirm uncertain descriptions, value restrictions, counts and aliases with the user now, before data exists to rationalise.
@@ -469,6 +487,7 @@ The script also renames positional entity keys (`n:0` → the node's label; `r:0
 - Node and relationship keys are readable and stable; every key referenced by relationships and mappings exists.
 - Every node, every relationship, and every property has a non-empty, specific `description` of at most 1,024 characters; numeric, temporal, and coded properties state unit, encoding, or scope.
 - Exactly one `key: true` property per node (or a composite `KEY` constraint instead), never combined with `unique`/`must_exist` on the same property.
+- Every node and relationship property is typed `STRING`, `INTEGER`, `FLOAT`, `BOOLEAN` or `ZONED DATETIME`, a `LIST<...>` of one of those, or a `VECTOR<...>` — the types Import supports for local CSV imports. Calendar dates are `ZONED DATETIME` values at midnight UTC (`2025-10-08T00:00:00Z`) whose descriptions say only the date carries meaning; queries compare them with `datetime(...)` and display them through `date()`.
 - No `key`, `must_exist` or `unique` flag on a property is repeated across entries that share a relationship type or label.
 - `name` is set at the root only — not on properties or constraints.
 - Every property description carrying a sample ends with `` e.g. `<value>`. ``, and that value appears verbatim in the mapped CSV column.

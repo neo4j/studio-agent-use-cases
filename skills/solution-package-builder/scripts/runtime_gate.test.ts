@@ -15,6 +15,8 @@
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
 
+import { SUPPORTED_CSV_TYPE_OPTIONS_COMPLETED } from '@nx/import-shared';
+import { propertyTypeToString } from '@nx/import-shared/data-model-property-type-utils';
 import { ontologySpecJsonToDataModelAndVisualisation } from '@nx/import-shared/sample-models';
 import { describe, expect, it } from 'vitest';
 
@@ -65,6 +67,21 @@ const encodeProblems = (dataModel: any): string[] => {
   return problems;
 };
 
+// The conversion accepts every spec type, but Import's local CSV import does not: it flags each property outside
+// SUPPORTED_CSV_TYPE_OPTIONS_COMPLETED "Not supported in local imports" (getUnsupportedLocalImportPropertyTypeErrors
+// in import-shared's data-model/errors.ts). Packages ship CSVs, so apply that rule to the converted model here.
+const supportedCsvTypes = new Set<string>(SUPPORTED_CSV_TYPE_OPTIONS_COMPLETED);
+const unsupportedLocalImportTypes = (dataModel: any): string[] => {
+  const graphSchema = dataModel.graphSchemaRepresentation?.graphSchema;
+  const owners: any[] = [...(graphSchema?.nodeLabels ?? []), ...(graphSchema?.relationshipTypes ?? [])];
+  return owners.flatMap((owner) =>
+    (owner.properties ?? [])
+      .map((property: any) => [property.token, propertyTypeToString(property)] as const)
+      .filter(([, type]: readonly [string, string | undefined]) => type !== undefined && !supportedCsvTypes.has(type))
+      .map(([token, type]: readonly [string, string | undefined]) => `${owner.token}.${token} (${type})`),
+  );
+};
+
 describe('runtime gate', () => {
   for (const [skillId, files] of packages) {
     it(skillId, () => {
@@ -87,6 +104,12 @@ describe('runtime gate', () => {
         const { dataModel } = ontologySpecJsonToDataModelAndVisualisation(graphModelSource, { tool: 'importer' });
         const problems = encodeProblems(dataModel);
         lines.push(problems.length === 0 ? 'IMPORT CONVERT OK' : `IMPORT CONVERT LOSSY: ${problems.join('; ')}`);
+        const unsupported = unsupportedLocalImportTypes(dataModel);
+        lines.push(
+          unsupported.length === 0
+            ? 'LOCAL IMPORT TYPES OK'
+            : `LOCAL IMPORT TYPES UNSUPPORTED ("Not supported in local imports"): ${unsupported.join(', ')}`,
+        );
       } catch (error) {
         lines.push(`IMPORT CONVERT FAILED: ${error instanceof Error ? error.message : String(error)}`);
       }
