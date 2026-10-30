@@ -191,6 +191,21 @@ JUDGE is not a final status. It means the mechanical checks passed and the judge
   To rebuild it, run `python3 $S/run_queries.py report <run-dir>`.
 - **In chat:** show the summary table, then one line for every FAIL, ENGINE-GAP, UNSURE and IMPORT-FAIL. Then list the SKIPPED queries that need manual testing on Aura. Say that a pass on Cypherlite is evidence, not proof.
 
+## Parity with Aura
+
+A Cypherlite pass becomes proof only once parity with Aura has been checked. Do not connect to Aura yourself unless the user authorises it. The usual route is a manual run.
+
+1. **Kit:** `python3 $S/compare_aura.py <run-dir>/<package> --kit` writes `AURA_PARITY_KIT.md`. It holds every query test mode ran, in run order, with its `:param` lines, plus two import checks (`SHOW CONSTRAINTS` and relationship counts by type).
+2. **Manual run:** the user runs them on a disposable Aura database after a sample import through the Import flow. Each result is exported as JSON to `<run-dir>/<package>/aura/NN.json`.
+3. **Compare:** `python3 $S/compare_aura.py <run-dir>/<package>` writes `parity.md` and `parity.json`.
+   - **Normalisation:** nodes become their reference-ontology key, paths become node and relationship sequences, and temporal values become ISO strings.
+   - **Row order:** ignored unless the query has an `ORDER BY`, and then ties may come in any order.
+   - **Known differences:** a mismatch is retried after CYPHERLITE.md's known rendering difference is normalised. It is also retried with each path reduced to its end nodes, where the query leaves the path's interior to the engine (`head(collect(...))`, `elementId` ordering). Each level is labelled, so nothing is waved through silently.
+   - **Subsets:** a query with `LIMIT` and no `ORDER BY` returns an arbitrary subset on each engine. Judge Aura's rows against the TESTS.md invariant instead.
+4. **Check what the labels leave open:** verify Aura's own arbitrary choices against the CSVs, such as each representative path being valid. Then record what parity confirmed or overturned in CYPHERLITE.md, including any "verify" row it settles.
+
+If an export's columns do not match the query's, the file probably holds another query's result. The script reports it as NOT-COMPARABLE rather than guessing.
+
 ## In create mode
 
 Run test mode on the draft folder by path as soon as QUERIES.md and TESTS.md exist, and after every change to the data, the queries or TESTS.md. SKILL.md step 4 has the rules. In short:

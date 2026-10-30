@@ -125,8 +125,8 @@ case("import.in_transactions", "Import", "LOAD CSV with CALL (row) { … } IN TR
      "IN TRANSACTIONS OF 1 ROWS",
      csv={"x.csv": BASIC}, expect=[], neo4j="Supported in an implicit transaction.")
 for fn, exp, note in (
-        ("toInteger", [1, None, None, None], "'1.0'→1 (BigDecimal fallback); ' 5'→null (no trim)"),
-        ("toFloat", [1.0, None, None, 5.0], "' 5'→5.0 (Double.parseDouble trims)"),
+        ("toInteger", [1, None, None, 5], "'1.0'→1 (BigDecimal fallback); ' 5'→5, confirmed on Aura 2026-10-30"),
+        ("toFloat", [1.0, None, None, 5.0], "' 5'→5.0, confirmed on Aura 2026-10-30"),
         ("toBoolean", [None, True, None, None], "case-insensitive 'true'/'false', otherwise null")):
     case(f"import.coerce.{fn}", "Import", f"{fn} on '1.0', 'TRUE', '' and ' 5'",
          f"RETURN {fn}('1.0') AS a, {fn}('TRUE') AS b, {fn}('') AS c, {fn}(' 5') AS d",
@@ -159,13 +159,13 @@ def datetime_cases():
              expect=[[v, int(datetime.datetime.fromisoformat(v.replace("Z", "+00:00")).timestamp())]],
              neo4j="Parses; toString returns the ISO form.", uses=("datetime()",))
     for cid, v, want, note in (
-            ("midnight", "2024-01-02T00:00:00Z", "2024-01-02T00:00:00Z", "seconds printed even when zero"),
+            ("midnight", "2024-01-02T00:00:00Z", "2024-01-02T00:00:00Z", "seconds printed even when zero (confirmed on Aura 2026-10-30)"),
             ("millis", "2024-01-02T03:04:05.123Z", "2024-01-02T03:04:05.123Z", "fraction kept"),
             ("offset", "2024-01-02T03:04:05+01:00", "2024-01-02T03:04:05+01:00", "offset kept"),
             ("date_only", "2024-01-02", "2024-01-02T00:00:00Z", "midnight in the default time zone (UTC on Aura)"),
             ("no_zone", "2024-01-02T03:04:05", "2024-01-02T03:04:05Z", "default time zone (UTC on Aura)")):
         case(f"import.datetime.{cid}", "Import", f"datetime('{v}')", "RETURN toString(datetime($v)) AS s",
-             params={"v": v}, expect=[[want]], neo4j=note, verify=True)
+             params={"v": v}, expect=[[want]], neo4j=note, verify="confirmed" not in note)
     case("import.datetime.space", "Import", "datetime('2024-01-02 03:04:05') with a space separator",
          "RETURN datetime($v) AS d", params={"v": "2024-01-02 03:04:05"}, rejects=True,
          neo4j="Rejected: the ISO parser needs 'T'.", verify=True)
@@ -477,7 +477,7 @@ cy("point_distance_wgs84", "point.distance between two WGS-84 points",
    "RETURN point.distance(point({latitude: 51.5074, longitude: -0.1278}), "
    "point({latitude: 48.8566, longitude: 2.3522})) AS d", [[LONDON_PARIS]], tol=1e-6,
    neo4j=f"Haversine with Neo4j's radius 6378140 m: {LONDON_PARIS:.1f} m (6371000 m would give "
-         f"{haversine(51.5074, -0.1278, 48.8566, 2.3522, 6371000.0):.1f}).", verify=True,
+         f"{haversine(51.5074, -0.1278, 48.8566, 2.3522, 6371000.0):.1f}); Aura gave 343941.08471254294 on 2026-10-30.",
    uses=("point()", "point.distance"))
 cy("point_distance_cartesian", "point.distance between Cartesian points",
    "RETURN point.distance(point({x: 0, y: 0}), point({x: 3, y: 4})) AS d", [[5.0]], uses=("point.distance",))
@@ -514,7 +514,7 @@ cy("round", "round() with and without precision",
    uses=("round()",))
 cy("round_half", "round() half-way cases: round(2.675, 2), round(-2.5)",
    "RETURN round(2.675, 2) AS a, round(-2.5) AS b", [[2.68, -2.0]],
-   neo4j="2.68 (BigDecimal.valueOf, HALF_UP on the decimal string) and -2.0 (Math.round).", verify=True,
+   neo4j="2.68 and -2.0, confirmed on Aura 2026-10-30.",
    uses=("round()",))
 cy("to_string_numbers", "toString() on floats and integers",
    "RETURN toString(1.0) AS a, toString(12.5) AS b, toString(100) AS c, toString(0.1 + 0.2) AS d, toString(150.0) AS e",

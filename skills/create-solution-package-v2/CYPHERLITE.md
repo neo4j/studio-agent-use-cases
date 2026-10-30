@@ -8,7 +8,7 @@ Test mode runs a package's import and queries on Cypherlite, an embedded openCyp
 
 Nothing in test mode relies on a Cypherlite behaviour this file does not record. Re-run the probe whenever the pin changes, and update this file from its output.
 
-A pass on Cypherlite is evidence, not proof. Cypherlite is not Aura's Cypher engine, and the generated `LOAD CSV` script is a second implementation of Aura's Import. Rows marked **verify** state Neo4j's behaviour from its documentation or implementation, not from a live run. They belong on the Aura parity list.
+A pass on Cypherlite is evidence, not proof. Cypherlite is not Aura's Cypher engine, and the generated `LOAD CSV` script is a second implementation of Aura's Import. Rows marked **verify** state Neo4j's behaviour from its documentation or implementation, not from a live run. They belong on the Aura parity list. Rows marked **confirmed on Aura** were checked in the patient-journey parity run of 30 October 2026 (see "Parity with Aura" below).
 
 ## Pinned version
 
@@ -77,11 +77,11 @@ The probe ran 251 cases:
 
 | Status | Cases |
 | ------ | ----- |
-| SUPPORTED | 220 |
-| DIFFERENT | 15 |
+| SUPPORTED | 221 |
+| DIFFERENT | 14 |
 | UNSUPPORTED | 16 |
 
-Phase 3 added one case, `cypher.limit_short_circuit`, after patient-journey's test run turned it up.
+Phase 3 added one case, `cypher.limit_short_circuit`, after patient-journey's test run turned it up. The Aura parity run then settled five verify rows; one of them, `toInteger(' 5')`, moved from DIFFERENT to SUPPORTED.
 
 Its full output, with every observation, is under `output/cypherlite-tests/probe-<timestamp>/`. That folder is not committed; this table is the record.
 
@@ -120,9 +120,9 @@ The probe greps every package's Cypher, with comments and strings removed, and m
 | `date()`, `duration()`, `duration.*` | 8 / 2 / 0 | SUPPORTED (values); `toString` differs, see below |
 | `datetime()` | 3 | DIFFERENT (`toString` only) |
 | `elementId()`, `reduce()`, list and pattern comprehensions, dynamic property access, chained comparison, regex `=~` | various | SUPPORTED |
-| `round()` | 48 | DIFFERENT on negative half-way values only |
+| `round()` | 48 | DIFFERENT on negative half-way values only (confirmed on Aura) |
 | `toString()` on numbers | 10 | SUPPORTED |
-| `toInteger` / `toFloat` | 4 / 10 | DIFFERENT on `' 5'` only (verify) |
+| `toInteger` / `toFloat` | 4 / 10 | SUPPORTED (`' 5'` confirmed on Aura) |
 | `db.index.fulltext.queryNodes` | 2 | DIFFERENT (no results) |
 | `apoc.*` / `gds.*` | 4 / 12 | UNSUPPORTED (as expected) |
 | `CREATE INDEX` / `CREATE FULLTEXT INDEX` / `CREATE POINT INDEX` | 2 / 1 / 1 | SUPPORTED |
@@ -141,11 +141,11 @@ The probe greps every package's Cypher, with comments and strings removed, and m
 | UTF-8 BOM on the header | **DIFFERENT** | BOM kept in the first key (`'﻿id'`), so `row.id` is null | Stripped; Import's papaparse strips it too |
 | Leading and trailing whitespace | SUPPORTED (verify) | Preserved | Preserved |
 | `LOAD CSV … CALL (row) {…} IN TRANSACTIONS` | **UNSUPPORTED** | `WriteBeforeCallInTransactions` | Supported; Import's own LOAD CSV exporter emits this shape |
-| `toInteger` on `'1.0'`, `'TRUE'`, `''`, `' 5'` | DIFFERENT (verify) | `1, null, null, 5` | `1, null, null, null` |
-| `toFloat` on the same | SUPPORTED (verify) | `1.0, null, null, 5.0` | Same |
+| `toInteger` on `'1.0'`, `'TRUE'`, `''`, `' 5'` | SUPPORTED (`' 5'` confirmed on Aura; the rest verify) | `1, null, null, 5` | Same: Aura gives 5 for `' 5'`, where I had expected null |
+| `toFloat` on the same | SUPPORTED (`' 5'` confirmed on Aura; the rest verify) | `1.0, null, null, 5.0` | Same |
 | `toBoolean` on `'1.0'`, `'TRUE'`, `''`, `' 5'` | SUPPORTED (verify) | `null, true, null, null` | Same |
 | Import's BOOLEAN rule `toLower(trim(v)) IN ['1','true','yes']` | SUPPORTED | As expected | Same |
-| `datetime()` on the only package format, `YYYY-MM-DDTHH:MM:SSZ` | SUPPORTED (value) / DIFFERENT (`toString`) | Same instant; `toString` drops zero seconds: `2024-02-09T00:00Z` | `2024-02-09T00:00:00Z` |
+| `datetime()` on the only package format, `YYYY-MM-DDTHH:MM:SSZ` | SUPPORTED (value) / DIFFERENT (`toString`, confirmed on Aura) | Same instant; `toString` drops zero seconds: `2024-02-09T00:00Z` | `2024-02-09T00:00:00Z` |
 | `datetime()` with millis, with an offset, with no zone | SUPPORTED (verify) | ISO form kept; no zone means UTC | Same on Aura (default zone UTC) |
 | `datetime('2024-01-02')` | DIFFERENT (verify) | Midnight UTC; `toString` drops seconds | Midnight UTC |
 | `datetime('2024-01-02 03:04:05')` (space separator) | DIFFERENT (verify) | Accepted; serialises as `2024-01-02T03:04:05Z[Z]` | Rejected (the ISO parser needs `T`) |
@@ -172,11 +172,11 @@ The probe greps every package's Cypher, with comments and strings removed, and m
 All SUPPORTED with Neo4j's results unless listed below:
 
 - **Subqueries:** `COLLECT {}` (with `ORDER BY`), `COUNT {}` and `count{}` in `WHERE`, `EXISTS {}` (pattern and `MATCH … WHERE`), `CALL {}` with an importing `WITH`, unit `CALL {}`, `CALL (x) {}`, and `CALL (x) { … NEXT … }`.
-- **Shortest paths:** legacy `shortestPath` (`*1..5`, `*0..8`, and a node to itself, which gives a zero-length path; verify) and `allShortestPaths` (undirected, type disjunction, `*..8`).
+- **Shortest paths:** legacy `shortestPath` (`*1..5`, `*0..8`, and a node to itself, which gives a zero-length path (verify)) and `allShortestPaths` (undirected, type disjunction, `*..8`).
 - **Patterns:** bounded and upper-only variable length; quantified path patterns in every shape the packages use; `[r:!T]`; `(x:A|B)`; `WHERE r:T`; `MATCH REPEATABLE ELEMENTS` with `allReduce`.
 - **Functions:**
   - `startNode`, `endNode`, `elementId` (a STRING, comparable), and `reduce` (including map accumulators and over `relationships(p)`);
-  - `point.distance`: WGS-84 matches Neo4j's 6,378,140 m haversine to 1e-6 (verify), and Cartesian is exact;
+  - `point.distance`: WGS-84 matches Aura to 15 significant figures (London–Paris 343,941.0847125 m on both; confirmed on Aura), and Cartesian is exact;
   - `date()`, `duration.between`, `duration.inDays`, and datetime arithmetic, which clamps to month end.
 - **Comparisons:** a datetime compared with a date is null, as the packages' prose relies on.
 - **Numbers and lists:** `round(x, n)`; `toString` on floats and integers in Java form (`1.0`, `150.0`, `0.30000000000000004`); integer division and modulo; list and pattern comprehensions; dynamic property access; chained comparison; regex with `(?i)` and `\b`.
@@ -185,9 +185,9 @@ All SUPPORTED with Neo4j's results unless listed below:
 
 | Case | Status | Observed | Neo4j |
 | ---- | ------ | -------- | ----- |
-| `toString(datetime)` at a whole minute | DIFFERENT | `2024-01-02T00:00Z` | `2024-01-02T00:00:00Z` (ISO_DATE_TIME always prints seconds) |
+| `toString(datetime)` at a whole minute | DIFFERENT (confirmed on Aura) | `2024-01-02T00:00Z` | `2024-01-02T00:00:00Z`: Aura printed the seconds both in the verify statement and in patient-journey's pathway query |
 | `toString(datetime + duration({months: 1}))` | DIFFERENT | Same seconds rendering; the value itself is right | Same |
-| `round(-2.5)` | DIFFERENT (verify) | `-3.0` (half away from zero) | `-2.0` (`Math.round`). `round(2.675, 2)` is `2.68` on both |
+| `round(-2.5)` | DIFFERENT (confirmed on Aura) | `-3.0` (half away from zero) | `-2.0`. `round(2.675, 2)` is `2.68` on both |
 | `LIMIT` stops the pattern match early | **DIFFERENT** (performance) | No. Over 1,124,250 matches, `LIMIT 1` takes about as long as `count(*)` (2–3 s each). patient-journey's "Shared-condition patient cluster" (`… RETURN path LIMIT 50` over 2,865,853 matches) takes about 29.5 s, the same as counting them all. | Streams: `LIMIT 1` returns after the first match |
 
 ### Procedures
@@ -213,7 +213,6 @@ All SUPPORTED with Neo4j's results unless listed below:
 | BOM kept in the first header key | The generator detects a BOM and addresses that column by its raw key (`` row.`﻿id` ``). This works today. | `ontology_to_cypher.py` `BOM_STAYS_IN_FIRST_KEY` |
 | Empty cells arrive as `''`, where Neo4j's `,,` is null | Every conversion reads `null` and `''` alike as empty, which is also Import's rule (Import nulls `''` before sending rows). No change is needed whichever way Neo4j behaves. | `ontology_to_cypher.py` `conv` |
 | `LOAD CSV … CALL IN TRANSACTIONS` rejected | Not needed. The generator emits plain `LOAD CSV … MERGE`, one statement per mapping; the largest package imports in seconds. | — |
-| `toInteger(' 5')` is 5 | Import trims first (`toInteger(trim(v))`), so the generator does too and the difference never arises. | `conv` |
 | `toString(datetime)` drops zero seconds | When judging, compare datetimes as values. Where a query returns a datetime rendered into a string, normalise `THH:MMZ` to `THH:MM:00Z` before comparing with TESTS.md, and say so in the evidence. This affects patient-journey's pathway query (`toString(enc.date)`). | `run_queries.py` judging |
 | `round()` half-way negatives | None in general. Of the packages' 48 `round` calls, two could see a negative value: loans-and-mortgages' appraisal `increasePct` and ev-route-planning's `arrival_soc_percent`. Even then the results differ only when the value lands exactly half-way at the rounding precision. If a mismatch ever turns on that, record ENGINE-GAP, not FAIL. | `run_queries.py` judging |
 | Fulltext queries return nothing | Classify any query calling `db.index.fulltext.*` as SKIPPED (manual testing on Aura). Still run the `CREATE FULLTEXT INDEX` statement in SETUP.md: it succeeds, and it checks the statement's syntax. | `run_queries.py` classification |
@@ -245,10 +244,26 @@ Not mirrored; `ontology_to_cypher.py` reports these:
 - **Deduplication:** Import removes exact duplicate rows within each roughly 1 MB chunk. This does not change the counts.
 - **Mappings:** Import loads only the last of several mappings for one entity. The generator refuses such a document; no package has one.
 
+## Parity with Aura
+
+The first parity check is patient-journey, on 30 October 2026. Ian ran the 13 queries manually on Aura after a sample import through the Import flow, using the parameters test mode used, and exported each result as JSON. `scripts/compare_aura.py` compared them with the Cypherlite run. It reduces nodes to their reference-ontology key, paths to node and relationship sequences, and temporal values to ISO strings. It ignores row order unless the query has an `ORDER BY`, and then also allows ties in any order.
+
+| Result | Queries |
+| ------ | ------- |
+| Same rows | 1, 2, 3, 5, 6, 7 (same order up to ties), 9 |
+| Same rows once the known `toString(datetime)` difference is normalised | 8 |
+| Same pairs and counts. The representative path is an arbitrary choice the query leaves to the engine (`head(collect(e))`, `elementId` ordering). Every representative Aura chose is valid against the CSVs | 11, 13 |
+| Arbitrary 50-row subsets under `LIMIT` with no `ORDER BY`. Aura's rows meet every TESTS.md invariant, as Cypherlite's did | 10, 12 |
+| Not compared: the export saved for 4 was query 3's result | 4 |
+| Import: Aura's Import created the same 20 constraints, with the same names (8 node keys, 12 existence), and the same relationship counts per type | — |
+
+- **Query 5 confirms the test-mode FAIL.** Aura returns Cypherlite's 447, 341, 189, 154, 147, 134, 119 and 67, in the same order, not TESTS.md's figures.
+- **No row differed for an engine reason** beyond the two rendering differences this file already listed.
+
 ## Draft asks for the Cypherlite team
 
 1. **Strip a UTF-8 BOM from the LOAD CSV header.** Neo4j and Aura's Import both do. Today the first key is `'﻿id'` and every `row.id` is null, silently.
-2. **`toString()` on temporal values should always print seconds** (`2024-01-02T00:00:00Z`), as Neo4j's ISO_DATE_TIME formatting does. The envelope's JSON form already prints them; only `toString` drops them.
+2. **`toString()` on temporal values should always print seconds** (`2024-01-02T00:00:00Z`), as Aura does (confirmed in the parity run). The envelope's JSON form already prints them; only `toString` drops them.
 3. **Reject `datetime('2024-01-02 03:04:05')`**, as Neo4j does. Also, a datetime parsed without a zone carries a region-like `Z` that serialises as `…Z[Z]`.
 4. **Accept `LOAD CSV … CALL (row) { … } IN TRANSACTIONS OF n ROWS`.** Neo4j does, and Import's own Cypher exporter emits exactly this.
 5. **Fulltext:**
@@ -262,12 +277,11 @@ Not mirrored; `ontology_to_cypher.py` reports these:
 8. **Align `db.ontology.set` with the published 1.0.0 schema.** Every package's ONTOLOGY.json is rejected: the packages and upx's library use `data_source_tables` / `data_source_mappings`, and Cypherlite's vendored copy uses `tables` / `mappings`.
 9. **Make `LIMIT` stop the match early.** Today `MATCH … RETURN … LIMIT 1` enumerates every match first. On patient-journey's sample, one visualisation query takes 29.5 s for 50 rows, where Neo4j streams.
 10. **Consider a native import:** `cypherlite import --ontology ONTOLOGY.json --csv-dir …` that implements Import's rules in the table above. This is only worth having if it shares one specification with Import, since otherwise it is a third implementation. `FINDINGS.md` discusses it.
-11. **Confirm Neo4j parity on the verify rows:**
+11. **Match Neo4j's `round()` on negative half-way values.** Aura gives `round(-2.5)` = `-2.0`; Cypherlite gives `-3.0`.
+12. **Confirm Neo4j parity on the remaining verify rows:**
     - bare-path LOAD CSV;
     - `,,` as null;
-    - `toInteger(' 5')`;
-    - `round(-2.5)`;
     - `shortestPath` from a node to itself.
 
     These need an Aura run; the team may already know.
-12. **Telemetry defaults to on.** For CI and agent use, consider defaulting it off under a detected harness or `CI=true`.
+13. **Telemetry defaults to on.** For CI and agent use, consider defaulting it off under a detected harness or `CI=true`.
