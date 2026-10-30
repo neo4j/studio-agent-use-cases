@@ -298,8 +298,8 @@ def test_query(i, s, store, section, vocab, all_writes, skill_text, skipped_writ
     if missing:
         q.update(status="NEEDS-PARAMS", reason=f"no value for {', '.join('$' + m for m in missing)} in TESTS.md, @sample or @params")
         blocked_writes.update({n: s["heading"] for n in writes(s["cypher"]) - vocab})
-        if drift:
-            q["findings"] += drift
+        q["notes"] += [f"unverifiable until {', '.join('$' + m for m in missing)} has a value (it may be a key of that "
+                       f"parameter): {d}" for d in drift]
         return q
     r = run_statement(s, store, values, args.timeout)
     q.update(exit=r.exit, seconds=round(r.seconds, 3), columns=r.columns, row_count=len(r.rows),

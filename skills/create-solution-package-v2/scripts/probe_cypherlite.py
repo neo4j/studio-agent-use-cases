@@ -566,6 +566,23 @@ def limit_check(R, store, csv_dir):
     return ("DIFFERENT" if one_row.seconds > 0.25 * full.seconds else "SUPPORTED"), obs
 
 
+def allreduce_check(R, store, csv_dir):
+    R("UNWIND range(1, 8) AS i CREATE (:N {i: i})")
+    R("MATCH (a:N), (b:N) WHERE a <> b CREATE (a)-[:R {w: 1}]->(b)")
+    times, counts = {}, {}
+    for k in (4, 6):
+        r = R(f"CYPHER 25 MATCH REPEATABLE ELEMENTS (a:N {{i: 1}})-[rs:R]->{{1,{k}}}(b) "
+              "WHERE allReduce(acc = 0, r IN rs | acc + r.w, acc <= 1) RETURN count(*) AS n", timeout="300s")
+        times[k], counts[k] = r.seconds, (r.rows[0]["n"] if r.rows else r.message)
+    obs = (f"8-node complete graph; allReduce fails after the first hop, so every bound returns {counts[4]} walks. "
+           f"Bound 4: {times[4]:.2f} s; bound 6: {times[6]:.2f} s")
+    return ("DIFFERENT" if times[6] > 5 * max(times[4], 0.01) else "SUPPORTED"), obs
+
+
+case("cypher.allreduce_pruning", "Cypher", "allReduce prunes REPEATABLE ELEMENTS expansion early", check=allreduce_check,
+     neo4j="allReduce is evaluated during expansion, so a failing prefix is never extended; the cost does not grow "
+           "with the bound when every walk fails at the first hop (from the Cypher 25 documentation).", verify=True,
+     uses=("REPEATABLE ELEMENTS", "allReduce"))
 case("cypher.limit_short_circuit", "Cypher", "LIMIT stops pattern enumeration early", check=limit_check,
      neo4j="Streams: LIMIT 1 returns after the first match, far faster than counting every match.")
 cy("value_type", "valueType() and IS :: type predicates (used by the landing checks)",

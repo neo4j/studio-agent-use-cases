@@ -122,7 +122,8 @@ def expectations(pkg):
 
 
 def profile_counts(tests_md):
-    """Counts the TESTS.md sample-data profile states: rows like | `Label` | 1,010 | or | `TYPE` (A → B) | 557 |."""
+    """Counts the TESTS.md sample-data profile states: rows like | `Label` | 1,010 |, | `TYPE` | 557 |, and a
+    relationship type qualified by its endpoints: (A → B), (`A`→`B`), (to `B`) or (from `A`)."""
     if not tests_md.exists():
         return []
     text = tests_md.read_text(encoding="utf-8")
@@ -131,8 +132,15 @@ def profile_counts(tests_md):
     for line in (m.group(1) if m else "").splitlines():
         r = re.match(r"^\|\s*`([^`]+)`\s*(?:\(([^)]*)\))?\s*\|\s*([\d,]+)\b", line)
         if r:
-            ends = re.split(r"\s*(?:→|->)\s*", r.group(2)) if r.group(2) and ("→" in r.group(2) or "->" in r.group(2)) else None
-            out.append({"name": r.group(1), "ends": ends, "count": int(r.group(3).replace(",", "")), "line": line.strip()})
+            qual = (r.group(2) or "").replace("`", "").strip()
+            ends = None
+            if re.search(r"→|->", qual):
+                a, b = re.split(r"\s*(?:→|->)\s*", qual, maxsplit=1)
+                ends = (a.strip() or None, b.strip() or None)
+            elif m2 := re.fullmatch(r"(to|from)\s+(\w+)", qual, re.I):
+                ends = (None, m2.group(2)) if m2.group(1).lower() == "to" else (m2.group(2), None)
+            out.append({"name": r.group(1), "ends": ends, "qualifier": qual, "count": int(r.group(3).replace(",", "")),
+                        "line": line.strip()})
     return out
 
 
@@ -227,12 +235,17 @@ def check_graph(pkg, store, stmts):
             csv_n = len(nodes[name]["ids"])
             graph_n = one(store, f"MATCH (n:{q(name)}) RETURN count(n) AS c")[0]["c"]
         else:
-            groups = [(k, g) for k, g in rels.items() if k[1] == name and (not ends or (k[0], k[2]) == tuple(ends))]
+            groups = [(k, g) for k, g in rels.items() if k[1] == name
+                      and (not ends or ((ends[0] in (None, k[0])) and (ends[1] in (None, k[2]))))]
             if not groups:
+                if any(k[1] == name for k in rels):
+                    add("tests-profile", f"{name} ({pc['qualifier']})", pc["count"], "no such endpoints in the reference ontology",
+                        False, "stale TESTS.md profile: " + pc["line"])
+                    findings.append(f"TESTS.md profile names {name} ({pc['qualifier']}), which the reference ontology has no mapping for")
                 continue
             csv_n = sum(len(g["ids"]) for _, g in groups)
             graph_n = sum(one(store, f"MATCH (:{q(a)})-[r:{q(t)}]->(:{q(b)}) RETURN count(r) AS c")[0]["c"] for (a, t, b), _ in groups)
-        subject = name + (f" ({' → '.join(ends)})" if ends else "")
+        subject = name + (f" ({pc['qualifier']})" if pc["qualifier"] else "")
         ok = pc["count"] == csv_n == graph_n
         add("tests-profile", subject, pc["count"], f"CSV {csv_n}, graph {graph_n}", ok,
             "" if ok else "stale TESTS.md profile or data: " + pc["line"])

@@ -73,15 +73,15 @@ These rules are what `scripts/cypherlite_cli.py` does. Each one rests on a probe
 
 ## Capability matrix
 
-The probe ran 251 cases:
+The probe ran 252 cases:
 
 | Status | Cases |
 | ------ | ----- |
 | SUPPORTED | 221 |
-| DIFFERENT | 14 |
+| DIFFERENT | 15 |
 | UNSUPPORTED | 16 |
 
-Phase 3 added one case, `cypher.limit_short_circuit`, after patient-journey's test run turned it up. The Aura parity run then settled five verify rows; one of them, `toInteger(' 5')`, moved from DIFFERENT to SUPPORTED.
+Phase 3 added one case, `cypher.limit_short_circuit`, after patient-journey's test run turned it up. Phase 4 added `cypher.allreduce_pruning`, after ev-route-planning's three route queries timed out. The Aura parity run then settled five verify rows; one of them, `toInteger(' 5')`, moved from DIFFERENT to SUPPORTED.
 
 Its full output, with every observation, is under `output/cypherlite-tests/probe-<timestamp>/`. That folder is not committed; this table is the record.
 
@@ -112,7 +112,7 @@ The probe greps every package's Cypher, with comments and strings removed, and m
 | Variable length `*a..b` | 35 | SUPPORTED |
 | Quantified path patterns: `{m,n}`, `+`, `*`, inner `WHERE`, inline node `WHERE`, group variables, cycles | 13 | SUPPORTED |
 | Type negation `[r:!T]`, node label disjunction `(x:A\|B)`, type predicate `r:T` | 4 / 22 / 18 | SUPPORTED |
-| `MATCH REPEATABLE ELEMENTS` + `allReduce` (Cypher 25) | 3 | SUPPORTED |
+| `MATCH REPEATABLE ELEMENTS` + `allReduce` (Cypher 25) | 3 | SUPPORTED for results; DIFFERENT for performance: no pruning during expansion (see Cypher) |
 | `NEXT` chaining, including inside `CALL (x) {}` and feeding a `MERGE` | 2 | SUPPORTED |
 | `CYPHER 25` prefix | 5 | SUPPORTED |
 | `UNION`, `OPTIONAL MATCH`, pattern predicates, `MERGE`, `SET n:Label`, `DELETE` | various | SUPPORTED |
@@ -188,6 +188,7 @@ All SUPPORTED with Neo4j's results unless listed below:
 | `toString(datetime)` at a whole minute | DIFFERENT (confirmed on Aura) | `2024-01-02T00:00Z` | `2024-01-02T00:00:00Z`: Aura printed the seconds both in the verify statement and in patient-journey's pathway query |
 | `toString(datetime + duration({months: 1}))` | DIFFERENT | Same seconds rendering; the value itself is right | Same |
 | `round(-2.5)` | DIFFERENT (confirmed on Aura) | `-3.0` (half away from zero) | `-2.0`. `round(2.675, 2)` is `2.68` on both |
+| `allReduce` prunes `REPEATABLE ELEMENTS` expansion | **DIFFERENT** (performance; Neo4j's behaviour from its documentation, verify) | No. On an 8-node complete graph, with `allReduce` failing after the first hop, every bound returns the same 7 walks, but each extra hop multiplies the time about six times (0.03 s at 4, 0.41 s at 6). ev-route-planning's three Cypher 25 route queries (`{1,14}`) never finish: past 60 s, and still running at 10 minutes. | `allReduce` is evaluated during expansion, so a prefix that fails it is never extended |
 | `LIMIT` stops the pattern match early | **DIFFERENT** (performance) | No. Over 1,124,250 matches, `LIMIT 1` takes about as long as `count(*)` (2–3 s each). patient-journey's "Shared-condition patient cluster" (`… RETURN path LIMIT 50` over 2,865,853 matches) takes about 29.5 s, the same as counting them all. | Streams: `LIMIT 1` returns after the first match |
 
 ### Procedures
@@ -219,6 +220,7 @@ All SUPPORTED with Neo4j's results unless listed below:
 | APOC and GDS absent | SKIPPED, judged from the heading label, `@prerequisites` and the Cypher. A query that reads what a skipped query writes is SKIPPED too. | `run_queries.py` classification |
 | Exit 6 covers runtime type errors | Classify by message: `UnknownFunction` / `ProcedureNotFound` on `apoc.` or `gds.` means SKIPPED; a construct named UNSUPPORTED above means ENGINE-GAP; anything else is a package fault (FAIL) once reduced to a minimal reproduction. | `run_queries.py` |
 | Plans do not name index seeks | Do not judge index use from EXPLAIN operator names. | — |
+| `allReduce` does not prune | A query that relies on `allReduce` to keep a long `REPEATABLE ELEMENTS` expansion tractable will time out. Record it as ENGINE-GAP, with this entry as the evidence; it needs manual testing on Aura. | TESTING.md, "Engine or package?" |
 | `LIMIT` does not stop enumeration | A `LIMIT` query over a large match space can take as long as counting every match, and can hit the timeout. If it times out, raise `--timeout`, say so, and judge the result. It is not a package fault unless the query would be slow on Neo4j too. | TESTING.md, "Engine or package?" |
 | `db.ontology.*` cannot read a package's ONTOLOGY.json | Not used. Test mode generates `LOAD CSV` instead. | — |
 
@@ -275,13 +277,16 @@ The first parity check is patient-journey, on 30 October 2026. Ian ran the 13 qu
 6. **Give runtime errors their own exit code or `kind`.** `/ by zero` exits 6 as `validation_error`, the same as a rejected statement. Test mode wants to tell "the engine cannot run this" apart from "this failed while running".
 7. **Name index use in the plan.** A key lookup served by a NODE KEY and an unindexed scan both show `NodeByLabelScan` with start `index-0`, and only timing separates them. A `NodeUniqueIndexSeek`-style operator, or the index name in `StartReason`, would let an agent confirm index use statically.
 8. **Align `db.ontology.set` with the published 1.0.0 schema.** Every package's ONTOLOGY.json is rejected: the packages and upx's library use `data_source_tables` / `data_source_mappings`, and Cypherlite's vendored copy uses `tables` / `mappings`.
-9. **Make `LIMIT` stop the match early.** Today `MATCH … RETURN … LIMIT 1` enumerates every match first. On patient-journey's sample, one visualisation query takes 29.5 s for 50 rows, where Neo4j streams.
-10. **Consider a native import:** `cypherlite import --ontology ONTOLOGY.json --csv-dir …` that implements Import's rules in the table above. This is only worth having if it shares one specification with Import, since otherwise it is a third implementation. `FINDINGS.md` discusses it.
-11. **Match Neo4j's `round()` on negative half-way values.** Aura gives `round(-2.5)` = `-2.0`; Cypherlite gives `-3.0`.
-12. **Confirm Neo4j parity on the remaining verify rows:**
+9. **Prune with `allReduce` during expansion.** It exists so that stateful path search stays tractable. Without it, ev-route-planning's flagship route queries cannot run at all. This is the one gap that turns plain Cypher 25 queries into manual-only ones.
+10. **Make `LIMIT` stop the match early.** Today `MATCH … RETURN … LIMIT 1` enumerates every match first. On patient-journey's sample, one visualisation query takes 29.5 s for 50 rows, where Neo4j streams.
+11. **Consider a native import:** `cypherlite import --ontology ONTOLOGY.json --csv-dir …` that implements Import's rules in the table above. This is only worth having if it shares one specification with Import, since otherwise it is a third implementation. `FINDINGS.md` discusses it.
+12. **Match Neo4j's `round()` on negative half-way values.** Aura gives `round(-2.5)` = `-2.0`; Cypherlite gives `-3.0`.
+13. **Confirm Neo4j parity on the remaining verify rows:**
     - bare-path LOAD CSV;
     - `,,` as null;
     - `shortestPath` from a node to itself.
 
     These need an Aura run; the team may already know.
-13. **Telemetry defaults to on.** For CI and agent use, consider defaulting it off under a detected harness or `CI=true`.
+14. **Report write counters.** The envelope of a write statement carries no counts (nodes or relationships created, deleted, set), so a test has to diff the graph to see what a write did. Neo4j returns them with every result.
+15. **Give each index its own `id` in `SHOW INDEXES`.** Every index reports `id: 0`.
+16. **Telemetry defaults to on.** For CI and agent use, consider defaulting it off under a detected harness or `CI=true`.
