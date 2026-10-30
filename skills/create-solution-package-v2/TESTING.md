@@ -107,7 +107,7 @@ The script parses QUERIES.md with `annotations.py`, which is the one parser for 
      - written by a query or SETUP.md statement and documented in SKILL.md.
    - An unbounded variable-length pattern is recorded as a finding. It is not a status.
 3. **Parameters.** In this order, the script takes values from:
-   1. the TESTS.md section's Parameters field. If the field names a parameter without giving its value ("`$constraints` as listed above"), it looks in the rest of that section;
+   1. the TESTS.md section's Parameters field. If the field names a parameter without giving its value, it looks in the rest of that section as `$name = <literal>`. A value given only elsewhere in TESTS.md, such as a JSON block in the sample-data profile, is not found: the query is NEEDS-PARAMS, and the finding is that TESTS.md should state the value in the query's own section;
    2. `@sample`;
    3. a starting value stated in `@params` ("Start at 4").
 
@@ -155,7 +155,7 @@ Before you call any failure a package fault:
 - **Workaround rewrite:** you may try a rewrite in a scratch copy of the query, never in the package, and report with `--workaround` whether it passed. It never counts as PASS.
 - **Exit codes are not enough on their own:**
   - exit 6 also covers runtime type errors such as `/ by zero`, so read the message;
-  - exit 7 is a timeout. A slow query on Cypherlite is not a package fault unless it would be slow on Neo4j too. Say which you believe and why.
+  - exit 7 is a timeout. A slow query on Cypherlite is not a package fault unless it would be slow on Neo4j too. Say which you believe and why. Reproduce the cost on a tiny graph, for example by timing the same shape at increasing bounds; that tells an engine that does not prune or stop early from a query that really explodes. CYPHERLITE.md lists two known cases: `allReduce` and `LIMIT`.
 
 ### 7. Teardown
 
