@@ -93,6 +93,38 @@ def writes(cypher):
     return names
 
 
+PATTERN_MAP = re.compile(r"(?<![\w`])[(\[]\s*`?\w*`?(?:\s*:\s*!?`?\w+`?(?:\s*[|&]\s*!?`?\w+`?)*)?\s*$")
+SUBQUERY = re.compile(r"\b(COUNT|EXISTS|COLLECT|CALL)\s*(\([^)]*\))?\s*$", re.I)
+
+
+def local_keys(cypher, params):
+    """Keys a query defines for itself: map-literal and map-projection keys (not pattern property maps, whose
+    keys are node or relationship properties) and the keys of map-valued parameters. A property access on
+    such a map is not drift, though Cypherlite's EXPLAIN reports the key as unknown."""
+    text = strip_cypher_noise(cypher)
+    keys = set()
+    for m in re.finditer(r"\{", text):
+        before = text[:m.start()]
+        if PATTERN_MAP.search(before) or SUBQUERY.search(before):
+            continue
+        depth, j = 1, m.end()
+        while j < len(text) and depth:
+            depth += {"{": 1, "}": -1}.get(text[j], 0)
+            j += 1
+        keys |= set(re.findall(r"(?:^|[{,])\s*`?([A-Za-z_]\w*)`?\s*:(?!:)", text[m.end():j - 1]))
+
+    def walk(v):
+        if isinstance(v, dict):
+            keys.update(v)
+            for x in v.values():
+                walk(x)
+        elif isinstance(v, list):
+            for x in v:
+                walk(x)
+    walk(params)
+    return keys
+
+
 def classify(stmt, skipped_writes):
     """Reasons a statement must be SKIPPED: APOC, GDS or fulltext, or it reads what a skipped one writes."""
     text = strip_cypher_noise(stmt["cypher"])
@@ -106,11 +138,19 @@ def classify(stmt, skipped_writes):
     if not reasons and (re.search(r"\((requires|needs) (APOC|GDS)\)|^GDS\b", heading)
                         or re.search(r"^\s*(APOC|GDS)\b|\b(APOC|GDS)\s+(plugin|library)\b|\bfulltext index\b", prereq, re.I)):
         reasons.append("needs APOC, GDS or a fulltext index, per its heading or @prerequisites")
-    for name, src in skipped_writes.items():
-        if re.search(rf"[:|]\s*`?{re.escape(name)}`?\b", text):
-            reasons.append(f"reads {name}, which only the skipped '{src}' writes")
-            break
+    hit = reads_from(stmt, skipped_writes)
+    if hit:
+        reasons.append(f"reads {hit[0]}, which only the skipped '{hit[1]}' writes")
     return reasons
+
+
+def reads_from(stmt, written):
+    """(name, writer) when the statement reads a label or type that only the given statements write."""
+    text = strip_cypher_noise(stmt["cypher"])
+    for name, src in written.items():
+        if re.search(rf"[:|!]\s*`?{re.escape(name)}`?\b", text):
+            return name, src
+    return None
 
 
 # ---------------------------------------------------------------- one package
@@ -186,7 +226,7 @@ def test_package(pkg, out, args):
         for s in setup + queries:
             for n in writes(s["cypher"]) - vocab:
                 all_writes.setdefault(n, s["heading"])
-        skipped_writes = {}
+        skipped_writes, blocked_writes = {}, {}
         for s in setup:
             reasons = classify(s, skipped_writes)
             rec = {"heading": s["heading"], "line": s["line"]}
@@ -202,7 +242,7 @@ def test_package(pkg, out, args):
         rows_dir.mkdir(exist_ok=True)
         for i, s in enumerate(queries, 1):
             res["queries"].append(test_query(i, s, store, tests.get(s["heading"]), vocab, all_writes, skill_text,
-                                             skipped_writes, untrusted, rows_dir, args))
+                                             skipped_writes, blocked_writes, untrusted, rows_dir, args))
     finally:
         if args.keep:
             res["kept_store"] = str(store)
@@ -211,7 +251,7 @@ def test_package(pkg, out, args):
     return finish(res, out, t0)
 
 
-def test_query(i, s, store, section, vocab, all_writes, skill_text, skipped_writes, untrusted, rows_dir, args):
+def test_query(i, s, store, section, vocab, all_writes, skill_text, skipped_writes, blocked_writes, untrusted, rows_dir, args):
     q = {"n": i, "heading": s["heading"], "line": s["line"], "status": "", "reason": "", "untrusted": untrusted,
          "params": {}, "param_sources": {}, "notes": [], "notifications": [], "findings": [],
          "tests": (section or {}).get("fields", {}), "sample": s["tags"].get("sample", ""),
@@ -223,11 +263,17 @@ def test_query(i, s, store, section, vocab, all_writes, skill_text, skipped_writ
         q.update(status="SKIPPED", reason="; ".join(reasons) + ". Needs manual testing on Aura.")
         skipped_writes.update({n: s["heading"] for n in writes(s["cypher"]) - vocab})
         return q
+    blocked = reads_from(s, blocked_writes)
+    if blocked:
+        q.update(status="NEEDS-PARAMS", reason=f"reads {blocked[0]}, which only '{blocked[1]}' writes, and that query "
+                                               "had no parameter values, so it never ran")
+        blocked_writes.update({n: s["heading"] for n in writes(s["cypher"]) - vocab})
+        return q
     values, sources, notes, missing = find_params(s, section)
     q.update(params=values, param_sources=sources)
     q["notes"] += notes
     ex = cl.run("EXPLAIN " + s["cypher"], store, params=values, timeout=args.timeout)
-    drift = []
+    drift, local = [], local_keys(s["cypher"], values)
     if ex.exit:
         q["notes"].append(f"EXPLAIN failed: {ex.error_class}: {ex.message}")
     for n in ex.notifications:
@@ -237,6 +283,8 @@ def test_query(i, s, store, section, vocab, all_writes, skill_text, skipped_writ
             name = (re.findall(r"`([^`]+)`", n.get("description", "")) or ["?"])[0]
             if name in vocab:
                 q["notes"].append(f"{UNKNOWN[code]} {name} is declared in ONTOLOGY.json but absent from the store at this point")
+            elif code == "UnknownPropertyKeyWarning" and name in local:
+                q["notes"].append(f"property key {name} is a key of a map the query builds or a parameter supplies, not drift")
             elif name in all_writes:
                 if re.search(rf"\b{re.escape(name)}\b", skill_text):
                     q["notes"].append(f"{UNKNOWN[code]} {name} is written by '{all_writes[name]}' and documented in SKILL.md; "
@@ -249,6 +297,7 @@ def test_query(i, s, store, section, vocab, all_writes, skill_text, skipped_writ
             q["findings"].append(f"unbounded variable-length pattern: {n.get('description')}")
     if missing:
         q.update(status="NEEDS-PARAMS", reason=f"no value for {', '.join('$' + m for m in missing)} in TESTS.md, @sample or @params")
+        blocked_writes.update({n: s["heading"] for n in writes(s["cypher"]) - vocab})
         if drift:
             q["findings"] += drift
         return q
