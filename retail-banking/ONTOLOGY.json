@@ -1,39 +1,78 @@
 {
   "schema": "https://neo4j.com/docs/ontology-graph-spec/1.0.0/schema.json",
   "id": "retail-banking",
-  "version": "1",
-  "name": "Retail Banking Transaction Fraud Ring",
-  "description": "Models retail banking payments as accounts joined by transaction nodes, so that money moved through a chain of accounts and back to where it started is detectable as a cycle rather than as a self-join. Answers which accounts form a closed ring, whether the payments around that ring run in chronological order, and whether the amount decays consistently as it moves.",
+  "version": "2",
+  "name": "Retail Banking Fraud",
+  "description": "Models retail banking as one graph of money, identity and digital access: customers and the accounts they hold, payments as transaction nodes between accounts, the identifiers customers share, and the sessions, devices and IP addresses they bank from. Answers whether money moves round closed rings, which customers share identifiers or devices, whether a session from a new device or country is followed by a payment to a new beneficiary, which new accounts pass money straight through, and whether funds reach a high-risk jurisdiction. The structure follows Neo4j's Transaction and Account Data Model. Descriptions, aliases and references draw on FIBO (Financial Industry Business Ontology), https://github.com/edmcouncil/fibo, Copyright (c) 2013-2026 EDM Association dba EDM Council, Inc. and Copyright (c) 2013-2025 Object Management Group, Inc., used under the MIT License (https://opensource.org/licenses/MIT). A simplification for demonstration, not FIBO itself, and not endorsed by the EDM Council or the Object Management Group.",
   "nodes": {
-    "Account": {
-      "label": "Account",
-      "description": "A retail bank account that can send and receive payments. Carries only its identifier: the reference ontology deliberately holds no customer, product or balance detail, so an account is a point money passes through rather than a party profile.",
+    "Customer": {
+      "label": "Customer",
+      "description": "A person who holds one or more of the institution's accounts, as primary or secondary holder. Identifiers and digital sessions attach to the customer, so it is where identity, device use and money meet. Expected to be one node per real person, after the institution's own identity resolution.",
+      "aliases": ["Client", "Retail customer"],
+      "reference": "https://spec.edmcouncil.org/fibo/ontology/FND/ProductsAndServices/ProductsAndServices/Customer",
       "properties": {
-        "accountNumber": {
-          "type": "INTEGER",
-          "description": "Identifier for the account, unique across the institution. Expected to be an internal account key rather than a printed sort-code-and-number pair, and to be stable for the life of the account. e.g. `1247`.",
+        "customerId": {
+          "type": "STRING",
+          "description": "Identifier for the customer record, unique across the institution and stable for the life of the relationship. e.g. `CUS10001`.",
           "key": true
+        },
+        "firstName": {
+          "type": "STRING",
+          "description": "The customer's given name as recorded at onboarding. A descriptor, not an identifier: names are too common to link customers on their own. e.g. `Jessica`."
+        },
+        "lastName": {
+          "type": "STRING",
+          "description": "The customer's family name as recorded at onboarding. A descriptor, not an identifier. e.g. `Murray`."
+        },
+        "dateOfBirth": {
+          "type": "ZONED DATETIME",
+          "description": "Date of birth as recorded at onboarding, as an ISO 8601 zoned datetime at midnight UTC; only the calendar date carries meaning. e.g. `1989-04-18T00:00:00Z`."
         }
       },
-      "extensions": {
-        "display": {
-          "x": 33,
-          "y": 51
+      "extensions": {"display": {"x": 0, "y": 0}}
+    },
+    "Account": {
+      "label": "Account",
+      "description": "A bank account that sends or receives payments: held at this institution (accountScope `INTERNAL`) or elsewhere and known only as a payment's counterparty (`EXTERNAL`). Internal accounts have holders, an opening date and a product type; external accounts carry only their identifier and country. The people behind an account are reached through HAS_ACCOUNT.",
+      "aliases": ["Bank account", "Deposit account"],
+      "reference": "https://spec.edmcouncil.org/fibo/ontology/FBC/ProductsAndServices/ClientsAndAccounts/DepositAccount",
+      "properties": {
+        "accountNumber": {
+          "type": "STRING",
+          "description": "Identifier for the account as the institution records it: for a UK account the sort code and account number, `NN-NN-NN NNNNNNNN`; for an account abroad its IBAN, without spaces. Text, so leading zeros survive. Unique across internal and external accounts. e.g. `12-34-56 10097783`.",
+          "key": true
+        },
+        "accountScope": {
+          "type": "STRING",
+          "description": "Whether the account is held at this institution (`INTERNAL`) or at another one (`EXTERNAL`). Stands in for the base model's `Internal` and `External` labels; a payment from an internal to an external account is money leaving the institution. e.g. `INTERNAL`.",
+          "must_exist": true,
+          "one_of": ["INTERNAL", "EXTERNAL"]
+        },
+        "accountType": {
+          "type": "STRING",
+          "description": "Product type of an internal account as the institution names it, for example `CURRENT` (FIBO's demand deposit account), `SAVINGS` or `BUSINESS`; a fixed-term account is FIBO's time deposit account. An open list. Empty for external accounts. e.g. `CURRENT`."
+        },
+        "openedDate": {
+          "type": "ZONED DATETIME",
+          "description": "Instant the account was opened, as an ISO 8601 zoned datetime. Account age at the time of a payment is measured from it. Empty for external accounts. e.g. `2019-08-15T17:57:34Z`."
         }
-      }
+      },
+      "extensions": {"display": {"x": 350, "y": 0}}
     },
     "Transaction": {
       "label": "Transaction",
       "description": "A single payment moving money from one account to another. Modelled as a node rather than as a relationship so that it can carry its own amount and timestamp and be traversed from either endpoint — which is what makes the chronological-order and amount-decay checks in ring detection expressible at all.",
+      "aliases": ["Payment", "Transfer"],
+      "reference": "https://spec.edmcouncil.org/fibo/ontology/FBC/ProductsAndServices/ClientsAndAccounts/IndividualTransaction",
       "properties": {
         "transactionId": {
           "type": "STRING",
-          "description": "Identifier for the payment, unique across the institution. Expected to be the source system's own transaction reference. e.g. `TXN3001`.",
+          "description": "Identifier for the payment, unique across the institution. Expected to be the source system's own transaction reference. e.g. `TXN3005`.",
           "key": true
         },
         "amount": {
           "type": "FLOAT",
-          "description": "Value of money moved by this payment, in the major units of `currency` rather than in minor units — a value of 1000.00 on a GBP payment is one thousand pounds, not one thousand pence. Always positive: direction is carried by the relationships, not by the sign. e.g. `131.46`.",
+          "description": "Value of money moved by this payment, in the major units of `currency` rather than in minor units — a value of 1000.00 on a GBP payment is one thousand pounds, not one thousand pence. Always positive: direction is carried by the relationships, not by the sign. e.g. `105.11`.",
           "must_exist": true
         },
         "currency": {
@@ -44,80 +83,528 @@
         },
         "date": {
           "type": "ZONED DATETIME",
-          "description": "Instant at which the payment was executed, as an ISO 8601 zoned datetime. Ordering payments on this is what separates a ring that moves money forwards in time from an arbitrary cycle, so it is expected to be a true execution timestamp rather than a posting or value date. e.g. `2023-11-16T11:15:00Z`.",
+          "description": "Instant at which the payment was executed, as an ISO 8601 zoned datetime. Ordering payments on this is what separates a ring that moves money forwards in time from an arbitrary cycle, so it is expected to be a true execution timestamp rather than a posting or value date. e.g. `2023-10-21T12:25:00Z`.",
+          "must_exist": true
+        },
+        "type": {
+          "type": "STRING",
+          "description": "Payment method or scheme, as the source system names it, for example `FASTER_PAYMENT`, `BACS`, `SWIFT`, `CARD`, `DIRECT_DEBIT` or `STANDING_ORDER`. An open list that varies by country. Push payments instructed on the spot (`FASTER_PAYMENT`, `SWIFT`) are what a fraudster controlling an account can use. e.g. `FASTER_PAYMENT`."
+        }
+      },
+      "extensions": {"display": {"x": 700, "y": 0}}
+    },
+    "Country": {
+      "label": "Country",
+      "description": "A country, by ISO 3166-1 alpha-2 code: where an account is held, an address is, or an IP address geolocates. Carries the institution's high-risk-jurisdiction classification, one hop from a beneficiary account.",
+      "properties": {
+        "code": {
+          "type": "STRING",
+          "description": "ISO 3166-1 alpha-2 country code, upper case. e.g. `GB`.",
+          "key": true,
+          "pattern": "^[A-Z]{2}$"
+        },
+        "name": {
+          "type": "STRING",
+          "description": "Country name in English. e.g. `United Kingdom`."
+        },
+        "isHighRiskJurisdiction": {
+          "type": "BOOLEAN",
+          "description": "Whether the institution's risk policy classifies the country as a high-risk jurisdiction for money laundering, typically by reference to the FATF lists and the regulator's own. A policy setting, not a fact about the country. Stands in for the base model's `HighRiskJurisdiction` account label, reached through IS_HOSTED. e.g. `false`.",
           "must_exist": true
         }
       },
-      "extensions": {
-        "display": {
-          "x": -33,
-          "y": -51
+      "extensions": {"display": {"x": 350, "y": 350}}
+    },
+    "Email": {
+      "label": "Email",
+      "description": "An email address recorded against one or more customers. A shared identifier: the same address on several customers links them, legitimately (a family) or not (identities built from shared contact details).",
+      "aliases": ["Email address", "E-mail address"],
+      "reference": "https://spec.edmcouncil.org/fibo/ontology/FND/Places/VirtualPlaces/ElectronicMailAddress",
+      "properties": {
+        "address": {
+          "type": "STRING",
+          "description": "The full email address, lower-cased. Customers converge on one node only when the text is identical, so normalisation is expected upstream. e.g. `jessica.murray126@example.net`.",
+          "key": true
+        },
+        "domain": {
+          "type": "STRING",
+          "description": "Domain part of the address, after the `@`, lower-cased. e.g. `example.net`."
         }
-      }
+      },
+      "extensions": {"display": {"x": -400, "y": -250}}
+    },
+    "Phone": {
+      "label": "Phone",
+      "description": "A telephone number recorded against one or more customers: a personal mobile, or a landline a household shares. A shared identifier, like Email.",
+      "aliases": ["Telephone number", "Phone number"],
+      "reference": "https://spec.edmcouncil.org/fibo/ontology/FND/Places/VirtualPlaces/TelephoneNumber",
+      "properties": {
+        "phoneNumber": {
+          "type": "STRING",
+          "description": "The number in E.164 form: a plus sign, country calling code and national number, no spaces or trunk zero. Customers converge only on identical text. The base model's constraint calls this `number`; its property list says `phoneNumber`, followed here. e.g. `+447700900797`.",
+          "key": true,
+          "pattern": "^\\+[1-9][0-9]{6,14}$"
+        },
+        "countryCode": {
+          "type": "STRING",
+          "description": "International calling code of the number, with its plus sign. e.g. `+44`.",
+          "pattern": "^\\+[1-9][0-9]{0,2}$"
+        }
+      },
+      "extensions": {"display": {"x": -450, "y": -50}}
+    },
+    "Address": {
+      "label": "Address",
+      "description": "A postal address where customers live or have lived. A shared identifier: people at one address are linked, which is ordinary for a household and suspicious when unrelated identities converge on it.",
+      "aliases": ["Postal address", "Residential address"],
+      "reference": "https://spec.edmcouncil.org/fibo/ontology/FND/Places/Addresses/PhysicalAddress",
+      "properties": {
+        "addressId": {
+          "type": "STRING",
+          "description": "Surrogate for the base model's composite key (`addressLine1`, `postTown`, `postCode`), which Import cannot use: the three values trimmed, whitespace collapsed, commas removed, upper-cased and joined with `, `. Built from exactly those parts, so addresses converge under MERGE as with the composite key, including flats sharing a street number unless the flat is in `addressLine1`. e.g. `1 SYCAMORE ROAD, LEEDS, LS1 2PU`.",
+          "key": true,
+          "pattern": "^[^,a-z]+, [^,a-z]+, [^,a-z]+$"
+        },
+        "addressLine1": {
+          "type": "STRING",
+          "description": "First line of the address: house or building number and street name. Part of the key. e.g. `1 Sycamore Road`."
+        },
+        "addressLine2": {
+          "type": "STRING",
+          "description": "Optional second line: flat number, building name or estate. Not part of the key. e.g. `Flat 17`."
+        },
+        "postTown": {
+          "type": "STRING",
+          "description": "Post town for postal delivery, as Royal Mail defines it for UK addresses, in upper case. Part of the key. e.g. `LEEDS`."
+        },
+        "postCode": {
+          "type": "STRING",
+          "description": "Postcode in its standard upper-case form with a single space before the inward code. Part of the key. e.g. `LS1 2PU`."
+        }
+      },
+      "extensions": {"display": {"x": 0, "y": 350}}
+    },
+    "Passport": {
+      "label": "Passport",
+      "description": "A passport presented as proof of identity. A shared identifier of the strongest kind: one passport on two customers means one document behind two identities.",
+      "reference": "https://spec.edmcouncil.org/fibo/ontology/FND/AgentsAndPeople/People/Passport",
+      "properties": {
+        "passportId": {
+          "type": "STRING",
+          "description": "Surrogate for the base model's composite key (`passportNumber`, `issuingCountry`), which Import cannot use: `<issuingCountry>:<passportNumber>`, the number upper-cased without spaces or hyphens. Built from exactly those parts, so passports converge under MERGE as with the composite key. e.g. `GB:686489834`.",
+          "key": true,
+          "pattern": "^[A-Z]{2}:[A-Z0-9]+$"
+        },
+        "passportNumber": {
+          "type": "STRING",
+          "description": "Passport number as printed on the document. Unique only within the issuing country. e.g. `686489834`."
+        },
+        "issuingCountry": {
+          "type": "STRING",
+          "description": "ISO 3166-1 alpha-2 code of the government that issued the passport. e.g. `GB`.",
+          "pattern": "^[A-Z]{2}$"
+        },
+        "issueDate": {
+          "type": "ZONED DATETIME",
+          "description": "Date the passport was issued, as an ISO 8601 zoned datetime at midnight UTC; only the calendar date carries meaning. e.g. `2023-03-02T00:00:00Z`."
+        },
+        "expiryDate": {
+          "type": "ZONED DATETIME",
+          "description": "Date the passport expires, as an ISO 8601 zoned datetime at midnight UTC; only the calendar date carries meaning. e.g. `2033-03-01T00:00:00Z`."
+        }
+      },
+      "extensions": {"display": {"x": -450, "y": 150}}
+    },
+    "DrivingLicense": {
+      "label": "DrivingLicense",
+      "description": "A driving licence presented as proof of identity. A shared identifier like Passport: one licence on two customers means one document behind two identities. The label keeps the base model's spelling.",
+      "aliases": ["Driving licence", "Driver's license"],
+      "reference": "https://spec.edmcouncil.org/fibo/ontology/FND/AgentsAndPeople/People/DriversLicense",
+      "properties": {
+        "licenseId": {
+          "type": "STRING",
+          "description": "Surrogate for the base model's composite key (`licenseNumber`, `issuingCountry`), which Import cannot use: `<issuingCountry>:<licenseNumber>`, the number upper-cased without spaces or hyphens. Built from exactly those parts, so licences converge under MERGE as with the composite key. e.g. `GB:MURRA854189J99UV`.",
+          "key": true,
+          "pattern": "^[A-Z]{2}:[A-Z0-9]+$"
+        },
+        "licenseNumber": {
+          "type": "STRING",
+          "description": "Licence number as printed on the document. Unique only within the issuing country. e.g. `MURRA854189J99UV`."
+        },
+        "issuingCountry": {
+          "type": "STRING",
+          "description": "ISO 3166-1 alpha-2 code of the authority that issued the licence. e.g. `GB`.",
+          "pattern": "^[A-Z]{2}$"
+        },
+        "issueDate": {
+          "type": "ZONED DATETIME",
+          "description": "Date the licence was issued, as an ISO 8601 zoned datetime at midnight UTC; only the calendar date carries meaning. e.g. `2017-07-16T00:00:00Z`."
+        },
+        "expiryDate": {
+          "type": "ZONED DATETIME",
+          "description": "Date the licence expires, as an ISO 8601 zoned datetime at midnight UTC; only the calendar date carries meaning. e.g. `2027-07-16T00:00:00Z`."
+        }
+      },
+      "extensions": {"display": {"x": -300, "y": 300}}
+    },
+    "Session": {
+      "label": "Session",
+      "description": "One login or login attempt on the digital channel, against one customer, from one device and one IP address. Sessions are the record of device and location use: a device or country appears in a customer's history only through them.",
+      "aliases": ["Login", "Login attempt"],
+      "properties": {
+        "sessionId": {
+          "type": "STRING",
+          "description": "Identifier for the session, unique across the channel. e.g. `SESS001804`.",
+          "key": true
+        },
+        "status": {
+          "type": "STRING",
+          "description": "Outcome of the session, lower case: `success` (logged in), `failed` (credentials rejected), `suspicious` (blocked or challenged by the channel's own controls) or `timeout`. Only a successful session gives access to the customer's accounts. e.g. `success`.",
+          "must_exist": true,
+          "one_of": ["success", "failed", "suspicious", "timeout"]
+        },
+        "createdAt": {
+          "type": "ZONED DATETIME",
+          "description": "Instant the session started, as an ISO 8601 zoned datetime. Ordering a customer's sessions on it is what makes a device or a country new to that customer. e.g. `2023-10-01T01:00:21Z`.",
+          "must_exist": true
+        }
+      },
+      "extensions": {"display": {"x": 350, "y": -300}}
+    },
+    "Device": {
+      "label": "Device",
+      "description": "A device a customer banks from (phone, computer or tablet), identified by the fingerprint the digital channel assigns. Reached from customers only through their sessions, which record who used it and when.",
+      "aliases": ["Device fingerprint"],
+      "properties": {
+        "deviceId": {
+          "type": "STRING",
+          "description": "Fingerprint or identifier the digital channel assigns to the device, stable across sessions. e.g. `DEV-0018bc528d`.",
+          "key": true
+        },
+        "deviceType": {
+          "type": "STRING",
+          "description": "Category of device, lower case: `mobile`, `desktop`, `tablet`, or `unknown` when the channel cannot tell. e.g. `mobile`.",
+          "one_of": ["mobile", "desktop", "tablet", "unknown"]
+        },
+        "userAgent": {
+          "type": "STRING",
+          "description": "Browser or app user agent string the device reported. Descriptive only: it is easily spoofed. e.g. `Mozilla/5.0 (Linux; Android 13; SM-S911B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Mobile Safari/537.36 BankApp/8.3`."
+        }
+      },
+      "extensions": {"display": {"x": 700, "y": -300}}
+    },
+    "IP": {
+      "label": "IP",
+      "description": "An IP address sessions connect from, IPv4 or IPv6. Its geolocation places a session in a country. Addresses are often shared (a household router, a mobile network pooling customers), so a shared IP address is a weak link on its own.",
+      "aliases": ["IP address"],
+      "properties": {
+        "ipAddress": {
+          "type": "STRING",
+          "description": "The address in standard text form: dotted-quad IPv4 or compressed IPv6. e.g. `198.51.100.1`.",
+          "key": true
+        }
+      },
+      "extensions": {"display": {"x": 800, "y": 350}}
     }
   },
   "relationships": {
-    "benefitsTo": {
-      "type": "BENEFITS_TO",
-      "description": "Credits the payment to the account that receives the money — the beneficiary side of the transfer. Exactly one beneficiary account per payment; an account may benefit from many payments, or from none. Following this out of a payment and then back out through the beneficiary's own outgoing payments is how a ring is walked.",
-      "from": {
-        "node": "Transaction",
-        "count": 1
-      },
-      "to": {
-        "node": "Account"
+    "hasAccount": {
+      "type": "HAS_ACCOUNT",
+      "description": "Records that the customer holds the account. An internal account has exactly one primary holder and may have secondary holders; external accounts have none. A customer may hold many accounts. Holding turns a link between two customers into a link between their money.",
+      "aliases": ["Account holder", "Holds account"],
+      "reference": "https://spec.edmcouncil.org/fibo/ontology/FBC/ProductsAndServices/ClientsAndAccounts/AccountHolder",
+      "from": {"node": "Customer"},
+      "to": {"node": "Account"},
+      "properties": {
+        "role": {
+          "type": "STRING",
+          "description": "The customer's standing on the account: `PRIMARY` for the primary owner (FIBO's primary account holder; exactly one per internal account) or `SECONDARY` for a co-owner such as the second name on a joint account (FIBO's secondary account holder). e.g. `PRIMARY`.",
+          "must_exist": true,
+          "one_of": ["PRIMARY", "SECONDARY"]
+        },
+        "since": {
+          "type": "ZONED DATETIME",
+          "description": "Instant the customer became a holder of the account; for the primary holder, normally the opening date. e.g. `2008-02-11T07:00:39Z`."
+        }
       }
     },
     "performs": {
       "type": "PERFORMS",
       "description": "Attributes the payment to the account the money leaves — the originating side of the transfer. Exactly one originating account per payment; an account may perform many payments, or none. Read together with the beneficiary link it gives each payment a direction, which is what makes cycle detection meaningful rather than merely finding connected accounts.",
-      "from": {
-        "node": "Account"
-      },
-      "to": {
-        "node": "Transaction",
-        "count": 1
+      "aliases": ["Payer account", "Debtor account"],
+      "reference": "https://spec.edmcouncil.org/fibo/ontology/FND/ProductsAndServices/PaymentsAndSchedules/Payer",
+      "from": {"node": "Account"},
+      "to": {"node": "Transaction", "count": 1}
+    },
+    "benefitsTo": {
+      "type": "BENEFITS_TO",
+      "description": "Credits the payment to the account that receives the money — the beneficiary side of the transfer. Exactly one beneficiary account per payment; an account may benefit from many payments, or from none. Following this out of a payment and then back out through the beneficiary's own outgoing payments is how a ring is walked.",
+      "aliases": ["Payee account", "Beneficiary account", "Creditor account"],
+      "reference": "https://spec.edmcouncil.org/fibo/ontology/FND/ProductsAndServices/PaymentsAndSchedules/Payee",
+      "from": {"node": "Transaction", "count": 1},
+      "to": {"node": "Account"}
+    },
+    "isHosted": {
+      "type": "IS_HOSTED",
+      "description": "Records the country the account is held in: `GB` for a UK account, for an IBAN the servicing institution's country. Exactly one country per account; a country may host many accounts, or none.",
+      "from": {"node": "Account", "count": 1},
+      "to": {"node": "Country"}
+    },
+    "hasEmail": {
+      "type": "HAS_EMAIL",
+      "description": "Records an email address the customer has given. A customer may have several; an address may belong to several customers, which is the link the identity patterns look for.",
+      "from": {"node": "Customer"},
+      "to": {"node": "Email"},
+      "properties": {
+        "since": {
+          "type": "ZONED DATETIME",
+          "description": "Instant the address was first recorded against the customer. e.g. `2008-02-11T07:00:39Z`."
+        }
       }
+    },
+    "hasPhone": {
+      "type": "HAS_PHONE",
+      "description": "Records a telephone number the customer has given. A customer may have several; a number may belong to several customers, as a household landline legitimately does.",
+      "from": {"node": "Customer"},
+      "to": {"node": "Phone"},
+      "properties": {
+        "since": {
+          "type": "ZONED DATETIME",
+          "description": "Instant the number was first recorded against the customer. e.g. `2008-02-11T07:00:39Z`."
+        }
+      }
+    },
+    "hasAddress": {
+      "type": "HAS_ADDRESS",
+      "description": "Records an address the customer lives or has lived at. A customer may have several, current and previous; an address may be shared by several customers, as a household or as converging identities.",
+      "from": {"node": "Customer"},
+      "to": {"node": "Address"},
+      "properties": {
+        "addedAt": {
+          "type": "ZONED DATETIME",
+          "description": "Instant the address was first linked to the customer. e.g. `2008-02-11T07:00:39Z`."
+        },
+        "lastChangedAt": {
+          "type": "ZONED DATETIME",
+          "description": "Instant the address details on this link were last updated. e.g. `2008-02-11T07:00:39Z`."
+        },
+        "isCurrent": {
+          "type": "BOOLEAN",
+          "description": "Whether this is the customer's current residential address; a previous address stays linked with `false`. e.g. `true`."
+        }
+      }
+    },
+    "hasPassport": {
+      "type": "HAS_PASSPORT",
+      "description": "Records a passport the customer presented as proof of identity, with how it was verified. A customer may present several over time; one passport on several customers is a strong sign of identity misuse.",
+      "from": {"node": "Customer"},
+      "to": {"node": "Passport"},
+      "properties": {
+        "verificationDate": {
+          "type": "ZONED DATETIME",
+          "description": "Instant the institution verified the document against the customer. e.g. `2023-03-15T04:20:15Z`."
+        },
+        "verificationMethod": {
+          "type": "STRING",
+          "description": "How the document was verified, as the institution names it, for example `BRANCH_VERIFIED`, `DIGITAL_SCAN` or `VIDEO_KYC`. An open list. e.g. `DIGITAL_SCAN`."
+        },
+        "verificationStatus": {
+          "type": "STRING",
+          "description": "Current state of the verification: `VERIFIED`, `PENDING`, `REJECTED`, or `EXPIRED` once the document's validity has lapsed. e.g. `VERIFIED`.",
+          "one_of": ["VERIFIED", "PENDING", "REJECTED", "EXPIRED"]
+        }
+      }
+    },
+    "hasDrivingLicense": {
+      "type": "HAS_DRIVING_LICENSE",
+      "description": "Records a driving licence the customer presented as proof of identity, with how it was verified. A customer may present several over time; one licence on several customers is a strong sign of identity misuse.",
+      "from": {"node": "Customer"},
+      "to": {"node": "DrivingLicense"},
+      "properties": {
+        "verificationDate": {
+          "type": "ZONED DATETIME",
+          "description": "Instant the institution verified the document against the customer. e.g. `2017-07-22T17:15:08Z`."
+        },
+        "verificationMethod": {
+          "type": "STRING",
+          "description": "How the document was verified, as the institution names it, for example `BRANCH_VERIFIED`, `DIGITAL_SCAN` or `VIDEO_KYC`. An open list. e.g. `DIGITAL_SCAN`."
+        },
+        "verificationStatus": {
+          "type": "STRING",
+          "description": "Current state of the verification: `VERIFIED`, `PENDING`, `REJECTED`, or `EXPIRED` once the document's validity has lapsed. e.g. `VERIFIED`.",
+          "one_of": ["VERIFIED", "PENDING", "REJECTED", "EXPIRED"]
+        }
+      }
+    },
+    "addressLocatedIn": {
+      "type": "LOCATED_IN",
+      "description": "Records the country the address is in. Exactly one country per address; a country may contain many addresses, or none. LOCATED_IN also links an IP address to the country it geolocates to.",
+      "from": {"node": "Address", "count": 1},
+      "to": {"node": "Country"}
+    },
+    "ipLocatedIn": {
+      "type": "LOCATED_IN",
+      "description": "Records the country the IP address geolocates to. At most one country per address, none when geolocation fails; a country may hold many addresses. Replaces the base model's route through Location. LOCATED_IN also links a postal address to its country.",
+      "from": {"node": "IP", "max_count": 1},
+      "to": {"node": "Country"}
+    },
+    "hasSession": {
+      "type": "HAS_SESSION",
+      "description": "Records that the session was a login, or attempted login, to the customer's digital banking. Exactly one customer per session; a customer may have many, or none. Added: the account-takeover page uses it but the base model does not declare it.",
+      "from": {"node": "Customer"},
+      "to": {"node": "Session", "count": 1}
+    },
+    "sessionUsesDevice": {
+      "type": "SESSION_USES_DEVICE",
+      "description": "Records the device the session ran on. Exactly one device per session; a device may appear in many sessions, of one customer or of several, which is what device sharing looks for.",
+      "from": {"node": "Session", "count": 1},
+      "to": {"node": "Device"}
+    },
+    "usesIp": {
+      "type": "USES_IP",
+      "description": "Records the IP address the session connected from. Exactly one address per session; an address may serve many sessions, of one customer or of several.",
+      "from": {"node": "Session", "count": 1},
+      "to": {"node": "IP"}
     }
   },
   "extensions": {
     "data_source_tables": {
+      "customers.csv": {
+        "source": "local",
+        "columns": [
+          {"name": "customerId", "type": "string"},
+          {"name": "firstName", "type": "string"},
+          {"name": "lastName", "type": "string"},
+          {"name": "dateOfBirth", "type": "string"}
+        ]
+      },
+      "countries.csv": {
+        "source": "local",
+        "columns": [
+          {"name": "code", "type": "string"},
+          {"name": "name", "type": "string"},
+          {"name": "isHighRiskJurisdiction", "type": "string"}
+        ]
+      },
       "accounts.csv": {
         "source": "local",
         "columns": [
-          {
-            "name": "accountNumber",
-            "type": "string"
-          }
+          {"name": "accountNumber", "type": "string"},
+          {"name": "accountScope", "type": "string"},
+          {"name": "accountType", "type": "string"},
+          {"name": "openedDate", "type": "string"},
+          {"name": "countryCode", "type": "string"}
+        ]
+      },
+      "account_holders.csv": {
+        "source": "local",
+        "columns": [
+          {"name": "customerId", "type": "string"},
+          {"name": "accountNumber", "type": "string"},
+          {"name": "role", "type": "string"},
+          {"name": "since", "type": "string"}
         ]
       },
       "transactions.csv": {
         "source": "local",
         "columns": [
-          {
-            "name": "transactionId",
-            "type": "string"
-          },
-          {
-            "name": "amount",
-            "type": "string"
-          },
-          {
-            "name": "currency",
-            "type": "string"
-          },
-          {
-            "name": "date",
-            "type": "string"
-          },
-          {
-            "name": "sourceAccountNumber",
-            "type": "string"
-          },
-          {
-            "name": "targetAccountNumber",
-            "type": "string"
-          }
+          {"name": "transactionId", "type": "string"},
+          {"name": "amount", "type": "string"},
+          {"name": "currency", "type": "string"},
+          {"name": "date", "type": "string"},
+          {"name": "type", "type": "string"},
+          {"name": "sourceAccountNumber", "type": "string"},
+          {"name": "targetAccountNumber", "type": "string"}
+        ]
+      },
+      "customer_emails.csv": {
+        "source": "local",
+        "columns": [
+          {"name": "customerId", "type": "string"},
+          {"name": "emailAddress", "type": "string"},
+          {"name": "domain", "type": "string"},
+          {"name": "since", "type": "string"}
+        ]
+      },
+      "customer_phones.csv": {
+        "source": "local",
+        "columns": [
+          {"name": "customerId", "type": "string"},
+          {"name": "phoneNumber", "type": "string"},
+          {"name": "countryCode", "type": "string"},
+          {"name": "since", "type": "string"}
+        ]
+      },
+      "addresses.csv": {
+        "source": "local",
+        "columns": [
+          {"name": "addressId", "type": "string"},
+          {"name": "addressLine1", "type": "string"},
+          {"name": "addressLine2", "type": "string"},
+          {"name": "postTown", "type": "string"},
+          {"name": "postCode", "type": "string"},
+          {"name": "countryCode", "type": "string"}
+        ]
+      },
+      "customer_addresses.csv": {
+        "source": "local",
+        "columns": [
+          {"name": "customerId", "type": "string"},
+          {"name": "addressId", "type": "string"},
+          {"name": "addedAt", "type": "string"},
+          {"name": "lastChangedAt", "type": "string"},
+          {"name": "isCurrent", "type": "string"}
+        ]
+      },
+      "customer_passports.csv": {
+        "source": "local",
+        "columns": [
+          {"name": "customerId", "type": "string"},
+          {"name": "passportId", "type": "string"},
+          {"name": "passportNumber", "type": "string"},
+          {"name": "issuingCountry", "type": "string"},
+          {"name": "issueDate", "type": "string"},
+          {"name": "expiryDate", "type": "string"},
+          {"name": "verificationDate", "type": "string"},
+          {"name": "verificationMethod", "type": "string"},
+          {"name": "verificationStatus", "type": "string"}
+        ]
+      },
+      "customer_driving_licenses.csv": {
+        "source": "local",
+        "columns": [
+          {"name": "customerId", "type": "string"},
+          {"name": "licenseId", "type": "string"},
+          {"name": "licenseNumber", "type": "string"},
+          {"name": "issuingCountry", "type": "string"},
+          {"name": "issueDate", "type": "string"},
+          {"name": "expiryDate", "type": "string"},
+          {"name": "verificationDate", "type": "string"},
+          {"name": "verificationMethod", "type": "string"},
+          {"name": "verificationStatus", "type": "string"}
+        ]
+      },
+      "devices.csv": {
+        "source": "local",
+        "columns": [
+          {"name": "deviceId", "type": "string"},
+          {"name": "deviceType", "type": "string"},
+          {"name": "userAgent", "type": "string"}
+        ]
+      },
+      "ip_addresses.csv": {
+        "source": "local",
+        "columns": [{"name": "ipAddress", "type": "string"}, {"name": "countryCode", "type": "string"}]
+      },
+      "sessions.csv": {
+        "source": "local",
+        "columns": [
+          {"name": "sessionId", "type": "string"},
+          {"name": "customerId", "type": "string"},
+          {"name": "deviceId", "type": "string"},
+          {"name": "ipAddress", "type": "string"},
+          {"name": "status", "type": "string"},
+          {"name": "createdAt", "type": "string"}
         ]
       }
     },
@@ -125,16 +612,40 @@
       "mapping0": [
         {
           "type": "NODE",
+          "node": "Customer",
+          "table": "customers.csv",
+          "mode": "MERGE",
+          "key": ["customerId"],
+          "properties": {
+            "customerId": {"column": "customerId"},
+            "firstName": {"column": "firstName"},
+            "lastName": {"column": "lastName"},
+            "dateOfBirth": {"column": "dateOfBirth"}
+          }
+        },
+        {
+          "type": "NODE",
+          "node": "Country",
+          "table": "countries.csv",
+          "mode": "MERGE",
+          "key": ["code"],
+          "properties": {
+            "code": {"column": "code"},
+            "name": {"column": "name"},
+            "isHighRiskJurisdiction": {"column": "isHighRiskJurisdiction"}
+          }
+        },
+        {
+          "type": "NODE",
           "node": "Account",
           "table": "accounts.csv",
           "mode": "MERGE",
-          "key": [
-            "accountNumber"
-          ],
+          "key": ["accountNumber"],
           "properties": {
-            "accountNumber": {
-              "column": "accountNumber"
-            }
+            "accountNumber": {"column": "accountNumber"},
+            "accountScope": {"column": "accountScope"},
+            "accountType": {"column": "accountType"},
+            "openedDate": {"column": "openedDate"}
           }
         },
         {
@@ -142,46 +653,114 @@
           "node": "Transaction",
           "table": "transactions.csv",
           "mode": "MERGE",
-          "key": [
-            "transactionId"
-          ],
+          "key": ["transactionId"],
           "properties": {
-            "transactionId": {
-              "column": "transactionId"
-            },
-            "amount": {
-              "column": "amount"
-            },
-            "currency": {
-              "column": "currency"
-            },
-            "date": {
-              "column": "date"
-            }
+            "transactionId": {"column": "transactionId"},
+            "amount": {"column": "amount"},
+            "currency": {"column": "currency"},
+            "date": {"column": "date"},
+            "type": {"column": "type"}
           }
         },
         {
+          "type": "NODE",
+          "node": "Email",
+          "table": "customer_emails.csv",
+          "mode": "MERGE",
+          "key": ["address"],
+          "properties": {"address": {"column": "emailAddress"}, "domain": {"column": "domain"}}
+        },
+        {
+          "type": "NODE",
+          "node": "Phone",
+          "table": "customer_phones.csv",
+          "mode": "MERGE",
+          "key": ["phoneNumber"],
+          "properties": {"phoneNumber": {"column": "phoneNumber"}, "countryCode": {"column": "countryCode"}}
+        },
+        {
+          "type": "NODE",
+          "node": "Address",
+          "table": "addresses.csv",
+          "mode": "MERGE",
+          "key": ["addressId"],
+          "properties": {
+            "addressId": {"column": "addressId"},
+            "addressLine1": {"column": "addressLine1"},
+            "addressLine2": {"column": "addressLine2"},
+            "postTown": {"column": "postTown"},
+            "postCode": {"column": "postCode"}
+          }
+        },
+        {
+          "type": "NODE",
+          "node": "Passport",
+          "table": "customer_passports.csv",
+          "mode": "MERGE",
+          "key": ["passportId"],
+          "properties": {
+            "passportId": {"column": "passportId"},
+            "passportNumber": {"column": "passportNumber"},
+            "issuingCountry": {"column": "issuingCountry"},
+            "issueDate": {"column": "issueDate"},
+            "expiryDate": {"column": "expiryDate"}
+          }
+        },
+        {
+          "type": "NODE",
+          "node": "DrivingLicense",
+          "table": "customer_driving_licenses.csv",
+          "mode": "MERGE",
+          "key": ["licenseId"],
+          "properties": {
+            "licenseId": {"column": "licenseId"},
+            "licenseNumber": {"column": "licenseNumber"},
+            "issuingCountry": {"column": "issuingCountry"},
+            "issueDate": {"column": "issueDate"},
+            "expiryDate": {"column": "expiryDate"}
+          }
+        },
+        {
+          "type": "NODE",
+          "node": "Session",
+          "table": "sessions.csv",
+          "mode": "MERGE",
+          "key": ["sessionId"],
+          "properties": {
+            "sessionId": {"column": "sessionId"},
+            "status": {"column": "status"},
+            "createdAt": {"column": "createdAt"}
+          }
+        },
+        {
+          "type": "NODE",
+          "node": "Device",
+          "table": "devices.csv",
+          "mode": "MERGE",
+          "key": ["deviceId"],
+          "properties": {
+            "deviceId": {"column": "deviceId"},
+            "deviceType": {"column": "deviceType"},
+            "userAgent": {"column": "userAgent"}
+          }
+        },
+        {
+          "type": "NODE",
+          "node": "IP",
+          "table": "ip_addresses.csv",
+          "mode": "MERGE",
+          "key": ["ipAddress"],
+          "properties": {"ipAddress": {"column": "ipAddress"}}
+        },
+        {
           "type": "RELATIONSHIP",
-          "relationship": "benefitsTo",
-          "table": "transactions.csv",
+          "relationship": "hasAccount",
+          "table": "account_holders.csv",
           "mode": "MERGE",
           "key": [],
-          "from_node": {
-            "label": "Transaction",
-            "properties": {
-              "transactionId": {
-                "column": "transactionId"
-              }
-            }
-          },
-          "to_node": {
-            "label": "Account",
-            "properties": {
-              "accountNumber": {
-                "column": "targetAccountNumber"
-              }
-            }
-          }
+          "from_node": {"label": "Customer", "properties": {"customerId": {"column": "customerId"}}},
+          "to_node": {"label": "Account", "properties": {"accountNumber": {"column": "accountNumber"}}},
+          "properties": {"role": {"column": "role"}, "since": {"column": "since"}}
         },
         {
           "type": "RELATIONSHIP",
@@ -189,22 +768,133 @@
           "table": "transactions.csv",
           "mode": "MERGE",
           "key": [],
-          "from_node": {
-            "label": "Account",
-            "properties": {
-              "accountNumber": {
-                "column": "sourceAccountNumber"
-              }
-            }
-          },
-          "to_node": {
-            "label": "Transaction",
-            "properties": {
-              "transactionId": {
-                "column": "transactionId"
-              }
-            }
+          "from_node": {"label": "Account", "properties": {"accountNumber": {"column": "sourceAccountNumber"}}},
+          "to_node": {"label": "Transaction", "properties": {"transactionId": {"column": "transactionId"}}}
+        },
+        {
+          "type": "RELATIONSHIP",
+          "relationship": "benefitsTo",
+          "table": "transactions.csv",
+          "mode": "MERGE",
+          "key": [],
+          "from_node": {"label": "Transaction", "properties": {"transactionId": {"column": "transactionId"}}},
+          "to_node": {"label": "Account", "properties": {"accountNumber": {"column": "targetAccountNumber"}}}
+        },
+        {
+          "type": "RELATIONSHIP",
+          "relationship": "isHosted",
+          "table": "accounts.csv",
+          "mode": "MERGE",
+          "key": [],
+          "from_node": {"label": "Account", "properties": {"accountNumber": {"column": "accountNumber"}}},
+          "to_node": {"label": "Country", "properties": {"code": {"column": "countryCode"}}}
+        },
+        {
+          "type": "RELATIONSHIP",
+          "relationship": "hasEmail",
+          "table": "customer_emails.csv",
+          "mode": "MERGE",
+          "key": [],
+          "from_node": {"label": "Customer", "properties": {"customerId": {"column": "customerId"}}},
+          "to_node": {"label": "Email", "properties": {"address": {"column": "emailAddress"}}},
+          "properties": {"since": {"column": "since"}}
+        },
+        {
+          "type": "RELATIONSHIP",
+          "relationship": "hasPhone",
+          "table": "customer_phones.csv",
+          "mode": "MERGE",
+          "key": [],
+          "from_node": {"label": "Customer", "properties": {"customerId": {"column": "customerId"}}},
+          "to_node": {"label": "Phone", "properties": {"phoneNumber": {"column": "phoneNumber"}}},
+          "properties": {"since": {"column": "since"}}
+        },
+        {
+          "type": "RELATIONSHIP",
+          "relationship": "hasAddress",
+          "table": "customer_addresses.csv",
+          "mode": "MERGE",
+          "key": [],
+          "from_node": {"label": "Customer", "properties": {"customerId": {"column": "customerId"}}},
+          "to_node": {"label": "Address", "properties": {"addressId": {"column": "addressId"}}},
+          "properties": {
+            "addedAt": {"column": "addedAt"},
+            "lastChangedAt": {"column": "lastChangedAt"},
+            "isCurrent": {"column": "isCurrent"}
           }
+        },
+        {
+          "type": "RELATIONSHIP",
+          "relationship": "hasPassport",
+          "table": "customer_passports.csv",
+          "mode": "MERGE",
+          "key": [],
+          "from_node": {"label": "Customer", "properties": {"customerId": {"column": "customerId"}}},
+          "to_node": {"label": "Passport", "properties": {"passportId": {"column": "passportId"}}},
+          "properties": {
+            "verificationDate": {"column": "verificationDate"},
+            "verificationMethod": {"column": "verificationMethod"},
+            "verificationStatus": {"column": "verificationStatus"}
+          }
+        },
+        {
+          "type": "RELATIONSHIP",
+          "relationship": "hasDrivingLicense",
+          "table": "customer_driving_licenses.csv",
+          "mode": "MERGE",
+          "key": [],
+          "from_node": {"label": "Customer", "properties": {"customerId": {"column": "customerId"}}},
+          "to_node": {"label": "DrivingLicense", "properties": {"licenseId": {"column": "licenseId"}}},
+          "properties": {
+            "verificationDate": {"column": "verificationDate"},
+            "verificationMethod": {"column": "verificationMethod"},
+            "verificationStatus": {"column": "verificationStatus"}
+          }
+        },
+        {
+          "type": "RELATIONSHIP",
+          "relationship": "addressLocatedIn",
+          "table": "addresses.csv",
+          "mode": "MERGE",
+          "key": [],
+          "from_node": {"label": "Address", "properties": {"addressId": {"column": "addressId"}}},
+          "to_node": {"label": "Country", "properties": {"code": {"column": "countryCode"}}}
+        },
+        {
+          "type": "RELATIONSHIP",
+          "relationship": "ipLocatedIn",
+          "table": "ip_addresses.csv",
+          "mode": "MERGE",
+          "key": [],
+          "from_node": {"label": "IP", "properties": {"ipAddress": {"column": "ipAddress"}}},
+          "to_node": {"label": "Country", "properties": {"code": {"column": "countryCode"}}}
+        },
+        {
+          "type": "RELATIONSHIP",
+          "relationship": "hasSession",
+          "table": "sessions.csv",
+          "mode": "MERGE",
+          "key": [],
+          "from_node": {"label": "Customer", "properties": {"customerId": {"column": "customerId"}}},
+          "to_node": {"label": "Session", "properties": {"sessionId": {"column": "sessionId"}}}
+        },
+        {
+          "type": "RELATIONSHIP",
+          "relationship": "sessionUsesDevice",
+          "table": "sessions.csv",
+          "mode": "MERGE",
+          "key": [],
+          "from_node": {"label": "Session", "properties": {"sessionId": {"column": "sessionId"}}},
+          "to_node": {"label": "Device", "properties": {"deviceId": {"column": "deviceId"}}}
+        },
+        {
+          "type": "RELATIONSHIP",
+          "relationship": "usesIp",
+          "table": "sessions.csv",
+          "mode": "MERGE",
+          "key": [],
+          "from_node": {"label": "Session", "properties": {"sessionId": {"column": "sessionId"}}},
+          "to_node": {"label": "IP", "properties": {"ipAddress": {"column": "ipAddress"}}}
         }
       ]
     }
