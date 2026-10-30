@@ -251,14 +251,14 @@ The first parity check is patient-journey, on 30 October 2026. Ian ran the 13 qu
 | Result | Queries |
 | ------ | ------- |
 | Same rows | 1, 2, 3, 5, 6, 7 (same order up to ties), 9 |
+| Same rows once collected lists are compared as sets. The query `collect()`s with no `ORDER BY` in front, so the order inside the list is the engine's choice: Aura and Cypherlite list Gerardo's four conditions in different orders | 4 |
 | Same rows once the known `toString(datetime)` difference is normalised | 8 |
 | Same pairs and counts. The representative path is an arbitrary choice the query leaves to the engine (`head(collect(e))`, `elementId` ordering). Every representative Aura chose is valid against the CSVs | 11, 13 |
 | Arbitrary 50-row subsets under `LIMIT` with no `ORDER BY`. Aura's rows meet every TESTS.md invariant, as Cypherlite's did | 10, 12 |
-| Not compared: the export saved for 4 was query 3's result | 4 |
 | Import: Aura's Import created the same 20 constraints, with the same names (8 node keys, 12 existence), and the same relationship counts per type | — |
 
 - **Query 5 confirms the test-mode FAIL.** Aura returns Cypherlite's 447, 341, 189, 154, 147, 134, 119 and 67, in the same order, not TESTS.md's figures.
-- **No row differed for an engine reason** beyond the two rendering differences this file already listed.
+- **All 13 queries and both import checks agree.** No row differed for an engine reason beyond the two rendering differences this file already listed. Every normalisation the comparison needed is one Cypher itself leaves undefined: `collect()` order, `head(collect())` choice, `elementId` ordering, and which rows a `LIMIT` with no `ORDER BY` returns.
 
 ## Draft asks for the Cypherlite team
 
