@@ -34,7 +34,7 @@ End with a clear next step, such as asking whether they'd like to explore the re
 - Departures from the source page, by design: the page gives charging stations a `Geo` sub-label, while here each node has a single label, so cities and stations share none and "any location" is the union `(:Geo|ChargingStation)`; the page stores roads in both directions, while here each segment is stored once and traversed undirected; the page carries an hourly speed profile per road, while here each segment has a free-flow and a peak speed. The `Express` road class is a modelling device — one hop standing in for a long motorway run whose intermediate junctions are not decision points — not a real road category.
 - The source demo page's `(x:Geo)` queries assume a shared label this reference ontology does not use: adapt them to `(:Geo|ChargingStation)` rather than relabelling the graph.
 - Every node, relationship and property the queries use is loaded by Import; no query creates anything.
-- The full reference ontology, with its import mappings, is in `ONTOLOGY.json`; runnable Cypher is in `QUERIES.md`.
+- The full reference ontology, with its import mappings, is in `ONTOLOGY.json`; runnable Cypher is in `QUERIES.cypher`.
 - Call it the reference ontology. Users may say "model", "graph model", "data model" or "ontology" — treat these as the same thing.
 - Treat its annotations as the authoritative meaning of each term — `description` above all, plus relationship counts. Quote them when explaining the reference ontology, rely on them when adapting queries to the user's own data, and never contradict them.
 
@@ -48,7 +48,7 @@ End with a clear next step, such as asking whether they'd like to explore the re
 | Charge option | `CHARGE` | A per-option record at a charging point with dwell minutes and power, that a route can take as a step without leaving the site |
 | Vehicle energy profile | `Car` | Usable battery capacity, consumption per kilometre, maximum charging power and current state of charge — no position on the network |
 
-When the user's database differs from the reference ontology, map their labels onto these roles before rewriting anything from `QUERIES.md`. A role with no counterpart in their data means the patterns resting on it have no analogue — say so plainly rather than forcing a fit.
+When the user's database differs from the reference ontology, map their labels onto these roles before rewriting anything from `QUERIES.cypher`. A role with no counterpart in their data means the patterns resting on it have no analogue — say so plainly rather than forcing a fit.
 
 ## Operational Constraints
 
@@ -63,7 +63,7 @@ For runnable examples:
 - `@sample` describes the bundled sample data only. Use it only when the connected database holds that sample — you imported it in this conversation, or a lookup of the `@sample` anchor (for example its `$carId`) finds it. Then use its values as starting parameters, and treat a result that differs from it as a sign the import went wrong. Otherwise ignore it: never present it, or anything derived from it, as an expectation of the user's own data.
 - `Geo` and `ChargingStation` share **no** label. Any traversal meaning "any location" must use `(:Geo|ChargingStation)`. A bare `(x:Geo)` is valid Cypher that returns rows while silently excluding every charging station, producing routes that never charge.
 - `ROAD` is stored once per segment. Always traverse it undirected as `-[:ROAD]-`, never `-[:ROAD]->`, and never create reverse edges.
-- Anchors are parameters, never hardcoded IDs. Offer the user a real anchor from **Available anchors** in `QUERIES.md` rather than inventing one.
+- Anchors are parameters, never hardcoded IDs. Offer the user a real anchor from **Available anchors** in `QUERIES.cypher` rather than inventing one.
 - Quantifier bounds like `{1,14}` are literals — Cypher rejects a parameter inside `{1,n}` — and charge stops count as hops. When a route query returns nothing, suspect the hop bound before the energy model.
 - Inside the stateful accumulator, clamp state of charge at `$maxSoc` and cap delivered power at the vehicle's `max_charge_power_kw`. Omitting either produces routes the fleet cannot drive.
 - Computed routes are optimistic planning inputs: consumption is constant per kilometre, with no allowance for load, gradient or weather; charging is a flat rate over a fixed dwell, with no taper; and there is no charger availability or queueing, live traffic or driver-hours rule.

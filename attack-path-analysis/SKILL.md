@@ -116,7 +116,7 @@ reference ontology or start importing data.
 - Every node, relationship and property the queries use is loaded by Import; no
   query creates anything.
 - The full reference ontology, with its import mappings, is in `ONTOLOGY.json`;
-  runnable Cypher is in `QUERIES.md`.
+  runnable Cypher is in `QUERIES.cypher`.
 - Call it the reference ontology. Users may say "model", "graph model", "data
   model" or "ontology" — treat these as the same thing.
 - Treat its annotations as the authoritative meaning of each term —
@@ -138,7 +138,7 @@ reference ontology or start importing data.
 | Inherited credential and its grants | `Identity` via `RUNS_AS`, then `IAMPolicy` via `ASSUMES` | A chain from an asset to the permissions its processes hold to the resources those permissions reach, with the grant shared across credentials. Collapsing it to a direct asset-to-resource edge loses the shared grant, and with it every choke point on the identity side |
 
 When the user's database differs from the reference ontology, map their labels
-onto these roles before rewriting anything from `QUERIES.md`. A role with no
+onto these roles before rewriting anything from `QUERIES.cypher`. A role with no
 counterpart in their data means the patterns resting on it have no analogue —
 say so plainly rather than forcing a fit. Check directed reachability first:
 without it none of the path questions can be answered at all, and a database
@@ -156,7 +156,7 @@ For runnable examples:
   confirm with the user before running anything that writes. **No bundled query
   writes.** The only writing statement in the package is the optional index in
   `SETUP.md`, which changes schema rather than data; the constraints at the end
-  of `QUERIES.md` are a reference for checking the live database, not statements
+  of `QUERIES.cypher` are a reference for checking the live database, not statements
   to run.
 - Right after a sample-data import, offer the statement in `SETUP.md` — 1
   statement, 0 required, 1 recommended. Explain it before running; if the user

@@ -1,6 +1,6 @@
 # Post-import setup
 
-One optional statement. Nothing here is required: every query in `QUERIES.md`
+One optional statement. Nothing here is required: every query in `QUERIES.cypher`
 returns identical results without it, and only the speed of the crown-jewel
 lookups changes.
 
@@ -24,7 +24,7 @@ Rules for the agent running these:
  *                 anchoring on a criticality band seek to the matching
  *                 applications instead of scanning every application in the
  *                 portfolio.
- * @usage          Recommended, never required. Two queries in QUERIES.md open
+ * @usage          Recommended, never required. Two queries in QUERIES.cypher open
  *                 with a tier predicate on Application and benefit directly:
  *                 "Attack paths from an exposed foothold to a crown-jewel
  *                 application" and "Crown-jewel exposure summary"; "Choke

@@ -79,7 +79,7 @@ reference ontology or start importing data.
   identifiers in an in-memory projection and return them rather than writing
   them back.
 - The full reference ontology, with its import mappings, is in
-  `ONTOLOGY.json`; runnable Cypher is in `QUERIES.md`.
+  `ONTOLOGY.json`; runnable Cypher is in `QUERIES.cypher`.
 - Call it the reference ontology. Users may say "model", "graph model", "data
   model" or "ontology" — treat these as the same thing.
 - Treat its annotations as the authoritative meaning of each term —
@@ -105,7 +105,7 @@ type, or that stores citations without a direction, cannot support those
 patterns at all.
 
 When the user's database differs from the reference ontology, map their
-labels onto these roles before rewriting anything from `QUERIES.md`. A role
+labels onto these roles before rewriting anything from `QUERIES.cypher`. A role
 with no counterpart in their data means the patterns resting on it have no
 analogue — say so plainly rather than forcing a fit.
 
@@ -120,7 +120,7 @@ For runnable examples:
   confirm with the user before running anything that writes.
 - No post-import setup is required — do not improvise indexes or constraints
   after Import. The node-key constraints on `Standard.id` and `Section.id`
-  come from `ONTOLOGY.json`; `QUERIES.md` repeats them at the end purely so
+  come from `ONTOLOGY.json`; `QUERIES.cypher` repeats them at the end purely so
   the expected constraints can be confirmed with `SHOW CONSTRAINTS`.
 - Neo4j 5.x and Cypher 5; no APOC. The GDS queries additionally need the GDS
   plugin 2.x — see below.

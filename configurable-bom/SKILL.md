@@ -101,7 +101,7 @@ structure or start importing data.
   relationship the reference ontology declares, so a query-created one cannot
   be expressed there without inventing source data for it.
 - The full reference ontology, with its import mappings, is in `ONTOLOGY.json`;
-  runnable Cypher is in `QUERIES.md`.
+  runnable Cypher is in `QUERIES.cypher`.
 - Call it the reference ontology. Users may say "model", "graph model", "data
   model" or "ontology" — treat these as the same thing.
 - Treat its annotations as the authoritative meaning of each term —
@@ -123,7 +123,7 @@ structure or start importing data.
 | Selection record | `RESOLVED_LINK`, created by the queries rather than imported | A per-variant marker written onto the edge, so resolutions coexist without duplicating the structure |
 
 When the user's database differs from the reference ontology, map their labels
-onto these roles before rewriting anything from `QUERIES.md`. A role with no
+onto these roles before rewriting anything from `QUERIES.cypher`. A role with no
 counterpart in their data means the patterns resting on it have no analogue —
 say so plainly rather than forcing a fit. The decision point is the one to check
 first: a structure that records the chosen option directly on its parent

@@ -11,7 +11,7 @@ An update is not a rebuild. A new package fails by being incomplete; an update f
 3. **Sample data is stable.** Do not regenerate or edit CSVs. If the data contradicts a new annotation, ask whether to change the data or the annotation — never quietly do either.
 4. **Mechanical changes are made; meaning changes are asked.** Use VALIDATION.md §7's split. Format conversion, terminology, moving sample-data detail into TESTS.md and removing retired keys are mechanical. New `one_of`, `pattern`, counts, aliases or references, edited descriptions, changed Cypher, and anything breaking are meaning changes: propose them in the plan.
 5. **Nothing is deleted without a destination.** Every file removed has a row in the content map saying where each part of its content went, or why that part was dropped (a duplicate of what text, or obsolete because of what).
-6. **Clean packages.** Everything outside the package format is folded in and deleted. A file survives as a supporting file only when its content is too large or too specialised for SKILL.md or QUERIES.md (SKILL.md's rule for supporting files) — and then it is indexed in SKILL.md's Supporting files table.
+6. **Clean packages.** Everything outside the package format is folded in and deleted. A file survives as a supporting file only when its content is too large or too specialised for SKILL.md or QUERIES.cypher (SKILL.md's rule for supporting files) — and then it is indexed in SKILL.md's Supporting files table.
 7. **Idempotent.** Running an update on a package that is already current produces no changes: report "already current", list anything VALIDATION.md still flags, and open no PR.
 8. **One package per branch and PR.** Never batch packages; each one is tested on its own.
 9. **No query runs.** Testing against a database is manual and outside this skill (as for new packages). Do not import data or run queries, and do not mark queries as unproven. TESTS.md is what the tester works from.
@@ -22,7 +22,7 @@ The `scripts/` folder beside this file does the mechanical work. Use them rather
 
 | Script | Does |
 | ------ | ---- |
-| `inventory.py <package-dir>` | Read-only. Ontology format generation (two legacy `GRAPH_MODEL.json` dialects, the pre-release `ONTOLOGY.json` shape, current), missing files, every file outside the format with a suggested clean-up category, legacy markers in each Markdown file, agent-loadable files over or near the 50,000-character limit, QUERIES.md/TESTS.md structure, and catalog.json drift. |
+| `inventory.py <package-dir>` | Read-only. Ontology format generation (two legacy `GRAPH_MODEL.json` dialects, the pre-release `ONTOLOGY.json` shape, current), missing files, every file outside the format with a suggested clean-up category, legacy markers in each Markdown file, agent-loadable files over or near the 50,000-character limit, QUERIES.cypher/TESTS.md structure, and catalog.json drift. |
 | `convert_legacy.py <package-dir>` | Writes `ONTOLOGY.json` from `GRAPH_MODEL.json` (either legacy dialect). Structural only: it renames positional entity keys, converts fields and mappings, and logs every key rename and every dropped field. It never invents annotations and never deletes the legacy file. It prints a `WARN` for each faithful conversion the destination will not accept — a constraint flag repeated across entries of one type, repeated endpoint pairs under an empty relationship-mapping key — and fixes neither. |
 | `compare_ontology.py <old> <new>` | Proves the conversion kept meaning: labels, relationship type + direction, property names, types, keys, existence, descriptions, annotations, table columns and mapping bindings, compared by label and type rather than entity key. Reads a legacy `GRAPH_MODEL.json`, a pre-release `ONTOLOGY.json` or a current one as `<old>`. Exit 0 and `EQUIVALENT`, or a list of differences. |
 | `check_annotations.py <package-dir>` | VALIDATION.md §3b against the bundled CSVs, plus the two destination-enforced rules: constraint flags per type, and repeated endpoint pairs per relationship mapping key. |
@@ -34,7 +34,7 @@ The `scripts/` folder beside this file does the mechanical work. Use them rather
 
 1. Resolve `<source>`. A bare name (`patient-journey`) is a folder in `neo4j/studio-agent-use-cases`; a GitHub URL names it directly; a local path is a checkout. Anything else — a zip, a folder outside the repo — ask where the package lives in the repo before going further, because the deliverable is a PR.
 2. Work in a clone of `neo4j/studio-agent-use-cases`. Fetch `origin` (fetching changes nothing in the working tree, so it belongs here, before assessment) and record `origin/main`'s commit as the base — the report cites it, and every "base commit" below means it. Choose the branch name now, but create the branch only after approval in Phase 4: `<prefix>/migrate-<skillId>` when the user's own branches in the repo share a prefix (`git branch -r` and recent merged PRs show it, e.g. `ian/`), otherwise `migrate/<skillId>`.
-3. Read every file in the package in full: SKILL.md, the ontology file, QUERIES.md, every supporting file, TESTS.md and SETUP.md if present, human_description.md, and the CSV headers. Folding content in requires knowing all of it; skimming loses exactly the sentences that make a package good.
+3. Read every file in the package in full: SKILL.md, the ontology file, QUERIES.cypher, every supporting file, TESTS.md and SETUP.md if present, human_description.md, and the CSV headers. Folding content in requires knowing all of it; skimming loses exactly the sentences that make a package good.
 
 ## Phase 2: Assess
 
@@ -50,10 +50,10 @@ Change nothing yet.
 | ------------ | ---------------- | -------------------------- |
 | Legacy ontology | `GRAPH_MODEL.json` | `ONTOLOGY.json` via the converter |
 | Ontology prose | `graph-model.md`, `data-model.md` | Meaning per element → that element's `description` in ONTOLOGY.json (within 1,024 characters); design rationale → SKILL.md's Reference ontology section; anything already in a description → dropped as duplicate |
-| Duplicate queries | `queries.cypher`, `query-templates.md`, `query-patterns.md` | Queries not in QUERIES.md → added to QUERIES.md with annotation blocks; queries already there → dropped as duplicate; pattern descriptions → that query's `@usage` or `@pattern` |
+| Duplicate queries | `queries.cypher`, `query-templates.md`, `query-patterns.md` | Queries not in QUERIES.cypher → added to QUERIES.cypher with annotation blocks; queries already there → dropped as duplicate; pattern descriptions → that query's `@usage` or `@pattern` |
 | Index statements | `indexes.cypher` | SETUP.md, one annotated statement per block, only those a query depends on |
 | Intro or overview | `INTRODUCTION.md`, `overview.md` | Agent-facing points → SKILL.md "Introducing this package" guidance; reader-facing explanation → human_description.md, where it is not already there |
-| Sample-data description | `sample-data.md`, profile prose in QUERIES.md or SKILL.md | TESTS.md's sample-data profile |
+| Sample-data description | `sample-data.md`, profile prose in QUERIES.cypher or SKILL.md | TESTS.md's sample-data profile |
 | Per-query sample expectations | `// Expected against sample data: …` comments, example `:param` lines with seeded values | That query's `@sample` tag (and its TESTS.md section, which must agree); the comment or `:param` line is then removed from the Cypher block |
 | Agent guidance | `caveats.md`, `implementation-guidance.md`, "Key rules" sections | SKILL.md Operational Constraints or Reference ontology section; large and specialised → kept as a supporting file |
 | Workflow | `resolution-workflow.md`, `detection-workflow.md` | Small → SKILL.md; large and specialised → kept as an indexed supporting file |
@@ -61,7 +61,7 @@ Change nothing yet.
 
 **Fold or keep.** Fold by default. Keep a file as a supporting file only when both hold: its remaining content — the characters of its content-map rows whose destination is not "dropped" — is over roughly 3,000 characters, and the consuming agent needs it only for a specific task (so loading it on demand saves context on every other turn). A file that is mostly duplication folds even when it is long. Record the decision and the remaining size in the file table; near the threshold, say so and let the user decide.
 
-**Prose between queries** in QUERIES.md or a duplicate query file goes where its kind belongs: about one query → that query's `@description`, `@usage` or `@pattern`; design rationale → SKILL.md's Reference ontology section; sample-data detail → TESTS.md; procedure across queries → SKILL.md or the retained workflow file.
+**Prose between queries** in QUERIES.cypher or a duplicate query file goes where its kind belongs: about one query → that query's `@description`, `@usage` or `@pattern`; design rationale → SKILL.md's Reference ontology section; sample-data detail → TESTS.md; procedure across queries → SKILL.md or the retained workflow file.
 
 When two files say different things about the same subject, the content map says so; resolving the conflict is a meaning change for the plan.
 
@@ -89,7 +89,7 @@ On the branch, in this order — each step constrains the next, as in a new buil
 
 1. **Ontology.** Run `convert_legacy.py` in the package folder; run `compare_ontology.py GRAPH_MODEL.json ONTOLOGY.json` and require `EQUIVALENT`; then `git rm GRAPH_MODEL.json`. Apply the approved fixes for the converter's `WARN` lines (a repeated constraint flag kept on one entry, with "Expected on every `<TYPE>` relationship." in the others' descriptions; a relationship mapping `key` for parallel relationships). Fold ontology prose into descriptions, apply the approved annotations, replace "model" terminology inside descriptions, and keep each description within 1,024 characters. Where the legacy `e.g.` sample is a seeded entity, move it to an unremarkable value from the same column. Re-run `compare_ontology.py` against the legacy file from the base commit (`git show <base>:<skillId>/GRAPH_MODEL.json`): the only differences allowed are the approved description edits and the approved annotations.
 2. **CSVs.** Untouched, unless the plan approved a change.
-3. **QUERIES.md.** Bring it to the format in SKILL.md step 3: a prerequisites preamble, the "Adapting these queries" section, an @-annotation block on every query, the data-agnostic sweep (sample-data claims move to TESTS.md), APOC/GDS material in its own section, and the node-key constraints reference at the end. Add the queries the content map brings in. Keep every query's Cypher byte-for-byte; the annotation block goes above it. Remove every `TODO(review): unproven query`. Comments inside the Cypher block are the one exception to byte-for-byte: a comment or `:param` line carrying sample-data expectations moves into the query's `@sample` tag (VALIDATION.md 5a), and the Phase 5 comparison ignores comments, so it still proves the logic unchanged. Three cases need a rule:
+3. **QUERIES.cypher.** Bring it to the format in SKILL.md step 3: a prerequisites preamble, the "Adapting these queries" section, an @-annotation block on every query, the data-agnostic sweep (sample-data claims move to TESTS.md), APOC/GDS material in its own section, and the node-key constraints reference at the end. Add the queries the content map brings in. Keep every query's Cypher byte-for-byte; the annotation block goes above it. Remove every `TODO(review): unproven query`. Comments inside the Cypher block are the one exception to byte-for-byte: a comment or `:param` line carrying sample-data expectations moves into the query's `@sample` tag (VALIDATION.md 5a), and the Phase 5 comparison ignores comments, so it still proves the logic unchanged. Three cases need a rule:
    - **A heading that holds more than one query** is split into one `##` heading per query. Each resulting heading must describe its own query: the first query keeps the original heading only if it still does, otherwise every part gets a new name from what it does, in the same style. Record every new heading in the plan; TESTS.md follows the new headings.
    - **Run order.** When the package says its queries must run in order, keep that order. Satisfy the APOC/GDS rule by labelling those queries in place — "(requires APOC)" in the heading and in `@prerequisites` — rather than moving them into a separate section.
    - **Literal thresholds.** Where a threshold is written into the Cypher as a literal rather than a `$parameter`, do not parameterise it: `@params` says `None` (or lists only the real parameters), and `@usage` names each literal threshold, what it controls, and a data-agnostic starting point for changing it. Parameterising is a query change — propose it in the plan as an optional fix.
@@ -107,7 +107,7 @@ Run VALIDATION.md in full, then these migration checks:
 - `inventory.py` reports no `MISSING`, no `OVERSIZE`, no `LEGACY` lines (a "the model" hit is acceptable only where it means something other than the reference ontology — a pricing model, a risk model), and no `EXTRA` except retained supporting files indexed in SKILL.md. Every label, type or property it reports as written by a query is declared and mapped, or defined in SKILL.md. A `NEAR-LIMIT` file goes in the PR description with its size.
 - `check_annotations.py`, the spec-library check and the runtime gate all pass — the gate on the destination's current main branch, with both `REGISTER OK` and `IMPORT CONVERT OK`. A legacy file converted faithfully can still fail the gate on the two destination-enforced rules, so a migration is not done until the gate has run on the converted package.
 - `compare_ontology.py` against the base commit's legacy file shows only approved differences.
-- Every query in the base commit's QUERIES.md and duplicate query files is either in the new QUERIES.md with identical Cypher, or recorded in the content map as a duplicate:
+- Every query in the base commit's QUERIES.cypher and duplicate query files is either in the new QUERIES.cypher with identical Cypher, or recorded in the content map as a duplicate:
 
 ```bash
 python3 - "<repo-root>" "<skillId>" "<base-commit>" <<'PY'
@@ -127,7 +127,7 @@ for n in names:
     text = subprocess.run(["git", "-C", root, "show", f"{base}:{skill}/{n}"], capture_output=True, text=True).stdout
     if n.endswith(".cypher") or "```cypher" in text:
         old |= bodies(text)
-new = bodies((root / skill / "QUERIES.md").read_text()) | bodies((root / skill / "SETUP.md").read_text() if (root / skill / "SETUP.md").is_file() else "")
+new = bodies((root / skill / "QUERIES.cypher").read_text()) | bodies((root / skill / "SETUP.md").read_text() if (root / skill / "SETUP.md").is_file() else "")
 for q in sorted(old - new): print("NOT CARRIED OVER (must be a duplicate or an approved change):", q[:120])
 for q in sorted(new - old): print("NEW OR CHANGED (must be an approved addition or fix):", q[:120])
 PY
@@ -139,7 +139,7 @@ PY
 
 ## Phase 6: Pull request
 
-1. Commit in three steps so the review reads in order: the ontology conversion (`ONTOLOGY.json` added, `GRAPH_MODEL.json` removed); the documents brought to format (SKILL.md, QUERIES.md, SETUP.md, TESTS.md, human_description.md); the clean-up (deleted files and `catalog.json`).
+1. Commit in three steps so the review reads in order: the ontology conversion (`ONTOLOGY.json` added, `GRAPH_MODEL.json` removed); the documents brought to format (SKILL.md, QUERIES.cypher, SETUP.md, TESTS.md, human_description.md); the clean-up (deleted files and `catalog.json`).
 2. Push the branch and open a pull request against `main`, titled `Migrate <skillId> to the current package format`. If you cannot push or open the PR from this environment, produce the branch as a patch plus the PR description, and give the user the commands to push and open it.
 3. The PR description is the migration report:
    - **Summary**: source commit, ontology generation before and after, one line on what changed.

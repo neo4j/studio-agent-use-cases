@@ -13,7 +13,7 @@ Required:
 ```text
 <package-path>/SKILL.md
 <package-path>/ONTOLOGY.json
-<package-path>/QUERIES.md
+<package-path>/QUERIES.cypher
 <package-path>/human_description.md  # required in every package
 <package-path>/sample-data/**/*.csv   # optional at the format level; present in any working demo
 <package-path>/TESTS.md               # required whenever sample-data CSVs resolve
@@ -29,7 +29,7 @@ Confirm:
 - `TESTS.md` and `human_description.md` are **not** indexed in SKILL.md's Supporting files table, and no agent-facing file instructs the agent to read either. Any mention is worth reviewing; an instruction to load one defeats the split and is a blocker.
 - The folder name (`skillId`) is kebab-case and stable.
 - Supporting files beyond the required set use only `.md` or `.cypher`, and each is indexed in SKILL.md with a stated purpose so the agent knows when to load it. An unindexed supporting file is a warning: index it, fold it in, or remove it. `TESTS.md` and `human_description.md` are the only exemptions.
-- **Every file the agent can load is at most 50,000 characters** — QUERIES.md, SETUP.md, ONTOLOGY.json and every supporting file. This is enforced by the destination, not guidance: upx's file-reading tools refuse any packaged file longer than that (`MAX_PACKAGE_FILE_CHARACTERS`), so the agent cannot read it at all. Over the limit is a **blocker**; over 45,000 is a warning, because the next added query or annotation tips it over. Count characters, not bytes — `wc -c` overstates any file with typographic dashes or arrows. Report every file near the limit with its size and what drove the growth. **`TESTS.md`, `human_description.md` and the sample-data CSVs are exempt** — none reaches the consuming agent, so size costs nothing there. A large TESTS.md is not a finding; a large QUERIES.md usually means material that belongs in TESTS.md has not moved, or verbose annotation blocks that can be tightened without losing meaning. `human_description.md` has its own length guidance in 5d, which is about the reader, not the context window.
+- **Every file the agent can load is at most 50,000 characters** — QUERIES.cypher, SETUP.md, ONTOLOGY.json and every supporting file. This is enforced by the destination, not guidance: upx's file-reading tools refuse any packaged file longer than that (`MAX_PACKAGE_FILE_CHARACTERS`), so the agent cannot read it at all. Over the limit is a **blocker**; over 45,000 is a warning, because the next added query or annotation tips it over. Count characters, not bytes — `wc -c` overstates any file with typographic dashes or arrows. Report every file near the limit with its size and what drove the growth. **`TESTS.md`, `human_description.md` and the sample-data CSVs are exempt** — none reaches the consuming agent, so size costs nothing there. A large TESTS.md is not a finding; a large QUERIES.cypher usually means material that belongs in TESTS.md has not moved, or verbose annotation blocks that can be tightened without losing meaning. `human_description.md` has its own length guidance in 5d, which is about the reader, not the context window.
 - Paths use forward slashes with no absolute, URL, backslash, empty, `.` or `..` segments.
 - No file references a bundled file that does not exist.
 - In `neo4j/studio-agent-use-cases`, the package's `catalog.json` entry lists exactly the files in the folder (`scripts/catalog_entry.py <repo-root> <skillId>` prints any difference; no output means none).
@@ -37,7 +37,7 @@ Confirm:
 ```bash
 P="<package-path>"
 
-for f in SKILL.md ONTOLOGY.json QUERIES.md human_description.md; do
+for f in SKILL.md ONTOLOGY.json QUERIES.cypher human_description.md; do
   test -s "$P/$f" || echo "MISSING: $f"
 done
 
@@ -275,28 +275,30 @@ A package where only some referenced CSVs resolve is invalid.
 
 ## 5. Query checks
 
-For QUERIES.md (and any supporting `.cypher` file):
+For QUERIES.cypher (and any supporting `.cypher` file):
+
+- **The file is valid Cypher.** All prose and headings are `//` comments (`// ## Query name`), there are no markdown code fences, and every statement ends with `;`. A stray fence, bare prose line or missing semicolon is a finding. Where a database is not available, check mechanically: `grep -n '^```' QUERIES.cypher` returns nothing, and every non-comment statement's last line ends in `;`.
 
 - The preamble states prerequisites in one place. It does **not** profile the sample data — row counts and seeded signals belong in TESTS.md.
 - An **"Adapting these queries"** section appears near the top: read the live schema, map onto SKILL.md's role map, rewrite, update the annotation block. Missing section is a finding.
-- Every query opens with a `/* @... */` annotation block **before any query logic** (a Cypher block comment, so it can never execute), carrying the required tags: `@name` matching the query's `##` heading, `@description`, `@params`, `@prerequisites`, `@returns`, `@usage`, `@tags`. No `@version`. A missing block or missing required tag is a finding.
+- Every query opens with a `/* @... */` annotation block **before any query logic** (a Cypher block comment, so it can never execute), carrying the required tags: `@name` matching the query's `// ##` heading, `@description`, `@params`, `@prerequisites`, `@returns`, `@usage`, `@tags`. No `@version`. A missing block or missing required tag is a finding.
 - **`@sample`, where present:** at most one per query; opens with the literal `Bundled sample data only:`; gives a value for every `$parameter` the query takes; every anchor it names — a key or name the query looks up — exists in the bundled CSVs (an anchor that does not exist is a blocker — it sends the agent's smoke test to a false alarm), while values that are not lookups need not: a threshold or date, or a name the query itself writes (an identifier for a variant the query creates); and it agrees with the query's TESTS.md section — parameters, row count and named results. Disagreement is a blocker: one of the two is stale.
 - `@params` matches the query's actual parameters exactly: every `$parameter` in the Cypher appears in `@params` with its meaning, and `@params` names nothing the query doesn't use (`None` for parameterless queries). Mechanically checkable — do it mechanically.
 - `@params` is **one line per parameter**, each starting at the parameter name, with wrapped text indented past it. A second parameter beginning at the same indent as the first one's continuation lines is unparseable and defeats the check above — finding.
 - Every parameter that gates a result set carries a **starting point with a data-agnostic justification**: either a concrete value justified by what the parameter does, or a stated procedure for deriving one where no number transfers between datasets ("take the portfolio's upper quartile"). A gating threshold with neither is a finding — the query is unusable without opening TESTS.md. A threshold justified by the sample is a leak, caught in 5a.
-- Labels, relationship types, directions, and properties match ONTOLOGY.json exactly — **with one exception: entities the queries themselves create.** A relationship type or label that a bundled query writes has no source data, cannot be mapped, and therefore must not be declared in the reference ontology at all (§3, and ONTOLOGY_SPEC_FORMAT.md's "Declare only what Import can load"). For each of those, confirm all four of: it is genuinely written by a bundled query and not merely missing from the reference ontology; it is absent from `extensions.data_source_tables` and `extensions.data_source_mappings` as well as `relationships`; SKILL.md carries its full definition (§6); and QUERIES.md's prerequisites say it does not exist in a freshly imported database. A query-referenced entity that is undeclared *and* undocumented is a blocker — that is the drift this rule exists to catch, and it looks identical to the legitimate case until you check which query writes it.
+- Labels, relationship types, directions, and properties match ONTOLOGY.json exactly — **with one exception: entities the queries themselves create.** A relationship type or label that a bundled query writes has no source data, cannot be mapped, and therefore must not be declared in the reference ontology at all (§3, and ONTOLOGY_SPEC_FORMAT.md's "Declare only what Import can load"). For each of those, confirm all four of: it is genuinely written by a bundled query and not merely missing from the reference ontology; it is absent from `extensions.data_source_tables` and `extensions.data_source_mappings` as well as `relationships`; SKILL.md carries its full definition (§6); and QUERIES.cypher's prerequisites say it does not exist in a freshly imported database. A query-referenced entity that is undeclared *and* undocumented is a blocker — that is the drift this rule exists to catch, and it looks identical to the legitimate case until you check which query writes it.
 - Annotation blocks use the reference ontology's vocabulary: where `@description`, `@params`, or `@usage` explains a property or relationship, its wording, unit, scope, allowed values, and direction agree with that element's ONTOLOGY.json annotations. An annotation that contradicts the reference ontology is a blocker — the two are one contract.
 - Variable-length traversals have explicit bounds; thresholds and limits are called out in `@usage` as tunable, in general terms. The one accepted exception is a walk over a structure that is acyclic by construction (a bill of materials, a containment hierarchy), where any fixed bound would silently truncate deep branches and turn them into false results: leave it unbounded and say so in `@usage` — that the walk is unbounded and relies on the structure being acyclic.
 - No per-query schema-drift prose. The adapting section states the procedure once; repeating it per query is boilerplate. An optional `@pattern` tag on a query whose shape isn't recoverable from its Cypher is fine — on every query it is padding, and a warning.
 - No design rationale between the queries (why the reference ontology departs from a source page, why a query differs from a published one). That belongs in SKILL.md's Reference ontology section or a supporting rationale file.
-- APOC or GDS use is confined to a clearly labelled section with prerequisites stated — a divider heading such as `## Graph Data Science (optional)` holding only section prose (plugin needs, projection lifecycle, run order), followed by each query under its own `##` heading with the requirement in `@prerequisites` — or, where the package's queries must run in a stated order, each APOC/GDS query is labelled in place with "(requires APOC)" or "(requires GDS)" in its heading and `@prerequisites`.
+- APOC or GDS use is confined to a clearly labelled section with prerequisites stated — a divider heading such as `// ## Graph Data Science (optional)` holding only section prose (plugin needs, projection lifecycle, run order), followed by each query under its own `// ##` heading with the requirement in `@prerequisites` — or, where the package's queries must run in a stated order, each APOC/GDS query is labelled in place with "(requires APOC)" or "(requires GDS)" in its heading and `@prerequisites`.
 - The node-key constraints implied by ONTOLOGY.json (`key: true` properties and composite `KEY` constraints) appear at the end as a reference for checking the live database, introduced by section prose; the individual statements need no annotation blocks.
 
 Running the queries against a database is manual testing, outside this skill's scope. Do not import data or run queries as part of validation, and do not mark queries as unproven. The checks above are static: read every query against ONTOLOGY.json and against the seeded design TESTS.md describes, and confirm by reading the CSVs that each query's pattern is present in the data — a query whose pattern the data cannot produce is a blocker whether or not anyone runs it.
 
 ## 5a. Sample-data leakage checks
 
-Everything the consuming agent reads must stay true on data that is not yours. Scan SKILL.md, QUERIES.md, SETUP.md and any supporting file — outside `@sample` tags, which are labelled as describing the bundled sample only — for:
+Everything the consuming agent reads must stay true on data that is not yours. Scan SKILL.md, QUERIES.cypher, SETUP.md and any supporting file — outside `@sample` tags, which are labelled as describing the bundled sample only — for:
 
 - Row counts, totals, or "N rows" claims of any kind.
 - Identifiers that only exist in the bundled CSVs — seeded entity IDs, names, addresses, account numbers.
@@ -338,7 +340,7 @@ sensitivity notes, which should say where each shipped value actually came from.
 
 Three hit classes are correct and expected. SKILL.md's "Introducing this package" section
 may describe the sample *in general terms* ("synthetic data that deliberately seeds the
-patterns the queries look for"); QUERIES.md's prerequisites may name the bundled CSVs as
+patterns the queries look for"); QUERIES.cypher's prerequisites may name the bundled CSVs as
 one of the things that can be imported. Both say the sample exists and what it is for, and
 neither may quantify it, name anything in it, or imply the reader's database contains it.
 The third is a query's `@sample` tag, which may name and quantify the sample because it is
@@ -359,7 +361,7 @@ When `SETUP.md` exists:
 - Every statement opens with a `/* @... */` annotation block: `@name`, `@description`, and `@usage` naming the dependent queries and the effect if skipped.
 - The file opens with the agent rules: explain before running, confirm the target, caveat results if declined.
 - SKILL.md's Operational Constraints reference SETUP.md with its statement count.
-- Any statement duplicated in QUERIES.md as a reference template says so in both places, with a run-once instruction.
+- Any statement duplicated in QUERIES.cypher as a reference template says so in both places, with a run-once instruction.
 - TESTS.md's "How to run" names the SETUP.md statements the queries depend on.
 
 When `SETUP.md` is absent:
@@ -369,11 +371,11 @@ When `SETUP.md` is absent:
 
 ## 5c. TESTS.md checks
 
-TESTS.md is the oracle. It is never loaded by the runtime, so it is exempt from the size target and free to be as concrete as the work requires — but it must be complete and it must pair with QUERIES.md.
+TESTS.md is the oracle. It is never loaded by the runtime, so it is exempt from the size target and free to be as concrete as the work requires — but it must be complete and it must pair with QUERIES.cypher.
 
 - A "How to run" preamble for the manual tester: disposable database required, CSVs imported through the Import flow from ONTOLOGY.json, and any SETUP.md statements that must run first.
-- A sample-data profile: row counts per label and relationship type, the seeded signals in full, and the deliberate background noise. This is the material removed from QUERIES.md — confirm it actually landed here rather than being deleted.
-- **Heading parity with QUERIES.md.** Every query's `##` heading has an identically titled `##` section in TESTS.md, and vice versa. Mechanically checkable — do it mechanically.
+- A sample-data profile: row counts per label and relationship type, the seeded signals in full, and the deliberate background noise. This is the material removed from QUERIES.cypher — confirm it actually landed here rather than being deleted.
+- **Heading parity with QUERIES.cypher.** Every query's `// ##` heading in QUERIES.cypher has an identically titled `##` section in TESTS.md, and vice versa. Mechanically checkable — do it mechanically.
 - Every query section states its **Parameters** and an **Invariant**. A section with expected counts but no invariant is a finding: it breaks on the next data regeneration and the breakage looks like a query fault.
 - Invariants are expressed in terms of the seeded design ("returns the twelve Ring A claimants and no unseeded claimant"), not as bare counts. A bare row count is an observation, not an invariant.
 - Any **Expected** counts are derivable from the bundled CSVs, and agree with them.
@@ -386,13 +388,13 @@ P="<package-path>"
 Q_SKIP='^## (Prerequisites|Adapting these queries|Graph Data Science.*|APOC.*|Node-key constraints.*)$'
 T_SKIP='^## (How to run|Sample-data profile)$'
 
-rg -N '^## ' "$P/QUERIES.md" | grep -Ev "$Q_SKIP" | sort > /tmp/q-headings.txt
+rg -N '^// ## ' "$P/QUERIES.cypher" | sed 's|^// ||' | grep -Ev "$Q_SKIP" | sort > /tmp/q-headings.txt
 rg -N '^## ' "$P/TESTS.md"   | grep -Ev "$T_SKIP" | sort > /tmp/t-headings.txt
 
 if ! diff -q /tmp/q-headings.txt /tmp/t-headings.txt >/dev/null; then
   echo "FINDING: unpaired query headings"
   comm -23 /tmp/q-headings.txt /tmp/t-headings.txt | sed 's/^/  no TESTS.md section: /'
-  comm -13 /tmp/q-headings.txt /tmp/t-headings.txt | sed 's/^/  no QUERIES.md query: /'
+  comm -13 /tmp/q-headings.txt /tmp/t-headings.txt | sed 's/^/  no QUERIES.cypher query: /'
 fi
 
 # Every TESTS.md query section states Parameters and an Invariant, and names the
@@ -436,7 +438,7 @@ The only file in the package written for a human reader, and the only one nothin
 
 **Exclusions** — none of the following may appear:
 
-- Filenames or paths of any kind: `ONTOLOGY.json`, `QUERIES.md`, `SKILL.md`, `TESTS.md`, `SETUP.md`, `sample-data/`.
+- Filenames or paths of any kind: `ONTOLOGY.json`, `QUERIES.cypher`, `SKILL.md`, `TESTS.md`, `SETUP.md`, `sample-data/`.
 - Cypher, JSON, or any fenced code block. Inline code formatting on label, relationship and property names is expected and fine.
 - Any mention of the sample data, in any terms — counts, seeded entities, or a general "bundled synthetic dataset". Stricter than 5a: the file is about the industry and the ontology, and the data is out of scope.
 - Instructions addressed to an agent: "the agent can help you", response shapes, operational constraints, "when the user first opens this package".
@@ -513,7 +515,7 @@ The greps over-report by design. `schema` may appear legitimately in a domain se
   - It is followed by the instruction to map the user's labels onto the roles before rewriting, and to say plainly when a role has no counterpart.
 - Any image URL is real or marked `TODO(review)` — never fabricated.
 - Operational constraints cover write confirmation, target-database confirmation, that `@params` starting values are starting points rather than universal defaults, package-specific gotchas (versions, plugins, tuning), and — when any query carries `@sample` — the rule that `@sample` is used only when the connected database holds the bundled sample.
-- Terminology, units, allowed values, directions, and identifiers are consistent across SKILL.md, QUERIES.md, ONTOLOGY.json, and the CSVs — with ONTOLOGY.json's annotations (nodes, relationships, and properties) as the reference vocabulary the other files must agree with.
+- Terminology, units, allowed values, directions, and identifiers are consistent across SKILL.md, QUERIES.cypher, ONTOLOGY.json, and the CSVs — with ONTOLOGY.json's annotations (nodes, relationships, and properties) as the reference vocabulary the other files must agree with.
 - The Reference ontology section summarises rather than redefines: the authoritative meanings live in ONTOLOGY.json's annotations, and SKILL.md says so.
 - SKILL.md instructs the consuming agent to treat those annotations as authoritative when explaining the reference ontology or generating Cypher, and tells it that users may say "model", "graph model", "data model" or "ontology" for the same thing.
 - **Package-wide terminology.** Every package file, TESTS.md included, calls the ontology the reference ontology. "Graph model", "graph data model", "data model" or a bare "model" used as its name, and any mention of `GRAPH_MODEL.json` or `neo4j-graph-spec-version`, is a finding — and a blocker in `human_description.md`. "Schema" is correct only for the live database. Equally a finding: describing the reference ontology in OWL, RDF, reasoning, T-Box/A-Box or "axiom" terms.
@@ -546,11 +548,11 @@ Example report shape:
 
 ```text
 Blockers (3)
-1. QUERIES.md §3 references Claim.amount; ONTOLOGY.json defines amountClaimed.
+1. QUERIES.cypher §3 references Claim.amount; ONTOLOGY.json defines amountClaimed.
    Fix: rename in the query (recommended) or add the property to the reference ontology.
 2. ONTOLOGY.json fails schema validation: property "vin" uses "mustExist"
    (legacy field). Fix: replace with must_exist (mechanical — fixed, please confirm).
-3. QUERIES.md §7 @usage says "returns the 12 seeded ring members" — a sample-data
+3. QUERIES.cypher §7 @usage says "returns the 12 seeded ring members" — a sample-data
    claim in an agent-facing file. Fix: move the count to TESTS.md and restate the
    guidance as "raise until the group size is improbable for the portfolio in hand"
    (mechanical — fixed, please confirm).

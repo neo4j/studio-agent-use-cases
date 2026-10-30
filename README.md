@@ -10,7 +10,7 @@ This public repository hosts the versioned skill packages used by Neo4j Studio A
 ├── <skill-id>/
 │   ├── SKILL.md
 │   ├── ONTOLOGY.json
-│   ├── QUERIES.md
+│   ├── QUERIES.cypher
 │   ├── human_description.md
 │   ├── TESTS.md
 │   └── ...SETUP.md, supporting files and sample-data/
@@ -26,7 +26,7 @@ Every skill must have:
 - a parseable `ONTOLOGY.json` — the package's reference ontology in the ontology graph spec, declaring the pinned spec URI (`https://neo4j.com/docs/ontology-graph-spec/1.0.0/schema.json`) as its `schema` and the directory name as its `id`; and
 - every sample CSV referenced by the reference ontology, with the columns it declares.
 
-The full package format — `QUERIES.md`, `TESTS.md`, `human_description.md`, `SETUP.md` and the validation suite — is defined by the create-solution-package skill in [`skills/solution-package-builder/`](skills/solution-package-builder/SKILL.md). Legacy `GRAPH_MODEL.json` packages are no longer accepted; the skill's `MIGRATION.md` covers converting one.
+The full package format — `QUERIES.cypher`, `TESTS.md`, `human_description.md`, `SETUP.md` and the validation suite — is defined by the create-solution-package skill in [`skills/solution-package-builder/`](skills/solution-package-builder/SKILL.md). Legacy `GRAPH_MODEL.json` packages are no longer accepted; the skill's `MIGRATION.md` covers converting one.
 
 ## Development
 
@@ -120,7 +120,7 @@ Do not commit directly to `staging` or `production`. Apply fixes to `main` and p
         "skill": [
           "sample-data/example.csv",
           "human_description.md",
-          "QUERIES.md",
+          "QUERIES.cypher",
           "TESTS.md"
         ]
       }

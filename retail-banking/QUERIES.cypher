@@ -1,27 +1,26 @@
-# Retail Banking — Query Guidance
+// # Retail Banking — Query Guidance
 
-Cypher for the `retail-banking` use case. Every query references only labels, relationship types, and properties defined in the reference ontology (`ONTOLOGY.json`). No query writes to the database.
+// Cypher for the `retail-banking` use case. Every query references only labels, relationship types, and properties defined in the reference ontology (`ONTOLOGY.json`). No query writes to the database.
 
-## Prerequisites
+// ## Prerequisites
 
-- Neo4j 5.9+ and Cypher 5. The ring queries use quantified path patterns (`{3,6}`, `{2,5}`), and the decay query uses a chained comparison (`0.80 <= x <= 1.00`).
-- **Directed ring with distinct accounts** and **Chronological and amount-decay ring** require APOC (`apoc.coll.toSet`) for their distinct-account filter, and say so in their headings. The other queries need no plugin.
-- The graph is loaded through the Import flow from `ONTOLOGY.json` — the bundled `sample-data/` CSVs, or the user's own payments data mapped onto the reference ontology.
-- The node keys in `ONTOLOGY.json` make `Account.accountNumber` and `Transaction.transactionId` unique, so any anchored lookup is an index seek rather than a label scan.
-- No query takes a parameter: every account is tried as the starting point of a ring.
-- The queries are listed in the order to run them. Start with the census, then run the ring queries broad to strict — each one adds a condition to the one before, which shows which condition removes a candidate ring.
+// - Neo4j 5.9+ and Cypher 5. The ring queries use quantified path patterns (`{3,6}`, `{2,5}`), and the decay query uses a chained comparison (`0.80 <= x <= 1.00`).
+// - **Directed ring with distinct accounts** and **Chronological and amount-decay ring** require APOC (`apoc.coll.toSet`) for their distinct-account filter, and say so in their headings. The other queries need no plugin.
+// - The graph is loaded through the Import flow from `ONTOLOGY.json` — the bundled `sample-data/` CSVs, or the user's own payments data mapped onto the reference ontology.
+// - The node keys in `ONTOLOGY.json` make `Account.accountNumber` and `Transaction.transactionId` unique, so any anchored lookup is an index seek rather than a label scan.
+// - No query takes a parameter: every account is tried as the starting point of a ring.
+// - The queries are listed in the order to run them. Start with the census, then run the ring queries broad to strict — each one adds a condition to the one before, which shows which condition removes a candidate ring.
 
-## Adapting these queries
+// ## Adapting these queries
 
-These queries assume the reference ontology in `ONTOLOGY.json`. When the user's database differs — their own ontology, a modified one, or a database that predates this package — the queries are patterns to rebuild, not Cypher to run.
+// These queries assume the reference ontology in `ONTOLOGY.json`. When the user's database differs — their own ontology, a modified one, or a database that predates this package — the queries are patterns to rebuild, not Cypher to run.
 
-1. Read the live schema (`CALL db.schema.visualization()`, `SHOW CONSTRAINTS`) rather than assuming the reference ontology applies.
-2. Map their labels onto the role map in `SKILL.md`. A role with no counterpart means the pattern below it has no analogue — say so rather than forcing a fit.
-3. Rewrite from the pattern, and update the annotation block to describe what the rewritten query actually does.
+// 1. Read the live schema (`CALL db.schema.visualization()`, `SHOW CONSTRAINTS`) rather than assuming the reference ontology applies.
+// 2. Map their labels onto the role map in `SKILL.md`. A role with no counterpart means the pattern below it has no analogue — say so rather than forcing a fit.
+// 3. Rewrite from the pattern, and update the annotation block to describe what the rewritten query actually does.
 
-## Graph census
+// ## Graph census
 
-```cypher
 /*
  * @name           Graph census
  * @description    Counts Account and Transaction nodes to confirm the import
@@ -42,11 +41,9 @@ MATCH (a:Account)
 WITH count(a) AS accounts
 MATCH (t:Transaction)
 RETURN accounts, count(t) AS transactions;
-```
 
-## Directed ring (basic)
+// ## Directed ring (basic)
 
-```cypher
 /*
  * @name           Directed ring (basic)
  * @description    First pass: proves directed rings exist at all. Follows
@@ -77,11 +74,9 @@ MATCH path =
   (()-[:PERFORMS]->()-[:BENEFITS_TO]->()){3,6}
   (start)
 RETURN path;
-```
 
-## Directed ring with distinct accounts (requires APOC)
+// ## Directed ring with distinct accounts (requires APOC)
 
-```cypher
 /*
  * @name           Directed ring with distinct accounts (requires APOC)
  * @description    The basic directed ring, keeping only rings whose paying
@@ -111,11 +106,9 @@ MATCH path =
   (start)
 WHERE size(apoc.coll.toSet(source)) = size(source)
 RETURN path;
-```
 
-## Chronological and amount-decay ring (requires APOC)
+// ## Chronological and amount-decay ring (requires APOC)
 
-```cypher
 /*
  * @name           Chronological and amount-decay ring (requires APOC)
  * @description    The strictest check: a ring of distinct accounts in which
@@ -161,15 +154,12 @@ MATCH path =
   (lastTx)-[:BENEFITS_TO]->(start)
 WHERE size(apoc.coll.toSet([start] + middleAccount)) = size([start] + middleAccount)
 RETURN path;
-```
 
-## Node-key constraints
+// ## Node-key constraints
 
-Import creates these node-key constraints from the key definitions in `ONTOLOGY.json`. They are listed as a reference for checking the live database (`SHOW CONSTRAINTS`), not as statements to run: recreating them, or adding `UNIQUE` variants, conflicts with the existing `KEY` constraints.
+// Import creates these node-key constraints from the key definitions in `ONTOLOGY.json`. They are listed as a reference for checking the live database (`SHOW CONSTRAINTS`), not as statements to run: recreating them, or adding `UNIQUE` variants, conflicts with the existing `KEY` constraints.
 
-```cypher
 CREATE CONSTRAINT accountNumber_Account_key IF NOT EXISTS
   FOR (a:Account) REQUIRE a.accountNumber IS NODE KEY;
 CREATE CONSTRAINT transactionId_Transaction_key IF NOT EXISTS
   FOR (t:Transaction) REQUIRE t.transactionId IS NODE KEY;
-```

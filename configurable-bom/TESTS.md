@@ -1,6 +1,6 @@
 # Configurable Bill of Materials — Tests
 
-What each query in `QUERIES.md` should return on the bundled sample data. This file is for the manual tester and the curating engineer; the runtime never loads it. Everything below was derived from the CSVs in `sample-data/`, not from a database run: the resolution figures come from a Python reference implementation that mirrors the queries step for step — resolve, score-and-prune, garbage-collect, roll up — run over the CSVs.
+What each query in `QUERIES.cypher` should return on the bundled sample data. This file is for the manual tester and the curating engineer; the runtime never loads it. Everything below was derived from the CSVs in `sample-data/`, not from a database run: the resolution figures come from a Python reference implementation that mirrors the queries step for step — resolve, score-and-prune, garbage-collect, roll up — run over the CSVs.
 
 ## How to run
 
@@ -21,7 +21,7 @@ What each query in `QUERIES.md` should return on the bundled sample data. This f
    replaces, so re-running over an existing variant name merges the new result
    into the old and the two cannot afterwards be told apart. The scenarios below
    use three distinct variant names so all three can coexist.
-6. Run each query in `QUERIES.md` with the parameters given in its section
+6. Run each query in `QUERIES.cypher` with the parameters given in its section
    below, in the order the sections appear, and compare the result with the
    Invariant first and the Expected values second.
 
@@ -347,7 +347,7 @@ allow list changed to `["11-Speed"]`, a value no option carries.
   select the cheapest frame, which is the least interesting of the three
   outcomes — an engineer demonstrating the package may prefer −100, where
   scoring visibly trades cost against weight rather than simply minimising cost.
-  `QUERIES.md` states the factor as an exchange rate and gives no
+  `QUERIES.cypher` states the factor as an exchange rate and gives no
   catalog-derived justification, which is correct.
 
   `maxIterations` needs only 2 passes here (rim and tire, then wheelset); 10 is

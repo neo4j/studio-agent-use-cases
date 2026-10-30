@@ -9,7 +9,7 @@
           "sample-data/accounts.csv",
           "sample-data/transactions.csv",
           "human_description.md",
-          "QUERIES.md",
+          "QUERIES.cypher",
           "TESTS.md"
         ],
         "markdown": "SKILL.md"
@@ -29,7 +29,7 @@
           "sample-data/treated_by.csv",
           "sample-data/treats.csv",
           "sample-data/vehicles.csv",
-          "QUERIES.md",
+          "QUERIES.cypher",
           "human_description.md",
           "TESTS.md"
         ],
@@ -48,7 +48,7 @@
           "sample-data/organisations.csv",
           "sample-data/patients.csv",
           "sample-data/providers.csv",
-          "QUERIES.md",
+          "QUERIES.cypher",
           "human_description.md",
           "TESTS.md"
         ],
@@ -63,7 +63,7 @@
           "sample-data/section_references.csv",
           "sample-data/sections.csv",
           "sample-data/standards.csv",
-          "QUERIES.md",
+          "QUERIES.cypher",
           "TESTS.md",
           "human_description.md"
         ],
@@ -86,7 +86,7 @@
           "sample-data/product_requires_config_group.csv",
           "sample-data/products.csv",
           "human_description.md",
-          "QUERIES.md",
+          "QUERIES.cypher",
           "SETUP.md",
           "TESTS.md"
         ],
@@ -108,7 +108,7 @@
           "sample-data/phones.csv",
           "sample-data/ssns.csv",
           "implementation-guidance.md",
-          "QUERIES.md",
+          "QUERIES.cypher",
           "SETUP.md",
           "human_description.md",
           "TESTS.md"
@@ -128,7 +128,7 @@
           "sample-data/roads-city-city.csv",
           "sample-data/roads-city-station.csv",
           "sample-data/roads-station-city.csv",
-          "QUERIES.md",
+          "QUERIES.cypher",
           "human_description.md",
           "TESTS.md"
         ],
@@ -156,7 +156,7 @@
           "sample-data/policy_accesses_application.csv",
           "sample-data/policy_accesses_service.csv",
           "human_description.md",
-          "QUERIES.md",
+          "QUERIES.cypher",
           "SETUP.md",
           "TESTS.md"
         ],
@@ -181,7 +181,7 @@
           "sample-data/persons.csv",
           "sample-data/properties.csv",
           "human_description.md",
-          "QUERIES.md",
+          "QUERIES.cypher",
           "TESTS.md",
           "NOTICE.md"
         ],

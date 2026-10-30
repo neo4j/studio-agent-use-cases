@@ -1,45 +1,44 @@
-# Regulatory Dependency Mapping — Query Guidance
+// # Regulatory Dependency Mapping — Query Guidance
 
-Cypher for the `regulatory-dependency-mapping` use case. Every query references only labels, relationship types, and properties defined in the reference ontology (`ONTOLOGY.json`). No query writes to the stored graph; the GDS queries create and drop an in-memory projection only.
+// Cypher for the `regulatory-dependency-mapping` use case. Every query references only labels, relationship types, and properties defined in the reference ontology (`ONTOLOGY.json`). No query writes to the stored graph; the GDS queries create and drop an in-memory projection only.
 
-## Prerequisites
+// ## Prerequisites
 
-- Neo4j 5.x, Cypher 5. No APOC.
-- The graph is loaded through the Import flow from `ONTOLOGY.json` — the
-  bundled `sample-data/` CSVs, or the user's own handbook mapped onto the
-  reference ontology.
-- The node keys in `ONTOLOGY.json` make `Standard.id` and `Section.id` unique,
-  so every anchored lookup below is an index seek rather than a label scan.
-- Every query outside the **Graph Data Science** section is plain Cypher and
-  needs nothing beyond the imported reference ontology. No post-import setup
-  is required.
-- The queries prefixed **GDS —** need the Graph Data Science plugin (2.x) on
-  the target database. GDS is absent on some Aura tiers and many self-managed
-  installs; the plain-Cypher queries cover the same ground, with
-  *Most-cited sections by inbound citation count* standing in for PageRank as
-  a degree-based measure of influence.
-- **Traversal depth cannot be parameterised.** Cypher requires a literal bound
-  on a variable-length pattern, so there is no `$maxDepth` to pass. A bound of
-  N returns the pattern to depth N and silently omits anything deeper: the
-  result is not marked as truncated. Each query's `@usage` states its bound.
-  Before trusting any of them on an unfamiliar handbook, check how deep it
-  actually nests and raise the literal in the Cypher if it nests deeper than
-  the bound allows.
-- Anchors are parameters, never hardcoded identifiers. Before running an
-  anchored query, ask the user which standard or section they mean, or offer
-  real identifiers from the hierarchy query. Do not invent identifiers.
+// - Neo4j 5.x, Cypher 5. No APOC.
+// - The graph is loaded through the Import flow from `ONTOLOGY.json` — the
+//   bundled `sample-data/` CSVs, or the user's own handbook mapped onto the
+//   reference ontology.
+// - The node keys in `ONTOLOGY.json` make `Standard.id` and `Section.id` unique,
+//   so every anchored lookup below is an index seek rather than a label scan.
+// - Every query outside the **Graph Data Science** section is plain Cypher and
+//   needs nothing beyond the imported reference ontology. No post-import setup
+//   is required.
+// - The queries prefixed **GDS —** need the Graph Data Science plugin (2.x) on
+//   the target database. GDS is absent on some Aura tiers and many self-managed
+//   installs; the plain-Cypher queries cover the same ground, with
+//   *Most-cited sections by inbound citation count* standing in for PageRank as
+//   a degree-based measure of influence.
+// - **Traversal depth cannot be parameterised.** Cypher requires a literal bound
+//   on a variable-length pattern, so there is no `$maxDepth` to pass. A bound of
+//   N returns the pattern to depth N and silently omits anything deeper: the
+//   result is not marked as truncated. Each query's `@usage` states its bound.
+//   Before trusting any of them on an unfamiliar handbook, check how deep it
+//   actually nests and raise the literal in the Cypher if it nests deeper than
+//   the bound allows.
+// - Anchors are parameters, never hardcoded identifiers. Before running an
+//   anchored query, ask the user which standard or section they mean, or offer
+//   real identifiers from the hierarchy query. Do not invent identifiers.
 
-## Adapting these queries
+// ## Adapting these queries
 
-These queries assume the reference ontology in `ONTOLOGY.json`. When the user's database differs — their own ontology, a modified one, or a database that predates this package — the queries are patterns to rebuild, not Cypher to run.
+// These queries assume the reference ontology in `ONTOLOGY.json`. When the user's database differs — their own ontology, a modified one, or a database that predates this package — the queries are patterns to rebuild, not Cypher to run.
 
-1. Read the live schema (`CALL db.schema.visualization()`, `SHOW CONSTRAINTS`) rather than assuming the reference ontology applies.
-2. Map their labels onto the role map in `SKILL.md`. A role with no counterpart means the pattern below it has no analogue — say so rather than forcing a fit.
-3. Rewrite from the pattern, and update the annotation block to describe what the rewritten query actually does.
+// 1. Read the live schema (`CALL db.schema.visualization()`, `SHOW CONSTRAINTS`) rather than assuming the reference ontology applies.
+// 2. Map their labels onto the role map in `SKILL.md`. A role with no counterpart means the pattern below it has no analogue — say so rather than forcing a fit.
+// 3. Rewrite from the pattern, and update the annotation block to describe what the rewritten query actually does.
 
-## Explore a standard's section hierarchy
+// ## Explore a standard's section hierarchy
 
-```cypher
 /*
  * @name           Explore a standard's section hierarchy
  * @description    Returns every section beneath a standard, with the depth at
@@ -71,12 +70,10 @@ RETURN std.id             AS standard,
        section.title       AS title,
        section.lastUpdated AS lastUpdated,
        length(path)        AS depth
-ORDER BY depth, sectionId
-```
+ORDER BY depth, sectionId;
 
-## Cross-references into and out of a section
+// ## Cross-references into and out of a section
 
-```cypher
 /*
  * @name           Cross-references into and out of a section
  * @description    Returns every section a given section cites and every
@@ -113,12 +110,10 @@ RETURN CASE WHEN startNode(ref) = section THEN 'cites' ELSE 'cited by' END
        related.title       AS relatedTitle,
        related.lastUpdated AS relatedLastUpdated,
        ref.subsection      AS ruleReference
-ORDER BY direction, relatedSectionId
-```
+ORDER BY direction, relatedSectionId;
 
-## Sections changed since a date
+// ## Sections changed since a date
 
-```cypher
 /*
  * @name           Sections changed since a date
  * @description    Returns sections whose current text took effect on or after
@@ -160,12 +155,10 @@ RETURN coalesce(std.id, '(unresolved)') AS standard,
        section.title       AS title,
        section.lastUpdated AS lastUpdated,
        count(DISTINCT citing) AS inboundCitations
-ORDER BY lastUpdated DESC, sectionId
-```
+ORDER BY lastUpdated DESC, sectionId;
 
-## Change blast radius for a section
+// ## Change blast radius for a section
 
-```cypher
 /*
  * @name           Change blast radius for a section
  * @description    Takes one section and returns everything a change to it
@@ -219,12 +212,10 @@ RETURN CASE WHEN affected IN core THEN 'changed text'
        affected.id          AS sectionId,
        affected.title       AS title,
        affected.lastUpdated AS lastUpdated
-ORDER BY reachedVia, standard, sectionId
-```
+ORDER BY reachedVia, standard, sectionId;
 
-## Most-cited sections by inbound citation count
+// ## Most-cited sections by inbound citation count
 
-```cypher
 /*
  * @name           Most-cited sections by inbound citation count
  * @description    Ranks sections by how many other sections cite them, with
@@ -266,12 +257,10 @@ RETURN coalesce(std.id, '(unresolved)') AS standard,
        inboundCitations,
        count(DISTINCT outbound) AS outboundCitations
 ORDER BY inboundCitations DESC, sectionId
-LIMIT $limit
-```
+LIMIT $limit;
 
-## Citations that cross standards
+// ## Citations that cross standards
 
-```cypher
 /*
  * @name           Citations that cross standards
  * @description    Returns every cross-reference whose citing and cited
@@ -310,12 +299,10 @@ RETURN citingStd.id      AS citingStandard,
        cited.id          AS citedSectionId,
        ref.subsection    AS ruleReference,
        cited.lastUpdated AS citedLastUpdated
-ORDER BY citingStandard, citedStandard, citingSectionId
-```
+ORDER BY citingStandard, citedStandard, citingSectionId;
 
-## Recently changed sections that are heavily cited
+// ## Recently changed sections that are heavily cited
 
-```cypher
 /*
  * @name           Recently changed sections that are heavily cited
  * @description    Returns sections whose text took effect on or after a given
@@ -369,26 +356,24 @@ RETURN coalesce(std.id, '(unresolved)') AS standard,
        inboundCitations,
        size(citingStandards) AS citingStandardCount,
        citingStandards
-ORDER BY inboundCitations DESC, lastUpdated DESC, sectionId
-```
+ORDER BY inboundCitations DESC, lastUpdated DESC, sectionId;
 
-## Graph Data Science (optional)
+// ## Graph Data Science (optional)
 
-The four queries below need the **GDS plugin (2.x)** on the target database.
-Check with `RETURN gds.version()` before offering them; if that errors, GDS is
-not installed and the plain-Cypher queries above cover the same ground.
+// The four queries below need the **GDS plugin (2.x)** on the target database.
+// Check with `RETURN gds.version()` before offering them; if that errors, GDS is
+// not installed and the plain-Cypher queries above cover the same ground.
 
-Run the projection first and drop it when finished. A GDS projection lives in
-the graph catalog for the database and user until it is explicitly dropped or
-the DBMS restarts — it does **not** go away when the client disconnects, so
-leaving one behind holds memory indefinitely. None of the four writes to the
-stored graph: scores and community identifiers are returned rather than saved
-as properties, which keeps them safe to run against a database the user has
-not agreed to modify.
+// Run the projection first and drop it when finished. A GDS projection lives in
+// the graph catalog for the database and user until it is explicitly dropped or
+// the DBMS restarts — it does **not** go away when the client disconnects, so
+// leaving one behind holds memory indefinitely. None of the four writes to the
+// stored graph: scores and community identifiers are returned rather than saved
+// as properties, which keeps them safe to run against a database the user has
+// not agreed to modify.
 
-## GDS — Project the section cross-reference graph
+// ## GDS — Project the section cross-reference graph
 
-```cypher
 /*
  * @name           GDS — Project the section cross-reference graph
  * @description    Creates the in-memory GDS projection of Section nodes and
@@ -415,12 +400,10 @@ not agreed to modify.
  */
 CALL gds.graph.project('regulatorySections', 'Section', 'RELATED')
 YIELD graphName, nodeCount, relationshipCount
-RETURN graphName, nodeCount, relationshipCount
-```
+RETURN graphName, nodeCount, relationshipCount;
 
-## GDS — Rank section influence with PageRank
+// ## GDS — Rank section influence with PageRank
 
-```cypher
 /*
  * @name           GDS — Rank section influence with PageRank
  * @description    Scores each section by PageRank over the citation graph, so
@@ -466,12 +449,10 @@ RETURN std.id          AS standard,
        round(score, 4)  AS pageRankScore,
        count(DISTINCT citing) AS inboundCitations
 ORDER BY pageRankScore DESC, sectionId
-LIMIT $limit
-```
+LIMIT $limit;
 
-## GDS — Group cross-referencing sections into communities
+// ## GDS — Group cross-referencing sections into communities
 
-```cypher
 /*
  * @name           GDS — Group cross-referencing sections into communities
  * @description    Runs Weakly Connected Components over the citation graph to
@@ -522,12 +503,10 @@ RETURN componentId,
        size(standardsSpanned) AS standardCount,
        standardsSpanned,
        sectionIds[0..10] AS sampleSections
-ORDER BY communitySize DESC, componentId
-```
+ORDER BY communitySize DESC, componentId;
 
-## GDS — Drop the section projection
+// ## GDS — Drop the section projection
 
-```cypher
 /*
  * @name           GDS — Drop the section projection
  * @description    Releases the in-memory 'regulatorySections' projection.
@@ -547,17 +526,14 @@ ORDER BY communitySize DESC, componentId
  */
 CALL gds.graph.drop('regulatorySections')
 YIELD graphName, nodeCount
-RETURN graphName, nodeCount
-```
+RETURN graphName, nodeCount;
 
-## Node-key constraints
+// ## Node-key constraints
 
-Import creates these node-key constraints from the key definitions in `ONTOLOGY.json`. They are listed as a reference for checking the live database (`SHOW CONSTRAINTS`), not as statements to run: recreating them, or adding `UNIQUE` variants, conflicts with the existing `KEY` constraints.
+// Import creates these node-key constraints from the key definitions in `ONTOLOGY.json`. They are listed as a reference for checking the live database (`SHOW CONSTRAINTS`), not as statements to run: recreating them, or adding `UNIQUE` variants, conflicts with the existing `KEY` constraints.
 
-```cypher
 CREATE CONSTRAINT standard_id IF NOT EXISTS
 FOR (n:Standard) REQUIRE n.id IS NODE KEY;
 
 CREATE CONSTRAINT section_id IF NOT EXISTS
 FOR (n:Section) REQUIRE n.id IS NODE KEY;
-```

@@ -33,7 +33,7 @@ words — don't recite this file. Convey:
   the same vehicle across several claims, one doctor tied to an unusual share of high-value
   claims, a claimant filing repeatedly.
 - The bundled sample data is synthetic and deliberately seeds each of those patterns, so the
-  queries in `QUERIES.md` return results straight away.
+  queries in `QUERIES.cypher` return results straight away.
 - A diagram of the reference ontology is available to show when explaining it:
   <https://neo4j.com/developer/industry-use-cases/_images/insurance/insurance-claims-fraud-schema.svg>
 - What you can help with: explaining the reference ontology, walking through the query
@@ -51,7 +51,7 @@ ontology or start importing data.
 - `Claimant` and `MedicalProfessional` are keyed by name, so identity is expected to be resolved before import; `Claim.date` is an ISO `YYYY-MM-DD` string rather than a temporal type; `Claim.amountClaimed` is whole currency units in a single-currency portfolio.
 - The labels, relationships and properties follow the source page. Its queries were corrected here: its repeat-claimant graph view dropped `path` in an aggregating `WITH` and would not compile, so the path is re-matched after the count; and its professional thresholds (more than 1 claim, or a total above 5000) suit a four-row demo, so the outlier query is paired with a threshold-free ranking.
 - Every node, relationship and property the queries use is loaded by Import; no query creates anything. The Graph Data Science queries build an in-memory projection, `fraud-graph`, which never reaches the database.
-- The full reference ontology, with its import mappings, is in `ONTOLOGY.json`; runnable Cypher is in `QUERIES.md`.
+- The full reference ontology, with its import mappings, is in `ONTOLOGY.json`; runnable Cypher is in `QUERIES.cypher`.
 - Call it the reference ontology. Users may say "model", "graph model", "data model" or "ontology" — treat these as the same thing.
 - Treat its annotations as the authoritative meaning of each term — `description` above all, plus `aliases` and relationship counts. Quote them when explaining the reference ontology, rely on them when adapting queries to the user's own data (an alias such as `Doctor` often names the user's equivalent label), and never contradict them.
 
@@ -64,7 +64,7 @@ ontology or start importing data.
 | Shared asset | `Vehicle` | A node keyed on a value that outlives owners and plates (a VIN), so several claims can converge on it |
 | Supporting professional | `MedicalProfessional` | A resolved identity attached to claims, so claim count and summed value concentrate on it |
 
-When the user's database differs from the reference ontology, map their labels onto these roles before rewriting anything from `QUERIES.md`. A role with no counterpart in their data means the patterns resting on it have no analogue — say so plainly rather than forcing a fit.
+When the user's database differs from the reference ontology, map their labels onto these roles before rewriting anything from `QUERIES.cypher`. A role with no counterpart in their data means the patterns resting on it have no analogue — say so plainly rather than forcing a fit.
 
 ## Operational Constraints
 

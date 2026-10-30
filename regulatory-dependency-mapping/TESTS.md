@@ -1,6 +1,6 @@
 # Regulatory Dependency Mapping — Tests
 
-What each query in `QUERIES.md` should return on the bundled sample data. This file is for the manual tester and the curating engineer; the runtime never loads it. Everything below was derived from the CSVs in `sample-data/`, not from a database run.
+What each query in `QUERIES.cypher` should return on the bundled sample data. This file is for the manual tester and the curating engineer; the runtime never loads it. Everything below was derived from the CSVs in `sample-data/`, not from a database run.
 
 ## How to run
 
@@ -8,7 +8,7 @@ What each query in `QUERIES.md` should return on the bundled sample data. This f
 2. Import the three CSVs in `sample-data/` through the Import flow, using `ONTOLOGY.json` as the import definition. This also creates the node-key constraints on `Standard.id` and `Section.id`; confirm them with `SHOW CONSTRAINTS`.
 3. No `SETUP.md` statements are needed. No query depends on schema the Import flow does not create, and none needs an index to be correct at this size.
 4. The four GDS queries need the GDS plugin 2.x. Run the projection query before the PageRank and WCC queries, and the drop query last.
-5. Run each query in `QUERIES.md` with the parameters given in its section below, and compare the result with the Invariant first and the Expected values second.
+5. Run each query in `QUERIES.cypher` with the parameters given in its section below, and compare the result with the Invariant first and the Expected values second.
 
 ## Sample-data profile
 

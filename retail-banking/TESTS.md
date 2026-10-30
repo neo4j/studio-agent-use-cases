@@ -1,13 +1,13 @@
 # Retail Banking — Tests
 
-What each query in `QUERIES.md` should return on the bundled sample data. This file is for the manual tester and the curating engineer; the runtime never loads it. Everything below was derived from the CSVs in `sample-data/`, not from a database run.
+What each query in `QUERIES.cypher` should return on the bundled sample data. This file is for the manual tester and the curating engineer; the runtime never loads it. Everything below was derived from the CSVs in `sample-data/`, not from a database run.
 
 ## How to run
 
 1. Use a disposable Neo4j 5.9+ database with APOC installed — two of the ring queries call `apoc.coll.toSet`.
 2. Import the CSVs in `sample-data/` through the Import flow, using `ONTOLOGY.json` as the import definition. This also creates the node-key constraints.
 3. No `SETUP.md` statements are needed.
-4. Run the queries in `QUERIES.md` in file order. None takes parameters. Compare each result with the Invariant first and the Expected values second.
+4. Run the queries in `QUERIES.cypher` in file order. None takes parameters. Compare each result with the Invariant first and the Expected values second.
 
 ## Sample-data profile
 

@@ -1,29 +1,28 @@
-# EV Route Planning — Query Guidance
+// # EV Route Planning — Query Guidance
 
-Cypher for the `ev-route-planning` use case. Every query references only labels, relationship types, and properties defined in the reference ontology (`ONTOLOGY.json`). No query writes to the database.
+// Cypher for the `ev-route-planning` use case. Every query references only labels, relationship types, and properties defined in the reference ontology (`ONTOLOGY.json`). No query writes to the database.
 
-## Prerequisites
+// ## Prerequisites
 
-- Neo4j 5.x, Cypher 5 — except **Lane feasibility across the fleet — which vehicles can serve this lane today**, **Feasible routes under battery and time constraints** and **Best route, scored — one recommendation with the numbers behind it**, which need Cypher 25 on Neo4j 2025.08+ (`allReduce`, `REPEATABLE ELEMENTS`). Confirm the version before offering them. No APOC or GDS.
-- The graph is loaded through the Import flow from `ONTOLOGY.json` — the bundled `sample-data/` CSVs, or the user's own data mapped onto the reference ontology. No post-import setup is required.
-- The node keys in `ONTOLOGY.json` make `Geo.name`, `ChargingStation.name` and `Car.id` unique, so every anchored lookup is an index seek rather than a label scan.
-- `Geo` and `ChargingStation` share no label: "any location" is the union `(:Geo|ChargingStation)`. A bare `(x:Geo)` is valid Cypher that silently excludes every charging station, so its routes never charge — and nothing errors.
-- `ROAD` is stored once per segment: always traverse it undirected, `-[:ROAD]-`. `CHARGE` is a self-loop on `ChargingStation`; a station name repeated on consecutive hops of a route is a charge stop, not a bug.
-- Bounds such as `*1..2` and `{1,14}` are literals — Cypher rejects a parameter inside them — and charge stops count as hops. When a route query returns nothing, suspect the bound before the energy model.
-- Anchors are parameters, never hardcoded IDs. Ask the user which entity they want, or offer a real one from **Available anchors**. Do not invent IDs.
-- Point and tabular queries come first, then the graph and visualisation queries, which return nodes, relationships, and paths for Neo4j Browser or Bloom to draw. Keep visualisation results bounded with `$limit`.
+// - Neo4j 5.x, Cypher 5 — except **Lane feasibility across the fleet — which vehicles can serve this lane today**, **Feasible routes under battery and time constraints** and **Best route, scored — one recommendation with the numbers behind it**, which need Cypher 25 on Neo4j 2025.08+ (`allReduce`, `REPEATABLE ELEMENTS`). Confirm the version before offering them. No APOC or GDS.
+// - The graph is loaded through the Import flow from `ONTOLOGY.json` — the bundled `sample-data/` CSVs, or the user's own data mapped onto the reference ontology. No post-import setup is required.
+// - The node keys in `ONTOLOGY.json` make `Geo.name`, `ChargingStation.name` and `Car.id` unique, so every anchored lookup is an index seek rather than a label scan.
+// - `Geo` and `ChargingStation` share no label: "any location" is the union `(:Geo|ChargingStation)`. A bare `(x:Geo)` is valid Cypher that silently excludes every charging station, so its routes never charge — and nothing errors.
+// - `ROAD` is stored once per segment: always traverse it undirected, `-[:ROAD]-`. `CHARGE` is a self-loop on `ChargingStation`; a station name repeated on consecutive hops of a route is a charge stop, not a bug.
+// - Bounds such as `*1..2` and `{1,14}` are literals — Cypher rejects a parameter inside them — and charge stops count as hops. When a route query returns nothing, suspect the bound before the energy model.
+// - Anchors are parameters, never hardcoded IDs. Ask the user which entity they want, or offer a real one from **Available anchors**. Do not invent IDs.
+// - Point and tabular queries come first, then the graph and visualisation queries, which return nodes, relationships, and paths for Neo4j Browser or Bloom to draw. Keep visualisation results bounded with `$limit`.
 
-## Adapting these queries
+// ## Adapting these queries
 
-These queries assume the reference ontology in `ONTOLOGY.json`. When the user's database differs — their own ontology, a modified one, or a database that predates this package — the queries are patterns to rebuild, not Cypher to run.
+// These queries assume the reference ontology in `ONTOLOGY.json`. When the user's database differs — their own ontology, a modified one, or a database that predates this package — the queries are patterns to rebuild, not Cypher to run.
 
-1. Read the live schema (`CALL db.schema.visualization()`, `SHOW CONSTRAINTS`) rather than assuming the reference ontology applies.
-2. Map their labels onto the role map in `SKILL.md`. A role with no counterpart means the pattern below it has no analogue — say so rather than forcing a fit.
-3. Rewrite from the pattern, and update the annotation block to describe what the rewritten query actually does.
+// 1. Read the live schema (`CALL db.schema.visualization()`, `SHOW CONSTRAINTS`) rather than assuming the reference ontology applies.
+// 2. Map their labels onto the role map in `SKILL.md`. A role with no counterpart means the pattern below it has no analogue — say so rather than forcing a fit.
+// 3. Rewrite from the pattern, and update the annotation block to describe what the rewritten query actually does.
 
-## Available anchors
+// ## Available anchors
 
-```cypher
 /*
  * @name           Available anchors
  * @description    Enumerates the valid anchor values for the parameterised
@@ -51,11 +50,9 @@ UNION
 MATCH (v:Car)
 RETURN 'vehicle' AS kind, v.id AS id,
        v.model + ' (' + v.vehicle_class + ', ' + toString(v.current_soc_percent) + '%)' AS label;
-```
 
-## Reference ontology sanity check — node and relationship counts
+// ## Reference ontology sanity check — node and relationship counts
 
-```cypher
 /*
  * @name           Reference ontology sanity check — node and relationship counts
  * @description    Counts every node label and relationship type to confirm
@@ -85,11 +82,9 @@ MATCH ()-[r:ROAD]->()
 WITH cities, charging_stations, cars, count(r) AS road_segments
 MATCH ()-[ch:CHARGE]->()
 RETURN cities, charging_stations, cars, road_segments, count(ch) AS charge_options;
-```
 
-## Road network by class — the four-tier hierarchy
+// ## Road network by class — the four-tier hierarchy
 
-```cypher
 /*
  * @name           Road network by class — the four-tier hierarchy
  * @description    Shows how segment count, distance and speed are
@@ -114,11 +109,9 @@ RETURN r.road_class                 AS road_class,
        round(sum(r.distance_km))    AS total_km,
        max(r.free_flow_speed_kph)   AS top_free_flow_kph
 ORDER BY segments DESC;
-```
 
-## Vehicle range — one vehicle's usable range from telemetry
+// ## Vehicle range — one vehicle's usable range from telemetry
 
-```cypher
 /*
  * @name           Vehicle range — one vehicle's usable range from telemetry
  * @description    Turns a vehicle's current state of charge into the
@@ -154,11 +147,9 @@ RETURN c.id                   AS car_id,
        c.max_charge_power_kw  AS max_charge_kw,
        round(usable_kwh, 1)   AS usable_kwh,
        round(usable_kwh / c.efficiency_kwh_per_km) AS range_km;
-```
 
-## Charging station detail — one station, its charge tiers and the roads that reach it
+// ## Charging station detail — one station, its charge tiers and the roads that reach it
 
-```cypher
 /*
  * @name           Charging station detail — one station, its charge tiers and the roads that reach it
  * @description    Inspects a single charging site before routing through
@@ -193,11 +184,9 @@ RETURN s.name     AS station,
        s.region   AS region,
        charge_tiers,
        collect(n.name + ' via ' + r.road_ref + ' (' + toString(r.distance_km) + ' km)') AS connected_roads;
-```
 
-## Charging options near a city — stations within two road hops, by depth
+// ## Charging options near a city — stations within two road hops, by depth
 
-```cypher
 /*
  * @name           Charging options near a city — stations within two road hops, by depth
  * @description    Finds where a vehicle leaving a city can charge: every
@@ -226,11 +215,9 @@ RETURN cs.name     AS station,
        cs.power_kw AS power_kw,
        cs.operator AS operator
 ORDER BY hops, power_kw DESC;
-```
 
-## Charging capacity by region
+// ## Charging capacity by region
 
-```cypher
 /*
  * @name           Charging capacity by region
  * @description    Compares installed charging capacity across regions to
@@ -257,11 +244,9 @@ RETURN cs.region                   AS region,
        round(avg(cs.power_kw), 1)  AS avg_kw,
        max(cs.power_kw)            AS best_kw
 ORDER BY total_kw DESC;
-```
 
-## Operator footprint
+// ## Operator footprint
 
-```cypher
 /*
  * @name           Operator footprint
  * @description    Shows how each charging operator is spread across the
@@ -289,11 +274,9 @@ RETURN cs.operator                AS operator,
        count(DISTINCT cs.region)  AS regions_covered,
        count(CASE WHEN cs.power_kw >= 300 THEN 1 END) AS high_power_sites
 ORDER BY sites DESC, total_kw DESC;
-```
 
-## Charge tiers — what each dwell time delivers
+// ## Charge tiers — what each dwell time delivers
 
-```cypher
 /*
  * @name           Charge tiers — what each dwell time delivers
  * @description    Quantifies the core routing trade-off, dwell time against
@@ -323,11 +306,9 @@ RETURN ch.tier            AS tier,
        round(avg(ch.power_kw * ch.time_in_minutes / 60.0), 1) AS avg_kwh_delivered,
        round(max(ch.power_kw * ch.time_in_minutes / 60.0), 1) AS best_kwh_delivered
 ORDER BY dwell_minutes;
-```
 
-## Charging coverage gaps — cities with no station within two road hops
+// ## Charging coverage gaps — cities with no station within two road hops
 
-```cypher
 /*
  * @name           Charging coverage gaps — cities with no station within two road hops
  * @description    Finds the planning blind spots: cities with no charging
@@ -357,11 +338,9 @@ RETURN city.name   AS stranded_city,
        city.region AS region,
        count(r)    AS road_links
 ORDER BY road_links DESC, stranded_city;
-```
 
-## Fleet composition and reach
+// ## Fleet composition and reach
 
-```cypher
 /*
  * @name           Fleet composition and reach
  * @description    Shows how much of the fleet is mission-ready without
@@ -400,11 +379,9 @@ RETURN c.vehicle_class                   AS vehicle_class,
        round(avg(range_km))               AS avg_range_km,
        count(CASE WHEN range_km >= $requiredRangeKm THEN 1 END) AS ready_without_charging
 ORDER BY vehicles DESC;
-```
 
-## Inline corridor stations — sites with no bypass
+// ## Inline corridor stations — sites with no bypass
 
-```cypher
 /*
  * @name           Inline corridor stations — sites with no bypass
  * @description    Separates mid-corridor stations, where an outage forces a
@@ -435,11 +412,9 @@ RETURN cs.name     AS station,
        between
 ORDER BY power_kw ASC, station
 LIMIT $limit;
-```
 
-## Corridor preview — how hard the spatial prune bites, before paying for traversal
+// ## Corridor preview — how hard the spatial prune bites, before paying for traversal
 
-```cypher
 /*
  * @name           Corridor preview — how hard the spatial prune bites, before paying for traversal
  * @description    The cheapest check on a lane: counts the places and
@@ -481,11 +456,9 @@ WHERE point.distance(pa, px) + point.distance(px, pb) < $detourRatio * direct_m
 RETURN count(x)                                      AS corridor_nodes,
        count(CASE WHEN x:ChargingStation THEN 1 END) AS corridor_stations,
        round(direct_m / 1000.0)                      AS direct_km;
-```
 
-## Lane feasibility across the fleet — which vehicles can serve this lane today
+// ## Lane feasibility across the fleet — which vehicles can serve this lane today
 
-```cypher
 /*
  * @name           Lane feasibility across the fleet — which vehicles can serve this lane today
  * @description    How many of the fleet can do this run, not the best route
@@ -579,11 +552,9 @@ RETURN c.vehicle_class                           AS vehicle_class,
        count(CASE WHEN can_reach THEN 1 END)     AS can_serve_lane,
        count(CASE WHEN NOT can_reach THEN 1 END) AS blocked
 ORDER BY vehicles DESC;
-```
 
-## Location ego network — everything one hop from a city
+// ## Location ego network — everything one hop from a city
 
-```cypher
 /*
  * @name           Location ego network — everything one hop from a city
  * @description    Visualises a hub and its road neighbourhood, cities and
@@ -607,11 +578,9 @@ ORDER BY vehicles DESC;
  */
 MATCH (hub:Geo {name: $cityName})-[r:ROAD]-(n:Geo|ChargingStation)
 RETURN hub, r, n;
-```
 
-## Fewest-hop route between two locations
+// ## Fewest-hop route between two locations
 
-```cypher
 /*
  * @name           Fewest-hop route between two locations
  * @description    Returns the fewest-hop path across the road network
@@ -638,11 +607,9 @@ MATCH (a:Geo|ChargingStation {name: $sourceName}),
       (b:Geo|ChargingStation {name: $targetName})
 MATCH p = shortestPath((a)-[:ROAD*1..12]-(b))
 RETURN p;
-```
 
-## Least-distance routes — ranked by driving distance, not hop count
+// ## Least-distance routes — ranked by driving distance, not hop count
 
-```cypher
 /*
  * @name           Least-distance routes — ranked by driving distance, not hop count
  * @description    Shows that fewest hops and least distance give different
@@ -672,11 +639,9 @@ WITH p, reduce(d = 0.0, r IN relationships(p) | d + r.distance_km) AS total_km
 ORDER BY total_km ASC
 LIMIT $limit
 RETURN p, round(total_km, 1) AS total_km;
-```
 
-## Charging catchment of a city — the paths out to reachable stations
+// ## Charging catchment of a city — the paths out to reachable stations
 
-```cypher
 /*
  * @name           Charging catchment of a city — the paths out to reachable stations
  * @description    Visualises how a city reaches its charging options,
@@ -702,11 +667,9 @@ MATCH (hub:Geo {name: $cityName})
 MATCH p = (hub)-[:ROAD*1..2]-(cs:ChargingStation)
 RETURN p
 LIMIT $limit;
-```
 
-## Feasible routes under battery and time constraints
+// ## Feasible routes under battery and time constraints
 
-```cypher
 /*
  * @name           Feasible routes under battery and time constraints
  * @description    The flagship query. Expands paths of ROAD and CHARGE hops
@@ -804,11 +767,9 @@ WHERE allReduce(
 )
 RETURN p
 LIMIT $limit;
-```
 
-## Best route, scored — one recommendation with the numbers behind it
+// ## Best route, scored — one recommendation with the numbers behind it
 
-```cypher
 /*
  * @name           Best route, scored — one recommendation with the numbers behind it
  * @description    Ranks every feasible route for one vehicle — the same
@@ -954,17 +915,14 @@ RETURN p,
        round(final.time_in_min / 60.0, 2)          AS elapsed_hours,
        round(final.energy_kwh, 1)                  AS energy_drawn_kwh,
        round(final.soc)                            AS arrival_soc_percent;
-```
 
-## Node-key constraints
+// ## Node-key constraints
 
-Import creates these node-key constraints from the key definitions in `ONTOLOGY.json`. They are listed as a reference for checking the live database (`SHOW CONSTRAINTS`), not as statements to run: recreating them, or adding `UNIQUE` variants, conflicts with the existing `KEY` constraints.
+// Import creates these node-key constraints from the key definitions in `ONTOLOGY.json`. They are listed as a reference for checking the live database (`SHOW CONSTRAINTS`), not as statements to run: recreating them, or adding `UNIQUE` variants, conflicts with the existing `KEY` constraints.
 
-```cypher
 CREATE CONSTRAINT name_Geo_key IF NOT EXISTS
   FOR (g:Geo) REQUIRE g.name IS NODE KEY;
 CREATE CONSTRAINT name_ChargingStation_key IF NOT EXISTS
   FOR (cs:ChargingStation) REQUIRE cs.name IS NODE KEY;
 CREATE CONSTRAINT id_Car_key IF NOT EXISTS
   FOR (c:Car) REQUIRE c.id IS NODE KEY;
-```

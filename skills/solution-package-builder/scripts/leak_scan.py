@@ -6,7 +6,7 @@ Usage: python3 leak_scan.py <package-dir> [--min-length N]
 Collects the values of every CSV column that ONTOLOGY.json maps to a node key, or to a
 STRING property with many distinct values (identifier-like: names, addresses, phone
 numbers) — low-cardinality columns are domain vocabulary, not seeded detail — and
-searches SKILL.md, QUERIES.md, SETUP.md and every supporting
+searches SKILL.md, QUERIES.cypher, SETUP.md and every supporting
 .md/.cypher file for them as whole tokens. TESTS.md and human_description.md are not
 scanned (5a and 5d treat them separately), and ONTOLOGY.json's `e.g.` samples are
 legitimate, as is a query's `@sample` tag (lines from `@sample` to the next tag or the

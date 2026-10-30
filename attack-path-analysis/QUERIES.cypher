@@ -1,60 +1,59 @@
-# Attack Path Analysis — Query Guidance
+// # Attack Path Analysis — Query Guidance
 
-Cypher for the `attack-path-analysis` use case. Every query references only
-labels, relationship types, and properties defined in the reference ontology
-(`ONTOLOGY.json`). No query writes to the database. The queries move outward
-from a single exposure to a whole route: which exposed hosts are worth
-attacking, where an attacker could go from one, what the route terminates at,
-and which hosts most routes depend on.
+// Cypher for the `attack-path-analysis` use case. Every query references only
+// labels, relationship types, and properties defined in the reference ontology
+// (`ONTOLOGY.json`). No query writes to the database. The queries move outward
+// from a single exposure to a whole route: which exposed hosts are worth
+// attacking, where an attacker could go from one, what the route terminates at,
+// and which hosts most routes depend on.
 
-## Prerequisites
+// ## Prerequisites
 
-- **Neo4j 5.x or later, Cypher 5.** No APOC and no GDS: every query below is
-  plain Cypher. Graph Data Science would be the better tool for choke-point
-  ranking on a large estate — see the `@usage` note on *Choke points on
-  crown-jewel attack paths* — but nothing here requires it.
-- The graph is loaded through the Import flow from `ONTOLOGY.json` — the
-  bundled `sample-data/` CSVs, or the user's own data mapped onto the reference
-  ontology.
-- The node keys in `ONTOLOGY.json` make `Endpoint.endpointId`,
-  `ComputeInstance.instanceId`, `CVE.cveId`, `Application.applicationId`,
-  `Identity.identityId`, `IAMPolicy.policyId` and `CloudService.serviceId`
-  unique, so every lookup anchored on one of them is an index seek.
-- The index in `SETUP.md` is recommended, not required. Without it the
-  crown-jewel queries scan the `Application` label instead of seeking; results
-  are identical.
-- **Temporal properties are `ZONED DATETIME`.** `CVE.publishedDate` and
-  `HAS_VULNERABILITY.detectedOn` both carry a zoned datetime whose time is always
-  midnight UTC, because the Import tool does not accept a bare date for local CSV
-  loads. Only the calendar date is meaningful. No query below filters on either,
-  but one you add should compare with `datetime($value)`, not `date($value)`.
-- **Variable-length bounds cannot be parameterised in Cypher.** Every traversal
-  below carries a literal ceiling in the pattern and a `$maxLateralHops` filter
-  inside it. The parameter tunes the bound; the literal is the hard limit. To
-  search beyond the ceiling, edit the literal in the pattern — and expect the
-  cost to climb steeply when you do.
-- Anchors are parameters, never hardcoded IDs. Before running an anchored query,
-  ask the user which instance or identity they mean, or take one from an earlier
-  query's output — the foothold query names instances, the reachability query
-  names identities. Do not invent IDs.
+// - **Neo4j 5.x or later, Cypher 5.** No APOC and no GDS: every query below is
+//   plain Cypher. Graph Data Science would be the better tool for choke-point
+//   ranking on a large estate — see the `@usage` note on *Choke points on
+//   crown-jewel attack paths* — but nothing here requires it.
+// - The graph is loaded through the Import flow from `ONTOLOGY.json` — the
+//   bundled `sample-data/` CSVs, or the user's own data mapped onto the reference
+//   ontology.
+// - The node keys in `ONTOLOGY.json` make `Endpoint.endpointId`,
+//   `ComputeInstance.instanceId`, `CVE.cveId`, `Application.applicationId`,
+//   `Identity.identityId`, `IAMPolicy.policyId` and `CloudService.serviceId`
+//   unique, so every lookup anchored on one of them is an index seek.
+// - The index in `SETUP.md` is recommended, not required. Without it the
+//   crown-jewel queries scan the `Application` label instead of seeking; results
+//   are identical.
+// - **Temporal properties are `ZONED DATETIME`.** `CVE.publishedDate` and
+//   `HAS_VULNERABILITY.detectedOn` both carry a zoned datetime whose time is always
+//   midnight UTC, because the Import tool does not accept a bare date for local CSV
+//   loads. Only the calendar date is meaningful. No query below filters on either,
+//   but one you add should compare with `datetime($value)`, not `date($value)`.
+// - **Variable-length bounds cannot be parameterised in Cypher.** Every traversal
+//   below carries a literal ceiling in the pattern and a `$maxLateralHops` filter
+//   inside it. The parameter tunes the bound; the literal is the hard limit. To
+//   search beyond the ceiling, edit the literal in the pattern — and expect the
+//   cost to climb steeply when you do.
+// - Anchors are parameters, never hardcoded IDs. Before running an anchored query,
+//   ask the user which instance or identity they mean, or take one from an earlier
+//   query's output — the foothold query names instances, the reachability query
+//   names identities. Do not invent IDs.
 
-## Adapting these queries
+// ## Adapting these queries
 
-These queries assume the reference ontology in `ONTOLOGY.json`. When the user's
-database differs — their own ontology, a modified one, or a database that
-predates this package — the queries are patterns to rebuild, not Cypher to run.
+// These queries assume the reference ontology in `ONTOLOGY.json`. When the user's
+// database differs — their own ontology, a modified one, or a database that
+// predates this package — the queries are patterns to rebuild, not Cypher to run.
 
-1. Read the live schema (`CALL db.schema.visualization()`, `SHOW CONSTRAINTS`)
-   rather than assuming the reference ontology applies.
-2. Map their labels onto the role map in `SKILL.md`. A role with no counterpart
-   means the pattern below it has no analogue — say so rather than forcing a
-   fit.
-3. Rewrite from the pattern, and update the annotation block to describe what
-   the rewritten query actually does.
+// 1. Read the live schema (`CALL db.schema.visualization()`, `SHOW CONSTRAINTS`)
+//    rather than assuming the reference ontology applies.
+// 2. Map their labels onto the role map in `SKILL.md`. A role with no counterpart
+//    means the pattern below it has no analogue — say so rather than forcing a
+//    fit.
+// 3. Rewrite from the pattern, and update the annotation block to describe what
+//    the rewritten query actually does.
 
-## Exposed hosts carrying an exploited vulnerability
+// ## Exposed hosts carrying an exploited vulnerability
 
-```cypher
 /*
  * @name           Exposed hosts carrying an exploited vulnerability
  * @description    Returns compute instances that are reachable from the public
@@ -105,12 +104,10 @@ RETURN i.instanceId     AS instanceId,
        v.epssScore      AS epssScore,
        v.severity       AS severity,
        f.detectedOn     AS lastConfirmed
-ORDER BY cvssScore DESC, epssScore DESC, instanceId
-```
+ORDER BY cvssScore DESC, epssScore DESC, instanceId;
 
-## Attack paths from an exposed foothold to a crown-jewel application
+// ## Attack paths from an exposed foothold to a crown-jewel application
 
-```cypher
 /*
  * @name           Attack paths from an exposed foothold to a crown-jewel application
  * @description    For every exposed instance carrying an exploited
@@ -178,12 +175,10 @@ RETURN e.dnsName        AS exposedVia,
        host.hostname    AS crownJewelHost,
        length(path)     AS lateralHops,
        [n IN nodes(path) | n.hostname] AS route
-ORDER BY lateralHops ASC, footholdCvss DESC, crownJewel
-```
+ORDER BY lateralHops ASC, footholdCvss DESC, crownJewel;
 
-## Lateral reachability from a compromised host
+// ## Lateral reachability from a compromised host
 
-```cypher
 /*
  * @name           Lateral reachability from a compromised host
  * @description    Returns every compute instance reachable from one named
@@ -236,12 +231,10 @@ RETURN hops,
        reached.environment    AS environment,
        collect(DISTINCT app.name + ' (' + app.tier + ')') AS applications,
        collect(DISTINCT identity.name) AS inheritableIdentities
-ORDER BY hops ASC, hostname
-```
+ORDER BY hops ASC, hostname;
 
-## Blast radius of a compromised identity
+// ## Blast radius of a compromised identity
 
-```cypher
 /*
  * @name           Blast radius of a compromised identity
  * @description    Returns every cloud service and business application one
@@ -302,12 +295,10 @@ RETURN identity.name               AS identityName,
          WHEN 1 THEN 'write'
          ELSE 'read' END           AS highestGrant,
        grantedByPolicies
-ORDER BY sensitivityRank ASC, highestGrantRank ASC, resourceName
-```
+ORDER BY sensitivityRank ASC, highestGrantRank ASC, resourceName;
 
-## Full kill chain from the internet to sensitive cloud data
+// ## Full kill chain from the internet to sensitive cloud data
 
-```cypher
 /*
  * @name           Full kill chain from the internet to sensitive cloud data
  * @description    Joins the network and identity halves of the reference
@@ -376,12 +367,10 @@ RETURN e.dnsName        AS exposedVia,
        svc.name         AS targetResource,
        svc.serviceType  AS resourceType,
        svc.dataClassification AS dataClassification
-ORDER BY lateralHops ASC, entryHost, targetResource
-```
+ORDER BY lateralHops ASC, entryHost, targetResource;
 
-## Choke points on crown-jewel attack paths
+// ## Choke points on crown-jewel attack paths
 
-```cypher
 /*
  * @name           Choke points on crown-jewel attack paths
  * @description    Enumerates the bounded CAN_REACH routes from every exposed,
@@ -449,12 +438,10 @@ RETURN chokePoint.instanceId     AS instanceId,
        chokePoint.networkSegment AS networkSegment,
        pathsThrough,
        gatesAccessTo
-ORDER BY pathsThrough DESC, hostname
-```
+ORDER BY pathsThrough DESC, hostname;
 
-## Crown-jewel exposure summary
+// ## Crown-jewel exposure summary
 
-```cypher
 /*
  * @name           Crown-jewel exposure summary
  * @description    Lists every application in the given criticality tier
@@ -522,47 +509,32 @@ RETURN target.applicationId AS applicationId,
        coalesce(hit.footholds, 0) AS reachableFromFootholds,
        hit.hops             AS fewestLateralHops,
        coalesce(hit.hosts, []) AS footholdHosts
-ORDER BY reachableFromFootholds DESC, fewestLateralHops ASC, crownJewel
-```
+ORDER BY reachableFromFootholds DESC, fewestLateralHops ASC, crownJewel;
 
-## Node-key constraints
+// ## Node-key constraints
 
-Import creates these node-key constraints from the key definitions in
-`ONTOLOGY.json`. They are listed as a reference for checking the live database
-(`SHOW CONSTRAINTS`), not as statements to run: recreating them, or adding
-`UNIQUE` variants, conflicts with the existing `KEY` constraints.
+// Import creates these node-key constraints from the key definitions in
+// `ONTOLOGY.json`. They are listed as a reference for checking the live database
+// (`SHOW CONSTRAINTS`), not as statements to run: recreating them, or adding
+// `UNIQUE` variants, conflicts with the existing `KEY` constraints.
 
-```cypher
 CREATE CONSTRAINT endpoint_key IF NOT EXISTS
-FOR (e:Endpoint) REQUIRE e.endpointId IS NODE KEY
-```
+FOR (e:Endpoint) REQUIRE e.endpointId IS NODE KEY;
 
-```cypher
 CREATE CONSTRAINT compute_instance_key IF NOT EXISTS
-FOR (i:ComputeInstance) REQUIRE i.instanceId IS NODE KEY
-```
+FOR (i:ComputeInstance) REQUIRE i.instanceId IS NODE KEY;
 
-```cypher
 CREATE CONSTRAINT cve_key IF NOT EXISTS
-FOR (v:CVE) REQUIRE v.cveId IS NODE KEY
-```
+FOR (v:CVE) REQUIRE v.cveId IS NODE KEY;
 
-```cypher
 CREATE CONSTRAINT application_key IF NOT EXISTS
-FOR (a:Application) REQUIRE a.applicationId IS NODE KEY
-```
+FOR (a:Application) REQUIRE a.applicationId IS NODE KEY;
 
-```cypher
 CREATE CONSTRAINT identity_key IF NOT EXISTS
-FOR (n:Identity) REQUIRE n.identityId IS NODE KEY
-```
+FOR (n:Identity) REQUIRE n.identityId IS NODE KEY;
 
-```cypher
 CREATE CONSTRAINT iam_policy_key IF NOT EXISTS
-FOR (p:IAMPolicy) REQUIRE p.policyId IS NODE KEY
-```
+FOR (p:IAMPolicy) REQUIRE p.policyId IS NODE KEY;
 
-```cypher
 CREATE CONSTRAINT cloud_service_key IF NOT EXISTS
-FOR (s:CloudService) REQUIRE s.serviceId IS NODE KEY
-```
+FOR (s:CloudService) REQUIRE s.serviceId IS NODE KEY;

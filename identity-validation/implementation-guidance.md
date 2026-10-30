@@ -14,7 +14,7 @@ Load this when the user is adapting the package to their own source systems, or 
 8. Never run fuzzy or descriptor scoring as a blind population-wide scan. Always block on a real shared identifier first. This isn't optional at real scale: an unblocked scan's false-positive rate grows with population size, while a blocked scan's candidate set grows only with the number of genuine near-matches.
 9. Create constraints and indexes for every attribute node's key property — **required**, not optional, once the graph reaches meaningful size. Without a backing index, `MERGE` on an attribute value label-scans every existing node of that type to check for a duplicate; at thousands of nodes that turns a fast load into a slow one. Create them before loading data, not after.
 
-The Import flow creates the nine node-key constraints itself from `ONTOLOGY.json` — never recreate them on an imported database. The fulltext index is not created by Import; it is the required statement of `SETUP.md`, and `Near-Duplicate SSN` fails without it. The constraints are listed at the end of `QUERIES.md` as a reference.
+The Import flow creates the nine node-key constraints itself from `ONTOLOGY.json` — never recreate them on an imported database. The fulltext index is not created by Import; it is the required statement of `SETUP.md`, and `Near-Duplicate SSN` fails without it. The constraints are listed at the end of `QUERIES.cypher` as a reference.
 
 ## Normalisation and placeholders
 
