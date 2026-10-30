@@ -73,13 +73,15 @@ These rules are what `scripts/cypherlite_cli.py` does. Each one rests on a probe
 
 ## Capability matrix
 
-The probe ran 250 cases:
+The probe ran 251 cases:
 
 | Status | Cases |
 | ------ | ----- |
 | SUPPORTED | 220 |
-| DIFFERENT | 14 |
+| DIFFERENT | 15 |
 | UNSUPPORTED | 16 |
+
+Phase 3 added one case, `cypher.limit_short_circuit`, after patient-journey's test run turned it up.
 
 Its full output, with every observation, is under `output/cypherlite-tests/probe-<timestamp>/`. That folder is not committed; this table is the record.
 
@@ -147,7 +149,7 @@ The probe greps every package's Cypher, with comments and strings removed, and m
 | `datetime()` with millis, with an offset, with no zone | SUPPORTED (verify) | ISO form kept; no zone means UTC | Same on Aura (default zone UTC) |
 | `datetime('2024-01-02')` | DIFFERENT (verify) | Midnight UTC; `toString` drops seconds | Midnight UTC |
 | `datetime('2024-01-02 03:04:05')` (space separator) | DIFFERENT (verify) | Accepted; serialises as `2024-01-02T03:04:05Z[Z]` | Rejected (the ISO parser needs `T`) |
-| Throughput: full patient-journey import | SUPPORTED | 36 statements, 27,401 CSV lines, about 4 s; 13,023 nodes and 31,394 relationships | Aura Import takes tens of seconds |
+| Throughput: full patient-journey import | SUPPORTED | 36 statements, 27,401 CSV lines, 4–7 s; 13,023 nodes and 31,394 relationships | Aura Import takes tens of seconds |
 
 ### Schema
 
@@ -186,6 +188,7 @@ All SUPPORTED with Neo4j's results unless listed below:
 | `toString(datetime)` at a whole minute | DIFFERENT | `2024-01-02T00:00Z` | `2024-01-02T00:00:00Z` (ISO_DATE_TIME always prints seconds) |
 | `toString(datetime + duration({months: 1}))` | DIFFERENT | Same seconds rendering; the value itself is right | Same |
 | `round(-2.5)` | DIFFERENT (verify) | `-3.0` (half away from zero) | `-2.0` (`Math.round`). `round(2.675, 2)` is `2.68` on both |
+| `LIMIT` stops the pattern match early | **DIFFERENT** (performance) | No. Over 1,124,250 matches, `LIMIT 1` takes about as long as `count(*)` (2–3 s each). patient-journey's "Shared-condition patient cluster" (`… RETURN path LIMIT 50` over 2,865,853 matches) takes about 29.5 s, the same as counting them all. | Streams: `LIMIT 1` returns after the first match |
 
 ### Procedures
 
@@ -217,6 +220,7 @@ All SUPPORTED with Neo4j's results unless listed below:
 | APOC and GDS absent | SKIPPED, judged from the heading label, `@prerequisites` and the Cypher. A query that reads what a skipped query writes is SKIPPED too. | `run_queries.py` classification |
 | Exit 6 covers runtime type errors | Classify by message: `UnknownFunction` / `ProcedureNotFound` on `apoc.` or `gds.` means SKIPPED; a construct named UNSUPPORTED above means ENGINE-GAP; anything else is a package fault (FAIL) once reduced to a minimal reproduction. | `run_queries.py` |
 | Plans do not name index seeks | Do not judge index use from EXPLAIN operator names. | — |
+| `LIMIT` does not stop enumeration | A `LIMIT` query over a large match space can take as long as counting every match, and can hit the timeout. If it times out, raise `--timeout`, say so, and judge the result. It is not a package fault unless the query would be slow on Neo4j too. | TESTING.md, "Engine or package?" |
 | `db.ontology.*` cannot read a package's ONTOLOGY.json | Not used. Test mode generates `LOAD CSV` instead. | — |
 
 There is no fallback for `IS NODE KEY`, because it is supported. If a future version drops it, the fallback is `IS UNIQUE` plus `IS NOT NULL` on each key property. Import itself does this on Community Edition, though there it uses `IS UNIQUE` only.
@@ -232,7 +236,7 @@ There is no fallback for `IS NODE KEY`, because it is supported. If a future ver
 | Constraints | Built from the ontology, never from the mapping `key`. Each `key`, `unique` and `must_exist` property flag is its own single-property constraint, so two `key: true` properties give two NODE KEYs, not one composite. A composite comes only from a `constraints` entry listing several properties. Statements: `CREATE CONSTRAINT <props>_<Label>_<key\|uniq\|propertyExistence> IF NOT EXISTS FOR … REQUIRE (…) IS NODE KEY \| IS UNIQUE`, or `REQUIRE n.p IS NOT NULL`. Relationships use `IS RELATIONSHIP KEY`. `PROPERTY_TYPE` becomes `IS UNIQUE`, an Import bug the generator reproduces and flags. For the ten packages: 53 node keys, 71 node and 17 relationship existence constraints. |
 | Nodes | `MERGE` on the mapping key, then `SET` every other mapped property. Only the first label is written. A row whose converted key is null is dropped. |
 | Relationships | Both endpoints are MATCHed on their key, never created. A missing endpoint drops the row silently. `MERGE (s)-[r:T]->(t)` when the mapping key is empty, so parallel rows collapse into one; `MERGE (s)-[r:T {key…}]->(t)` otherwise. Every mapped property, key included, is then SET. |
-| Values | `''` becomes null. STRING is not trimmed. INTEGER, FLOAT and ZONED DATETIME are converted after `trim`. BOOLEAN is `toLower(trim(v)) IN ['1','true','yes']`, so any other non-empty value, including `no`, is `false`. |
+| Values | `''` becomes null. STRING is not trimmed. INTEGER, FLOAT and ZONED DATETIME are converted after `trim`. BOOLEAN is `toLower(trim(v)) IN ['1','true','yes']`, so any other non-empty value, including `no`, is `false`. A value that does not convert becomes null, silently. Cypher's `datetime()` would fail the whole statement instead, so the generator passes only ISO-shaped values to it and nulls the rest. `import_check.py` then reports every non-empty cell that did not convert, so nothing is hidden. If the property has an existence constraint, the null fails that entity's load, as it fails Import's one-transaction chunk on Aura. |
 | CSV | papaparse: header names trimmed, BOM stripped, quotes `"` with `""` escaping, line endings auto-detected, blank lines skipped. |
 
 Not mirrored; `ontology_to_cypher.py` reports these:
@@ -256,8 +260,9 @@ Not mirrored; `ontology_to_cypher.py` reports these:
 6. **Give runtime errors their own exit code or `kind`.** `/ by zero` exits 6 as `validation_error`, the same as a rejected statement. Test mode wants to tell "the engine cannot run this" apart from "this failed while running".
 7. **Name index use in the plan.** A key lookup served by a NODE KEY and an unindexed scan both show `NodeByLabelScan` with start `index-0`, and only timing separates them. A `NodeUniqueIndexSeek`-style operator, or the index name in `StartReason`, would let an agent confirm index use statically.
 8. **Align `db.ontology.set` with the published 1.0.0 schema.** Every package's ONTOLOGY.json is rejected: the packages and upx's library use `data_source_tables` / `data_source_mappings`, and Cypherlite's vendored copy uses `tables` / `mappings`.
-9. **Consider a native import:** `cypherlite import --ontology ONTOLOGY.json --csv-dir …` that implements Import's rules in the table above. This is only worth having if it shares one specification with Import, since otherwise it is a third implementation. `FINDINGS.md` discusses it.
-10. **Confirm Neo4j parity on the verify rows:**
+9. **Make `LIMIT` stop the match early.** Today `MATCH … RETURN … LIMIT 1` enumerates every match first. On patient-journey's sample, one visualisation query takes 29.5 s for 50 rows, where Neo4j streams.
+10. **Consider a native import:** `cypherlite import --ontology ONTOLOGY.json --csv-dir …` that implements Import's rules in the table above. This is only worth having if it shares one specification with Import, since otherwise it is a third implementation. `FINDINGS.md` discusses it.
+11. **Confirm Neo4j parity on the verify rows:**
     - bare-path LOAD CSV;
     - `,,` as null;
     - `toInteger(' 5')`;
@@ -265,4 +270,4 @@ Not mirrored; `ontology_to_cypher.py` reports these:
     - `shortestPath` from a node to itself.
 
     These need an Aura run; the team may already know.
-11. **Telemetry defaults to on.** For CI and agent use, consider defaulting it off under a detected harness or `CI=true`.
+12. **Telemetry defaults to on.** For CI and agent use, consider defaulting it off under a detected harness or `CI=true`.
