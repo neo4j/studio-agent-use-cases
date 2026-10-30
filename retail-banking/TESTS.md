@@ -20,7 +20,7 @@ Four months (2023-09-01 to 2023-12-31) of synthetic retail-banking activity, gen
 | `Customer` | 1266 | 1157 background customers (40 of them onboarded during the period) and 109 with a seeded role, listed below. Customer IDs are assigned at random, so a seeded customer's ID says nothing about it |
 | `Account` | 1892 | 1709 `INTERNAL` (1391 `CURRENT`, 302 `SAVINGS`, 16 `BUSINESS`) and 183 `EXTERNAL`. UK accounts are written `NN-NN-NN NNNNNNNN`; internal ones use sort codes `12-34-56` to `12-34-58`. 45 external accounts abroad carry IBANs: BG 8, LB 7, PL 6, PT 6, RO 6, ES 2, FR 2, GR 2, IT 2, LT 2, AE 1, MC 1 |
 | `Transaction` | 7906 | 7825 `gbp`, 59 `eur`, 22 `usd`. `TXN001`–`TXN004` are ring A; the rest are numbered in date order |
-| `Country` | 21 | `isHighRiskJurisdiction` true for BG, LB, MC and IR. These flags are illustrative choices for the sample, loosely modelled on published FATF lists, and are not a statement of any official list on any date. `TODO(review)`: confirm or replace the flagged countries |
+| `Country` | 21 | `isHighRiskJurisdiction` true for BG, LB, MC and IR, flags reviewed and confirmed for the sample by the package owner. They are the sample institution's policy setting; a user's own data carries its own |
 | `Email` | 1376 | All on reserved example domains |
 | `Phone` | 1285 | Ofcom's reserved drama ranges only: mobiles `+447700900xxx` and landlines in ten cities' fiction ranges |
 | `Address` | 986 | All in GB |
