@@ -134,17 +134,146 @@ def parse_tests(path):
             continue
         fields, cur = {}, None
         for line in body.splitlines():
-            m = re.match(r"^\s*(?:[-*]\s*)?\*\*(Parameters|Invariant|Expected|Sensitivity)\*\*\s*:?\s*(.*)$", line) \
-                or re.match(r"^\s*\|\s*\**(Parameters|Invariant|Expected|Sensitivity)\**\s*\|\s*(.*?)\s*\|?\s*$", line)
+            m = re.match(r"^\s*(?:[-*]\s*)?\*\*(Parameters|Invariant|Expected|Sensitivity):?\*\*\s*:?\s*(.*)$", line) \
+                or re.match(r"^\s*\|\s*\**(Parameters|Invariant|Expected|Sensitivity):?\**\s*\|\s*(.*?)\s*\|?\s*$", line)
             if m:
                 cur = m.group(1)
                 fields[cur] = m.group(2).strip()
-            elif re.match(r"^\s*(?:[-*]\s*)?\*\*\w[\w -]*\*\*\s*:?", line) or line.startswith("#"):
+            elif re.match(r"^\s*(?:[-*]\s*)?\*\*\w[\w -]*:?\*\*\s*:?", line) or line.startswith("#"):
                 cur = None
             elif cur and line.strip():
                 fields[cur] += "\n" + line.rstrip()
         out[heading] = {"line": start, "body": body, "fields": fields}
     return out
+
+
+_NUMBER = re.compile(r"-?\d+(?:\.\d+)?(?:[eE][-+]?\d+)?")
+_IDENT = re.compile(r"[A-Za-z_]\w*")
+
+
+def parse_literal(s, i=0):
+    """Parse one Cypher literal (string, number, boolean, null, list or map) from s[i:].
+    Returns (value, end). Raises ValueError when s[i:] does not start with a literal."""
+    n = len(s)
+    while i < n and s[i] in " \t\r\n":
+        i += 1
+    if i >= n:
+        raise ValueError("end of text")
+    c = s[i]
+    if c in "'\"":
+        out, j = [], i + 1
+        while j < n and s[j] != c:
+            if s[j] == "\\" and j + 1 < n:
+                e = s[j + 1]
+                if e == "u" and j + 5 < n:
+                    out.append(chr(int(s[j + 2:j + 6], 16)))
+                    j += 6
+                    continue
+                out.append({"n": "\n", "t": "\t", "r": "\r"}.get(e, e))
+                j += 2
+            else:
+                out.append(s[j])
+                j += 1
+        if j >= n:
+            raise ValueError("unterminated string")
+        return "".join(out), j + 1
+    if c in "[{":
+        close, items, j = "]" if c == "[" else "}", ([] if c == "[" else {}), i + 1
+        while True:
+            while j < n and s[j] in " \t\r\n,":
+                j += 1
+            if j < n and s[j] == close:
+                return items, j + 1
+            if c == "[":
+                v, j = parse_literal(s, j)
+                items.append(v)
+            else:
+                if j < n and s[j] in "'\"`":
+                    if s[j] == "`":
+                        k = s.index("`", j + 1)
+                        key, j = s[j + 1:k], k + 1
+                    else:
+                        key, j = parse_literal(s, j)
+                else:
+                    m = _IDENT.match(s, j)
+                    if not m:
+                        raise ValueError(f"bad map key at {j}")
+                    key, j = m.group(0), m.end()
+                while j < n and s[j] in " \t\r\n":
+                    j += 1
+                if j >= n or s[j] != ":":
+                    raise ValueError(f"expected ':' at {j}")
+                v, j = parse_literal(s, j + 1)
+                items[key] = v
+            while j < n and s[j] in " \t\r\n":
+                j += 1
+            if j < n and s[j] not in ",]}":
+                raise ValueError(f"unexpected {s[j]!r} at {j}")
+    m = _NUMBER.match(s, i)
+    if m:
+        t = m.group(0)
+        return (float(t) if any(x in t for x in ".eE") else int(t)), m.end()
+    for word, val in (("true", True), ("false", False), ("null", None)):
+        if s[i:i + len(word)].lower() == word and not s[i + len(word):i + len(word) + 1].isalnum():
+            return val, i + len(word)
+    raise ValueError(f"no literal at {i}")
+
+
+ASSIGN = re.compile(r"\$([A-Za-z_]\w*)\s*=\s*")
+START = re.compile(r"\b(?:start(?:ing)?(?:\s+value)?(?:\s+(?:at|with|from))?|defaults?(?:\s+(?:to|of))?)\s+`?(?=[-\d'\"\[{])", re.I)
+
+
+def assignments(text):
+    """{name: [values in order]} for every `$name = <literal>` in text."""
+    out = {}
+    for m in ASSIGN.finditer(text or ""):
+        try:
+            v, _ = parse_literal(text, m.end())
+        except ValueError:
+            continue
+        out.setdefault(m.group(1), []).append(v)
+    return out
+
+
+def find_params(stmt, tests_section):
+    """Resolve each parameter a statement takes, in the order TESTING.md sets: the TESTS.md section's
+    Parameters field (or, when that field names the parameter without a value, elsewhere in the
+    section), then @sample, then a starting value stated in @params.
+    Returns (values, sources, notes, missing)."""
+    values, sources, notes, missing = {}, {}, [], []
+    field = (tests_section or {}).get("fields", {}).get("Parameters", "")
+    body = (tests_section or {}).get("body", "")
+    in_field, in_body = assignments(field), assignments(body)
+    in_sample = assignments(stmt["tags"].get("sample", ""))
+    if re.search(r"\bscenario\b|\bthen\b", field, re.I) or any(len(v) > 1 for v in in_field.values()):
+        notes.append("TESTS.md gives several scenarios; the first one's values are used")
+    for name in stmt["params"]:
+        if name in in_field:
+            values[name], sources[name] = in_field[name][0], "TESTS.md Parameters"
+        elif re.search(rf"\${name}\b", field) and name in in_body:
+            values[name], sources[name] = in_body[name][0], "TESTS.md section (pointed to by Parameters)"
+        elif name in in_sample:
+            values[name], sources[name] = in_sample[name][0], "@sample"
+        else:
+            desc = stmt["declared_params"].get(name, "")
+            m = START.search(desc)
+            try:
+                if not m:
+                    raise ValueError
+                values[name], _ = parse_literal(desc, m.end())
+                sources[name] = "@params starting value"
+            except ValueError:
+                missing.append(name)
+    return values, sources, notes, missing
+
+
+SAMPLE_COUNT = re.compile(r"\breturns?\s+(\d[\d,]*)\s+(rows?|paths?)\b", re.I)
+
+
+def sample_row_count(stmt):
+    """The row count @sample states, when it states one as 'returns N rows' or 'returns N paths'."""
+    m = SAMPLE_COUNT.search(stmt["tags"].get("sample", ""))
+    return int(m.group(1).replace(",", "")) if m else None
 
 
 if __name__ == "__main__":

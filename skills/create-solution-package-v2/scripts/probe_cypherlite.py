@@ -558,6 +558,16 @@ cy("set_label", "SET n:Label, then match on it",
    "MATCH (p:P {id: 1}) SET p:Flagged WITH count(*) AS _ MATCH (q:Flagged) RETURN q.id", [[1]], uses=("SET label",))
 cy("delete", "DELETE relationships and count them",
    "MATCH ()-[r:S]->() DELETE r RETURN count(*) AS c", [[2]], uses=("DELETE",))
+def limit_check(R, store, csv_dir):
+    R("UNWIND range(1, 1500) AS i CREATE (:N {i: i})")
+    full = R("MATCH (a:N), (b:N) WHERE a.i < b.i RETURN count(*) AS c", timeout="300s")
+    one_row = R("MATCH (a:N), (b:N) WHERE a.i < b.i RETURN a.i LIMIT 1", timeout="300s")
+    obs = f"count(*) of {full.rows[0]['c'] if full.rows else '?'} matches: {full.seconds:.2f} s; LIMIT 1: {one_row.seconds:.2f} s"
+    return ("DIFFERENT" if one_row.seconds > 0.25 * full.seconds else "SUPPORTED"), obs
+
+
+case("cypher.limit_short_circuit", "Cypher", "LIMIT stops pattern enumeration early", check=limit_check,
+     neo4j="Streams: LIMIT 1 returns after the first match, far faster than counting every match.")
 cy("value_type", "valueType() and IS :: type predicates (used by the landing checks)",
    "RETURN valueType('a') AS a, valueType(1) AS b, valueType(1.0) AS c, valueType(true) AS d, "
    "valueType(datetime('2024-01-02T03:04:05Z')) AS e, 'a' IS :: STRING AS f, datetime() IS :: ZONED DATETIME AS g",

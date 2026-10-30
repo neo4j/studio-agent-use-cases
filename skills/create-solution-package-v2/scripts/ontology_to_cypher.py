@@ -15,7 +15,9 @@ CYPHERLITE.md "Import fidelity"):
 - Relationships: MATCH both endpoints on their key (never created), MERGE the relationship on its
   mapping key (an empty key collapses parallel rows into one), then SET every mapped property.
 - Values: an empty cell is null (Import converts '' to null before sending rows); STRING is not
-  trimmed; INTEGER/FLOAT/ZONED DATETIME trim first; BOOLEAN is toLower(trim(v)) IN ['1','true','yes'].
+  trimmed; INTEGER/FLOAT/ZONED DATETIME trim first; BOOLEAN is toLower(trim(v)) IN ['1','true','yes'];
+  a value that does not convert becomes null, as in Import (a datetime must be ISO-shaped to reach
+  datetime(), which would otherwise fail the whole statement).
 
 Not mirrored, reported instead: Import normalises datetimes through JavaScript `Date` (so a value with
 no zone is read in the browser's timezone), and deduplicates rows within each ~1 MB chunk.
@@ -27,6 +29,10 @@ NODE_MAPPING_KEYS = {"type", "node", "table", "mode", "key", "properties"}
 REL_MAPPING_KEYS = {"type", "relationship", "table", "mode", "key", "properties", "from_node", "to_node"}
 ENDPOINT_KEYS = {"label", "properties"}
 UTC_ISO = re.compile(r"^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(\.\d{1,3})?Z$")
+# Import turns a value JavaScript Date cannot parse into null; datetime() would fail the whole statement
+# instead, so only ISO-shaped values reach it. import_check.py reports every non-empty cell that does not
+# convert, so the guard hides nothing.
+ISO_DATETIME = r"^\\d{4}-\\d{2}-\\d{2}(T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?)?(Z|[+-]\\d{2}:\\d{2})?$"
 SUFFIX = {"key": "key", "unique": "uniq", "must_exist": "propertyExistence",
           "KEY": "key", "UNIQUE": "uniq", "EXISTS": "propertyExistence", "PROPERTY_TYPE": "propertyType"}
 
@@ -53,7 +59,7 @@ def conv(col, typ, alias=None):
         raise ShapeError(f"property type {typ!r} is not supported by the generator")
     inner = {"STRING": v, "INTEGER": f"toInteger(trim({v}))", "FLOAT": f"toFloat(trim({v}))",
              "BOOLEAN": f"toLower(trim({v})) IN ['1', 'true', 'yes']",
-             "ZONED DATETIME": f"datetime(trim({v}))"}[typ]
+             "ZONED DATETIME": f"CASE WHEN trim({v}) =~ '{ISO_DATETIME}' THEN datetime(trim({v})) END"}[typ]
     return f"CASE WHEN {v} IS NULL OR {v} = '' THEN null ELSE {inner} END"
 
 
