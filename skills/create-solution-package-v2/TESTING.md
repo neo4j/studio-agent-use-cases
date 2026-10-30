@@ -111,7 +111,7 @@ The script parses QUERIES.md with `annotations.py`, which is the one parser for 
    2. `@sample`;
    3. a starting value stated in `@params` ("Start at 4").
 
-   If a parameter has no value from any of these, the query is **NEEDS-PARAMS**. When TESTS.md gives several scenarios, the first scenario's values are used and the report says so.
+   If a parameter has no value from any of these, the query is **NEEDS-PARAMS**. A later query that reads a label or relationship type only a NEEDS-PARAMS query writes is NEEDS-PARAMS too, with the reason. It is not run, so it does not show up as a misleading empty-result FAIL. When TESTS.md gives several scenarios, the first scenario's values are used and the report says so.
 4. **Run.** With `--mode envelope --max-rows 0 --timeout 60s`, annotation block included. It records the columns, rows, time taken and exit code. The full rows go to `rows/<NN>.json`.
 5. **Mechanical checks.** In order:
    - the exit code is 0;

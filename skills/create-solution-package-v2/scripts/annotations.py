@@ -134,9 +134,11 @@ def parse_tests(path):
             continue
         fields, cur = {}, None
         for line in body.splitlines():
+            # A field is a bold **Field:** line, or a two-cell | Field | value | table row. A wider table whose
+            # header happens to start with "Parameters" (a sensitivity grid) is not a field.
             m = re.match(r"^\s*(?:[-*]\s*)?\*\*(Parameters|Invariant|Expected|Sensitivity):?\*\*\s*:?\s*(.*)$", line) \
-                or re.match(r"^\s*\|\s*\**(Parameters|Invariant|Expected|Sensitivity):?\**\s*\|\s*(.*?)\s*\|?\s*$", line)
-            if m:
+                or re.match(r"^\s*\|\s*\**(Parameters|Invariant|Expected|Sensitivity):?\**\s*\|([^|]*)\|?\s*$", line)
+            if m and m.group(1) not in fields:
                 cur = m.group(1)
                 fields[cur] = m.group(2).strip()
             elif re.match(r"^\s*(?:[-*]\s*)?\*\*\w[\w -]*:?\*\*\s*:?", line) or line.startswith("#"):
