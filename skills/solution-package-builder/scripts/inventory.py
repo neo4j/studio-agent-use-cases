@@ -8,7 +8,7 @@ Reports, without changing anything:
   - required files present or missing
   - every file outside the package format, with a suggested clean-up category
   - legacy markers in each Markdown file
-  - QUERIES.md structure (annotation blocks, adapting section) and TESTS.md parity
+  - QUERIES.cypher structure (annotation blocks, adapting section) and TESTS.md parity
   - the catalog.json entry against the folder, when the repo root is known
 Standard library only.
 """
@@ -42,8 +42,8 @@ for name in ("ONTOLOGY.json", "GRAPH_MODEL.json"):
         print(f"ONTOLOGY-FILE {name}: {generation(f)}")
 
 # --- files -------------------------------------------------------------------------
-FORMAT = {"SKILL.md", "ONTOLOGY.json", "QUERIES.md", "human_description.md", "TESTS.md", "SETUP.md"}
-REQUIRED = {"SKILL.md", "ONTOLOGY.json", "QUERIES.md", "human_description.md"}
+FORMAT = {"SKILL.md", "ONTOLOGY.json", "QUERIES.cypher", "human_description.md", "TESTS.md", "SETUP.md"}
+REQUIRED = {"SKILL.md", "ONTOLOGY.json", "QUERIES.cypher", "human_description.md"}
 has_csv = any((p / "sample-data").rglob("*.csv")) if (p / "sample-data").is_dir() else False
 if has_csv: REQUIRED.add("TESTS.md")
 for f in sorted(REQUIRED):
@@ -61,7 +61,7 @@ CATEGORY = [
     (r"^GRAPH_MODEL\.json$", "legacy ontology: convert to ONTOLOGY.json, then delete"),
     (r"(graph|data)[-_]?model|schema|ontology", "ontology prose: fold unique meaning into ONTOLOGY.json descriptions, then delete"),
     (r"^index", "index statements: move into SETUP.md, then delete"),
-    (r"\.cypher$|quer(y|ies)[-_]?(templates?|patterns?)|^queries\.", "duplicate queries: reconcile with QUERIES.md, then delete"),
+    (r"\.cypher$|quer(y|ies)[-_]?(templates?|patterns?)|^queries\.", "duplicate queries: reconcile with QUERIES.cypher, then delete"),
     (r"^introduction|^overview|^readme", "intro or overview: fold into SKILL.md intro guidance / human_description.md, then delete"),
     (r"sample[-_]?data\.md|^data", "sample-data description: move into TESTS.md, then delete"),
     (r"caveat|limitation|implementation|guidance", "agent guidance: fold into SKILL.md, or keep as an indexed supporting file if too large"),
@@ -109,33 +109,51 @@ if s:
     if "Supporting files" in secs:
         print("SKILL has a Supporting files table — re-check every entry after clean-up")
 
-# --- QUERIES.md and TESTS.md -------------------------------------------------------
-q = (p / "QUERIES.md").read_text(encoding="utf-8") if (p / "QUERIES.md").is_file() else ""
+# --- QUERIES.cypher and TESTS.md -------------------------------------------------------
+q = (p / "QUERIES.cypher").read_text(encoding="utf-8") if (p / "QUERIES.cypher").is_file() else ""
+schema_stmt = re.compile(r"\s*(CREATE|DROP|SHOW)\s+(CONSTRAINT|INDEX|CONSTRAINTS|INDEXES)", re.I)
+strip = lambda b: re.sub(r"(?m)^\s*//.*$\n?", "", re.sub(r"(?s)^\s*/\*.*?\*/", "", b))
+
+def cypher_sections(text):
+    """Split a .cypher package file into {heading: [statement, ...]}. Prose and headings are `//` comments
+    (`// ## Heading`); a statement runs from its first non-comment line (or `/*` annotation block) to a line ending in `;`."""
+    secs, head, stmt, in_block = {}, None, [], False
+    for line in text.split("\n"):
+        if not stmt and not in_block:
+            m = re.match(r"//\s*##\s+(.+?)\s*$", line)
+            if m: head = m.group(1); secs.setdefault(head, []); continue
+            if not line.strip() or line.lstrip().startswith("//"): continue
+        stmt.append(line)
+        if "/*" in line and "*/" not in line.split("/*", 1)[1]: in_block = True
+        if in_block and "*/" in line: in_block = False
+        if not in_block and re.search(r";\s*(//.*)?$", line):
+            secs.setdefault(head, []).append("\n".join(stmt)); stmt = []
+    if stmt: secs.setdefault(head, []).append("\n".join(stmt))
+    return secs
+
+qsecs = cypher_sections(q)
+blocks = [b for bs in qsecs.values() for b in bs]
 if q:
-    blocks = re.findall(r"```cypher\n(.*?)```", q, re.S)
-    schema_stmt = re.compile(r"\s*(CREATE|DROP|SHOW)\s+(CONSTRAINT|INDEX|CONSTRAINTS|INDEXES)", re.I)
-    strip = lambda b: re.sub(r"(?m)^\s*//.*$\n?", "", re.sub(r"(?s)^\s*/\*.*?\*/", "", b))
     queries = [b for b in blocks if not schema_stmt.match(strip(b))]
     annotated = sum(1 for b in queries if re.match(r"\s*/\*.*?@name", b, re.S))
     print(f"QUERIES {len(queries)} queries ({len(blocks) - len(queries)} constraint/index statements), {annotated} with an @-annotation block")
-    if "## Adapting these queries" not in q:
-        print("QUERIES no 'Adapting these queries' section")
-    for h in re.findall(r"(?m)^## (.+)$", q):
-        sec = q.split(f"## {h}", 1)[1].split("\n## ", 1)[0]
-        n = sum(1 for b in re.findall(r"```cypher\n(.*?)```", sec, re.S) if not schema_stmt.match(strip(b)))
+    if re.search(r"(?m)^```", q): print("QUERIES contains markdown code fences (file must be plain Cypher: prose as // comments, no fences)")
+    if not any(h == "Adapting these queries" for h in qsecs): print("QUERIES no 'Adapting these queries' section")
+    for h, bs in qsecs.items():
+        n = sum(1 for b in bs if not schema_stmt.match(strip(b)))
         if n > 1: print(f"QUERIES heading holds {n} queries (split to one per heading): {h}")
 setup_text = (p / "SETUP.md").read_text(encoding="utf-8") if (p / "SETUP.md").is_file() else ""
 for name, text in (("QUERIES", q), ("SETUP", setup_text)):
-    code = "\n".join(re.findall(r"```cypher\n(.*?)```", text, re.S))
+    code = "\n".join(blocks) if name == "QUERIES" else "\n".join(re.findall(r"```cypher\n(.*?)```", text, re.S))
     writes = sorted(set(re.findall(r"(?:SET|MERGE|CREATE)\s+[^\n]*?:(\w+)", code)) - {"CONSTRAINT", "INDEX"})
     props = sorted(set(re.findall(r"\bSET\s+\w+\.(\w+)", code)))
     if writes: print(f"{name} writes labels/types {writes} — check each is declared or defined in SKILL.md")
     if props: print(f"{name} writes properties {props} — check each is declared and mapped, or defined in SKILL.md")
-    qh = set(re.findall(r"(?m)^## (.+)$", q))
+    qh = set(h for h in qsecs if h)
     t = (p / "TESTS.md").read_text(encoding="utf-8") if (p / "TESTS.md").is_file() else ""
     if t:
         th = set(re.findall(r"(?m)^## (.+)$", t))
-        skip = {"Prerequisites", "Adapting these queries", "How to run", "Sample-data profile"}
+        skip = {"Prerequisites", "Adapting these queries", "How to run", "Sample-data profile", "Node-key constraints"}
         for h in sorted((qh - th) - skip): print(f"TESTS no section for query heading: {h}")
         for h in sorted((th - qh) - skip): print(f"TESTS section with no query: {h}")
 

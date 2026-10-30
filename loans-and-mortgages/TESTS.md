@@ -1,13 +1,13 @@
 # Loans and Mortgages — Tests
 
-What each query in `QUERIES.md` should return on the bundled sample data. This file is for the manual tester and the curating engineer; the runtime never loads it. Everything below was derived from the CSVs in `sample-data/` by simulating each query offline, not from a database run.
+What each query in `QUERIES.cypher` should return on the bundled sample data. This file is for the manual tester and the curating engineer; the runtime never loads it. Everything below was derived from the CSVs in `sample-data/` by simulating each query offline, not from a database run.
 
 ## How to run
 
 1. Use a disposable Neo4j 5.x database (5.6 or later, for `COUNT {}` and `COLLECT {}` subqueries) — the import writes the whole sample.
 2. Import the CSVs in `sample-data/` through the Import flow, using `ONTOLOGY.json` as the import definition. This also creates the node-key constraints.
 3. No `SETUP.md` statements are needed.
-4. Run each query in `QUERIES.md` with the parameters given in its section below, and compare the result with the Invariant first and the Expected values second.
+4. Run each query in `QUERIES.cypher` with the parameters given in its section below, and compare the result with the Invariant first and the Expected values second.
 5. Every date column holds an ISO 8601 zoned datetime at midnight UTC (`2025-10-08T00:00:00Z`) and imports as `ZONED DATETIME`: Import does not accept `DATE` for local CSV files and flags such a property "Not supported in local imports". The queries display dates with `date()`, so the values below are written as plain dates.
 6. Empty CSV cells (`propertyId` on unsecured loans, `paidDate` and `daysLate` on missed payments, `occupancy`, `lienPosition`, `ltvAtOrigination` and `denialReason` where they do not apply) are expected to import as absent properties, and an empty `propertyId` creates no `SECURED_BY`. If the import instead writes empty strings, the type conversions fail first — check that before reading any query result.
 

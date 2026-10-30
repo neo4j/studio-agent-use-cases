@@ -1,6 +1,6 @@
 # Insurance Claims Fraud — Tests
 
-What each query in `QUERIES.md` should return on the bundled sample data. This file is for the manual tester and the curating engineer; the runtime never loads it. Everything below was derived from the CSVs in `sample-data/`, not from a database run.
+What each query in `QUERIES.cypher` should return on the bundled sample data. This file is for the manual tester and the curating engineer; the runtime never loads it. Everything below was derived from the CSVs in `sample-data/`, not from a database run.
 
 ## How to run
 
@@ -8,7 +8,7 @@ What each query in `QUERIES.md` should return on the bundled sample data. This f
 2. Import the CSVs in `sample-data/` through the Import flow, using `ONTOLOGY.json` as the import definition. This also creates the node-key constraints.
 3. No `SETUP.md` statements are needed.
 4. The Graph Data Science queries need the GDS library on the database. Run them in their listed order: project, then Louvain and PageRank, then drop.
-5. Run each query in `QUERIES.md` with the parameters given in its section below, and compare the result with the Invariant first and the Expected values second.
+5. Run each query in `QUERIES.cypher` with the parameters given in its section below, and compare the result with the Invariant first and the Expected values second.
 
 ## Sample-data profile
 

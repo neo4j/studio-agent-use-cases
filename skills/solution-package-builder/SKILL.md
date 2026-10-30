@@ -23,7 +23,7 @@ The word claims less than it might suggest. A reference ontology here is typed n
 
 This is the constraint that shapes every decision below. A package has three audiences and they need different things.
 
-**The consuming agent** receives SKILL.md's body directly in its instruction prompt and loads QUERIES.md when it needs Cypher. Everything it reads costs context, and everything it reads it may repeat to a user whose data is not yours. It needs the reference ontology's meaning, the query patterns, and honest caveats — stated so they stay true whatever data is in the database.
+**The consuming agent** receives SKILL.md's body directly in its instruction prompt and loads QUERIES.cypher when it needs Cypher. Everything it reads costs context, and everything it reads it may repeat to a user whose data is not yours. It needs the reference ontology's meaning, the query patterns, and honest caveats — stated so they stay true whatever data is in the database.
 
 **The curating engineer**, and any agent verifying the package, needs the opposite: concrete row counts, the exact composition of the seeded rings, what happens at other thresholds, which query returned what on which day. All of that is real work product and none of it belongs anywhere the consuming agent can read it, because on the user's own data it is not merely useless but wrong.
 
@@ -39,7 +39,7 @@ Seven parts, six of them required. Keep packages this small where possible — e
 <package-name>/            # kebab-case; the folder name becomes the skillId
 ├── SKILL.md               # agent guidance: frontmatter + body (see below)
 ├── ONTOLOGY.json          # reference ontology per ONTOLOGY_SPEC_FORMAT.md
-├── QUERIES.md             # runnable Cypher with @-annotation blocks
+├── QUERIES.cypher             # runnable Cypher with @-annotation blocks
 ├── human_description.md   # the package explained to a person — rendered as HTML in a UI, never read by an agent
 ├── TESTS.md               # expected results on the sample data — never loaded by the runtime
 ├── SETUP.md               # optional — post-import statements the queries depend on
@@ -51,7 +51,7 @@ A package with no sample data is a reference-ontology template, not a working de
 
 There is no INTRODUCTION.md. The agent introduces the package from guidance inside SKILL.md (see the template below), not from a canned document. `human_description.md` is not that document and is not a substitute for it: no agent ever reads it, and it is never the script for a spoken introduction. It is a page a person reads with their eyes, in a UI, possibly before any agent is involved at all.
 
-Complex packages may add supporting files (`.md` or `.cypher` only) when they are justified in explaining the package to the agent and how to use it effectively — for example a multi-step workflow, detailed design rationale, or honest caveats that would bloat SKILL.md (see `identity-validation` for a worked example). Each one must earn its place: add it only when the content is too large or too specialised for SKILL.md or QUERIES.md, and index every one in a "Supporting files" table in SKILL.md stating when the agent should load it. Simple packages need none. **Every file the agent can load must stay at or under 50,000 characters** — QUERIES.md, SETUP.md, ONTOLOGY.json and every supporting file. That is a hard limit: the destination's file-reading tools refuse anything longer, so the agent cannot read the file at all. Aim for 45,000 or less so the next query or annotation does not tip it over, count characters rather than bytes, and note any file near the limit in the handoff. A QUERIES.md that grows past it usually needs its sample detail moved to TESTS.md or its annotation prose tightened; failing that, an optional query group can move to an indexed supporting file. Paths must be relative with forward slashes.
+Complex packages may add supporting files (`.md` or `.cypher` only) when they are justified in explaining the package to the agent and how to use it effectively — for example a multi-step workflow, detailed design rationale, or honest caveats that would bloat SKILL.md (see `identity-validation` for a worked example). Each one must earn its place: add it only when the content is too large or too specialised for SKILL.md or QUERIES.cypher, and index every one in a "Supporting files" table in SKILL.md stating when the agent should load it. Simple packages need none. **Every file the agent can load must stay at or under 50,000 characters** — QUERIES.cypher, SETUP.md, ONTOLOGY.json and every supporting file. That is a hard limit: the destination's file-reading tools refuse anything longer, so the agent cannot read the file at all. Aim for 45,000 or less so the next query or annotation does not tip it over, count characters rather than bytes, and note any file near the limit in the handoff. A QUERIES.cypher that grows past it usually needs its sample detail moved to TESTS.md or its annotation prose tightened; failing that, an optional query group can move to an indexed supporting file. Paths must be relative with forward slashes.
 
 `TESTS.md`, `human_description.md` and the sample-data CSVs are exempt from both rules: none of them is indexed in SKILL.md, and none counts against the size limit, because none reaches the consuming agent. `human_description.md` has a length constraint of its own — a reader's patience rather than a context window. See step 7.
 
@@ -114,15 +114,16 @@ One CSV per table in the spec. The header row must match the table's `columns` n
 
 The data must also satisfy the reference ontology's annotations: every value conforms to its property's confirmed `description` (unit, encoding, scope) and to its `one_of` or `pattern`, and every relationship's counts and prose multiplicity hold. Once the CSVs exist, backfill each property description's trailing `` e.g. `...` `` with a real value taken verbatim from the mapped column — from an unremarkable background row, never a seeded ring member or anchor, because the sample is there to show a value's shape and should carry no signal.
 
-Keep a working note of what you seeded as you go — ring composition, deliberate background noise, the counts each pattern produces. That note becomes TESTS.md at step 4. Do not put it in QUERIES.md.
+Keep a working note of what you seeded as you go — ring composition, deliberate background noise, the counts each pattern produces. That note becomes TESTS.md at step 4. Do not put it in QUERIES.cypher.
 
-### 3. QUERIES.md
+### 3. QUERIES.cypher
 
 The agent runs these as-is when the database matches the reference ontology and rewrites them when it doesn't, so correctness beats cleverness — and everything in the file must stay true on data that isn't yours.
 
+- **The file is valid Cypher, not markdown.** It has the `.cypher` extension so editors and tooling open it as Cypher. All prose — the title, the preamble, section headings, section prose — is written as `//` line comments; query bodies are bare Cypher with no code fences; and **every statement ends with a semicolon**, so the whole file runs as a multi-statement script. Headings keep their markdown markers inside the comment (`// # Title`, `// ## Query name`) so they stay greppable. Write the file in this order, with a blank line between parts.
 - Open with a short preamble: prerequisites in one place (Neo4j/Cypher version, APOC or GDS needs). **No sample-data profile** — row counts, seeded signals and noise statistics go in TESTS.md.
 - Follow it with a short **"Adapting these queries"** section — see below.
-- One `##` heading per query, simplest first, each with a fenced ```` ```cypher ```` block.
+- One `// ## Query name` heading per query, simplest first, each followed by the annotation block and the query, ending in `;`. One query per heading.
 - **Every query opens with an @-annotation block** — a Cypher block comment (`/* ... */`) before any query logic, so it can never execute, carrying @-prefixed key–value annotations:
 
   ```cypher
@@ -152,8 +153,8 @@ The agent runs these as-is when the database matches the reference ontology and 
    *                     raise until the result is reviewable by hand.
    *                 minExposure - Minimum summed value across those claims.
    ```
-- **The whole file is data-agnostic, not just the annotation blocks — except `@sample`.** No row counts, no seeded-entity names, no thresholds justified by the bundled data, anywhere else in QUERIES.md: not in prose, not in Cypher comments, not in example `:param` lines. The file travels with the package into editors and customers' databases, and the Solution Agent's show/run tooling surfaces annotation blocks to help the user understand a query — an unlabelled sample-data claim is false the moment the data is the user's own, and conspicuously so.
-- **`@sample` is the one place the bundled data appears in QUERIES.md.** An optional tag, at most one per query, after `@tags`. It gives the runtime agent what `@returns` cannot: concrete parameter values that are valid on the sample, and what the query returns with them — so that after a sample import the agent can smoke-test the import and start from a real anchor instead of inventing an ID. It always opens with the literal phrase `Bundled sample data only:`, so no reader can take it as a claim about other data:
+- **The whole file is data-agnostic, not just the annotation blocks — except `@sample`.** No row counts, no seeded-entity names, no thresholds justified by the bundled data, anywhere else in QUERIES.cypher: not in prose, not in Cypher comments, not in example `:param` lines. The file travels with the package into editors and customers' databases, and the Solution Agent's show/run tooling surfaces annotation blocks to help the user understand a query — an unlabelled sample-data claim is false the moment the data is the user's own, and conspicuously so.
+- **`@sample` is the one place the bundled data appears in QUERIES.cypher.** An optional tag, at most one per query, after `@tags`. It gives the runtime agent what `@returns` cannot: concrete parameter values that are valid on the sample, and what the query returns with them — so that after a sample import the agent can smoke-test the import and start from a real anchor instead of inventing an ID. It always opens with the literal phrase `Bundled sample data only:`, so no reader can take it as a claim about other data:
 
   ```text
    * @sample         Bundled sample data only: $patientId = 'fd65a941-3fa1-…'
@@ -170,29 +171,29 @@ The agent runs these as-is when the database matches the reference ontology and 
 - **Where a query writes an entity the reference ontology cannot declare**, say so in the preamble's prerequisites: name it, and state that it does not exist in a freshly imported database. A reader who runs the queries in isolation has no other way to know.
 - **Annotation blocks inherit the reference ontology's vocabulary.** When `@description`, `@params`, or `@usage` explains a property or relationship, use the wording, unit, scope, allowed values, and direction from its ONTOLOGY.json annotations — never a paraphrase that could drift (if the reference ontology says dose per administration in milligrams, the annotation doesn't say "daily dosage"). The reference ontology's descriptions, the query annotations, and the queries themselves must read as one coherent artifact.
 - Bound every variable-length traversal. The exception is a walk over a structure that is acyclic by construction (a bill of materials, a containment hierarchy), where a fixed bound would silently drop deep branches and report them as false results: leave it unbounded and say in `@usage` that the walk is unbounded and relies on the structure being acyclic.
-- Isolate optional APOC/GDS material in its own clearly labelled section: a divider heading such as `## Graph Data Science (optional)` carrying only section prose — the plugin requirement, the projection's lifecycle, and the order the statements run in (project, run, drop) — followed by each statement under its own `##` heading with the requirement repeated in `@prerequisites`. When the package's queries must run in a stated order, label each APOC/GDS query in place instead ("(requires APOC)" in its heading and in `@prerequisites`) rather than moving it. Algorithm queries that stream one row per node need a `$limit` or an aggregation, or they return the whole graph. Do not mark queries as unproven: testing against a database is a manual step outside package creation, and TESTS.md is what the tester works from. Do not mark queries as unproven: testing against a database is a manual step outside package creation, and TESTS.md is what the tester works from.
+- Isolate optional APOC/GDS material in its own clearly labelled section: a divider heading such as `// ## Graph Data Science (optional)` carrying only section prose — the plugin requirement, the projection's lifecycle, and the order the statements run in (project, run, drop) — followed by each statement under its own `// ##` heading with the requirement repeated in `@prerequisites`. When the package's queries must run in a stated order, label each APOC/GDS query in place instead ("(requires APOC)" in its heading and in `@prerequisites`) rather than moving it. Algorithm queries that stream one row per node need a `$limit` or an aggregation, or they return the whole graph. Do not mark queries as unproven: testing against a database is a manual step outside package creation, and TESTS.md is what the tester works from. Do not mark queries as unproven: testing against a database is a manual step outside package creation, and TESTS.md is what the tester works from.
 - **Design rationale is not query material.** Why the reference ontology diverges from a published source page, why a query differs from the one on that page — that is a line or two in SKILL.md's Reference ontology section, or a supporting rationale file if it genuinely needs more. It does not belong between the queries.
 - End with the node-key constraints implied by ONTOLOGY.json (`key: true` properties and any composite `KEY` constraints), framed as a reference for checking the live database. Import creates them from ONTOLOGY.json, so they are there to verify the expected constraints, not to build them. Section prose introduces them; the individual statements need no annotation blocks.
 
 #### The "Adapting these queries" section
 
-A dozen lines or so near the top of QUERIES.md, stating the procedure once for the whole package rather than repeating it per query:
+A dozen lines or so near the top of QUERIES.cypher, stating the procedure once for the whole package rather than repeating it per query:
 
-```markdown
-## Adapting these queries
-
-These queries assume the reference ontology in `ONTOLOGY.json`. When the
-user's database differs — their own ontology, a modified one, or a database
-that predates this package — the queries are patterns to rebuild, not
-Cypher to run.
-
-1. Read the live schema (`CALL db.schema.visualization()`, `SHOW CONSTRAINTS`)
-   rather than assuming the reference ontology applies.
-2. Map their labels onto the role map in `SKILL.md`. A role with no
-   counterpart means the pattern below it has no analogue — say so
-   rather than forcing a fit.
-3. Rewrite from the pattern, and update the annotation block to describe
-   what the rewritten query actually does.
+```cypher
+// ## Adapting these queries
+//
+// These queries assume the reference ontology in `ONTOLOGY.json`. When the
+// user's database differs — their own ontology, a modified one, or a database
+// that predates this package — the queries are patterns to rebuild, not
+// Cypher to run.
+//
+// 1. Read the live schema (`CALL db.schema.visualization()`, `SHOW CONSTRAINTS`)
+//    rather than assuming the reference ontology applies.
+// 2. Map their labels onto the role map in `SKILL.md`. A role with no
+//    counterpart means the pattern below it has no analogue — say so
+//    rather than forcing a fit.
+// 3. Rewrite from the pattern, and update the annotation block to describe
+//    what the rewritten query actually does.
 ```
 
 That is the whole investment. Do not add per-query rewrite prose: it is boilerplate against a capable agent, and it costs context on every query to say what one section says once. The exception, used sparingly, is a query whose analytical shape genuinely isn't recoverable from its Cypher — there, add `@pattern` (the schema-independent shape in one line) to the annotation block. Most queries don't need it.
@@ -201,7 +202,7 @@ That is the whole investment. Do not add per-query rewrite prose: it is boilerpl
 
 Everything concrete about the bundled sample data, in one file the runtime never loads.
 
-Write it immediately after QUERIES.md, from the working note kept at step 2 and from reading the CSVs: it states what each query should return on the bundled data, derived from the seeded design. It is the specification the manual tester works from, the oracle VALIDATION.md checks for completeness, and the reference an engineer curating the package needs. It is exempt from the size limit — detail is free here, because none of it reaches the consuming agent.
+Write it immediately after QUERIES.cypher, from the working note kept at step 2 and from reading the CSVs: it states what each query should return on the bundled data, derived from the seeded design. It is the specification the manual tester works from, the oracle VALIDATION.md checks for completeness, and the reference an engineer curating the package needs. It is exempt from the size limit — detail is free here, because none of it reaches the consuming agent.
 
 Package creation does not run the queries. Testing against a database is manual and outside this skill's scope, so do not run imports, do not mark queries as unproven, and do not invent observed results.
 
@@ -209,7 +210,7 @@ Structure:
 
 - **How to run** — for the manual tester: that a disposable database is required, that the CSVs import through the Import flow from ONTOLOGY.json first, and any SETUP.md statements that must run before the queries.
 - **Sample-data profile** — row counts per label and relationship type, the deliberately seeded signals in full, and the deliberate background noise that keeps any single query from being a clean detector. Say why key choices were made where the data drove them.
-- **One `##` section per query, heading matching QUERIES.md exactly** so the two files pair mechanically.
+- **One `##` section per query, heading matching QUERIES.cypher's `// ##` heading text exactly** so the two files pair mechanically.
 
 Each query section carries:
 
@@ -230,9 +231,9 @@ Every query gets its own `##` section. Do not collect any under a shared heading
 
 If any query depends on schema or derived data the Import flow does not create — a fulltext or point index, a query-applied label — put the minimal statements in SETUP.md. Most packages need none.
 
-- **Never include node-key constraints.** Import creates them from ONTOLOGY.json's key definitions; recreating them (or `UNIQUE` variants) conflicts with the existing `KEY` constraints. Constraints belong at the end of QUERIES.md as a reference.
+- **Never include node-key constraints.** Import creates them from ONTOLOGY.json's key definitions; recreating them (or `UNIQUE` variants) conflicts with the existing `KEY` constraints. Constraints belong at the end of QUERIES.cypher as a reference.
 - One statement per ```` ```cypher ```` block — the agent runs one statement per call.
-- Each statement opens with the same `/* @... */` annotation block as QUERIES.md queries: `@name`, `@description` (what the statement creates and why), and `@usage` naming the dependent queries and the effect if skipped (fails outright vs. silently degraded results). `@params`/`@returns`/`@tags` only where meaningful.
+- Each statement opens with the same `/* @... */` annotation block as QUERIES.cypher queries: `@name`, `@description` (what the statement creates and why), and `@usage` naming the dependent queries and the effect if skipped (fails outright vs. silently degraded results). `@params`/`@returns`/`@tags` only where meaningful.
 - Order required statements first; mark recommended and optional ones clearly. Keep the total to a handful — a growing SETUP.md means the package is over-engineered.
 - Open the file with the agent rules: explain each statement before running it, confirm the target database, and if the user declines a statement, name the affected queries and caveat their results for the rest of the conversation.
 
@@ -302,7 +303,7 @@ the reference ontology or start importing data.
   relationship and property the queries use is loaded by Import; no query
   creates anything.">
 - The full reference ontology, with its import mappings, is in
-  `ONTOLOGY.json`; runnable Cypher is in `QUERIES.md`.
+  `ONTOLOGY.json`; runnable Cypher is in `QUERIES.cypher`.
 - Call it the reference ontology. Users may say "model", "graph model",
   "data model" or "ontology" — treat these as the same thing.
 - Treat its annotations as the authoritative meaning of each term —
@@ -319,7 +320,7 @@ the reference ontology or start importing data.
 | <Abstract role> | `<Label>` | <The property or connection the patterns depend on> |
 
 When the user's database differs from the reference ontology, map their
-labels onto these roles before rewriting anything from `QUERIES.md`. A role with no
+labels onto these roles before rewriting anything from `QUERIES.cypher`. A role with no
 counterpart in their data means the patterns resting on it have no
 analogue — say so plainly rather than forcing a fit.
 
@@ -389,7 +390,7 @@ Its reader is evaluating, not operating: someone who has landed on this package 
 
 Four rules on content:
 
-- **No filenames, no Cypher, no JSON.** Never name `ONTOLOGY.json`, `QUERIES.md`, `SKILL.md`, `sample-data/`, or any other file. The reader is looking at a rendered page, not a directory listing. Describe what the reference ontology contains; don't point at where it lives.
+- **No filenames, no Cypher, no JSON.** Never name `ONTOLOGY.json`, `QUERIES.cypher`, `SKILL.md`, `sample-data/`, or any other file. The reader is looking at a rendered page, not a directory listing. Describe what the reference ontology contains; don't point at where it lives.
 - **No sample data, at all.** Not counts, not seeded entities, not "the bundled synthetic dataset". The file describes the industry and the reference ontology; the data is out of scope. This is a stricter rule than SKILL.md's, which permits a general mention.
 - **No agent instructions.** No "the agent can help you with", no response shapes, no operational constraints. Nothing in this file addresses a machine.
 - **Plain professional language.** Someone in the industry should recognise their own vocabulary; someone outside it should still follow. Expand a term of art on first use.
@@ -460,7 +461,7 @@ Aim for something a reader gets through in two or three minutes — roughly 400 
 
 ## Validate and hand off
 
-Run [VALIDATION.md](VALIDATION.md) in full. Inconsistency between reference ontology, data, and queries is the most common failure — and annotations widen that check: descriptions, sample values, allowed values, counts, query annotations, and CSVs must all tell the same story. The second most common failure is now sample-data detail leaking into a file the consuming agent reads; check QUERIES.md and SKILL.md for it specifically.
+Run [VALIDATION.md](VALIDATION.md) in full. Inconsistency between reference ontology, data, and queries is the most common failure — and annotations widen that check: descriptions, sample values, allowed values, counts, query annotations, and CSVs must all tell the same story. The second most common failure is now sample-data detail leaking into a file the consuming agent reads; check QUERIES.cypher and SKILL.md for it specifically.
 
 Your handoff summary must list every remaining `TODO(review):` with its path (including `inferred description` items the user hasn't confirmed), whether the reference ontology validated against the bundled schema, passed the spec-library check (and with which npm release), and was accepted by the destination runtime — registration and Import conversion both — the ontology graph spec version its `schema` field declares, any agent-loadable file near the 50,000-character limit, whether `human_description.md` covers every node, relationship and property in the reference ontology, and any assumption that needs domain-owner review. In `neo4j/studio-agent-use-cases`, also run `scripts/validate-new-packages.py` and the unit tests, which CI runs on the pull request.
 

@@ -1,6 +1,6 @@
 # EV Route Planning — Tests
 
-What each query in `QUERIES.md` should return on the bundled sample data. This file is for the manual tester and the curating engineer; the runtime never loads it. Everything below was derived from the CSVs in `sample-data/`, not from a database run.
+What each query in `QUERIES.cypher` should return on the bundled sample data. This file is for the manual tester and the curating engineer; the runtime never loads it. Everything below was derived from the CSVs in `sample-data/`, not from a database run.
 
 ## How to run
 
@@ -8,7 +8,7 @@ What each query in `QUERIES.md` should return on the bundled sample data. This f
 2. Import the CSVs in `sample-data/` through the Import flow, using `ONTOLOGY.json` as the import definition. This also creates the node-key constraints.
 3. No `SETUP.md` statements are needed.
 4. Run **Reference ontology sanity check — node and relationship counts** first. `charge_options` must be 200: the `CHARGE` mapping identifies each relationship by `tier`, so the two options at a station stay separate. A count of 100 means the tiers merged on import, and the route queries will then see only one tier per station.
-5. Run each query in `QUERIES.md` with the parameters given in its section below, and compare the result with the Invariant first and the Expected values second. The parameter values are the ones the legacy `:param` block used, and the ones each query's `@sample` gives.
+5. Run each query in `QUERIES.cypher` with the parameters given in its section below, and compare the result with the Invariant first and the Expected values second. The parameter values are the ones the legacy `:param` block used, and the ones each query's `@sample` gives.
 
 ## Sample-data profile
 

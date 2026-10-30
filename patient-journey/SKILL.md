@@ -33,7 +33,7 @@ End with a clear next step, such as asking whether they'd like to explore the re
 - Relationships: `(Patient)-[:HAS_ENCOUNTER]->(Encounter)`, `(Encounter)-[:NEXT]->(Encounter)`, `(Encounter)-[:HAS_OBSERVATION]->(Observation)`, `(Encounter)-[:DIAGNOSED]->(Condition)`, `(Encounter)-[:PRESCRIBED]->(Drug)`, `(Encounter)-[:ATTENDED_BY]->(Provider)`, `(Provider)-[:HAS_SPECIALITY]->(Speciality)`, `(Provider)-[:BELONGS_TO]->(Organisation)`.
 - Nothing clinical attaches to a patient directly: observations, diagnoses, prescriptions and the attending provider all hang off the `Encounter`, which gives every fact a date and a context. `Condition` and `Drug` are shared — one node per standardised code — so patients meet at them, and that meeting is the comorbidity and co-prescription signal.
 - Every node, relationship and property the queries use is loaded by Import; no query creates anything.
-- The full reference ontology, with its import mappings, is in `ONTOLOGY.json`; runnable Cypher is in `QUERIES.md`.
+- The full reference ontology, with its import mappings, is in `ONTOLOGY.json`; runnable Cypher is in `QUERIES.cypher`.
 - Call it the reference ontology. Users may say "model", "graph model", "data model" or "ontology" — treat these as the same thing.
 - Treat its annotations as the authoritative meaning of each term — `description` above all, plus `aliases` and relationship counts. Quote them when explaining the reference ontology, rely on them when adapting queries to the user's own data (an alias such as `Person` or `Visit` often names the user's equivalent label), and never contradict them.
 
@@ -48,7 +48,7 @@ End with a clear next step, such as asking whether they'd like to explore the re
 | Care deliverer | `Provider` | Exactly one per episode, so workload and delivery can be counted |
 | Delivery context | `Speciality`, `Organisation` | A grouping above the deliverer that providers converge on |
 
-When the user's database differs from the reference ontology, map their labels onto these roles before rewriting anything from `QUERIES.md`. A role with no counterpart in their data means the patterns resting on it have no analogue — say so plainly rather than forcing a fit.
+When the user's database differs from the reference ontology, map their labels onto these roles before rewriting anything from `QUERIES.cypher`. A role with no counterpart in their data means the patterns resting on it have no analogue — say so plainly rather than forcing a fit.
 
 ## Operational Constraints
 

@@ -1,52 +1,51 @@
-# Configurable Bill of Materials — Query Guidance
+// # Configurable Bill of Materials — Query Guidance
 
-Cypher for the `configurable-bom` use case: exploring a configurable product
-structure, resolving a variant from it, pruning the decisions constraints left
-open, and costing the result. Every query references only labels, relationship
-types and properties defined in the reference ontology (`ONTOLOGY.json`), plus
-`RESOLVED_LINK`, which the queries create and `SKILL.md` defines. **Four of these
-queries write to the database:** resolving a variant creates `RESOLVED_LINK`
-relationships; pruning, garbage collection and clearing delete them. None of
-them touches `Product`, `Assembly`, `ConfigGroup` or `Part`, or any structural
-relationship between them — the configurable structure is read-only throughout,
-and every write is confined to one variant's links. Confirm the target database
-before running any of them.
+// Cypher for the `configurable-bom` use case: exploring a configurable product
+// structure, resolving a variant from it, pruning the decisions constraints left
+// open, and costing the result. Every query references only labels, relationship
+// types and properties defined in the reference ontology (`ONTOLOGY.json`), plus
+// `RESOLVED_LINK`, which the queries create and `SKILL.md` defines. **Four of these
+// queries write to the database:** resolving a variant creates `RESOLVED_LINK`
+// relationships; pruning, garbage collection and clearing delete them. None of
+// them touches `Product`, `Assembly`, `ConfigGroup` or `Part`, or any structural
+// relationship between them — the configurable structure is read-only throughout,
+// and every write is confined to one variant's links. Confirm the target database
+// before running any of them.
 
-## Prerequisites
+// ## Prerequisites
 
-- **Neo4j 2025.06 or later, with Cypher 25.** Two queries below open with a
-  `CYPHER 25` directive and use query chaining (`NEXT`) and scoped call
-  subqueries (`CALL (var) { ... }`); several use quantified path patterns
-  (`-[:TYPE]->*`, `-[:TYPE]->{1,8}`) and the negated type predicate
-  (`-[r:!RESOLVED_LINK]->`). None of this runs on an earlier version. No APOC
-  or GDS.
-- The graph is loaded through the Import flow from `ONTOLOGY.json` — the
-  bundled `sample-data/` CSVs, or the user's own data mapped onto the reference
-  ontology.
-- `RESOLVED_LINK` is **not** declared in `ONTOLOGY.json` and does not exist in a
-  freshly imported database. The queries below create it, and `SKILL.md`
-  carries its definition. Every other label, relationship type and property
-  used here is in the reference ontology.
-- `SETUP.md` carries one recommended index. Nothing here fails without it, but
-  every query that filters `RESOLVED_LINK` by variant scans without it.
-- The intended order for a full resolution is: resolve, then prune, then garbage
-  collect, then roll up. Rolling up before pruning counts every surviving
-  option, which is a sum over a superset rather than over a bill of materials.
-- Anchors are parameters, never hardcoded IDs. Ask the user which product
-  (`Product.productId`) and which variant name to work with, rather than
-  inventing either.
+// - **Neo4j 2025.06 or later, with Cypher 25.** Two queries below open with a
+//   `CYPHER 25` directive and use query chaining (`NEXT`) and scoped call
+//   subqueries (`CALL (var) { ... }`); several use quantified path patterns
+//   (`-[:TYPE]->*`, `-[:TYPE]->{1,8}`) and the negated type predicate
+//   (`-[r:!RESOLVED_LINK]->`). None of this runs on an earlier version. No APOC
+//   or GDS.
+// - The graph is loaded through the Import flow from `ONTOLOGY.json` — the
+//   bundled `sample-data/` CSVs, or the user's own data mapped onto the reference
+//   ontology.
+// - `RESOLVED_LINK` is **not** declared in `ONTOLOGY.json` and does not exist in a
+//   freshly imported database. The queries below create it, and `SKILL.md`
+//   carries its definition. Every other label, relationship type and property
+//   used here is in the reference ontology.
+// - `SETUP.md` carries one recommended index. Nothing here fails without it, but
+//   every query that filters `RESOLVED_LINK` by variant scans without it.
+// - The intended order for a full resolution is: resolve, then prune, then garbage
+//   collect, then roll up. Rolling up before pruning counts every surviving
+//   option, which is a sum over a superset rather than over a bill of materials.
+// - Anchors are parameters, never hardcoded IDs. Ask the user which product
+//   (`Product.productId`) and which variant name to work with, rather than
+//   inventing either.
 
-## Adapting these queries
+// ## Adapting these queries
 
-These queries assume the reference ontology in `ONTOLOGY.json`. When the user's database differs — their own ontology, a modified one, or a database that predates this package — the queries are patterns to rebuild, not Cypher to run.
+// These queries assume the reference ontology in `ONTOLOGY.json`. When the user's database differs — their own ontology, a modified one, or a database that predates this package — the queries are patterns to rebuild, not Cypher to run.
 
-1. Read the live schema (`CALL db.schema.visualization()`, `SHOW CONSTRAINTS`) rather than assuming the reference ontology applies.
-2. Map their labels onto the role map in `SKILL.md`. A role with no counterpart means the pattern below it has no analogue — say so rather than forcing a fit.
-3. Rewrite from the pattern, and update the annotation block to describe what the rewritten query actually does.
+// 1. Read the live schema (`CALL db.schema.visualization()`, `SHOW CONSTRAINTS`) rather than assuming the reference ontology applies.
+// 2. Map their labels onto the role map in `SKILL.md`. A role with no counterpart means the pattern below it has no analogue — say so rather than forcing a fit.
+// 3. Rewrite from the pattern, and update the annotation block to describe what the rewritten query actually does.
 
-## Explore the configurable structure of a product
+// ## Explore the configurable structure of a product
 
-```cypher
 /*
  * @name           Explore the configurable structure of a product
  * @description    Returns the product's configurable structure as paths:
@@ -73,12 +72,10 @@ These queries assume the reference ontology in `ONTOLOGY.json`. When the user's 
  *                 the three wheel assemblies.
  */
 MATCH path = (:Product {productId: $productId})-[:REQUIRES|HAS_PART|HAS_OPTION]->{1,8}()
-RETURN path
-```
+RETURN path;
 
-## List the configuration decisions and their options
+// ## List the configuration decisions and their options
 
-```cypher
 /*
  * @name           List the configuration decisions and their options
  * @description    Returns every configuration decision in the catalog with
@@ -111,12 +108,10 @@ RETURN cg.configGroupId AS configGroupId,
          optionId:    coalesce(option.partId, option.assemblyId),
          optionValue: option[cg.optionProperty]
        }) AS options
-ORDER BY category, configGroupId
-```
+ORDER BY category, configGroupId;
 
-## Resolve a variant against constraints
+// ## Resolve a variant against constraints
 
-```cypher
 /*
  * @name           Resolve a variant against constraints
  * @description    Walks the configurable structure from the product to its
@@ -187,12 +182,10 @@ RETURN startNode(rel) AS source, rel AS r, endNode(rel) AS target
 NEXT
 
 MERGE (source)-[rl:RESOLVED_LINK {idVariant: $idVariant, relType: type(r)}]->(target)
-SET rl.qty = r.qty
-```
+SET rl.qty = r.qty;
 
-## Show a resolved bill of materials
+// ## Show a resolved bill of materials
 
-```cypher
 /*
  * @name           Show a resolved bill of materials
  * @description    Returns every RESOLVED_LINK belonging to one variant as
@@ -214,12 +207,10 @@ SET rl.qty = r.qty
  *                 resolved link.
  */
 MATCH p = ()-[:RESOLVED_LINK {idVariant: $idVariant}]->()
-RETURN p
-```
+RETURN p;
 
-## Prune undecided decisions by scoring
+// ## Prune undecided decisions by scoring
 
-```cypher
 /*
  * @name           Prune undecided decisions by scoring
  * @description    Repeatedly finds configuration decisions that still have
@@ -305,12 +296,10 @@ CALL (_) {
   UNWIND optLinks[1..] AS delOptLink
   DELETE delOptLink
 
-}
-```
+};
 
-## Remove resolved links detached from the product
+// ## Remove resolved links detached from the product
 
-```cypher
 /*
  * @name           Remove resolved links detached from the product
  * @description    Deletes RESOLVED_LINK relationships for one variant that are
@@ -339,12 +328,10 @@ CALL (_) {
  */
 MATCH ()<-[r:RESOLVED_LINK {idVariant: $idVariant}]-(x)
 WHERE NOT EXISTS { (x)<-[:RESOLVED_LINK {idVariant: $idVariant}]-*(:Product) }
-DELETE r
-```
+DELETE r;
 
-## Roll up weight and cost of a resolved variant
+// ## Roll up weight and cost of a resolved variant
 
-```cypher
 /*
  * @name           Roll up weight and cost of a resolved variant
  * @description    Totals the weight and cost of a resolved variant by finding
@@ -379,12 +366,10 @@ WITH leaf, {cost: leaf.cost * times, weight: leaf.weight * times} AS vals
 WITH collect(vals) AS valsList
 WITH reduce(acc = {cost: 0.0, weight: 0.0}, vals IN valsList |
      {cost: acc.cost + vals.cost, weight: acc.weight + vals.weight}) AS vals
-RETURN round(vals.weight, 2) AS weightKg, round(vals.cost, 2) AS cost
-```
+RETURN round(vals.weight, 2) AS weightKg, round(vals.cost, 2) AS cost;
 
-## Find configuration decisions the constraints could not satisfy
+// ## Find configuration decisions the constraints could not satisfy
 
-```cypher
 /*
  * @name           Find configuration decisions the constraints could not satisfy
  * @description    Returns the paths to configuration decisions that the
@@ -419,12 +404,10 @@ RETURN round(vals.weight, 2) AS weightKg, round(vals.cost, 2) AS cost
 MATCH path = (:Product {productId: $productId})-[:RESOLVED_LINK {idVariant: $idVariant}]->*(x)
              -[:REQUIRES]->(y:ConfigGroup)
 WHERE NOT EXISTS { (x)-[:RESOLVED_LINK {idVariant: $idVariant}]->(y) }
-RETURN path
-```
+RETURN path;
 
-## Clear a resolved variant
+// ## Clear a resolved variant
 
-```cypher
 /*
  * @name           Clear a resolved variant
  * @description    Deletes every RESOLVED_LINK belonging to one variant,
@@ -449,14 +432,12 @@ RETURN path
  *                 55 if run straight after resolving.
  */
 MATCH ()-[r:RESOLVED_LINK {idVariant: $idVariant}]->()
-DELETE r
-```
+DELETE r;
 
-## Node-key constraints
+// ## Node-key constraints
 
-Import creates these node-key constraints from the key definitions in `ONTOLOGY.json`. They are listed as a reference for checking the live database (`SHOW CONSTRAINTS`), not as statements to run: recreating them, or adding `UNIQUE` variants, conflicts with the existing `KEY` constraints. `ONTOLOGY.json` also declares `qty` as required on `REQUIRES`, so expect that existence constraint alongside these. There are no constraints on `RESOLVED_LINK`: the queries above write it rather than Import loading it.
+// Import creates these node-key constraints from the key definitions in `ONTOLOGY.json`. They are listed as a reference for checking the live database (`SHOW CONSTRAINTS`), not as statements to run: recreating them, or adding `UNIQUE` variants, conflicts with the existing `KEY` constraints. `ONTOLOGY.json` also declares `qty` as required on `REQUIRES`, so expect that existence constraint alongside these. There are no constraints on `RESOLVED_LINK`: the queries above write it rather than Import loading it.
 
-```cypher
 CREATE CONSTRAINT product_key IF NOT EXISTS
 FOR (n:Product) REQUIRE n.productId IS NODE KEY;
 
@@ -468,4 +449,3 @@ FOR (n:ConfigGroup) REQUIRE n.configGroupId IS NODE KEY;
 
 CREATE CONSTRAINT part_key IF NOT EXISTS
 FOR (n:Part) REQUIRE n.partId IS NODE KEY;
-```

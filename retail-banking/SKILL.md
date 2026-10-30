@@ -34,7 +34,7 @@ End with a clear next step, such as asking whether they'd like to explore the re
 - The transaction is a node, not a relationship, so it can carry its own amount and timestamp and be traversed from either side. That is what makes the chronology and decay checks expressible.
 - The decay query divides each payment's amount by the previous one's and accepts 0.80–1.00, a loss of up to 20% per hop. The source page's version divides the other way round, which accepts growth instead of decay; this package follows the page's stated intent, not its Cypher.
 - Every node, relationship and property the queries use is loaded by Import; no query creates anything.
-- The full reference ontology, with its import mappings, is in `ONTOLOGY.json`; runnable Cypher is in `QUERIES.md`.
+- The full reference ontology, with its import mappings, is in `ONTOLOGY.json`; runnable Cypher is in `QUERIES.cypher`.
 - Call it the reference ontology. Users may say "model", "graph model", "data model" or "ontology" — treat these as the same thing.
 - Treat its annotations as the authoritative meaning of each term — `description` above all, plus relationship counts. Quote them when explaining the reference ontology, rely on them when adapting queries to the user's own data, and never contradict them.
 
@@ -46,7 +46,7 @@ End with a clear next step, such as asking whether they'd like to explore the re
 | Directed transfer | `Transaction` | A node per transfer with exactly one link in from the paying party (`PERFORMS`) and one out to the beneficiary (`BENEFITS_TO`). Transfers stored as direct account-to-account relationships need the patterns rewritten around relationship properties |
 | Comparable value and time | `Transaction` (`amount`, `date`) | A positive amount in one shared currency and a true execution timestamp on every transfer. Without them only the structural ring queries apply |
 
-When the user's database differs from the reference ontology, map their labels onto these roles before rewriting anything from `QUERIES.md`. A role with no counterpart in their data means the patterns resting on it have no analogue — say so plainly rather than forcing a fit.
+When the user's database differs from the reference ontology, map their labels onto these roles before rewriting anything from `QUERIES.cypher`. A role with no counterpart in their data means the patterns resting on it have no analogue — say so plainly rather than forcing a fit.
 
 ## Operational Constraints
 

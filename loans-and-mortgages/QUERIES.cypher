@@ -1,28 +1,27 @@
-# Loans and Mortgages — Query Guidance
+// # Loans and Mortgages — Query Guidance
 
-Cypher for the `loans-and-mortgages` use case. Every query references only labels, relationship types, and properties defined in the reference ontology (`ONTOLOGY.json`). No query writes to the database.
+// Cypher for the `loans-and-mortgages` use case. Every query references only labels, relationship types, and properties defined in the reference ontology (`ONTOLOGY.json`). No query writes to the database.
 
-## Prerequisites
+// ## Prerequisites
 
-- Neo4j 5.x and Cypher 5, at a release that supports `COUNT {}` and `COLLECT {}` subqueries (5.6 or later). No APOC or Graph Data Science required.
-- The graph is loaded through the Import flow from `ONTOLOGY.json` — the bundled `sample-data/` CSVs, or the user's own data mapped onto the reference ontology.
-- Types matter to the queries: amounts, rates and ratios are FLOAT; `creditScore`, `termMonths`, `dwellingUnits` and `daysLate` are INTEGER; and every date is a ZONED DATETIME at midnight UTC, because Import does not accept DATE for local CSV files. Only the calendar date carries meaning. Comparisons and `duration` arithmetic work directly; compare against `datetime(...)`, never `date(...)` (a datetime compared with a date is null), and wrap a value in `date()` to display it.
-- Amounts are US dollars and assume a single-currency portfolio. Percentages (`interestRate`, `ltvAtOrigination`, `dtiRatio`) are held as percentages, so 80 means 80%.
-- A missed installment is a `Payment` with `amountPaid` below `amountDue`; `Loan.status` is the servicer's own snapshot as of `balanceAsOfDate`. The queries use each for what it is: payment-level questions read `Payment`, status questions read `Loan.status`.
-- No `SETUP.md` statements are needed, and no query creates a label, relationship type, or property.
-- Queries run from simple lookups, through portfolio and delinquency views, to the collateral, connected-party and origination-quality patterns.
+// - Neo4j 5.x and Cypher 5, at a release that supports `COUNT {}` and `COLLECT {}` subqueries (5.6 or later). No APOC or Graph Data Science required.
+// - The graph is loaded through the Import flow from `ONTOLOGY.json` — the bundled `sample-data/` CSVs, or the user's own data mapped onto the reference ontology.
+// - Types matter to the queries: amounts, rates and ratios are FLOAT; `creditScore`, `termMonths`, `dwellingUnits` and `daysLate` are INTEGER; and every date is a ZONED DATETIME at midnight UTC, because Import does not accept DATE for local CSV files. Only the calendar date carries meaning. Comparisons and `duration` arithmetic work directly; compare against `datetime(...)`, never `date(...)` (a datetime compared with a date is null), and wrap a value in `date()` to display it.
+// - Amounts are US dollars and assume a single-currency portfolio. Percentages (`interestRate`, `ltvAtOrigination`, `dtiRatio`) are held as percentages, so 80 means 80%.
+// - A missed installment is a `Payment` with `amountPaid` below `amountDue`; `Loan.status` is the servicer's own snapshot as of `balanceAsOfDate`. The queries use each for what it is: payment-level questions read `Payment`, status questions read `Loan.status`.
+// - No `SETUP.md` statements are needed, and no query creates a label, relationship type, or property.
+// - Queries run from simple lookups, through portfolio and delinquency views, to the collateral, connected-party and origination-quality patterns.
 
-## Adapting these queries
+// ## Adapting these queries
 
-These queries assume the reference ontology in `ONTOLOGY.json`. When the user's database differs — their own ontology, a modified one, or a database that predates this package — the queries are patterns to rebuild, not Cypher to run.
+// These queries assume the reference ontology in `ONTOLOGY.json`. When the user's database differs — their own ontology, a modified one, or a database that predates this package — the queries are patterns to rebuild, not Cypher to run.
 
-1. Read the live schema (`CALL db.schema.visualization()`, `SHOW CONSTRAINTS`) rather than assuming the reference ontology applies.
-2. Map their labels onto the role map in `SKILL.md`. A role with no counterpart means the pattern below it has no analogue — say so rather than forcing a fit.
-3. Rewrite from the pattern, and update the annotation block to describe what the rewritten query actually does.
+// 1. Read the live schema (`CALL db.schema.visualization()`, `SHOW CONSTRAINTS`) rather than assuming the reference ontology applies.
+// 2. Map their labels onto the role map in `SKILL.md`. A role with no counterpart means the pattern below it has no analogue — say so rather than forcing a fit.
+// 3. Rewrite from the pattern, and update the annotation block to describe what the rewritten query actually does.
 
-## Loan overview
+// ## Loan overview
 
-```cypher
 /*
  * @name           Loan overview
  * @description    Gathers everything the reference ontology holds about one
@@ -66,12 +65,10 @@ RETURN l.loanId AS loanId, prod.name AS product, l.status AS status,
        COLLECT { MATCH (b:Person)-[r:BORROWER_ON]->(l) RETURN b.name + ' (' + r.borrowerRole + ')' } AS borrowers,
        COLLECT { MATCH (g:Person)-[:GUARANTEES]->(l) RETURN g.name } AS guarantors,
        COUNT { (l)-[:HAS_PAYMENT]->(:Payment) } AS paymentsRecorded,
-       COUNT { (l)-[:HAS_PAYMENT]->(p:Payment) WHERE p.amountPaid < p.amountDue } AS paymentsMissed
-```
+       COUNT { (l)-[:HAS_PAYMENT]->(p:Payment) WHERE p.amountPaid < p.amountDue } AS paymentsMissed;
 
-## Person's lending network
+// ## Person's lending network
 
-```cypher
 /*
  * @name           Person's lending network
  * @description    Draws one person's position across the portfolio: their
@@ -105,12 +102,10 @@ RETURN path
 UNION
 MATCH path = (p:Person {personId: $personId})-[:BORROWER_ON|GUARANTEES]->(:Loan)<-[:BORROWER_ON|GUARANTEES]-(other:Person)
 WHERE other <> p
-RETURN path
-```
+RETURN path;
 
-## Portfolio by product
+// ## Portfolio by product
 
-```cypher
 /*
  * @name           Portfolio by product
  * @description    Summarises open loans by the product they were written
@@ -143,12 +138,10 @@ WITH prod, count(l) AS openLoans, sum(l.currentBalance) AS outstandingBalance,
 RETURN prod.name AS product, prod.marketCategory AS marketCategory, openLoans,
        round(outstandingBalance, 2) AS outstandingBalance, round(avgRate, 2) AS avgInterestRate,
        troubledLoans, round(100.0 * troubledLoans / openLoans, 1) AS troubledPct
-ORDER BY outstandingBalance DESC
-```
+ORDER BY outstandingBalance DESC;
 
-## Application outcomes by product
+// ## Application outcomes by product
 
-```cypher
 /*
  * @name           Application outcomes by product
  * @description    Counts applications by product and HMDA disposition:
@@ -180,12 +173,10 @@ WITH prod, count(a) AS applications,
 RETURN prod.name AS product, applications, originated, denied, withdrawn,
        applications - originated - denied - withdrawn AS otherOutcomes,
        round(100.0 * originated / applications, 1) AS pullThroughPct
-ORDER BY applications DESC
-```
+ORDER BY applications DESC;
 
-## Denial reasons and applicant profile
+// ## Denial reasons and applicant profile
 
-```cypher
 /*
  * @name           Denial reasons and applicant profile
  * @description    Ranks the primary denial reasons on denied applications
@@ -216,12 +207,10 @@ WITH coalesce(a.denialReason, 'not recorded') AS denialReason, a, prod
 RETURN denialReason, count(a) AS denials,
        round(avg(a.creditScore)) AS avgCreditScore, round(avg(a.dtiRatio), 1) AS avgDtiRatio,
        collect(DISTINCT prod.name) AS products
-ORDER BY denials DESC
-```
+ORDER BY denials DESC;
 
-## Loans with missed payments
+// ## Loans with missed payments
 
-```cypher
 /*
  * @name           Loans with missed payments
  * @description    Lists loans with at least a given number of missed
@@ -257,12 +246,10 @@ MATCH (l)-[:SERVICED_BY]->(servicer:FinancialInstitution)
 OPTIONAL MATCH (b:Person)-[:BORROWER_ON {borrowerRole: 'primary borrower'}]->(l)
 RETURN l.loanId AS loanId, l.status AS status, missedPayments, oldestMissedDue,
        l.currentBalance AS currentBalance, b.name AS primaryBorrower, servicer.name AS servicer
-ORDER BY missedPayments DESC, oldestMissedDue
-```
+ORDER BY missedPayments DESC, oldestMissedDue;
 
-## Delinquency by servicer
+// ## Delinquency by servicer
 
-```cypher
 /*
  * @name           Delinquency by servicer
  * @description    Compares servicers by the share of the open loans they
@@ -289,12 +276,10 @@ WITH s, count(l) AS openLoans,
      sum(CASE WHEN l.status = 'in default' THEN 1 ELSE 0 END) AS inDefault
 RETURN s.name AS servicer, openLoans, delinquent, inDefault,
        round(100.0 * (delinquent + inDefault) / openLoans, 1) AS troubledPct
-ORDER BY troubledPct DESC
-```
+ORDER BY troubledPct DESC;
 
-## Stacked liens with high combined LTV
+// ## Stacked liens with high combined LTV
 
-```cypher
 /*
  * @name           Stacked liens with high combined LTV
  * @description    Finds properties securing two or more open loans and
@@ -343,12 +328,10 @@ RETURN prop.propertyId AS propertyId,
        openLiens, round(combinedBalance, 2) AS combinedBalance,
        latest.appraisedValue AS latestAppraisedValue,
        date(latest.appraisalDate) AS latestAppraisalDate, combinedLtv
-ORDER BY combinedLtv DESC
-```
+ORDER BY combinedLtv DESC;
 
-## Rapid appraisal increases on the same property
+// ## Rapid appraisal increases on the same property
 
-```cypher
 /*
  * @name           Rapid appraisal increases on the same property
  * @description    Finds pairs of appraisals of the same property where the
@@ -399,12 +382,10 @@ RETURN prop.propertyId AS propertyId,
          OPTIONAL MATCH (l)<-[:RESULTED_IN]-(:LoanApplication)-[:HANDLED_BY]->(o:LoanOfficer)
          RETURN l.loanId + ' (' + l.status + ', ' + coalesce(o.name, 'no officer') + ')'
        } AS loansAfterIncrease
-ORDER BY increasePct DESC
-```
+ORDER BY increasePct DESC;
 
-## Total exposure per person
+// ## Total exposure per person
 
-```cypher
 /*
  * @name           Total exposure per person
  * @description    Ranks people by everything they are liable for across the
@@ -438,12 +419,10 @@ RETURN p.personId AS personId, p.name AS name, openLoans,
        round(borrowedBalance, 2) AS borrowedBalance, round(guaranteedBalance, 2) AS guaranteedBalance,
        round(borrowedBalance + guaranteedBalance, 2) AS totalExposure
 ORDER BY totalExposure DESC
-LIMIT $limit
-```
+LIMIT $limit;
 
-## Default contagion through borrowers and guarantors
+// ## Default contagion through borrowers and guarantors
 
-```cypher
 /*
  * @name           Default contagion through borrowers and guarantors
  * @description    Finds people who borrow on a troubled loan and are also
@@ -481,12 +460,10 @@ RETURN p.personId AS personId, p.name AS name, troubledLoans,
        other.loanId AS exposedLoan,
        CASE type(r) WHEN 'GUARANTEES' THEN 'guarantor' ELSE r.borrowerRole END AS role,
        other.status AS exposedStatus, other.currentBalance AS exposedBalance
-ORDER BY personId, exposedLoan
-```
+ORDER BY personId, exposedLoan;
 
-## Early payment defaults by loan officer
+// ## Early payment defaults by loan officer
 
-```cypher
 /*
  * @name           Early payment defaults by loan officer
  * @description    Measures early payment default (EPD) — an installment
@@ -545,14 +522,12 @@ MATCH (o)-[:EMPLOYED_BY]->(fi:FinancialInstitution)
 RETURN o.officerId AS officerId, o.name AS loanOfficer, fi.name AS institution,
        loans, earlyDefaults, round(100.0 * epdRate, 1) AS epdRatePct,
        round(100.0 * portfolioRate, 1) AS portfolioRatePct
-ORDER BY epdRate DESC, loans DESC
-```
+ORDER BY epdRate DESC, loans DESC;
 
-## Node-key constraints
+// ## Node-key constraints
 
-Import creates these from the `key: true` properties in `ONTOLOGY.json`. They are listed as a reference for checking the live database with `SHOW CONSTRAINTS`, not to be run after Import.
+// Import creates these from the `key: true` properties in `ONTOLOGY.json`. They are listed as a reference for checking the live database with `SHOW CONSTRAINTS`, not to be run after Import.
 
-```cypher
 CREATE CONSTRAINT person_personId_key IF NOT EXISTS FOR (n:Person) REQUIRE n.personId IS NODE KEY;
 CREATE CONSTRAINT loanApplication_applicationId_key IF NOT EXISTS FOR (n:LoanApplication) REQUIRE n.applicationId IS NODE KEY;
 CREATE CONSTRAINT loanProduct_productId_key IF NOT EXISTS FOR (n:LoanProduct) REQUIRE n.productId IS NODE KEY;
@@ -562,4 +537,3 @@ CREATE CONSTRAINT appraisal_appraisalId_key IF NOT EXISTS FOR (n:Appraisal) REQU
 CREATE CONSTRAINT payment_paymentId_key IF NOT EXISTS FOR (n:Payment) REQUIRE n.paymentId IS NODE KEY;
 CREATE CONSTRAINT financialInstitution_institutionId_key IF NOT EXISTS FOR (n:FinancialInstitution) REQUIRE n.institutionId IS NODE KEY;
 CREATE CONSTRAINT loanOfficer_officerId_key IF NOT EXISTS FOR (n:LoanOfficer) REQUIRE n.officerId IS NODE KEY;
-```

@@ -1,13 +1,13 @@
 # Attack Path Analysis — Tests
 
-What each query in `QUERIES.md` should return on the bundled sample data. This
+What each query in `QUERIES.cypher` should return on the bundled sample data. This
 file is for the manual tester and the curating engineer; the runtime never loads
 it. Everything below was derived from the CSVs in `sample-data/`, not from a
 database run.
 
 ## How to run
 
-1. **Use a disposable database.** Every query in `QUERIES.md` reads; the one
+1. **Use a disposable database.** Every query in `QUERIES.cypher` reads; the one
    statement in `SETUP.md` writes schema. Never run this against anything but a
    throwaway Neo4j 5.x target.
 2. **Import the CSVs in `sample-data/` through the Import flow, using

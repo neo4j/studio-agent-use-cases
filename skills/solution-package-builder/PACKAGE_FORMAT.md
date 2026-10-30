@@ -8,7 +8,7 @@ Use this reference when creating a use-case folder. The folder name becomes `ski
 <skillId>/
 ├── SKILL.md                    # required
 ├── ONTOLOGY.json               # required — the reference ontology
-├── QUERIES.md                  # required for packages — runnable Cypher
+├── QUERIES.cypher                  # required for packages — runnable Cypher
 ├── human_description.md        # required — the package explained to a person; rendered as HTML, never loaded
 ├── TESTS.md                    # required when sample data is bundled — authoring-side only, never loaded
 ├── SETUP.md                    # optional — post-import statements the queries depend on
@@ -112,7 +112,7 @@ with, and a clear next step. Direction, not a script.>
 
 - <Nodes and relationships in one or two lines each; key properties.>
 - The full reference ontology, with its import mappings, is in
-  `ONTOLOGY.json`; runnable Cypher is in `QUERIES.md`.
+  `ONTOLOGY.json`; runnable Cypher is in `QUERIES.cypher`.
 - Call it the reference ontology. Users may say "model", "graph model",
   "data model" or "ontology" — treat these as the same thing.
 
@@ -121,7 +121,7 @@ with, and a clear next step. Direction, not a script.>
 | <Abstract role> | `<Label>` | <The property or connection the pattern depends on> |
 
 When the user's database differs from the reference ontology, map their
-labels onto these roles before rewriting anything from `QUERIES.md`. A role with no
+labels onto these roles before rewriting anything from `QUERIES.cypher`. A role with no
 counterpart in their data means the patterns resting on it have no
 analogue — say so plainly rather than forcing a fit.
 
@@ -153,9 +153,9 @@ Validation approach
 
 Keep the body short because the active agent receives it directly in its instruction prompt.
 
-## `QUERIES.md` and `SETUP.md`
+## `QUERIES.cypher` and `SETUP.md`
 
-Every query in `QUERIES.md` — and every statement in `SETUP.md` when the package ships one — opens with an @-annotation block: a Cypher block comment before any logic, carrying @-prefixed key–value metadata per the agent-optimised query annotations RFC.
+Every query in `QUERIES.cypher` — and every statement in `SETUP.md` when the package ships one — opens with an @-annotation block: a Cypher block comment before any logic, carrying @-prefixed key–value metadata per the agent-optimised query annotations RFC.
 
 ```cypher
 /*
@@ -178,9 +178,9 @@ Required tags on a **query**: `@name`, `@description`, `@params`, `@prerequisite
 
 Required tags on a **`SETUP.md` statement**: `@name`, `@description`, and `@usage`. The rest only where meaningful — a schema statement usually has no parameters and returns nothing worth describing.
 
-**Annotation blocks are data-agnostic, and so is the rest of QUERIES.md — except `@sample`.** The file travels into editors and into customers' databases, and the consuming agent surfaces the block when showing or running a query. An unlabelled claim about the bundled sample — a row count, a seeded entity name, a threshold justified by "the sample" — is false the moment the data is the user's own, and visibly so. `@sample` is the labelled exception: it exists so the agent can smoke-test a sample import and start from a valid anchor, it must agree with TESTS.md, and the package's SKILL.md tells the agent to use it only when the connected database holds the sample. Where a query has a parameter that gates its result, `@params` gives either a starting value with a reason that holds on any dataset ("start at 4 and raise until the result is a reviewable size") or a procedure for deriving one ("take the portfolio's upper quartile and start there") — never a value justified by the bundled rows.
+**Annotation blocks are data-agnostic, and so is the rest of QUERIES.cypher — except `@sample`.** The file travels into editors and into customers' databases, and the consuming agent surfaces the block when showing or running a query. An unlabelled claim about the bundled sample — a row count, a seeded entity name, a threshold justified by "the sample" — is false the moment the data is the user's own, and visibly so. `@sample` is the labelled exception: it exists so the agent can smoke-test a sample import and start from a valid anchor, it must agree with TESTS.md, and the package's SKILL.md tells the agent to use it only when the connected database holds the sample. Where a query has a parameter that gates its result, `@params` gives either a starting value with a reason that holds on any dataset ("start at 4 and raise until the result is a reviewable size") or a procedure for deriving one ("take the portfolio's upper quartile and start there") — never a value justified by the bundled rows.
 
-Concrete expected results live in `TESTS.md`, not here. `QUERIES.md` also carries a short "Adapting these queries" section stating the procedure when the user's schema differs: read the live schema, map their labels onto SKILL.md's role map, rewrite, and update the annotation block to match.
+Concrete expected results live in `TESTS.md`, not here. `QUERIES.cypher` is valid Cypher: prose and headings are `//` comments, queries are bare statements without code fences, and every statement ends in `;`. It also carries a short "Adapting these queries" section stating the procedure when the user's schema differs: read the live schema, map their labels onto SKILL.md's role map, rewrite, and update the annotation block to match.
 
 The consuming agent treats the annotation block as context, not ground truth — query logic wins on conflict. The create-solution-package skill defines the full authoring rules.
 
@@ -197,7 +197,7 @@ Contract:
 - **Exempt from the file-size limit.** It never consumes the consuming agent's context, so detail is free here. This is the file verbosity belongs in.
 - **Required whenever the package bundles sample data.** A package whose CSVs resolve but which ships no `TESTS.md` has no oracle and cannot be verified.
 
-Structure: a "How to run" preamble, the full sample-data profile, then one `##` section per query whose heading matches its `QUERIES.md` heading exactly, so the two files pair mechanically. Each file also has headings the other does not — prerequisites and the adapting section on one side, how-to-run and the profile on the other — and parity is checked over the query headings only.
+Structure: a "How to run" preamble, the full sample-data profile, then one `##` section per query whose heading matches the text of its `QUERIES.cypher` `// ##` heading exactly, so the two files pair mechanically. Each file also has headings the other does not — prerequisites and the adapting section on one side, how-to-run and the profile on the other — and parity is checked over the query headings only.
 
 Every query gets its own `##` section; a shared catch-all heading breaks parity. TESTS.md is written from the seeded design, not from a database run — testing against a database is manual and outside package creation.
 
@@ -206,7 +206,7 @@ Each query section states:
 - **Parameters** — the values the tester should use.
 - **Invariant** — what must hold whatever the data generator produces, expressed in terms of the seeded design ("returns the twelve Ring A claimants and no unseeded claimant"). This is what survives a data regeneration.
 - **Expected** — optional; concrete expectations derivable from the CSVs, such as the seeded entities and counts the query should return. Useful and precise, but a snapshot of this dataset, not a contract.
-- **Sensitivity** — optional; what other threshold values should do. This is the material that most often bloats QUERIES.md and it belongs here.
+- **Sensitivity** — optional; what other threshold values should do. This is the material that most often bloats QUERIES.cypher and it belongs here.
 
 Separating invariant from expected counts is the point of the file. A package whose oracle is nothing but row counts breaks the first time anyone regenerates the CSVs, and the breakage looks like a query fault.
 
@@ -434,7 +434,7 @@ In a runtime that implements this format, adding a valid folder to its configure
 - `SKILL.md` and `ONTOLOGY.json` are loaded eagerly, and the reference ontology is converted to an Import model while the catalogue loads.
 - `TESTS.md` is never loaded, at any point, by any path.
 - `human_description.md` is never loaded into the agent's context either. It is available to the UI for rendering, and to it alone.
-- Every other file is read on demand through a tool that refuses any file over 50,000 characters, so a longer QUERIES.md, SETUP.md, ONTOLOGY.json or supporting file is unreadable to the agent.
+- Every other file is read on demand through a tool that refuses any file over 50,000 characters, so a longer QUERIES.cypher, SETUP.md, ONTOLOGY.json or supporting file is unreadable to the agent.
 - An invalid use case is logged and skipped rather than failing the build — and "invalid" includes a reference ontology the runtime cannot convert to an Import model (a duplicate constraint name, an encoding it cannot read). The package simply disappears from the catalogue, which is why VALIDATION.md's runtime gate runs the same two steps.
 
 The active agent receives the use case's `SKILL.md` body.

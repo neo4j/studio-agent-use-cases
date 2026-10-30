@@ -1,13 +1,13 @@
 # Identity Validation — Tests
 
-What each query in `QUERIES.md` should return on the bundled sample data. This file is for the manual tester and the curating engineer; the runtime never loads it. Everything below was derived from the CSVs in `sample-data/`, not from a database run.
+What each query in `QUERIES.cypher` should return on the bundled sample data. This file is for the manual tester and the curating engineer; the runtime never loads it. Everything below was derived from the CSVs in `sample-data/`, not from a database run.
 
 ## How to run
 
 1. Use a disposable Neo4j 5.x database with APOC installed — the import writes the whole sample, and two queries need APOC.
 2. Import the CSVs in `sample-data/` through the Import flow, using `ONTOLOGY.json` as the import definition. This also creates the node-key constraints.
 3. Run `SETUP.md` statement 1 (the `ssnFuzzyIndex` fulltext index). Statements 2 and 3 are the same Cypher as the first two queries below, so either run them from `SETUP.md` and skip those two queries, or skip them and run the queries — not both. The optional spatial statements are not needed.
-4. Run each query in `QUERIES.md`, in file order, with the parameters given in its section below, and compare the result with the Invariant first and the Expected values second. Order matters: the placeholder flags must be applied before the matching queries.
+4. Run each query in `QUERIES.cypher`, in file order, with the parameters given in its section below, and compare the result with the Invariant first and the Expected values second. Order matters: the placeholder flags must be applied before the matching queries.
 
 ## Sample-data profile
 

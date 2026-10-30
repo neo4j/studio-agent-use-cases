@@ -1,29 +1,28 @@
-# Identity Validation — Query Guidance
+// # Identity Validation — Query Guidance
 
-Cypher for the `identity-validation` use case. Every query references only labels, relationship types, and properties defined in the reference ontology (`ONTOLOGY.json`), plus the query-created `:Placeholder` label defined in `SKILL.md`. The two placeholder-detection queries write that label; every other query is read-only.
+// Cypher for the `identity-validation` use case. Every query references only labels, relationship types, and properties defined in the reference ontology (`ONTOLOGY.json`), plus the query-created `:Placeholder` label defined in `SKILL.md`. The two placeholder-detection queries write that label; every other query is read-only.
 
-## Prerequisites
+// ## Prerequisites
 
-- Neo4j 5.x, Cypher 5. The matching queries use negated label expressions (`:!Placeholder`).
-- APOC for the two queries marked "(requires APOC)" — `apoc.text.jaroWinklerDistance`. No other query needs it. No GDS.
-- The graph is loaded through the Import flow from `ONTOLOGY.json` — the bundled `sample-data/` CSVs, or the user's own data mapped onto the reference ontology.
-- The node keys in `ONTOLOGY.json` make every attribute value unique per label, so records sharing a value converge on one node and every anchored lookup is an index seek.
-- `SETUP.md` run post-import: its required statement creates the `ssnFuzzyIndex` fulltext index that the two near-duplicate SSN queries depend on, and its two recommended statements apply the placeholder flags every matching query excludes.
-- `:Placeholder` is a label the placeholder-detection queries (or `SETUP.md` statements 2 and 3) add to attribute nodes holding filler values. It does not exist in a freshly imported database, and it is not part of the reference ontology. Until it is applied, the `:Placeholder` exclusions have nothing to exclude and filler values create false matches. Likewise, the optional `SETUP.md` spatial statements write a `Location.coordinates` point property that no query here depends on.
-- Anchors are parameters, never hardcoded IDs. Ask the user which identity or phone number they want, or offer one from the results of **Confidence-Scored Identity Matches**. Do not invent IDs.
-- Run order matters: the two flagging queries first, then matching, then corroboration. The queries below are in that order, so the APOC queries are labelled in place rather than moved.
+// - Neo4j 5.x, Cypher 5. The matching queries use negated label expressions (`:!Placeholder`).
+// - APOC for the two queries marked "(requires APOC)" — `apoc.text.jaroWinklerDistance`. No other query needs it. No GDS.
+// - The graph is loaded through the Import flow from `ONTOLOGY.json` — the bundled `sample-data/` CSVs, or the user's own data mapped onto the reference ontology.
+// - The node keys in `ONTOLOGY.json` make every attribute value unique per label, so records sharing a value converge on one node and every anchored lookup is an index seek.
+// - `SETUP.md` run post-import: its required statement creates the `ssnFuzzyIndex` fulltext index that the two near-duplicate SSN queries depend on, and its two recommended statements apply the placeholder flags every matching query excludes.
+// - `:Placeholder` is a label the placeholder-detection queries (or `SETUP.md` statements 2 and 3) add to attribute nodes holding filler values. It does not exist in a freshly imported database, and it is not part of the reference ontology. Until it is applied, the `:Placeholder` exclusions have nothing to exclude and filler values create false matches. Likewise, the optional `SETUP.md` spatial statements write a `Location.coordinates` point property that no query here depends on.
+// - Anchors are parameters, never hardcoded IDs. Ask the user which identity or phone number they want, or offer one from the results of **Confidence-Scored Identity Matches**. Do not invent IDs.
+// - Run order matters: the two flagging queries first, then matching, then corroboration. The queries below are in that order, so the APOC queries are labelled in place rather than moved.
 
-## Adapting these queries
+// ## Adapting these queries
 
-These queries assume the reference ontology in `ONTOLOGY.json`. When the user's database differs — their own ontology, a modified one, or a database that predates this package — the queries are patterns to rebuild, not Cypher to run.
+// These queries assume the reference ontology in `ONTOLOGY.json`. When the user's database differs — their own ontology, a modified one, or a database that predates this package — the queries are patterns to rebuild, not Cypher to run.
 
-1. Read the live schema (`CALL db.schema.visualization()`, `SHOW CONSTRAINTS`) rather than assuming the reference ontology applies.
-2. Map their labels onto the role map in `SKILL.md`. A role with no counterpart means the pattern below it has no analogue — say so rather than forcing a fit.
-3. Rewrite from the pattern, and update the annotation block to describe what the rewritten query actually does.
+// 1. Read the live schema (`CALL db.schema.visualization()`, `SHOW CONSTRAINTS`) rather than assuming the reference ontology applies.
+// 2. Map their labels onto the role map in `SKILL.md`. A role with no counterpart means the pattern below it has no analogue — say so rather than forcing a fit.
+// 3. Rewrite from the pattern, and update the annotation block to describe what the rewritten query actually does.
 
-## Placeholder Email Detection
+// ## Placeholder Email Detection
 
-```cypher
 /*
  * @name           Placeholder Email Detection
  * @description    Flags filler email values — the non-null junk a source
@@ -54,11 +53,9 @@ WHERE toLower(e.email) IN knownPlaceholderEmails
 SET e:Placeholder
 RETURN e.email AS flaggedEmail
 ORDER BY flaggedEmail;
-```
 
-## Placeholder Phone Detection
+// ## Placeholder Phone Detection
 
-```cypher
 /*
  * @name           Placeholder Phone Detection
  * @description    Flags filler phone values such as "999-999-9999" with a
@@ -84,11 +81,9 @@ WHERE p.phoneNumber IN knownPlaceholderPhones
 SET p:Placeholder
 RETURN p.phoneNumber AS flaggedPhone
 ORDER BY flaggedPhone;
-```
 
-## Shared Identifier Fan-out (Basic)
+// ## Shared Identifier Fan-out (Basic)
 
-```cypher
 /*
  * @name           Shared Identifier Fan-out (Basic)
  * @description    The simplest pattern in this package, and the place to
@@ -131,11 +126,9 @@ RETURN i1.identityId AS identity1,
        path
 ORDER BY sharedSignal, identity1, identity2
 LIMIT 200;
-```
 
-## Confidence-Scored Identity Matches
+// ## Confidence-Scored Identity Matches
 
-```cypher
 /*
  * @name           Confidence-Scored Identity Matches
  * @description    Groups the fan-out by identity pair and ranks pairs by how
@@ -172,11 +165,9 @@ RETURN i1.identityId AS identity1,
        size(sharedSignals) AS confidence
 ORDER BY confidence DESC, identity1, identity2
 LIMIT 50;
-```
 
-## Match Cluster as a Graph
+// ## Match Cluster as a Graph
 
-```cypher
 /*
  * @name           Match Cluster as a Graph
  * @description    The full match cluster around one identity as paths: the
@@ -208,11 +199,9 @@ MATCH path = (seed:Identity {identityId: $identityId})
              (match:Identity)
 WHERE match <> seed
 RETURN path;
-```
 
-## Implausible Address Detection
+// ## Implausible Address Detection
 
-```cypher
 /*
  * @name           Implausible Address Detection
  * @description    The "flag junk before matching on it" idea applied to
@@ -241,11 +230,9 @@ RETURN i.identityId AS identity,
        a.state AS state,
        a.zipcode AS zipcode
 ORDER BY a.zipcode;
-```
 
-## Location Match: Same Coordinates, Different Address Text
+// ## Location Match: Same Coordinates, Different Address Text
 
-```cypher
 /*
  * @name           Location Match: Same Coordinates, Different Address Text
  * @description    Finds identities whose address text differs but whose
@@ -283,11 +270,9 @@ RETURN i1.identityId AS identity1,
        l.longitude AS longitude,
        path
 ORDER BY latitude, longitude;
-```
 
-## Descriptor Similarity: Near-Miss Name Spelling (requires APOC)
+// ## Descriptor Similarity: Near-Miss Name Spelling (requires APOC)
 
-```cypher
 /*
  * @name           Descriptor Similarity: Near-Miss Name Spelling (requires APOC)
  * @description    Corroborates an already-suspected match with a near-miss
@@ -335,11 +320,9 @@ RETURN i1.identityId AS identity1,
        n2.fullName AS name2,
        round(nameSimilarity, 3) AS nameSimilarity
 ORDER BY nameSimilarity DESC;
-```
 
-## Nearby Address (Geographic Distance as Descriptor)
+// ## Nearby Address (Geographic Distance as Descriptor)
 
-```cypher
 /*
  * @name           Nearby Address (Geographic Distance as Descriptor)
  * @description    Corroborates an already-suspected match with geographic
@@ -390,11 +373,9 @@ RETURN i1.identityId AS identity1,
        a2.address AS address2,
        round(metersApart) AS metersApart
 ORDER BY metersApart;
-```
 
-## Weighted Composite Match Score (requires APOC)
+// ## Weighted Composite Match Score (requires APOC)
 
-```cypher
 /*
  * @name           Weighted Composite Match Score (requires APOC)
  * @description    Blends identifier confidence with name similarity into one
@@ -444,11 +425,9 @@ RETURN i1.identityId AS identity1,
        round(0.7 * (size(sharedSignals) / 6.0) + 0.3 * nameSimilarity, 3) AS weightedScore
 ORDER BY weightedScore DESC, identity1, identity2
 LIMIT 50;
-```
 
-## Near-Duplicate SSN (Synthetic Identity Signal)
+// ## Near-Duplicate SSN (Synthetic Identity Signal)
 
-```cypher
 /*
  * @name           Near-Duplicate SSN (Synthetic Identity Signal)
  * @description    The synthetic-identity signature: two SSNs one edit apart,
@@ -497,11 +476,9 @@ RETURN i1.identityId AS identity1,
        score,
        type(rc1) AS corroboratingSignal
 ORDER BY score DESC;
-```
 
-## Near-Duplicate SSN as a Graph
+// ## Near-Duplicate SSN as a Graph
 
-```cypher
 /*
  * @name           Near-Duplicate SSN as a Graph
  * @description    The same synthetic-identity detection returned as paths:
@@ -532,11 +509,9 @@ WHERE NOT corrob:Placeholder
 MATCH ssnPath1 = (i1)-[:HAS_SSN]->(s)
 MATCH ssnPath2 = (i2)-[:HAS_SSN]->(node)
 RETURN corroborationPath, ssnPath1, ssnPath2;
-```
 
-## Cross-Channel Profile Assembly
+// ## Cross-Channel Profile Assembly
 
-```cypher
 /*
  * @name           Cross-Channel Profile Assembly
  * @description    The operational query that follows matching: given one
@@ -577,11 +552,9 @@ RETURN i.identityId AS identity,
        d.dob AS dob,
        ip.ip AS ip
 ORDER BY sourceSystem;
-```
 
-## Cross-Channel Profile as a Graph
+// ## Cross-Channel Profile as a Graph
 
-```cypher
 /*
  * @name           Cross-Channel Profile as a Graph
  * @description    The assembled profile as paths: every record carrying the
@@ -604,13 +577,11 @@ MATCH (:Phone {phoneNumber: $phoneNumber})<-[:HAS_PHONE]-(i:Identity)
 MATCH path = (i)-[:HAS_NAME|HAS_PHONE|HAS_EMAIL|HAS_SSN|HAS_ADDRESS|HAS_DOB|HAS_IP]->
              (attribute)
 RETURN path;
-```
 
-## Node-key constraints
+// ## Node-key constraints
 
-Import creates these node-key constraints from the key definitions in `ONTOLOGY.json`. They are listed as a reference for checking the live database (`SHOW CONSTRAINTS`), not as statements to run: recreating them, or adding `UNIQUE` variants, conflicts with the existing `KEY` constraints.
+// Import creates these node-key constraints from the key definitions in `ONTOLOGY.json`. They are listed as a reference for checking the live database (`SHOW CONSTRAINTS`), not as statements to run: recreating them, or adding `UNIQUE` variants, conflicts with the existing `KEY` constraints.
 
-```cypher
 CREATE CONSTRAINT identityId_Identity_key IF NOT EXISTS
   FOR (i:Identity) REQUIRE i.identityId IS NODE KEY;
 CREATE CONSTRAINT fullName_PersonName_key IF NOT EXISTS
@@ -629,4 +600,3 @@ CREATE CONSTRAINT ip_IPAddress_key IF NOT EXISTS
   FOR (ip:IPAddress) REQUIRE ip.ip IS NODE KEY;
 CREATE CONSTRAINT locationId_Location_key IF NOT EXISTS
   FOR (l:Location) REQUIRE l.locationId IS NODE KEY;
-```

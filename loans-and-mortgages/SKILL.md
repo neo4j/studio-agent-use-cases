@@ -44,7 +44,7 @@ End with a clear next step, such as asking whether they'd like to explore the re
 - Conventions: US market, amounts in US dollars; `interestRate`, `ltvAtOrigination` and `dtiRatio` are percentages (80 means 80%); `creditScore` is FICO-style 300–850 at application; every date is a `ZONED DATETIME` at midnight UTC (Import does not accept `DATE` for local CSV files), so only the calendar date carries meaning — compare with `datetime(...)`, not `date(...)`, and wrap values in `date()` for display; `Loan.status` is the servicer's snapshot as of `balanceAsOfDate` (`current`, `delinquent` 30–89 days past due, `in default` 90+, `paid in full`); a missed installment is a `Payment` whose `amountPaid` is below `amountDue`. The product of a loan is reached through its application, and so is its originating officer.
 - How it departs from FIBO: roles (borrower, co-maker, guarantor, lender, servicer, originator) are relationships, not classes; FIBO's class hierarchies (closed- vs open-end, secured vs unsecured, mortgage purpose, HMDA disposition, lien position, amortization type) are coded properties using FIBO's own labels; the loan contract and its loan-specific account are one `Loan` node with `Payment` nodes for the payment history; ratios are numbers, not objects. Left out for the demo: regulatory reporting, demographics, legal proceedings, commercial, student, card and vehicle loans.
 - Every node, relationship and property the queries use is loaded by Import; no query creates anything.
-- The full reference ontology, with its import mappings, is in `ONTOLOGY.json`; runnable Cypher is in `QUERIES.md`.
+- The full reference ontology, with its import mappings, is in `ONTOLOGY.json`; runnable Cypher is in `QUERIES.cypher`.
 - Call it the reference ontology. Users may say "model", "graph model", "data model" or "ontology" — treat these as the same thing.
 - Treat its annotations as the authoritative meaning of each term — `description` above all, plus `aliases`, allowed values (`one_of`, `pattern`) and relationship counts. Quote them when explaining the reference ontology, rely on them when adapting queries to the user's own data (an alias such as `Mortgage loan originator` or `Collateral` often names the user's equivalent), and never contradict them.
 
@@ -61,7 +61,7 @@ End with a clear next step, such as asking whether they'd like to explore the re
 
 `LoanProduct` and `FinancialInstitution` are grouping dimensions (by product, by servicer) rather than roles; any categorical equivalent in the user's data will do.
 
-When the user's database differs from the reference ontology, map their labels onto these roles before rewriting anything from `QUERIES.md`. A role with no counterpart in their data means the patterns resting on it have no analogue — say so plainly rather than forcing a fit.
+When the user's database differs from the reference ontology, map their labels onto these roles before rewriting anything from `QUERIES.cypher`. A role with no counterpart in their data means the patterns resting on it have no analogue — say so plainly rather than forcing a fit.
 
 ## Supporting files
 

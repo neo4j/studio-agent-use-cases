@@ -7,7 +7,7 @@ Rules for the agent:
 - Present each statement with its purpose **before** running it — the explanation accompanies the approval request, never follows the result.
 - Every statement writes (schema or labels), so confirm the target database and connection first.
 - If the user declines a statement, tell them which queries are affected (named in each statement's `@usage`) and that you can no longer guarantee those queries will run or return accurate results. Repeat that caveat whenever an affected query comes up later in the conversation.
-- Do **not** create node-key constraints here. The Import flow creates them from `ONTOLOGY.json`; recreating them — or `UNIQUE` variants of them — is at best redundant and at worst rejected as conflicting with the existing `KEY` constraints. The constraints are listed at the end of `QUERIES.md` as a reference only.
+- Do **not** create node-key constraints here. The Import flow creates them from `ONTOLOGY.json`; recreating them — or `UNIQUE` variants of them — is at best redundant and at worst rejected as conflicting with the existing `KEY` constraints. The constraints are listed at the end of `QUERIES.cypher` as a reference only.
 
 ## 1. Required — fulltext index for fuzzy SSN matching
 
@@ -45,7 +45,7 @@ OPTIONS { indexConfig: { `fulltext.analyzer`: 'keyword' } };
  *                 unrelated identities, and every scored result downstream
  *                 inherits those false positives. Extend the literal list
  *                 knownPlaceholderEmails per source system. The same
- *                 statement appears in QUERIES.md as Placeholder Email
+ *                 statement appears in QUERIES.cypher as Placeholder Email
  *                 Detection: run it once, here or there, not both.
  */
 WITH ['none@none.com', 'n/a', 'test@test.com', 'unknown@unknown.com'] AS knownPlaceholderEmails
@@ -72,7 +72,7 @@ ORDER BY flaggedEmail;
  *                 placeholder emails: one filler number falsely links every
  *                 unrelated identity that carries it. Extend the literal
  *                 list knownPlaceholderPhones per source system. The same
- *                 statement appears in QUERIES.md as Placeholder Phone
+ *                 statement appears in QUERIES.cypher as Placeholder Phone
  *                 Detection: run it once, here or there, not both.
  */
 WITH ['999-999-9999', '000-000-0000', '555-555-5555'] AS knownPlaceholderPhones

@@ -1,26 +1,25 @@
-# Patient Journey — Query Guidance
+// # Patient Journey — Query Guidance
 
-Cypher for the `patient-journey` use case. Every query references only labels, relationship types, and properties defined in the reference ontology (`ONTOLOGY.json`). No query writes to the database.
+// Cypher for the `patient-journey` use case. Every query references only labels, relationship types, and properties defined in the reference ontology (`ONTOLOGY.json`). No query writes to the database.
 
-## Prerequisites
+// ## Prerequisites
 
-- Neo4j 5.x, Cypher 5. No APOC or GDS required.
-- The graph is loaded through the Import flow from `ONTOLOGY.json` — the bundled `sample-data/` CSVs, or the user's own data mapped onto the reference ontology.
-- The node keys in `ONTOLOGY.json` make `Patient.id`, `Encounter.id`, `Observation.id`, `Condition.code`, `Drug.code`, `Provider.id`, `Speciality.name`, and `Organisation.id` unique, so every anchored lookup below is an index seek rather than a label scan.
-- Anchors are parameters, never hardcoded IDs. Before running an anchored query, ask the user which entity they want or offer a real one from **Available anchors**. Do not invent IDs.
-- Queries are listed point and tabular first, then the graph and visualisation queries, which return nodes, relationships, and paths for Neo4j Browser or Bloom to draw. Keep visualisation results bounded with `$limit`.
+// - Neo4j 5.x, Cypher 5. No APOC or GDS required.
+// - The graph is loaded through the Import flow from `ONTOLOGY.json` — the bundled `sample-data/` CSVs, or the user's own data mapped onto the reference ontology.
+// - The node keys in `ONTOLOGY.json` make `Patient.id`, `Encounter.id`, `Observation.id`, `Condition.code`, `Drug.code`, `Provider.id`, `Speciality.name`, and `Organisation.id` unique, so every anchored lookup below is an index seek rather than a label scan.
+// - Anchors are parameters, never hardcoded IDs. Before running an anchored query, ask the user which entity they want or offer a real one from **Available anchors**. Do not invent IDs.
+// - Queries are listed point and tabular first, then the graph and visualisation queries, which return nodes, relationships, and paths for Neo4j Browser or Bloom to draw. Keep visualisation results bounded with `$limit`.
 
-## Adapting these queries
+// ## Adapting these queries
 
-These queries assume the reference ontology in `ONTOLOGY.json`. When the user's database differs — their own ontology, a modified one, or a database that predates this package — the queries are patterns to rebuild, not Cypher to run.
+// These queries assume the reference ontology in `ONTOLOGY.json`. When the user's database differs — their own ontology, a modified one, or a database that predates this package — the queries are patterns to rebuild, not Cypher to run.
 
-1. Read the live schema (`CALL db.schema.visualization()`, `SHOW CONSTRAINTS`) rather than assuming the reference ontology applies.
-2. Map their labels onto the role map in `SKILL.md`. A role with no counterpart means the pattern below it has no analogue — say so rather than forcing a fit.
-3. Rewrite from the pattern, and update the annotation block to describe what the rewritten query actually does.
+// 1. Read the live schema (`CALL db.schema.visualization()`, `SHOW CONSTRAINTS`) rather than assuming the reference ontology applies.
+// 2. Map their labels onto the role map in `SKILL.md`. A role with no counterpart means the pattern below it has no analogue — say so rather than forcing a fit.
+// 3. Rewrite from the pattern, and update the annotation block to describe what the rewritten query actually does.
 
-## Available anchors
+// ## Available anchors
 
-```cypher
 /*
  * @name           Available anchors
  * @description    Enumerates the valid anchor values for the parameterised
@@ -48,11 +47,9 @@ RETURN 'condition' AS Kind, c.code AS Id, c.description AS Label
 UNION
 MATCH (pr:Provider)
 RETURN 'provider' AS Kind, pr.id AS Id, pr.name AS Label;
-```
 
-## Reference ontology sanity check — node counts by label
+// ## Reference ontology sanity check — node counts by label
 
-```cypher
 /*
  * @name           Reference ontology sanity check — node counts by label
  * @description    Counts nodes per label to confirm the import loaded and
@@ -76,11 +73,9 @@ RETURN 'provider' AS Kind, pr.id AS Id, pr.name AS Label;
 MATCH (n)
 RETURN labels(n)[0] AS Label, count(*) AS Count
 ORDER BY Count DESC;
-```
 
-## Patient's prescribed drugs
+// ## Patient's prescribed drugs
 
-```cypher
 /*
  * @name           Patient's prescribed drugs
  * @description    Every drug prescribed to one patient across all of their
@@ -103,11 +98,9 @@ ORDER BY Count DESC;
  */
 MATCH (p:Patient {id: $patientId})-[:HAS_ENCOUNTER]->(:Encounter)-[:PRESCRIBED]->(d:Drug)
 RETURN p.name AS Name, collect(DISTINCT d.name) AS `Prescribed Drugs`;
-```
 
-## Patient's diagnosed conditions
+// ## Patient's diagnosed conditions
 
-```cypher
 /*
  * @name           Patient's diagnosed conditions
  * @description    Every condition diagnosed across one patient's
@@ -131,11 +124,9 @@ RETURN p.name AS Name, collect(DISTINCT d.name) AS `Prescribed Drugs`;
  */
 MATCH (p:Patient {id: $patientId})-[:HAS_ENCOUNTER]->(:Encounter)-[:DIAGNOSED]->(c:Condition)
 RETURN p.name AS Name, collect(DISTINCT c.description) AS Conditions;
-```
 
-## Comorbidities of other patients who share a condition with a given patient
+// ## Comorbidities of other patients who share a condition with a given patient
 
-```cypher
 /*
  * @name           Comorbidities of other patients who share a condition with a given patient
  * @description    The core cross-patient pattern: from one patient's
@@ -169,11 +160,9 @@ MATCH
 WHERE c <> c2 AND other <> p
 RETURN c2.code AS Code, c2.description AS Description, count(DISTINCT other) AS PatientCount
 ORDER BY PatientCount DESC;
-```
 
-## Comorbidities associated with a condition
+// ## Comorbidities associated with a condition
 
-```cypher
 /*
  * @name           Comorbidities associated with a condition
  * @description    Condition-centric aggregate: the conditions diagnosed at
@@ -199,11 +188,9 @@ MATCH (c1:Condition {code: $conditionCode})<-[:DIAGNOSED]-(:Encounter)-[:DIAGNOS
 WHERE c1 <> c2
 RETURN c2.code AS Code, c2.description AS Description, count(*) AS Occurrences
 ORDER BY Occurrences DESC;
-```
 
-## Provider workload
+// ## Provider workload
 
-```cypher
 /*
  * @name           Provider workload
  * @description    Pivots to the provider dimension: which patients a
@@ -229,11 +216,9 @@ ORDER BY Occurrences DESC;
 MATCH (p:Provider {id: $providerId})<-[:ATTENDED_BY]-(:Encounter)<-[:HAS_ENCOUNTER]-(pt:Patient)
 RETURN pt.id AS PatientId, pt.name AS `Patient Name`, count(*) AS Encounters
 ORDER BY Encounters DESC;
-```
 
-## Single-patient chronological pathway via the NEXT chain
+// ## Single-patient chronological pathway via the NEXT chain
 
-```cypher
 /*
  * @name           Single-patient chronological pathway via the NEXT chain
  * @description    Reconstructs one patient's encounters in date order by
@@ -265,11 +250,9 @@ WHERE NOT (:Encounter)-[:NEXT]->(head)
 MATCH path = (head)-[:NEXT*0..200]->(tail:Encounter)
 WHERE NOT (tail)-[:NEXT]->(:Encounter)
 RETURN [enc IN nodes(path) | toString(enc.date) + ' (' + enc.type + ')'] AS Pathway;
-```
 
-## Patient journey subgraph
+// ## Patient journey subgraph
 
-```cypher
 /*
  * @name           Patient journey subgraph
  * @description    Visualises everything connected to one patient: their
@@ -296,11 +279,9 @@ RETURN [enc IN nodes(path) | toString(enc.date) + ' (' + enc.type + ')'] AS Path
 MATCH (pat:Patient {id: $patientId})-[:HAS_ENCOUNTER]->(e:Encounter)
 OPTIONAL MATCH (e)-[r:HAS_OBSERVATION|DIAGNOSED|PRESCRIBED|ATTENDED_BY|NEXT]->(x)
 RETURN pat, e, r, x;
-```
 
-## Shared-condition patient cluster
+// ## Shared-condition patient cluster
 
-```cypher
 /*
  * @name           Shared-condition patient cluster
  * @description    Visualises the cohort of patients who share a diagnosis,
@@ -330,11 +311,9 @@ MATCH path = (p1:Patient)-[:HAS_ENCOUNTER]->(:Encounter)-[:DIAGNOSED]->(c:Condit
 WHERE elementId(p1) < elementId(p2)
 RETURN path
 LIMIT $limit;
-```
 
-## Comorbidity network
+// ## Comorbidity network
 
-```cypher
 /*
  * @name           Comorbidity network
  * @description    Population-level visualisation of which conditions are
@@ -369,11 +348,9 @@ LIMIT $limit
 MATCH path = (c1)<-[:DIAGNOSED]-(example)-[:DIAGNOSED]->(c2)
 RETURN path, coOccurrences
 ORDER BY coOccurrences DESC;
-```
 
-## Care network around a condition
+// ## Care network around a condition
 
-```cypher
 /*
  * @name           Care network around a condition
  * @description    Visualises the delivery network for a diagnosis:
@@ -400,11 +377,9 @@ ORDER BY coOccurrences DESC;
 MATCH path = (c:Condition {code: $conditionCode})<-[:DIAGNOSED]-(:Encounter)-[:ATTENDED_BY]->(:Provider)-[:BELONGS_TO]->(:Organisation)
 RETURN path
 LIMIT $limit;
-```
 
-## Drug co-prescription network
+// ## Drug co-prescription network
 
-```cypher
 /*
  * @name           Drug co-prescription network
  * @description    Population-level visualisation of medications prescribed
@@ -439,13 +414,11 @@ LIMIT $limit
 MATCH path = (d1)<-[:PRESCRIBED]-(example)-[:PRESCRIBED]->(d2)
 RETURN path, coPrescriptions
 ORDER BY coPrescriptions DESC;
-```
 
-## Node-key constraints
+// ## Node-key constraints
 
-Import creates these node-key constraints from the key definitions in `ONTOLOGY.json`. They are listed as a reference for checking the live database (`SHOW CONSTRAINTS`), not as statements to run: recreating them, or adding `UNIQUE` variants, conflicts with the existing `KEY` constraints.
+// Import creates these node-key constraints from the key definitions in `ONTOLOGY.json`. They are listed as a reference for checking the live database (`SHOW CONSTRAINTS`), not as statements to run: recreating them, or adding `UNIQUE` variants, conflicts with the existing `KEY` constraints.
 
-```cypher
 CREATE CONSTRAINT id_Patient_key IF NOT EXISTS
   FOR (p:Patient) REQUIRE p.id IS NODE KEY;
 CREATE CONSTRAINT id_Encounter_key IF NOT EXISTS
@@ -462,4 +435,3 @@ CREATE CONSTRAINT name_Speciality_key IF NOT EXISTS
   FOR (s:Speciality) REQUIRE s.name IS NODE KEY;
 CREATE CONSTRAINT id_Organisation_key IF NOT EXISTS
   FOR (org:Organisation) REQUIRE org.id IS NODE KEY;
-```
