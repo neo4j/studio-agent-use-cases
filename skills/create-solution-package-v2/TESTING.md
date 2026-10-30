@@ -200,9 +200,12 @@ A Cypherlite pass becomes proof only once parity with Aura has been checked. Do 
 3. **Compare:** `python3 $S/compare_aura.py <run-dir>/<package>` writes `parity.md` and `parity.json`.
    - **Normalisation:** nodes become their reference-ontology key, paths become node and relationship sequences, and temporal values become ISO strings.
    - **Row order:** ignored unless the query has an `ORDER BY`, and then ties may come in any order.
-   - **Known differences:** a mismatch is retried after CYPHERLITE.md's known rendering difference is normalised. It is also retried with each path reduced to its end nodes, where the query leaves the path's interior to the engine (`head(collect(...))`, `elementId` ordering). Each level is labelled, so nothing is waved through silently.
+   - **Known differences:** a mismatch is retried at three further levels, each labelled, so nothing is waved through silently:
+     - after CYPHERLITE.md's known rendering difference is normalised;
+     - with collected lists compared as sets, where the query `collect()`s with no `ORDER BY` in front;
+     - with each path reduced to its end nodes, where the query leaves the path's interior to the engine (`head(collect(...))`, `elementId` ordering).
    - **Subsets:** a query with `LIMIT` and no `ORDER BY` returns an arbitrary subset on each engine. Judge Aura's rows against the TESTS.md invariant instead.
-4. **Check what the labels leave open:** verify Aura's own arbitrary choices against the CSVs, such as each representative path being valid. Then record what parity confirmed or overturned in CYPHERLITE.md, including any "verify" row it settles.
+4. **Check what the labels leave open:** verify Aura's own arbitrary choices against the CSVs, such as each representative path being valid. Write those checks in `<run-dir>/<package>/parity-notes.md`; the script appends it to `parity.md` on every run. Then record what parity confirmed or overturned in CYPHERLITE.md, including any "verify" row it settles.
 
 If an export's columns do not match the query's, the file probably holds another query's result. The script reports it as NOT-COMPARABLE rather than guessing.
 

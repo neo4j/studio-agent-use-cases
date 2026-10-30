@@ -15,9 +15,11 @@ before comparing:
 Rows are compared as multisets. Where the query has an ORDER BY, the sequence of sort-key values must also
 agree, which allows ties in any order. A query with LIMIT and no ORDER BY returns an arbitrary subset, so
 only its size and overlap are reported. A mismatch is re-tested after CYPHERLITE.md's known rendering
-difference (toString of a datetime drops zero seconds) is normalised, and labelled as such.
+difference (toString of a datetime drops zero seconds) is normalised; then, where the query collect()s
+without an ORDER BY in front, with collected lists compared as sets; then, where it picks a path interior
+arbitrarily, with paths reduced to their end nodes. Each level is labelled in the result.
 Also compares aura/constraints.json and aura/rel-counts.json with the generated import, when present.
-Writes parity.json and parity.md beside the package report. Standard library only."""
+Writes parity.json and parity.md beside the package report; parity.md ends with parity-notes.md when present. Standard library only."""
 import argparse, collections, datetime, json, pathlib, re, sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
@@ -116,6 +118,24 @@ def endpoints(v):
     return v
 
 
+def unordered(v):
+    """Every plain list inside a cell sorted, leaving nodes, relationships and paths intact: for queries that
+    collect() without an ORDER BY in front, where the order inside the list is the engine's choice."""
+    if isinstance(v, list) and v and isinstance(v[0], str) and v[0] in ("node", "rel", "path", "path-ends"):
+        return v
+    if isinstance(v, list):
+        return sorted((unordered(x) for x in v), key=lambda x: json.dumps(x, sort_keys=True))
+    if isinstance(v, dict):
+        return {k: unordered(x) for k, x in v.items()}
+    return v
+
+
+def unordered_collect(text):
+    """True when the query collects and no ORDER BY comes before its first collect()."""
+    m = re.search(r"\bcollect\s*\(", text, re.I)
+    return bool(m) and not re.search(r"\bORDER\s+BY\b", text[:m.start()], re.I)
+
+
 ARBITRARY = re.compile(r"\bhead\s*\(\s*collect\s*\(|collect\s*\([^)]*\)\s*\[\s*0\s*\]|\belementId\s*\(", re.I)
 
 
@@ -159,6 +179,10 @@ def compare_query(n, heading, cypher, cl_rows, cl_cols, aura_rows, canon):
         return collections.Counter(map(key, x)) == collections.Counter(map(key, y))
 
     levels = [("", a, b), (" after normalising toString(datetime) seconds", soften(a), soften(b))]
+    if unordered_collect(text):
+        levels.append((" comparing collected lists as sets: the query collects without an ORDER BY in front, so the "
+                       "order inside each list is the engine's choice",
+                       [[unordered(c) for c in r] for r in soften(a)], [[unordered(c) for c in r] for r in soften(b)]))
     if ARBITRARY.search(text):
         levels.append((" comparing each path by its end nodes only: the query picks the path interior or the pair "
                        "orientation arbitrarily (head(collect(...)) or elementId order), which no two engines need share",
@@ -176,8 +200,9 @@ def compare_query(n, heading, cypher, cl_rows, cl_cols, aura_rows, canon):
                 else:
                     res.update(status="DIFFERENT", detail=detail + f"; but the ORDER BY {order} sequence differs")
                     return res
-            res.update(status="MATCH" if not label else ("MATCH-ARBITRARY-CHOICE" if "end nodes" in label else "MATCH-KNOWN-DIFFERENCE"),
-                       detail=detail)
+            status = "MATCH" if not label else ("MATCH-ARBITRARY-CHOICE" if "end nodes" in label else
+                                                "MATCH-UNORDERED-COLLECT" if "as sets" in label else "MATCH-KNOWN-DIFFERENCE")
+            res.update(status=status, detail=detail)
             return res
     ca, cb = collections.Counter(map(key, a)), collections.Counter(map(key, b))
     only_a, only_b = list((ca - cb).elements()), list((cb - ca).elements())
@@ -290,6 +315,9 @@ def main():
         if r.get("only_aura") or r.get("only_cypherlite"):
             L += ["", f"## {r['n']}. {r['heading']}", "", "Only on Aura:", "```"] + r.get("only_aura", []) + \
                  ["```", "Only on Cypherlite:", "```"] + r.get("only_cypherlite", []) + ["```"]
+    notes = out / "parity-notes.md"
+    if notes.exists():  # hand-written checks that need the CSVs, kept apart so a re-run never loses them
+        L += ["", notes.read_text().strip()]
     (out / "parity.md").write_text("\n".join(L) + "\n")
     print("\n".join(L))
 
