@@ -84,7 +84,7 @@ Synthetic data generated with Synthea (Massachusetts, seed 100) and reduced to a
 ## Comorbidities of other patients who share a condition with a given patient
 
 - **Parameters:** `$patientId = 'fd65a941-3fa1-337f-28e2-6c9d3922c1af'` (Gerardo Covarrubias).
-- **Invariant:** non-empty. Each PatientCount counts distinct patients other than the anchor who share at least one of the anchor's conditions and also have the row's condition through a different shared condition. The anchor patient never contributes. The result is ordered by PatientCount descending.
+- **Invariant:** non-empty. Each PatientCount counts distinct patients other than the anchor who share at least one of the anchor's conditions and also have the row's condition through a different shared condition. The row's condition may be diagnosed on any of the other patient's encounters, including the one that diagnosed the shared condition. The anchor patient never contributes. The result is ordered by PatientCount descending.
 - **Expected:** 8 rows (2265 other patients share at least one of Gerardo's conditions):
 
   | Code | Description | PatientCount |
@@ -99,6 +99,7 @@ Synthetic data generated with Synthea (Massachusetts, seed 100) and reduced to a
   | 230265002 | Familial Alzheimer's disease of early onset (disorder) | 103 |
 
 - **Sensitivity:** before the `other <> p` fix, the four conditions Gerardo has were each 1 higher (Hypertension 542, Cough 289, Coronary Heart Disease 248, Dyspnea 248). Zero rows means `Condition` did not merge on code.
+  Before the query was split into two `MATCH` clauses, both patterns sat in one `MATCH`, and relationship uniqueness forced the second condition onto a different `HAS_ENCOUNTER` from the shared one. That form returned 447, 341, 189, 154, 147, 134, 119 and 67, observed on Cypherlite and on Aura (parity run, 30 October 2026).
 
 ## Comorbidities associated with a condition
 
