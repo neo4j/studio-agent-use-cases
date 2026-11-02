@@ -1,0 +1,1030 @@
+{
+  "schema": "https://neo4j.com/docs/ontology-graph-spec/1.0.0/schema.json",
+  "id": "competitive-intelligence",
+  "version": "1",
+  "name": "Life Sciences Competitive Intelligence",
+  "description": "Pharmaceutical and biotech competitive intelligence: which companies are developing which drugs, against which protein targets, for which diseases, how far each programme has got in clinical trials, and where companies' patent filings claim the same targets and diseases.",
+  "nodes": {
+    "Company": {
+      "label": "Company",
+      "aliases": [
+        "Sponsor",
+        "Assignee"
+      ],
+      "description": "A pharmaceutical or biotechnology company: the sponsor of clinical development programmes and the owner (assignee) of patents. The hub shared by the pipeline and patent views.",
+      "properties": {
+        "id": {
+          "type": "STRING",
+          "description": "Identifier of the company, stable across its programmes and patents. e.g. `CO-021`.",
+          "key": true
+        },
+        "name": {
+          "type": "STRING",
+          "description": "Registered company name.",
+          "must_exist": true
+        },
+        "country": {
+          "type": "STRING",
+          "description": "Country of the company's headquarters, as an ISO 3166-1 alpha-2 code. e.g. `SE`.",
+          "pattern": "^[A-Z]{2}$"
+        },
+        "market_cap": {
+          "type": "INTEGER",
+          "description": "Market capitalisation in whole US dollars at a single point in time: a snapshot that dates quickly, so compare companies only within one snapshot. Also called market capitalisation. e.g. `1840000000`.",
+          "aliases": [
+            "Market capitalisation"
+          ]
+        },
+        "focus": {
+          "type": "STRING",
+          "description": "Therapeutic areas the company works in, as a list of area names separated by ' / ' (for example Neuroscience, Oncology, Immunology, Metabolic disease). Open-ended, not a closed set. e.g. `Metabolic disease / Neuroscience / Oncology`."
+        }
+      },
+      "extensions": {
+        "display": {
+          "x": 0,
+          "y": 0
+        }
+      }
+    },
+    "Drug": {
+      "label": "Drug",
+      "aliases": [
+        "Development asset",
+        "Compound"
+      ],
+      "description": "A drug development asset or approved product: one molecule or biologic, which may be developed for several diseases through several clinical trials.",
+      "properties": {
+        "id": {
+          "type": "STRING",
+          "description": "Identifier of the asset: the sponsor's compound code. e.g. `UBL-5457`.",
+          "key": true
+        },
+        "name": {
+          "type": "STRING",
+          "description": "Name used for the asset: its non-proprietary name once one is assigned, otherwise its compound code.",
+          "must_exist": true
+        },
+        "mechanism": {
+          "type": "STRING",
+          "description": "Mechanism of action in words: the target and how the asset acts on it, for example an inhibitor, an agonist or a monoclonal antibody. Free text. e.g. `LRRK2 inhibitor`."
+        },
+        "administration": {
+          "type": "STRING",
+          "description": "Route of administration of the asset in its lead programme. e.g. `Oral`.",
+          "one_of": [
+            "Oral",
+            "Intravenous",
+            "Subcutaneous",
+            "Intrathecal",
+            "Inhaled"
+          ]
+        },
+        "status": {
+          "type": "STRING",
+          "description": "Development status of the asset as a whole, not of any one trial: Active (in clinical development and not yet approved), Approved (marketed for at least one indication), Discontinued (development stopped by the sponsor). e.g. `Active`.",
+          "must_exist": true,
+          "one_of": [
+            "Active",
+            "Approved",
+            "Discontinued"
+          ]
+        }
+      },
+      "extensions": {
+        "display": {
+          "x": 320,
+          "y": 0
+        }
+      }
+    },
+    "Protein": {
+      "label": "Protein",
+      "aliases": [
+        "Target",
+        "Drug target"
+      ],
+      "description": "A human protein pursued as a drug target. Drugs and patents that act on the same target share one Protein node, which is what lets pipeline and patent activity be compared.",
+      "properties": {
+        "name": {
+          "type": "STRING",
+          "description": "Common name or gene symbol of the target, as pipeline and patent sources use it. Keep one name per protein; the UniProt accession is the unambiguous identifier. e.g. `JAK1`.",
+          "key": true
+        },
+        "uniprot": {
+          "type": "STRING",
+          "description": "UniProtKB accession of the human protein. e.g. `P23458`.",
+          "must_exist": true,
+          "pattern": "^([OPQ][0-9][A-Z0-9]{3}[0-9]|[A-NR-Z][0-9]([A-Z][A-Z0-9]{2}[0-9]){1,2})$"
+        },
+        "function": {
+          "type": "STRING",
+          "description": "Short description of the protein's biological role."
+        },
+        "type": {
+          "type": "STRING",
+          "description": "Target class of the protein, as drug discovery groups targets. e.g. `Kinase`.",
+          "one_of": [
+            "Enzyme",
+            "Receptor",
+            "Kinase",
+            "Immune checkpoint",
+            "Peptide",
+            "Structural protein",
+            "Transcription factor"
+          ]
+        }
+      },
+      "extensions": {
+        "display": {
+          "x": 680,
+          "y": -180
+        }
+      }
+    },
+    "Disease": {
+      "label": "Disease",
+      "aliases": [
+        "Indication",
+        "Therapeutic area"
+      ],
+      "description": "A disease or indication that drugs are developed for and patents claim.",
+      "properties": {
+        "name": {
+          "type": "STRING",
+          "description": "Name of the disease. e.g. `Rheumatoid Arthritis`.",
+          "key": true
+        },
+        "icd10": {
+          "type": "STRING",
+          "description": "ICD-10 code for the disease: a three-character category, optionally with a subcategory after a full stop. e.g. `M06`.",
+          "pattern": "^[A-Z][0-9]{2}(\\.[0-9A-Z]{1,4})?$"
+        },
+        "us_prevalence": {
+          "type": "INTEGER",
+          "description": "Approximate number of people in the United States living with the disease, at a single point in time. An order-of-magnitude figure for sizing, not an epidemiological estimate. e.g. `1500000`."
+        },
+        "annual_market_usd": {
+          "type": "INTEGER",
+          "description": "Approximate annual US market for treatments of the disease, in whole US dollars, at a single point in time. An order-of-magnitude figure for sizing. e.g. `30000000000`."
+        }
+      },
+      "extensions": {
+        "display": {
+          "x": 680,
+          "y": 180
+        }
+      }
+    },
+    "ClinicalTrial": {
+      "label": "ClinicalTrial",
+      "aliases": [
+        "Study",
+        "Clinical study"
+      ],
+      "description": "A registered clinical trial of one drug in one disease at one phase, as listed on ClinicalTrials.gov.",
+      "properties": {
+        "nct_id": {
+          "type": "STRING",
+          "description": "ClinicalTrials.gov registry identifier, also called the NCT number. e.g. `NCT99193561`.",
+          "key": true,
+          "pattern": "^NCT[0-9]{8}$",
+          "aliases": [
+            "NCT number"
+          ]
+        },
+        "title": {
+          "type": "STRING",
+          "description": "Brief title of the study as registered.",
+          "must_exist": true
+        },
+        "status": {
+          "type": "STRING",
+          "description": "Overall recruitment status of the study as ClinicalTrials.gov reports it. Terminated, Withdrawn and Suspended mean the study stopped or paused early (see termination_reason); a stopped trial does not by itself mean the drug was discontinued. e.g. `Completed`.",
+          "must_exist": true,
+          "one_of": [
+            "Not yet recruiting",
+            "Recruiting",
+            "Active, not recruiting",
+            "Completed",
+            "Terminated",
+            "Withdrawn",
+            "Suspended"
+          ]
+        },
+        "start_date": {
+          "type": "ZONED DATETIME",
+          "description": "Actual start date of the study, or its anticipated start date while it is not yet recruiting. Stored as midnight UTC on that day; only the calendar date carries meaning. e.g. `2022-09-17T00:00:00Z`."
+        },
+        "enrollment": {
+          "type": "INTEGER",
+          "description": "Number of participants: actual for completed or terminated studies, anticipated otherwise. e.g. `31`."
+        },
+        "termination_reason": {
+          "type": "STRING",
+          "description": "The sponsor's stated reason the study was terminated, withdrawn or suspended (ClinicalTrials.gov's 'why stopped'). Absent for studies that were not stopped. e.g. `Slow enrolment`.",
+          "aliases": [
+            "Why stopped"
+          ]
+        }
+      },
+      "extensions": {
+        "display": {
+          "x": 320,
+          "y": 300
+        }
+      }
+    },
+    "Phase": {
+      "label": "Phase",
+      "aliases": [
+        "Development stage"
+      ],
+      "description": "A clinical development phase, 1 to 4. Phase 4 is a post-approval study. A phase says how far a trial is in development, not how it ended.",
+      "properties": {
+        "name": {
+          "type": "STRING",
+          "description": "Name of the phase. e.g. `Phase 2`.",
+          "key": true,
+          "one_of": [
+            "Phase 1",
+            "Phase 2",
+            "Phase 3",
+            "Phase 4"
+          ]
+        },
+        "number": {
+          "type": "INTEGER",
+          "description": "The phase as a number, 1 to 4, for ordering and comparison. e.g. `2`.",
+          "must_exist": true
+        }
+      },
+      "extensions": {
+        "display": {
+          "x": 680,
+          "y": 420
+        }
+      }
+    },
+    "Patent": {
+      "label": "Patent",
+      "aliases": [
+        "Patent filing",
+        "Patent application"
+      ],
+      "description": "A patent or published patent application claiming a drug target, mechanism or indication. Patents signal strategic intent, often years before clinical programmes appear.",
+      "properties": {
+        "id": {
+          "type": "STRING",
+          "description": "Publication number of the patent or application, with its country prefix and kind code. e.g. `EP9023189B1`.",
+          "key": true,
+          "aliases": [
+            "Publication number"
+          ]
+        },
+        "title": {
+          "type": "STRING",
+          "description": "Title of the patent as published.",
+          "must_exist": true
+        },
+        "filing_date": {
+          "type": "ZONED DATETIME",
+          "description": "Filing date of the application. Stored as midnight UTC on that day; only the calendar date carries meaning. e.g. `2025-03-28T00:00:00Z`."
+        },
+        "status": {
+          "type": "STRING",
+          "description": "Legal status of the filing: Pending (under examination), Granted (in force), Expired (term ended) or Abandoned (given up by the owner). e.g. `Pending`.",
+          "must_exist": true,
+          "one_of": [
+            "Pending",
+            "Granted",
+            "Expired",
+            "Abandoned"
+          ]
+        }
+      },
+      "extensions": {
+        "display": {
+          "x": 0,
+          "y": -300
+        }
+      }
+    }
+  },
+  "relationships": {
+    "inPipeline": {
+      "type": "IN_PIPELINE",
+      "from": {
+        "node": "Company"
+      },
+      "to": {
+        "node": "Drug",
+        "min_count": 1
+      },
+      "description": "Links a company to a drug in its development pipeline, as originator or co-developer. Every drug is in at least one company's pipeline, and a co-developed drug is in each partner's; a company may have many pipeline drugs or none."
+    },
+    "targets": {
+      "type": "TARGETS",
+      "from": {
+        "node": "Drug",
+        "min_count": 1
+      },
+      "to": {
+        "node": "Protein"
+      },
+      "description": "Links a drug to a protein it is designed to act on. Every drug targets at least one protein, and a bispecific targets two; a protein may be targeted by many drugs or none."
+    },
+    "treats": {
+      "type": "TREATS",
+      "from": {
+        "node": "Drug",
+        "min_count": 1
+      },
+      "to": {
+        "node": "Disease"
+      },
+      "description": "Links a drug to a disease it is developed for or approved in: a drug treats every disease it has been trialled in. Every drug treats at least one disease; a disease may have many drugs or none."
+    },
+    "investigatedIn": {
+      "type": "INVESTIGATED_IN",
+      "from": {
+        "node": "Drug",
+        "min_count": 1
+      },
+      "to": {
+        "node": "ClinicalTrial",
+        "count": 1
+      },
+      "description": "Links a drug to a clinical trial that studies it. Each trial investigates exactly one drug; every drug has one or more trials."
+    },
+    "hasPhase": {
+      "type": "HAS_PHASE",
+      "from": {
+        "node": "ClinicalTrial",
+        "count": 1
+      },
+      "to": {
+        "node": "Phase"
+      },
+      "description": "Links a clinical trial to its development phase. Each trial is in exactly one phase; a phase has many trials."
+    },
+    "forDisease": {
+      "type": "FOR_DISEASE",
+      "from": {
+        "node": "ClinicalTrial",
+        "count": 1
+      },
+      "to": {
+        "node": "Disease"
+      },
+      "description": "Links a clinical trial to the disease it studies. Each trial studies exactly one disease; a disease may have many trials or none."
+    },
+    "hasOwner": {
+      "type": "HAS_OWNER",
+      "from": {
+        "node": "Patent",
+        "min_count": 1
+      },
+      "to": {
+        "node": "Company"
+      },
+      "description": "Links a patent to a company that owns it, its assignee. Every patent has at least one owner, and a jointly owned patent has several; a company may own many patents or none."
+    },
+    "patentTargets": {
+      "type": "TARGETS",
+      "from": {
+        "node": "Patent",
+        "min_count": 1
+      },
+      "to": {
+        "node": "Protein"
+      },
+      "description": "Links a patent to a protein its claims cover as a drug target. Every patent claims at least one target; a protein may be claimed by many patents or none. The same Protein nodes are targeted by drugs, so patents and pipelines meet here."
+    },
+    "patentTreats": {
+      "type": "TREATS",
+      "from": {
+        "node": "Patent",
+        "min_count": 1
+      },
+      "to": {
+        "node": "Disease"
+      },
+      "description": "Links a patent to a disease its claims name as an indication. Every patent names at least one indication; a disease may be named by many patents or none."
+    }
+  },
+  "extensions": {
+    "data_source_tables": {
+      "companies.csv": {
+        "source": "local",
+        "columns": [
+          {
+            "name": "id",
+            "type": "string"
+          },
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "country",
+            "type": "string"
+          },
+          {
+            "name": "market_cap",
+            "type": "string"
+          },
+          {
+            "name": "focus",
+            "type": "string"
+          }
+        ]
+      },
+      "company_drugs.csv": {
+        "source": "local",
+        "columns": [
+          {
+            "name": "companyId",
+            "type": "string"
+          },
+          {
+            "name": "drugId",
+            "type": "string"
+          }
+        ]
+      },
+      "diseases.csv": {
+        "source": "local",
+        "columns": [
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "icd10",
+            "type": "string"
+          },
+          {
+            "name": "us_prevalence",
+            "type": "string"
+          },
+          {
+            "name": "annual_market_usd",
+            "type": "string"
+          }
+        ]
+      },
+      "drug_targets.csv": {
+        "source": "local",
+        "columns": [
+          {
+            "name": "drugId",
+            "type": "string"
+          },
+          {
+            "name": "proteinName",
+            "type": "string"
+          }
+        ]
+      },
+      "drugs.csv": {
+        "source": "local",
+        "columns": [
+          {
+            "name": "id",
+            "type": "string"
+          },
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "mechanism",
+            "type": "string"
+          },
+          {
+            "name": "administration",
+            "type": "string"
+          },
+          {
+            "name": "status",
+            "type": "string"
+          }
+        ]
+      },
+      "patent_indications.csv": {
+        "source": "local",
+        "columns": [
+          {
+            "name": "patentId",
+            "type": "string"
+          },
+          {
+            "name": "diseaseName",
+            "type": "string"
+          }
+        ]
+      },
+      "patent_owners.csv": {
+        "source": "local",
+        "columns": [
+          {
+            "name": "patentId",
+            "type": "string"
+          },
+          {
+            "name": "companyId",
+            "type": "string"
+          }
+        ]
+      },
+      "patent_targets.csv": {
+        "source": "local",
+        "columns": [
+          {
+            "name": "patentId",
+            "type": "string"
+          },
+          {
+            "name": "proteinName",
+            "type": "string"
+          }
+        ]
+      },
+      "patents.csv": {
+        "source": "local",
+        "columns": [
+          {
+            "name": "id",
+            "type": "string"
+          },
+          {
+            "name": "title",
+            "type": "string"
+          },
+          {
+            "name": "filing_date",
+            "type": "string"
+          },
+          {
+            "name": "status",
+            "type": "string"
+          }
+        ]
+      },
+      "phases.csv": {
+        "source": "local",
+        "columns": [
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "number",
+            "type": "string"
+          }
+        ]
+      },
+      "proteins.csv": {
+        "source": "local",
+        "columns": [
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "uniprot",
+            "type": "string"
+          },
+          {
+            "name": "function",
+            "type": "string"
+          },
+          {
+            "name": "type",
+            "type": "string"
+          }
+        ]
+      },
+      "trials.csv": {
+        "source": "local",
+        "columns": [
+          {
+            "name": "nct_id",
+            "type": "string"
+          },
+          {
+            "name": "title",
+            "type": "string"
+          },
+          {
+            "name": "status",
+            "type": "string"
+          },
+          {
+            "name": "start_date",
+            "type": "string"
+          },
+          {
+            "name": "enrollment",
+            "type": "string"
+          },
+          {
+            "name": "termination_reason",
+            "type": "string"
+          },
+          {
+            "name": "drugId",
+            "type": "string"
+          },
+          {
+            "name": "phaseName",
+            "type": "string"
+          },
+          {
+            "name": "diseaseName",
+            "type": "string"
+          }
+        ]
+      }
+    },
+    "data_source_mappings": {
+      "mapping0": [
+        {
+          "type": "NODE",
+          "node": "Company",
+          "table": "companies.csv",
+          "mode": "MERGE",
+          "key": [
+            "id"
+          ],
+          "properties": {
+            "id": {
+              "column": "id"
+            },
+            "name": {
+              "column": "name"
+            },
+            "country": {
+              "column": "country"
+            },
+            "market_cap": {
+              "column": "market_cap"
+            },
+            "focus": {
+              "column": "focus"
+            }
+          }
+        },
+        {
+          "type": "NODE",
+          "node": "Drug",
+          "table": "drugs.csv",
+          "mode": "MERGE",
+          "key": [
+            "id"
+          ],
+          "properties": {
+            "id": {
+              "column": "id"
+            },
+            "name": {
+              "column": "name"
+            },
+            "mechanism": {
+              "column": "mechanism"
+            },
+            "administration": {
+              "column": "administration"
+            },
+            "status": {
+              "column": "status"
+            }
+          }
+        },
+        {
+          "type": "NODE",
+          "node": "Protein",
+          "table": "proteins.csv",
+          "mode": "MERGE",
+          "key": [
+            "name"
+          ],
+          "properties": {
+            "name": {
+              "column": "name"
+            },
+            "uniprot": {
+              "column": "uniprot"
+            },
+            "function": {
+              "column": "function"
+            },
+            "type": {
+              "column": "type"
+            }
+          }
+        },
+        {
+          "type": "NODE",
+          "node": "Disease",
+          "table": "diseases.csv",
+          "mode": "MERGE",
+          "key": [
+            "name"
+          ],
+          "properties": {
+            "name": {
+              "column": "name"
+            },
+            "icd10": {
+              "column": "icd10"
+            },
+            "us_prevalence": {
+              "column": "us_prevalence"
+            },
+            "annual_market_usd": {
+              "column": "annual_market_usd"
+            }
+          }
+        },
+        {
+          "type": "NODE",
+          "node": "ClinicalTrial",
+          "table": "trials.csv",
+          "mode": "MERGE",
+          "key": [
+            "nct_id"
+          ],
+          "properties": {
+            "nct_id": {
+              "column": "nct_id"
+            },
+            "title": {
+              "column": "title"
+            },
+            "status": {
+              "column": "status"
+            },
+            "start_date": {
+              "column": "start_date"
+            },
+            "enrollment": {
+              "column": "enrollment"
+            },
+            "termination_reason": {
+              "column": "termination_reason"
+            }
+          }
+        },
+        {
+          "type": "NODE",
+          "node": "Phase",
+          "table": "phases.csv",
+          "mode": "MERGE",
+          "key": [
+            "name"
+          ],
+          "properties": {
+            "name": {
+              "column": "name"
+            },
+            "number": {
+              "column": "number"
+            }
+          }
+        },
+        {
+          "type": "NODE",
+          "node": "Patent",
+          "table": "patents.csv",
+          "mode": "MERGE",
+          "key": [
+            "id"
+          ],
+          "properties": {
+            "id": {
+              "column": "id"
+            },
+            "title": {
+              "column": "title"
+            },
+            "filing_date": {
+              "column": "filing_date"
+            },
+            "status": {
+              "column": "status"
+            }
+          }
+        },
+        {
+          "type": "RELATIONSHIP",
+          "relationship": "inPipeline",
+          "table": "company_drugs.csv",
+          "mode": "MERGE",
+          "key": [],
+          "from_node": {
+            "label": "Company",
+            "properties": {
+              "id": {
+                "column": "companyId"
+              }
+            }
+          },
+          "to_node": {
+            "label": "Drug",
+            "properties": {
+              "id": {
+                "column": "drugId"
+              }
+            }
+          }
+        },
+        {
+          "type": "RELATIONSHIP",
+          "relationship": "targets",
+          "table": "drug_targets.csv",
+          "mode": "MERGE",
+          "key": [],
+          "from_node": {
+            "label": "Drug",
+            "properties": {
+              "id": {
+                "column": "drugId"
+              }
+            }
+          },
+          "to_node": {
+            "label": "Protein",
+            "properties": {
+              "name": {
+                "column": "proteinName"
+              }
+            }
+          }
+        },
+        {
+          "type": "RELATIONSHIP",
+          "relationship": "treats",
+          "table": "trials.csv",
+          "mode": "MERGE",
+          "key": [],
+          "from_node": {
+            "label": "Drug",
+            "properties": {
+              "id": {
+                "column": "drugId"
+              }
+            }
+          },
+          "to_node": {
+            "label": "Disease",
+            "properties": {
+              "name": {
+                "column": "diseaseName"
+              }
+            }
+          }
+        },
+        {
+          "type": "RELATIONSHIP",
+          "relationship": "investigatedIn",
+          "table": "trials.csv",
+          "mode": "MERGE",
+          "key": [],
+          "from_node": {
+            "label": "Drug",
+            "properties": {
+              "id": {
+                "column": "drugId"
+              }
+            }
+          },
+          "to_node": {
+            "label": "ClinicalTrial",
+            "properties": {
+              "nct_id": {
+                "column": "nct_id"
+              }
+            }
+          }
+        },
+        {
+          "type": "RELATIONSHIP",
+          "relationship": "hasPhase",
+          "table": "trials.csv",
+          "mode": "MERGE",
+          "key": [],
+          "from_node": {
+            "label": "ClinicalTrial",
+            "properties": {
+              "nct_id": {
+                "column": "nct_id"
+              }
+            }
+          },
+          "to_node": {
+            "label": "Phase",
+            "properties": {
+              "name": {
+                "column": "phaseName"
+              }
+            }
+          }
+        },
+        {
+          "type": "RELATIONSHIP",
+          "relationship": "forDisease",
+          "table": "trials.csv",
+          "mode": "MERGE",
+          "key": [],
+          "from_node": {
+            "label": "ClinicalTrial",
+            "properties": {
+              "nct_id": {
+                "column": "nct_id"
+              }
+            }
+          },
+          "to_node": {
+            "label": "Disease",
+            "properties": {
+              "name": {
+                "column": "diseaseName"
+              }
+            }
+          }
+        },
+        {
+          "type": "RELATIONSHIP",
+          "relationship": "hasOwner",
+          "table": "patent_owners.csv",
+          "mode": "MERGE",
+          "key": [],
+          "from_node": {
+            "label": "Patent",
+            "properties": {
+              "id": {
+                "column": "patentId"
+              }
+            }
+          },
+          "to_node": {
+            "label": "Company",
+            "properties": {
+              "id": {
+                "column": "companyId"
+              }
+            }
+          }
+        },
+        {
+          "type": "RELATIONSHIP",
+          "relationship": "patentTargets",
+          "table": "patent_targets.csv",
+          "mode": "MERGE",
+          "key": [],
+          "from_node": {
+            "label": "Patent",
+            "properties": {
+              "id": {
+                "column": "patentId"
+              }
+            }
+          },
+          "to_node": {
+            "label": "Protein",
+            "properties": {
+              "name": {
+                "column": "proteinName"
+              }
+            }
+          }
+        },
+        {
+          "type": "RELATIONSHIP",
+          "relationship": "patentTreats",
+          "table": "patent_indications.csv",
+          "mode": "MERGE",
+          "key": [],
+          "from_node": {
+            "label": "Patent",
+            "properties": {
+              "id": {
+                "column": "patentId"
+              }
+            }
+          },
+          "to_node": {
+            "label": "Disease",
+            "properties": {
+              "name": {
+                "column": "diseaseName"
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}
