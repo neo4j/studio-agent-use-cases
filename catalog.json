@@ -10,7 +10,20 @@
           "sample-data/transactions.csv",
           "human_description.md",
           "QUERIES.md",
-          "TESTS.md"
+          "TESTS.md",
+          "sample-data/account_holders.csv",
+          "sample-data/addresses.csv",
+          "sample-data/countries.csv",
+          "sample-data/customer_addresses.csv",
+          "sample-data/customer_driving_licenses.csv",
+          "sample-data/customer_emails.csv",
+          "sample-data/customer_passports.csv",
+          "sample-data/customer_phones.csv",
+          "sample-data/customers.csv",
+          "sample-data/devices.csv",
+          "sample-data/ip_addresses.csv",
+          "sample-data/sessions.csv",
+          "NOTICE.md"
         ],
         "markdown": "SKILL.md"
       }
