@@ -386,7 +386,7 @@ Adapt every domain term, filename, property, and mapping. Do not leave angle-bra
 }
 ```
 
-Common graph property types in packages include `STRING`, `INTEGER`, `FLOAT`, `BOOLEAN`, `DATE`, and `ZONED DATETIME`; the full set is the spec's `Neo4jType` enum.
+Graph property types are limited to what Import supports for local CSV imports: `STRING`, `INTEGER`, `FLOAT`, `BOOLEAN`, `ZONED DATETIME`, their `LIST<...>` forms, and `VECTOR<...>`. The spec's `Neo4jType` enum offers more, but Import flags anything else "Not supported in local imports". A calendar date is a `ZONED DATETIME` at midnight UTC (`2025-10-08T00:00:00Z`), never `DATE`; see ONTOLOGY_SPEC_FORMAT.md's "Property types Import can load".
 
 Note the annotation shape in the example: `description` on the root, nodes, relationships, and properties; property descriptions ending with a `` e.g. `...` `` value that appears verbatim in the sample CSVs below; a closed value set as `one_of`; an industry synonym as an alias; and the relationship's multiplicity stated in its description in both directions and as counts on its targets — every event has exactly one `HAS_EVENT` (`to.count: 1`), while an entity's zero-or-more is the unconstrained default, so `from` carries no count. Every sample value must match a real value in the mapped CSV column — mismatches are validation failures. Note also which extensions the example carries — `tables`, `mappings` and node `display` — and that it carries no others.
 
