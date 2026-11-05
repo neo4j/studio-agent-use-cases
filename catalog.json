@@ -229,6 +229,30 @@
         ],
         "markdown": "SKILL.md"
       }
+    },
+    {
+      "skillId": "competitive-intelligence",
+      "files": {
+        "graph": "ONTOLOGY.json",
+        "skill": [
+          "sample-data/companies.csv",
+          "sample-data/company_drugs.csv",
+          "sample-data/diseases.csv",
+          "sample-data/drug_targets.csv",
+          "sample-data/drugs.csv",
+          "sample-data/patent_indications.csv",
+          "sample-data/patent_owners.csv",
+          "sample-data/patent_targets.csv",
+          "sample-data/patents.csv",
+          "sample-data/phases.csv",
+          "sample-data/proteins.csv",
+          "sample-data/trials.csv",
+          "human_description.md",
+          "QUERIES.md",
+          "TESTS.md"
+        ],
+        "markdown": "SKILL.md"
+      }
     }
   ]
 }
