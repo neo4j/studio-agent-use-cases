@@ -57,7 +57,7 @@
           "description": "Instant the account was opened, as an ISO 8601 zoned datetime. Account age at the time of a payment is measured from it. Empty for external accounts. e.g. `2019-08-15T17:57:34Z`."
         }
       },
-      "extensions": {"display": {"x": 350, "y": 0}}
+      "extensions": {"display": {"x": 120, "y": 0}}
     },
     "Transaction": {
       "label": "Transaction",
@@ -91,7 +91,7 @@
           "description": "Payment method or scheme, as the source system names it, for example `FASTER_PAYMENT`, `BACS`, `SWIFT`, `CARD`, `DIRECT_DEBIT` or `STANDING_ORDER`. An open list that varies by country. Push payments instructed on the spot (`FASTER_PAYMENT`, `SWIFT`) are what a fraudster controlling an account can use. e.g. `FASTER_PAYMENT`."
         }
       },
-      "extensions": {"display": {"x": 700, "y": 0}}
+      "extensions": {"display": {"x": 245, "y": 0}}
     },
     "Country": {
       "label": "Country",
@@ -113,7 +113,7 @@
           "must_exist": true
         }
       },
-      "extensions": {"display": {"x": 350, "y": 350}}
+      "extensions": {"display": {"x": 120, "y": 120}}
     },
     "Email": {
       "label": "Email",
@@ -131,7 +131,7 @@
           "description": "Domain part of the address, after the `@`, lower-cased. e.g. `example.net`."
         }
       },
-      "extensions": {"display": {"x": -400, "y": -250}}
+      "extensions": {"display": {"x": -140, "y": -85}}
     },
     "Phone": {
       "label": "Phone",
@@ -151,7 +151,7 @@
           "pattern": "^\\+[1-9][0-9]{0,2}$"
         }
       },
-      "extensions": {"display": {"x": -450, "y": -50}}
+      "extensions": {"display": {"x": -155, "y": -15}}
     },
     "Address": {
       "label": "Address",
@@ -182,7 +182,7 @@
           "description": "Postcode in its standard upper-case form with a single space before the inward code. Part of the key. e.g. `LS1 2PU`."
         }
       },
-      "extensions": {"display": {"x": 0, "y": 350}}
+      "extensions": {"display": {"x": 0, "y": 120}}
     },
     "Passport": {
       "label": "Passport",
@@ -213,7 +213,7 @@
           "description": "Date the passport expires, as an ISO 8601 zoned datetime at midnight UTC; only the calendar date carries meaning. e.g. `2033-03-01T00:00:00Z`."
         }
       },
-      "extensions": {"display": {"x": -450, "y": 150}}
+      "extensions": {"display": {"x": -155, "y": 55}}
     },
     "DrivingLicense": {
       "label": "DrivingLicense",
@@ -245,7 +245,7 @@
           "description": "Date the licence expires, as an ISO 8601 zoned datetime at midnight UTC; only the calendar date carries meaning. e.g. `2027-07-16T00:00:00Z`."
         }
       },
-      "extensions": {"display": {"x": -300, "y": 300}}
+      "extensions": {"display": {"x": -105, "y": 105}}
     },
     "Session": {
       "label": "Session",
@@ -269,7 +269,7 @@
           "must_exist": true
         }
       },
-      "extensions": {"display": {"x": 350, "y": -300}}
+      "extensions": {"display": {"x": 120, "y": -105}}
     },
     "Device": {
       "label": "Device",
@@ -291,7 +291,7 @@
           "description": "Browser or app user agent string the device reported. Descriptive only: it is easily spoofed. e.g. `Mozilla/5.0 (Linux; Android 13; SM-S911B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Mobile Safari/537.36 BankApp/8.3`."
         }
       },
-      "extensions": {"display": {"x": 700, "y": -300}}
+      "extensions": {"display": {"x": 245, "y": -105}}
     },
     "IP": {
       "label": "IP",
@@ -304,7 +304,7 @@
           "key": true
         }
       },
-      "extensions": {"display": {"x": 800, "y": 350}}
+      "extensions": {"display": {"x": 280, "y": 120}}
     }
   },
   "relationships": {
