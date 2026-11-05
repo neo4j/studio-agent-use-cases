@@ -1,0 +1,22 @@
+code,name,isHighRiskJurisdiction
+GB,United Kingdom,false
+IE,Ireland,false
+FR,France,false
+DE,Germany,false
+ES,Spain,false
+IT,Italy,false
+NL,Netherlands,false
+PT,Portugal,false
+GR,Greece,false
+PL,Poland,false
+RO,Romania,false
+LT,Lithuania,false
+CH,Switzerland,false
+AE,United Arab Emirates,false
+US,United States,false
+IN,India,false
+NG,Nigeria,false
+BG,Bulgaria,true
+LB,Lebanon,true
+MC,Monaco,true
+IR,Iran,true

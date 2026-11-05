@@ -165,8 +165,10 @@ RETURN p.name AS Name, collect(DISTINCT c.description) AS Conditions;
  */
 MATCH
     (p:Patient {id: $patientId})-[:HAS_ENCOUNTER]->(:Encounter)-[:DIAGNOSED]->(c:Condition),
-    (c)<-[:DIAGNOSED]-(:Encounter)<-[:HAS_ENCOUNTER]-(other:Patient)-[:HAS_ENCOUNTER]->(:Encounter)-[:DIAGNOSED]->(c2:Condition)
-WHERE c <> c2 AND other <> p
+    (c)<-[:DIAGNOSED]-(:Encounter)<-[:HAS_ENCOUNTER]-(other:Patient)
+WHERE other <> p
+MATCH (other)-[:HAS_ENCOUNTER]->(:Encounter)-[:DIAGNOSED]->(c2:Condition)
+WHERE c2 <> c
 RETURN c2.code AS Code, c2.description AS Description, count(DISTINCT other) AS PatientCount
 ORDER BY PatientCount DESC;
 ```

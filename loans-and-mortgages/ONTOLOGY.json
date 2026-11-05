@@ -20,7 +20,7 @@
           "description": "The person's full name as recorded on their applications. e.g. `Patricia Hughes`."
         }
       },
-      "extensions": {"display": {"x": -300, "y": 100}}
+      "extensions": {"display": {"x": -90, "y": 30}}
     },
     "LoanApplication": {
       "label": "LoanApplication",
@@ -112,7 +112,7 @@
           ]
         }
       },
-      "extensions": {"display": {"x": -300, "y": -250}}
+      "extensions": {"display": {"x": -90, "y": -75}}
     },
     "LoanProduct": {
       "label": "LoanProduct",
@@ -169,7 +169,7 @@
           "description": "True when loans under the product are secured by collateral; here that collateral is always real property. e.g. `true`."
         }
       },
-      "extensions": {"display": {"x": -700, "y": -250}}
+      "extensions": {"display": {"x": -210, "y": -75}}
     },
     "Loan": {
       "label": "Loan",
@@ -228,7 +228,7 @@
           "must_exist": true
         }
       },
-      "extensions": {"display": {"x": 150, "y": -100}}
+      "extensions": {"display": {"x": 45, "y": -30}}
     },
     "Property": {
       "label": "Property",
@@ -269,7 +269,7 @@
           "description": "Number of separate dwelling units in the property; 1 for a single-family home, 2-4 for small multi-family. e.g. `1`."
         }
       },
-      "extensions": {"display": {"x": 150, "y": 300}}
+      "extensions": {"display": {"x": 45, "y": 90}}
     },
     "Appraisal": {
       "label": "Appraisal",
@@ -293,7 +293,7 @@
           "must_exist": true
         }
       },
-      "extensions": {"display": {"x": 600, "y": 300}}
+      "extensions": {"display": {"x": 180, "y": 90}}
     },
     "Payment": {
       "label": "Payment",
@@ -330,7 +330,7 @@
           "description": "Days from dueDate to paidDate; 0 when paid on or before the due date, empty when nothing has been paid. e.g. `5`."
         }
       },
-      "extensions": {"display": {"x": 600, "y": -100}}
+      "extensions": {"display": {"x": 180, "y": -30}}
     },
     "FinancialInstitution": {
       "label": "FinancialInstitution",
@@ -353,7 +353,7 @@
           "aliases": ["Legal Entity Identifier"]
         }
       },
-      "extensions": {"display": {"x": 350, "y": -500}}
+      "extensions": {"display": {"x": 105, "y": -150}}
     },
     "LoanOfficer": {
       "label": "LoanOfficer",
@@ -376,7 +376,7 @@
           "reference": "https://spec.edmcouncil.org/fibo/ontology/LOAN/RealEstateLoans/MortgageOrigination/NMLSR-ID"
         }
       },
-      "extensions": {"display": {"x": -300, "y": -500}}
+      "extensions": {"display": {"x": -90, "y": -150}}
     }
   },
   "relationships": {

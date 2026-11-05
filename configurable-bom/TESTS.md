@@ -257,10 +257,11 @@ allow list changed to `["11-Speed"]`, a value no option carries.
 
 ## Resolve a variant against constraints
 
-- **Parameters:** scenario A: `$productId = 'MB1'`, `$idVariant = 'V-WELL'`,
-  `$constraints` as listed above. Scenario B: `$idVariant = 'V-LOOSE'` with the
-  loose constraints. Scenario C: `$idVariant = 'V-OVER'` with the
-  over-constrained set.
+- **Parameters:** `$productId = 'MB1'` in every scenario. The constraint sets
+  are those under "The three scenarios" above, repeated here as literals.
+  - Scenario A: `$idVariant = 'V-WELL'`, `$constraints = [{"category": "wheelset", "properties": [{"name": "wheelSize", "allowList": ["29"]}]}, {"category": "gearing", "properties": [{"name": "gearSystem", "allowList": ["9-Speed"]}]}, {"category": "shifter", "properties": [{"name": "gearSystem", "allowList": ["9-Speed"]}]}, {"category": "derailleur", "properties": [{"name": "gearSystem", "allowList": ["9-Speed"]}]}, {"category": "rim", "properties": [{"name": "material", "allowList": ["Alloy"]}]}, {"category": "tire", "properties": [{"name": "pattern", "allowList": ["Trail"]}]}, {"category": "frame-material", "properties": [{"name": "material", "allowList": ["Aluminum"]}]}, {"category": "finish", "properties": [{"name": "color", "allowList": ["Black"]}]}, {"category": "caliper", "properties": [{"name": "brakeType", "allowList": ["Hydraulic Disc"]}]}]`
+  - Scenario B: `$idVariant = 'V-LOOSE'`, `$constraints = [{"category": "rim", "properties": [{"name": "material", "denyList": ["Carbon"]}]}, {"category": "gearing", "properties": [{"name": "gearSystem", "denyList": ["7-Speed"]}]}, {"category": "shifter", "properties": [{"name": "gearSystem", "denyList": ["7-Speed"]}]}, {"category": "derailleur", "properties": [{"name": "gearSystem", "denyList": ["7-Speed"]}]}]`
+  - Scenario C: `$idVariant = 'V-OVER'`, `$constraints = [{"category": "wheelset", "properties": [{"name": "wheelSize", "allowList": ["29"]}]}, {"category": "gearing", "properties": [{"name": "gearSystem", "allowList": ["11-Speed"]}]}, {"category": "shifter", "properties": [{"name": "gearSystem", "allowList": ["9-Speed"]}]}, {"category": "derailleur", "properties": [{"name": "gearSystem", "allowList": ["9-Speed"]}]}, {"category": "rim", "properties": [{"name": "material", "allowList": ["Alloy"]}]}, {"category": "tire", "properties": [{"name": "pattern", "allowList": ["Trail"]}]}, {"category": "frame-material", "properties": [{"name": "material", "allowList": ["Aluminum"]}]}, {"category": "finish", "properties": [{"name": "color", "allowList": ["Black"]}]}, {"category": "caliper", "properties": [{"name": "brakeType", "allowList": ["Hydraulic Disc"]}]}]`
 - **Invariant:**
   - Scenario A: every decision the variant reaches ends with exactly one
     outgoing `RESOLVED_LINK`, and the options selected are precisely those the
