@@ -6,7 +6,7 @@ Prints the statement count, any fidelity notes, and fails loudly (exit 2) on any
 binding or property type it does not recognise. Hardened from the prototype in the v2 brief.
 
 What it mirrors (upx apps/import/src/cypher-runner and the @neo4j/ontology-graph-spec decoder; see
-CYPHERLITE.md "Import fidelity"):
+RELATE.md "Import fidelity"):
 - Constraints come from the ontology, never from the mapping key: each `key`, `unique` and `must_exist`
   property flag becomes its own single-property constraint, and only a `constraints` entry listing
   several properties makes a composite one. Names follow Import: <props>_<Label>_<suffix>.
@@ -36,11 +36,11 @@ ISO_DATETIME = r"^\\d{4}-\\d{2}-\\d{2}(T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?)?(
 SUFFIX = {"key": "key", "unique": "uniq", "must_exist": "propertyExistence",
           "KEY": "key", "UNIQUE": "uniq", "EXISTS": "propertyExistence", "PROPERTY_TYPE": "propertyType"}
 
-# Workarounds CYPHERLITE.md records for this Cypherlite version. Each maps an Import constraint kind to
-# the statement form Cypherlite accepts, or to None to skip it with a note.
+# Workarounds RELATE.md records for this Relate version. Each maps an Import constraint kind to
+# the statement form Relate accepts, or to None to skip it with a note.
 WORKAROUNDS = {}
-# Cypherlite 0.13.0 keeps a UTF-8 BOM in the first header key (Import strips it), so a BOM-prefixed
-# CSV's first column is addressed by its raw key. CYPHERLITE.md, import.bom.
+# Cypherlite 0.13.0, the release before the rename to Relate, keeps a UTF-8 BOM in the first header key
+# (Import strips it), so a BOM-prefixed CSV's first column is addressed by its raw key. RELATE.md, import.bom.
 BOM_STAYS_IN_FIRST_KEY = True
 
 
@@ -269,7 +269,7 @@ def generate(pkg):
     for c in stmts:
         alt = WORKAROUNDS.get(c["constraint"], c["cypher"])
         if alt is None:
-            c["skipped"] = f"workaround: {c['constraint']} constraints are not created on Cypherlite (CYPHERLITE.md)"
+            c["skipped"] = f"workaround: {c['constraint']} constraints are not created on Relate (RELATE.md)"
         elif callable(alt):
             c["cypher"], c["note"] = alt(c)
     stmts += [node_statement(pkg, o, m) for m in maps if m["type"] == "NODE"]

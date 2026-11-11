@@ -1,6 +1,6 @@
 # Test mode
 
-Test mode imports a package's sample data into a throwaway Cypherlite database and checks the data landed as the reference ontology says. It then runs every query and judges each result against TESTS.md.
+Test mode imports a package's sample data into a throwaway Relate database and checks the data landed as the reference ontology says. It then runs every query and judges each result against TESTS.md.
 
 It runs in two situations:
 - on its own, as `/create-solution-package-v2 test [package]`;
@@ -11,19 +11,19 @@ Test mode **reports problems; it does not fix them**:
 - Proposed fixes go in the report.
 - A workaround you try goes in a scratch copy, and never counts as a PASS.
 
-Every Cypherlite behaviour this procedure relies on is recorded in [CYPHERLITE.md](CYPHERLITE.md). Do not assume anything about Cypherlite that file does not record. If you need a behaviour it does not cover, probe it with `scripts/probe_cypherlite.py` first.
+Every Relate behaviour this procedure relies on is recorded in [RELATE.md](RELATE.md). Do not assume anything about Relate that file does not record. If you need a behaviour it does not cover, probe it with `scripts/probe_relate.py` first.
 
 ## Before you start
 
-- **Version:** check `cypherlite --version --json` against the pin in CYPHERLITE.md.
-  - If Cypherlite is missing, install it as CYPHERLITE.md describes.
+- **Version:** check `relate --version --json` against the pin in RELATE.md.
+  - If Relate is missing, install it as RELATE.md describes.
   - If it is a different version, say so and re-run the probe before trusting any result:
     ```bash
-    python3 scripts/probe_cypherlite.py <repo-root>
+    python3 scripts/probe_relate.py <repo-root>
     ```
-- **Telemetry:** the scripts set `CYPHERLITE_TELEMETRY=0` themselves. Telemetry defaults to on, so set it in any shell where you call `cypherlite` by hand.
+- **Telemetry:** the scripts set `RELATE_TELEMETRY=0` themselves. Telemetry defaults to on, so set it in any shell where you call `relate` by hand.
 - **No live databases:** do not connect to Aura or any other Neo4j instance unless the user says so. Test mode needs neither.
-- **Where results go:** under `output/cypherlite-tests/<timestamp>/` at the repo root. `output` is git-ignored. Never write them into a package or a skill folder.
+- **Where results go:** under `output/relate-tests/<timestamp>/` at the repo root. `output` is git-ignored. Never write them into a package or a skill folder.
 
 ## Running it
 
@@ -36,8 +36,8 @@ python3 $S/run_queries.py run ../drafts/my-pkg    # a draft package, by path
 
 Options:
 
-- `--keep` keeps the Cypherlite store and prints its path. Use it when you need to reproduce something by hand; the user can also ask for it in words.
-- `--timeout 60s` sets the per-statement timeout. Raise it if a query is legitimately slow on Cypherlite, and say that you did.
+- `--keep` keeps the Relate store and prints its path. Use it when you need to reproduce something by hand; the user can also ask for it in words.
+- `--timeout 60s` sets the per-statement timeout. Raise it if a query is legitimately slow on Relate, and say that you did.
 - `--run-dir` and `--root` override where the results go and where packages are found.
 
 The script runs steps 1 to 7 below for each package, in catalogue order, and decides everything mechanical. The rest is yours: step 6's judgement and the triage of anything that failed. When the script finishes, it prints the summary and the lines that need attention.
@@ -60,13 +60,13 @@ A directory store from `mktemp -d`, never `:memory:`. Each one-shot CLI call aga
 
 `import_check.py` generates `import.cypher` with `ontology_to_cypher.py`, saves it in the run folder, and runs it one statement per call with `--load-csv-dir <package>/sample-data`.
 
-The script mirrors what Aura's Import does with the same ONTOLOGY.json. CYPHERLITE.md's "Import fidelity" section has the detail:
+The script mirrors what Aura's Import does with the same ONTOLOGY.json. RELATE.md's "Import fidelity" section has the detail:
 - **Constraints:** it creates the ones Import creates, one per `key`, `unique` and `must_exist` flag. A composite constraint comes only from a `constraints` entry.
 - **Nodes:** MERGE on the mapping key, then SET every other mapped property.
 - **Relationships:** MATCH both endpoints and MERGE the relationship on its mapping key.
 - **Values:** converted by Import's rules: `''` becomes null, BOOLEAN is `toLower(trim(v)) IN ['1','true','yes']`, and numbers and datetimes are trimmed first.
 
-The script also applies CYPHERLITE.md's workarounds, such as addressing a BOM-prefixed first column by its raw key.
+The script also applies RELATE.md's workarounds, such as addressing a BOM-prefixed first column by its raw key.
 
 ### 4. Landing checks
 
@@ -100,7 +100,7 @@ The script parses QUERIES.md with `annotations.py`, which is the one parser for 
    - its heading or `@prerequisites` says it needs APOC, GDS or a fulltext index; or
    - it reads a label, type or property that only a skipped query writes.
 
-   Fulltext is skipped because Cypherlite's fulltext index ignores the analyser and Lucene query syntax (CYPHERLITE.md).
+   Fulltext is skipped because Relate's fulltext index ignores the analyser: under `keyword` it still splits an SSN on `-`, so a fuzzy query matches SSNs that only share a digit group (RELATE.md, Procedures).
 2. **Static check.** It runs `EXPLAIN` in envelope mode and records the notifications.
    - An unknown label, relationship type or property key is a **FAIL for drift**, unless the name is either:
      - declared in ONTOLOGY.json and merely absent from the sample at that point; or
@@ -126,9 +126,7 @@ For every query left as JUDGE, read its section in `report.md` and, where the he
 
 1. **Invariant first.** It is the contract. Check every clause of it against the rows: membership, exclusions, ordering, bounds. Example: "never the anchor", "ordered by PatientCount descending", "no more than `$limit`".
 2. **Expected second, where stated.** Compare counts and named values. Ignore row order unless the query has an `ORDER BY`. Where TESTS.md says something is not fixed ("which pairs are returned is not fixed", a tie at fifth place), do not hold the result to it.
-3. **Allow for the engine differences CYPHERLITE.md lists.** Most often:
-   - `toString()` of a datetime on a whole minute renders as `…T00:00Z` where Neo4j gives `…T00:00:00Z`. Normalise before comparing, and say so in the evidence.
-   - `round()` differs only on negative half-way values.
+3. **Allow for the engine differences RELATE.md lists.** The two result differences Cypherlite had, `toString(datetime)` dropping zero seconds and `round()` on negative half-way values, are gone at Relate 0.1.3. The remaining ones are in the import (empty cells, a BOM, bare paths, the space-separated datetime), which the generator already handles, and fulltext, which is skipped.
 4. **Record the verdict**, quoting evidence from the rows: the counts you checked, the named entities you found or did not find.
 
    ```bash
@@ -147,15 +145,15 @@ For every query left as JUDGE, read its section in `report.md` and, where the he
 
 Before you call any failure a package fault:
 
-- **Rejected on a known gap:** if the statement was rejected (exit 6) on a construct CYPHERLITE.md lists as UNSUPPORTED, or on a difference it lists, the status is **ENGINE-GAP**, not FAIL. Record it with `judge … --status ENGINE-GAP --override` and name the CYPHERLITE.md entry.
+- **Rejected on a known gap:** if the statement was rejected (exit 6) on a construct RELATE.md lists as UNSUPPORTED, or on a difference it lists, the status is **ENGINE-GAP**, not FAIL. Record it with `judge … --status ENGINE-GAP --override` and name the RELATE.md entry.
 - **Cause unclear:** reduce the query to a minimal reproduction before blaming either side.
-  - Re-run with `--keep` and work against the kept store with `cypherlite --database <store> --mode envelope --max-rows 0 -c '…'`.
+  - Re-run with `--keep` and work against the kept store with `relate --database <store> --mode envelope --max-rows 0 -c '…'`.
   - Cut the query down until one construct explains the failure.
-  - A construct the probe never covered goes into CYPHERLITE.md as a new probe case. Never let it become an assumption.
+  - A construct the probe never covered goes into RELATE.md as a new probe case. Never let it become an assumption.
 - **Workaround rewrite:** you may try a rewrite in a scratch copy of the query, never in the package, and report with `--workaround` whether it passed. It never counts as PASS.
 - **Exit codes are not enough on their own:**
   - exit 6 also covers runtime type errors such as `/ by zero`, so read the message;
-  - exit 7 is a timeout. A slow query on Cypherlite is not a package fault unless it would be slow on Neo4j too. Say which you believe and why. Reproduce the cost on a tiny graph, for example by timing the same shape at increasing bounds; that tells an engine that does not prune or stop early from a query that really explodes. CYPHERLITE.md lists two known cases: `allReduce` and `LIMIT`.
+  - exit 7 is a timeout. A slow query on Relate is not a package fault unless it would be slow on Neo4j too. Say which you believe and why. Reproduce the cost on a tiny graph, for example by timing the same shape at increasing bounds; that tells an engine that does not prune or stop early from a query that really explodes. Relate 0.1.3 stops early under `LIMIT`, but a `REPEATABLE ELEMENTS` search that must enumerate every route is still slow: RELATE.md records ev-route-planning's two route queries that time out even at 600 s.
 
 ### 7. Teardown
 
@@ -167,7 +165,7 @@ The script deletes the store unless `--keep` was given. It always keeps `import.
 | ------ | ------- |
 | PASS | Ran, and the result satisfies the TESTS.md invariant and expectations |
 | FAIL | Package fault: rejected statement, empty or wrong result, or drift caught by `EXPLAIN` |
-| ENGINE-GAP | Cypherlite does not support a construct that is valid on Neo4j |
+| ENGINE-GAP | Relate does not support a construct that is valid on Neo4j |
 | SKIPPED | Needs APOC, GDS or a fulltext procedure; requires manual testing on Aura |
 | NEEDS-PARAMS | No parameter values found in TESTS.md, `@sample` or `@params` |
 | UNSURE | Ran, but the result cannot be judged against TESTS.md with confidence |
@@ -177,23 +175,23 @@ JUDGE is not a final status. It means the mechanical checks passed and the judge
 
 ## Reports
 
-- **Per package:** `output/cypherlite-tests/<timestamp>/<package>/` holds:
+- **Per package:** `output/relate-tests/<timestamp>/<package>/` holds:
   - `report.md`;
   - `results.json`, the full record, including each judgement;
   - `import.cypher` and `import.json`;
   - `rows/`.
-- **Per run:** `output/cypherlite-tests/<timestamp>/summary.md` has one row per package, with:
+- **Per run:** `output/relate-tests/<timestamp>/summary.md` has one row per package, with:
   - the import status;
   - the count of each query status;
   - the time taken;
   - one line for every FAIL, ENGINE-GAP, UNSURE, IMPORT-FAIL and BLOCKED.
 
   To rebuild it, run `python3 $S/run_queries.py report <run-dir>`.
-- **In chat:** show the summary table, then one line for every FAIL, ENGINE-GAP, UNSURE and IMPORT-FAIL. Then list the SKIPPED queries that need manual testing on Aura. Say that a pass on Cypherlite is evidence, not proof.
+- **In chat:** show the summary table, then one line for every FAIL, ENGINE-GAP, UNSURE and IMPORT-FAIL. Then list the SKIPPED queries that need manual testing on Aura. Say that a pass on Relate is evidence, not proof.
 
 ## Parity with Aura
 
-A Cypherlite pass becomes proof only once parity with Aura has been checked. Do not connect to Aura yourself unless the user authorises it. The usual route is a manual run.
+A Relate pass becomes proof only once parity with Aura has been checked. Do not connect to Aura yourself unless the user authorises it. The usual route is a manual run.
 
 1. **Kit:** `python3 $S/compare_aura.py <run-dir>/<package> --kit` writes `AURA_PARITY_KIT.md`. It holds every query test mode ran, in run order, with its `:param` lines, plus two import checks (`SHOW CONSTRAINTS` and relationship counts by type).
 2. **Manual run:** the user runs them on a disposable Aura database after a sample import through the Import flow. Each result is exported as JSON to `<run-dir>/<package>/aura/NN.json`.
@@ -201,11 +199,11 @@ A Cypherlite pass becomes proof only once parity with Aura has been checked. Do 
    - **Normalisation:** nodes become their reference-ontology key, paths become node and relationship sequences, and temporal values become ISO strings.
    - **Row order:** ignored unless the query has an `ORDER BY`, and then ties may come in any order.
    - **Known differences:** a mismatch is retried at three further levels, each labelled, so nothing is waved through silently:
-     - after CYPHERLITE.md's known rendering difference is normalised;
+     - after RELATE.md's known rendering difference is normalised;
      - with collected lists compared as sets, where the query `collect()`s with no `ORDER BY` in front;
      - with each path reduced to its end nodes, where the query leaves the path's interior to the engine (`head(collect(...))`, `elementId` ordering).
    - **Subsets:** a query with `LIMIT` and no `ORDER BY` returns an arbitrary subset on each engine. Judge Aura's rows against the TESTS.md invariant instead.
-4. **Check what the labels leave open:** verify Aura's own arbitrary choices against the CSVs, such as each representative path being valid. Write those checks in `<run-dir>/<package>/parity-notes.md`; the script appends it to `parity.md` on every run. Then record what parity confirmed or overturned in CYPHERLITE.md, including any "verify" row it settles.
+4. **Check what the labels leave open:** verify Aura's own arbitrary choices against the CSVs, such as each representative path being valid. Write those checks in `<run-dir>/<package>/parity-notes.md`; the script appends it to `parity.md` on every run. Then record what parity confirmed or overturned in RELATE.md, including any "verify" row it settles.
 
 If an export's columns do not match the query's, the file probably holds another query's result. The script reports it as NOT-COMPARABLE rather than guessing.
 

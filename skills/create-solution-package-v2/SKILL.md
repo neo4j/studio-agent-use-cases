@@ -1,6 +1,6 @@
 ---
 name: create-solution-package-v2
-description: Experimental v2 of create-solution-package. Use only when the user names create-solution-package-v2. Two modes. `create <source>` builds a new Neo4j industry solution package for Aura's onboarding agent — reference ontology (ONTOLOGY.json), sample CSVs with import mappings, Cypher queries, agent guidance and a human description — and tests it on Cypherlite as it goes. `test [package]` imports a package's sample data into a throwaway Cypherlite database, checks the data landed as the reference ontology says, and runs every query against TESTS.md; with no package named it tests every package in the repo. Updating or migrating an existing package stays in v1.
+description: Experimental v2 of create-solution-package. Use only when the user names create-solution-package-v2. Two modes. `create <source>` builds a new Neo4j industry solution package for Aura's onboarding agent — reference ontology (ONTOLOGY.json), sample CSVs with import mappings, Cypher queries, agent guidance and a human description — and tests it on Relate as it goes. `test [package]` imports a package's sample data into a throwaway Relate database, checks the data landed as the reference ontology says, and runs every query against TESTS.md; with no package named it tests every package in the repo. Updating or migrating an existing package stays in v1.
 ---
 
 # Create a Solution Package (v2, experimental)
@@ -11,18 +11,18 @@ Your job: take the user's raw inputs and produce a complete, consistent draft pa
 
 ## Modes
 
-This is v2 of create-solution-package, an experiment in testing packages on Cypherlite, an embedded openCypher engine. It has two modes. Decide which from the request before doing anything else.
+This is v2 of create-solution-package, an experiment in testing packages on Relate, an embedded openCypher engine. It has two modes. Decide which from the request before doing anything else.
 
 | Mode | When | What to do |
 | ---- | ---- | ---------- |
-| **create** | The request names `create`, or gives a source to build a package from (industry links, a reference ontology, sample Cypher). | Follow the build order below. It is v1's, except that the draft is tested on Cypherlite as it is built (steps 2 and 4). |
+| **create** | The request names `create`, or gives a source to build a package from (industry links, a reference ontology, sample Cypher). | Follow the build order below. It is v1's, except that the draft is tested on Relate as it is built (steps 2 and 4). |
 | **test** | The request names `test`. | Follow [TESTING.md](TESTING.md). With no package named, test every package in `catalog.json` plus any root folder holding an `ONTOLOGY.json` that the catalogue does not list. With one named, test only that package. |
 
 If the request is neither — it asks to update, migrate or clean up an existing package — say that v2 does not do that and that v1 (`create-solution-package`) does. Do not improvise a migration here.
 
 Test mode reports problems; it never fixes them. It never edits a package, never edits v1, and never rewrites a query to make it pass. Proposed fixes go in the report.
 
-Companion skills: [ONTOLOGY_SPEC_FORMAT.md](ONTOLOGY_SPEC_FORMAT.md) is the contract for `ONTOLOGY.json` — follow it exactly; its authority is `ontology-graph-spec.schema.json`, bundled here. [VALIDATION.md](VALIDATION.md) is the check suite to run before handing off. [TESTING.md](TESTING.md) is the test-mode procedure, and [CYPHERLITE.md](CYPHERLITE.md) records the pinned Cypherlite version, what it can and cannot run, and the workaround for each gap. `scripts/` holds the tools VALIDATION.md and TESTING.md use. ONTOLOGY_SPEC_FORMAT.md and PACKAGE_FORMAT.md are v1's, unchanged: where they mention MIGRATION.md, that procedure lives in v1; and where PACKAGE_FORMAT.md says testing against a database is manual and outside package creation, this file's step 4 replaces it — the package format itself is unchanged.
+Companion skills: [ONTOLOGY_SPEC_FORMAT.md](ONTOLOGY_SPEC_FORMAT.md) is the contract for `ONTOLOGY.json` — follow it exactly; its authority is `ontology-graph-spec.schema.json`, bundled here. [VALIDATION.md](VALIDATION.md) is the check suite to run before handing off. [TESTING.md](TESTING.md) is the test-mode procedure, and [RELATE.md](RELATE.md) records the pinned Relate version, what it can and cannot run, and the workaround for each gap. `scripts/` holds the tools VALIDATION.md and TESTING.md use. ONTOLOGY_SPEC_FORMAT.md and PACKAGE_FORMAT.md are v1's, unchanged: where they mention MIGRATION.md, that procedure lives in v1; and where PACKAGE_FORMAT.md says testing against a database is manual and outside package creation, this file's step 4 replaces it — the package format itself is unchanged.
 
 **The bundled schema is the only ontology graph spec.** Never fetch one over the network or reason from a remembered version — the bundled file is pinned deliberately, and packages are bound to it. ONTOLOGY_SPEC_FORMAT.md carries the pinned version and its provenance; every package you build declares it in `ONTOLOGY.json`'s `schema` field.
 
@@ -220,9 +220,9 @@ Package creation runs test mode ([TESTING.md](TESTING.md)) on the draft as soon 
 
 - **A FAIL is a blocker.** So are IMPORT-FAIL and BLOCKED. Each sends the build back: to the CSVs or the generator when the data cannot produce the pattern, to the query when the Cypher is wrong, to TESTS.md when the expectation is stale. Fix the cause and re-run; never tune TESTS.md to match a wrong result.
 - **Never write a result into TESTS.md that was not either observed in a run or derived from the CSVs.** A count you computed from the CSVs and a count test mode observed are both fine, and they should agree; say which a figure is when it matters. A figure that is neither is invented.
-- **ENGINE-GAP is not a package fault**, but say so in the handoff with the CYPHERLITE.md entry it rests on. **UNSURE** goes to the user with the evidence. **NEEDS-PARAMS** means TESTS.md's Parameters field is missing a value — add it.
+- **ENGINE-GAP is not a package fault**, but say so in the handoff with the RELATE.md entry it rests on. **UNSURE** goes to the user with the evidence. **NEEDS-PARAMS** means TESTS.md's Parameters field is missing a value — add it.
 - **SKIPPED queries (APOC, GDS, fulltext) are untested.** They still need manual testing on Aura, and the handoff says so, naming each one.
-- **Test results live in `output/cypherlite-tests/`, never in the package.** Do not add a results file, a status column or a "tested on" note to any package file; a v2 package is indistinguishable from a v1 package.
+- **Test results live in `output/relate-tests/`, never in the package.** Do not add a results file, a status column or a "tested on" note to any package file; a v2 package is indistinguishable from a v1 package.
 
 Structure:
 
@@ -481,6 +481,6 @@ Aim for something a reader gets through in two or three minutes — roughly 400 
 
 Run [VALIDATION.md](VALIDATION.md) in full. Inconsistency between reference ontology, data, and queries is the most common failure — and annotations widen that check: descriptions, sample values, allowed values, counts, query annotations, and CSVs must all tell the same story. The second most common failure is now sample-data detail leaking into a file the consuming agent reads; check QUERIES.md and SKILL.md for it specifically.
 
-Your handoff summary must give the final test-mode summary — the run folder, the per-package table, one line for every FAIL, ENGINE-GAP, UNSURE and IMPORT-FAIL, every SKIPPED query that still needs manual testing on Aura, and the Cypherlite version — and must list every remaining `TODO(review):` with its path (including `inferred description` items the user hasn't confirmed), whether the reference ontology validated against the bundled schema, passed the spec-library check (and with which npm release), and was accepted by the destination runtime — registration and Import conversion both — the ontology graph spec version its `schema` field declares, any agent-loadable file near the 50,000-character limit, whether `human_description.md` covers every node, relationship and property in the reference ontology, and any assumption that needs domain-owner review. In `neo4j/studio-agent-use-cases`, also run `scripts/validate-new-packages.py` and the unit tests, which CI runs on the pull request.
+Your handoff summary must give the final test-mode summary — the run folder, the per-package table, one line for every FAIL, ENGINE-GAP, UNSURE and IMPORT-FAIL, every SKIPPED query that still needs manual testing on Aura, and the Relate version — and must list every remaining `TODO(review):` with its path (including `inferred description` items the user hasn't confirmed), whether the reference ontology validated against the bundled schema, passed the spec-library check (and with which npm release), and was accepted by the destination runtime — registration and Import conversion both — the ontology graph spec version its `schema` field declares, any agent-loadable file near the 50,000-character limit, whether `human_description.md` covers every node, relationship and property in the reference ontology, and any assumption that needs domain-owner review. In `neo4j/studio-agent-use-cases`, also run `scripts/validate-new-packages.py` and the unit tests, which CI runs on the pull request.
 
 `human_description.md` is the one part of the package nothing downstream verifies — no schema rejects it, no query fails against it, and no agent ever reads it back. Say plainly in the handoff that it needs a human read before the package ships.

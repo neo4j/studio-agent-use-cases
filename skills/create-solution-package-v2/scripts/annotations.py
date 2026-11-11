@@ -3,7 +3,7 @@
 
 check_annotations.py checks ONTOLOGY.json against the CSVs and parses no Markdown, so this is the one
 parser for the @-annotation blocks (PACKAGE_FORMAT.md, VALIDATION.md section 5). Used by run_queries.py
-and probe_cypherlite.py.
+and probe_relate.py.
 
 Usage: python3 annotations.py <package-dir>   (prints what it parsed). Standard library only."""
 import json, re, sys, pathlib

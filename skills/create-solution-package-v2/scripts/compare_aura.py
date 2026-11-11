@@ -4,7 +4,7 @@
 Usage: python3 compare_aura.py RUN_DIR/PACKAGE [--aura DIR]
        python3 compare_aura.py RUN_DIR/PACKAGE --kit     (write AURA_PARITY_KIT.md for the manual Aura run)
 
-Reads the Cypherlite rows test mode saved (rows/NN.json) and the Aura JSON exports (aura/NN.json, as
+Reads the Relate rows test mode saved (rows/NN.json) and the Aura JSON exports (aura/NN.json, as
 Aura's Query tool exports them: an array of row objects). Both sides are reduced to one canonical form
 before comparing:
 - nodes become (label, key value), using each label's mapping key from ONTOLOGY.json;
@@ -14,8 +14,8 @@ before comparing:
 - floats are compared to 12 significant digits.
 Rows are compared as multisets. Where the query has an ORDER BY, the sequence of sort-key values must also
 agree, which allows ties in any order. A query with LIMIT and no ORDER BY returns an arbitrary subset, so
-only its size and overlap are reported. A mismatch is re-tested after CYPHERLITE.md's known rendering
-difference (toString of a datetime drops zero seconds) is normalised; then, where the query collect()s
+only its size and overlap are reported. A mismatch is re-tested after normalising toString(datetime)
+without zero seconds (Cypherlite 0.13.0's rendering, fixed in Relate 0.1.3; kept for runs made on it); then, where the query collect()s
 without an ORDER BY in front, with collected lists compared as sets; then, where it picks a path interior
 arbitrarily, with paths reduced to their end nodes. Each level is labelled in the result.
 Also compares aura/constraints.json and aura/rel-counts.json with the generated import, when present.
@@ -64,9 +64,9 @@ class Canon:
         if isinstance(v, str):
             return v
         if isinstance(v, dict):
-            if v.get("kind") == "node":                       # Cypherlite node
+            if v.get("kind") == "node":                       # Relate node
                 return self.node(v.get("labels", []), v.get("properties", {}))
-            if v.get("kind") == "relationship":               # Cypherlite relationship
+            if v.get("kind") == "relationship":               # Relate relationship
                 return ["rel", v["type"], self.value(v.get("properties", {}))]
             if "segments" in v and "start" in v:              # Aura path
                 out = [self.value(v["start"])]
@@ -84,7 +84,7 @@ class Canon:
             return {k: self.value(x) for k, x in sorted(v.items())}
         if isinstance(v, list):
             if v and all(isinstance(x, dict) and x.get("kind") in ("node", "relationship") for x in v):
-                out, prev_node = [], None                     # Cypherlite path
+                out, prev_node = [], None                     # Relate path
                 for x in v:
                     if x["kind"] == "node":
                         prev_node = x
@@ -97,7 +97,7 @@ class Canon:
 
 
 def soften(v):
-    """Apply CYPHERLITE.md's known rendering difference: toString(datetime) without zero seconds."""
+    """Normalise toString(datetime) without zero seconds: Cypherlite 0.13.0's rendering, fixed in Relate 0.1.3."""
     if isinstance(v, str):
         return SHORT_DT.sub(lambda m: m.group(1) + ":00" + m.group(2), v)
     if isinstance(v, list):
@@ -163,11 +163,11 @@ def compare_query(n, heading, cypher, cl_rows, cl_cols, aura_rows, canon):
     cols = cl_cols
     if aura_rows and set(aura_rows[0]) != set(cols):
         return {"n": n, "heading": heading, "status": "NOT-COMPARABLE",
-                "detail": f"Aura export has columns {sorted(aura_rows[0])}; Cypherlite returned {cols}. The export may be "
+                "detail": f"Aura export has columns {sorted(aura_rows[0])}; Relate returned {cols}. The export may be "
                           "from a different query."}
     a = [[canon.value(r.get(c)) for c in cols] for r in aura_rows]
     b = [[canon.value(r.get(c)) for c in cols] for r in cl_rows]
-    res = {"n": n, "heading": heading, "aura_rows": len(a), "cypherlite_rows": len(b), "ordered": order is not None}
+    res = {"n": n, "heading": heading, "aura_rows": len(a), "relate_rows": len(b), "ordered": order is not None}
     if has_limit and order is None:
         overlap = sum((collections.Counter(map(key, a)) & collections.Counter(map(key, b))).values())
         res.update(status="SUBSET", detail=f"LIMIT without ORDER BY: each engine may return any {len(a)} rows. "
@@ -206,8 +206,8 @@ def compare_query(n, heading, cypher, cl_rows, cl_cols, aura_rows, canon):
             return res
     ca, cb = collections.Counter(map(key, a)), collections.Counter(map(key, b))
     only_a, only_b = list((ca - cb).elements()), list((cb - ca).elements())
-    res.update(status="DIFFERENT", detail=f"{len(only_a)} rows only on Aura, {len(only_b)} only on Cypherlite",
-               only_aura=only_a[:5], only_cypherlite=only_b[:5])
+    res.update(status="DIFFERENT", detail=f"{len(only_a)} rows only on Aura, {len(only_b)} only on Relate",
+               only_aura=only_a[:5], only_relate=only_b[:5])
     return res
 
 
@@ -230,7 +230,7 @@ def compare_import(out, aura):
                 mine[re.search(r"\[:(\w+)\]", c["subject"]).group(1)] += c["observed"]
         same = theirs == dict(mine)
         lines.append({"check": "relationship counts", "status": "MATCH" if same else "DIFFERENT",
-                      "detail": f"Aura {theirs}" + ("" if same else f"; Cypherlite {dict(mine)}")})
+                      "detail": f"Aura {theirs}" + ("" if same else f"; Relate {dict(mine)}")})
     return lines
 
 
@@ -260,7 +260,7 @@ def write_kit(out, res, stmts, aura):
          "```cypher", "MATCH ()-[r]->() RETURN type(r) AS type, count(*) AS n ORDER BY type", "```", ""]
     for q in res["queries"]:
         if q["status"] in ("SKIPPED", "NEEDS-PARAMS"):
-            L += [f"## {q['n']:02d}. {q['heading']}", "", f"{q['status']} on Cypherlite: {q['reason']}", ""]
+            L += [f"## {q['n']:02d}. {q['heading']}", "", f"{q['status']} on Relate: {q['reason']}", ""]
             continue
         s = stmts[q["heading"]]
         text = strip_cypher_noise(s["cypher"])
@@ -297,7 +297,7 @@ def main():
     for q in res["queries"]:
         f = aura / f"{q['n']:02d}.json"
         if q["status"] == "SKIPPED" or not (out / "rows" / f"{q['n']:02d}.json").exists():
-            rows_out.append({"n": q["n"], "heading": q["heading"], "status": "NOT-RUN", "detail": "not run on Cypherlite"})
+            rows_out.append({"n": q["n"], "heading": q["heading"], "status": "NOT-RUN", "detail": "not run on Relate"})
             continue
         if not f.exists():
             rows_out.append({"n": q["n"], "heading": q["heading"], "status": "MISSING", "detail": f"no {f.name}"})
@@ -307,14 +307,14 @@ def main():
                                       json.loads(f.read_text()), canon))
     imp = compare_import(out, aura)
     (out / "parity.json").write_text(json.dumps({"queries": rows_out, "import": imp}, indent=1, default=str))
-    L = [f"# Aura parity: {res['package']}", "", f"Cypherlite run {out.parent.name}; Aura exports in `{aura}`.", "",
+    L = [f"# Aura parity: {res['package']}", "", f"Relate run {out.parent.name}; Aura exports in `{aura}`.", "",
          "| Check | Status | Detail |", "| --- | --- | --- |"]
     L += [f"| Import: {x['check']} | {x['status']} | {x['detail']} |" for x in imp]
     L += [f"| {r['n']}. {r['heading']} | {r['status']} | {r['detail'].replace('|', '/')} |" for r in rows_out]
     for r in rows_out:
-        if r.get("only_aura") or r.get("only_cypherlite"):
+        if r.get("only_aura") or r.get("only_relate"):
             L += ["", f"## {r['n']}. {r['heading']}", "", "Only on Aura:", "```"] + r.get("only_aura", []) + \
-                 ["```", "Only on Cypherlite:", "```"] + r.get("only_cypherlite", []) + ["```"]
+                 ["```", "Only on Relate:", "```"] + r.get("only_relate", []) + ["```"]
     notes = out / "parity-notes.md"
     if notes.exists():  # hand-written checks that need the CSVs, kept apart so a re-run never loses them
         L += ["", notes.read_text().strip()]

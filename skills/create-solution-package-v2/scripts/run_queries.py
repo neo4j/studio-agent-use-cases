@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Test mode for create-solution-package-v2: import a package into a throwaway Cypherlite store, check the
+"""Test mode for create-solution-package-v2: import a package into a throwaway Relate store, check the
 landing, run SETUP.md and every query, and write the reports (TESTING.md).
 
 Usage:
@@ -18,7 +18,7 @@ import argparse, collections, datetime, json, os, pathlib, re, shutil, subproces
 
 HERE = pathlib.Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
-import cypherlite_cli as cl  # noqa: E402
+import relate_cli as cl  # noqa: E402
 import import_check  # noqa: E402
 import ontology_to_cypher as gen  # noqa: E402
 from annotations import (find_params, parse_statements, parse_tests, sample_row_count,  # noqa: E402
@@ -28,9 +28,9 @@ STATUSES = ["PASS", "FAIL", "ENGINE-GAP", "SKIPPED", "NEEDS-PARAMS", "UNSURE", "
 FINAL_BY_SCRIPT = {"FAIL", "ENGINE-GAP", "SKIPPED", "NEEDS-PARAMS"}
 UNKNOWN = {"UnknownLabelWarning": "label", "UnknownRelationshipTypeWarning": "relationship type",
            "UnknownPropertyKeyWarning": "property key"}
-# Errors CYPHERLITE.md records as engine gaps for the pinned version: (regex on the message, note).
+# Errors RELATE.md records as engine gaps for the pinned version: (regex on the message, note).
 ENGINE_GAPS = [
-    (r"WriteBeforeCallInTransactions", "CALL … IN TRANSACTIONS after a write clause (CYPHERLITE.md, import.in_transactions)"),
+    (r"WriteBeforeCallInTransactions", "CALL … IN TRANSACTIONS after a write clause (RELATE.md, import.in_transactions)"),
 ]
 EXPECTS_EMPTY = re.compile(r"\b(no rows|empty|returns nothing|zero rows|0 rows|no results?)\b", re.I)
 
@@ -100,7 +100,7 @@ SUBQUERY = re.compile(r"\b(COUNT|EXISTS|COLLECT|CALL)\s*(\([^)]*\))?\s*$", re.I)
 def local_keys(cypher, params):
     """Keys a query defines for itself: map-literal and map-projection keys (not pattern property maps, whose
     keys are node or relationship properties) and the keys of map-valued parameters. A property access on
-    such a map is not drift, though Cypherlite's EXPLAIN reports the key as unknown."""
+    such a map is not drift, though Relate's EXPLAIN reports the key as unknown."""
     text = strip_cypher_noise(cypher)
     keys = set()
     for m in re.finditer(r"\{", text):
@@ -131,8 +131,8 @@ def classify(stmt, skipped_writes):
     heading, prereq = stmt["heading"], stmt["tags"].get("prerequisites", "")
     reasons = []
     for rx, why in ((r"\bapoc\.", "calls APOC"), (r"\bgds\.", "calls GDS"),
-                    (r"\bdb\.index\.fulltext\.", "calls a fulltext procedure, which Cypherlite cannot run with "
-                                                 "Lucene syntax (CYPHERLITE.md)")):
+                    (r"\bdb\.index\.fulltext\.", "calls a fulltext procedure, and Relate's fulltext index ignores "
+                                                 "the analyser (RELATE.md, proc.fulltext_query)")):
         if re.search(rx, text, re.I):
             reasons.append(why)
     if not reasons and (re.search(r"\((requires|needs) (APOC|GDS)\)|^GDS\b", heading)
@@ -196,7 +196,7 @@ def run_statement(stmt, store, params, timeout):
 def test_package(pkg, out, args):
     t0 = time.monotonic()
     out.mkdir(parents=True, exist_ok=True)
-    res = {"package": pkg.name, "path": str(pkg), "cypherlite": cl.version(), "started": datetime.datetime.now().isoformat(timespec="seconds"),
+    res = {"package": pkg.name, "path": str(pkg), "relate": cl.version(), "started": datetime.datetime.now().isoformat(timespec="seconds"),
            "status": "", "preflight": None, "import": None, "setup": [], "queries": [], "findings": [], "store": None}
     pf = preflight(pkg)
     res["preflight"] = pf
@@ -204,7 +204,7 @@ def test_package(pkg, out, args):
         res["status"] = "BLOCKED"
         res["findings"] += pf["blockers"] or [f"check_annotations.py did not finish (exit {pf['exit']})"]
         return finish(res, out, t0)
-    store = pathlib.Path(tempfile.mkdtemp(prefix=f"cypherlite-{pkg.name}-"))
+    store = pathlib.Path(tempfile.mkdtemp(prefix=f"relate-{pkg.name}-"))
     res["store"] = str(store)
     try:
         try:
@@ -355,13 +355,13 @@ def render_package(res):
     imp = res.get("import") or {}
     L = [f"# Test report: {res['package']}", "",
          f"- Package: `{res['path']}`",
-         f"- Cypherlite: `{json.dumps(res['cypherlite'])}`",
+         f"- Relate: `{json.dumps(res['relate'])}`",
          f"- Started: {res['started']}; {res.get('seconds', '?')} s",
          f"- Import: **{res['status']}**" + (" — query results below are untrusted" if res["status"] == "IMPORT-FAIL" else ""),
          "- Queries: " + ", ".join(f"{k} {v}" for k, v in c.items() if v), ""]
     if res.get("kept_store"):
         L.append(f"- Store kept at `{res['kept_store']}`\n")
-    L += ["A pass here is evidence, not proof: Cypherlite is not Aura's engine and `import.cypher` is a second "
+    L += ["A pass here is evidence, not proof: Relate is not Aura's engine and `import.cypher` is a second "
           "implementation of Aura's Import. SKIPPED queries still need manual testing on Aura.", ""]
     if res["findings"]:
         L += ["## Findings", ""] + [f"- {f}" for f in res["findings"]] + [""]
@@ -431,7 +431,7 @@ def render_query(q):
 
 
 def render_summary(run_dir, results):
-    L = [f"# Cypherlite test run {run_dir.name}", "", f"Cypherlite `{json.dumps(results[0]['cypherlite'])}`" if results else "", "",
+    L = [f"# Relate test run {run_dir.name}", "", f"Relate `{json.dumps(results[0]['relate'])}`" if results else "", "",
          "| Package | Import | " + " | ".join(STATUSES[:-1]) + " | Pending | Time (s) |",
          "| --- | --- | " + " | ".join("---" for _ in STATUSES) + " | --- |"]
     for r in results:
@@ -472,7 +472,7 @@ def cmd_run(a):
     root = pathlib.Path(a.root).resolve() if a.root else find_root(pathlib.Path.cwd().resolve())
     pkgs = packages(root, a.packages)
     stamp = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
-    run_dir = pathlib.Path(a.run_dir).resolve() if a.run_dir else root / "output" / "cypherlite-tests" / stamp
+    run_dir = pathlib.Path(a.run_dir).resolve() if a.run_dir else root / "output" / "relate-tests" / stamp
     for p in pkgs:
         if run_dir == p or p in run_dir.parents:
             sys.exit("the run directory must not be inside a package folder")
@@ -537,7 +537,7 @@ def main():
     r.add_argument("packages", nargs="*")
     r.add_argument("--root")
     r.add_argument("--run-dir")
-    r.add_argument("--keep", action="store_true", help="keep the Cypherlite store")
+    r.add_argument("--keep", action="store_true", help="keep the Relate store")
     r.add_argument("--timeout", default="60s")
     j = sub.add_parser("judge")
     j.add_argument("package_run")

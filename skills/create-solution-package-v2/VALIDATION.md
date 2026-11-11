@@ -377,7 +377,7 @@ TESTS.md is the oracle. It is never loaded by the runtime, so it is exempt from 
 - Every query section states its **Parameters** and an **Invariant**. A section with expected counts but no invariant is a finding: it breaks on the next data regeneration and the breakage looks like a query fault.
 - Invariants are expressed in terms of the seeded design ("returns the twelve Ring A claimants and no unseeded claimant"), not as bare counts. A bare row count is an observation, not an invariant.
 - Any **Expected** counts are derivable from the bundled CSVs, and agree with them.
-- No `TODO(review): unproven query` lines anywhere, and no "queries not executed" or "test results" section — test results live in `output/cypherlite-tests/`, never in the package, and the format is v1's. Remove any left over from older packages.
+- No `TODO(review): unproven query` lines anywhere, and no "queries not executed" or "test results" section — test results live in `output/relate-tests/`, never in the package, and the format is v1's. Remove any left over from older packages.
 
 Both files carry headings the other does not — prerequisites and the adapting section on one side, how-to-run and the profile on the other, plus any APOC/GDS section heading and the closing node-key constraints section. Exclude those, then compare what remains; the exclusion lists are per-package, so edit them to match.
 
@@ -500,9 +500,9 @@ wc -w "$H"
 
 The greps over-report by design. `schema` may appear legitimately in a domain sense, `row` inside an unrelated word, a label name may coincide with ordinary prose. Read each hit rather than acting on the count — and read the whole file once straight through, which is the only check that catches a page that is accurate and still unreadable.
 
-## 5e. Local execution (Cypherlite)
+## 5e. Local execution (Relate)
 
-Run test mode on the package ([TESTING.md](TESTING.md)): it imports the sample data into a throwaway Cypherlite store with a `LOAD CSV` script generated from ONTOLOGY.json, checks the data landed as the reference ontology says, runs SETUP.md, then runs every query in file order and judges each result against its TESTS.md section.
+Run test mode on the package ([TESTING.md](TESTING.md)): it imports the sample data into a throwaway Relate store with a `LOAD CSV` script generated from ONTOLOGY.json, checks the data landed as the reference ontology says, runs SETUP.md, then runs every query in file order and judges each result against its TESTS.md section.
 
 ```bash
 python3 "<skill-path>/scripts/run_queries.py" run "<package-path>"
@@ -514,7 +514,7 @@ Each query ends with one status:
 | ------ | ------- | ------------ |
 | PASS | Ran, and the result satisfies the TESTS.md invariant and expectations | — |
 | FAIL | Package fault: rejected statement, empty or wrong result, or drift caught by `EXPLAIN` | Blocker |
-| ENGINE-GAP | Cypherlite does not support a construct that is valid on Neo4j (CYPHERLITE.md names it) | Warning; name it in the handoff |
+| ENGINE-GAP | Relate does not support a construct that is valid on Neo4j (RELATE.md names it) | Warning; name it in the handoff |
 | SKIPPED | Needs APOC, GDS or a fulltext procedure, or reads what such a query writes; requires manual testing on Aura | Handoff item, not a finding |
 | NEEDS-PARAMS | No parameter values found in TESTS.md, `@sample` or `@params` | Finding: add the values to TESTS.md's Parameters field |
 | UNSURE | Ran, but the result cannot be judged against TESTS.md with confidence | Warning; put the evidence to the user |
@@ -523,8 +523,8 @@ Each query ends with one status:
 What a PASS means, and what it does not:
 
 - **It means** the query ran on the bundled sample, imported as Aura's Import would import it, and returned rows that satisfy the invariant TESTS.md states, with the evidence quoted in the report. The landing checks behind it compared the graph with counts computed independently from the CSVs.
-- **It does not mean** the query is proven on Aura. Cypherlite is not Aura's Cypher engine, and the generated `LOAD CSV` script is a second implementation of Aura's Import; CYPHERLITE.md lists where each is known to differ. A pass is evidence, not proof, until parity has been checked against Aura.
-- **It does not replace section 3's runtime gate.** The gate proves the destination registers the package and converts its reference ontology for Import; Cypherlite proves neither.
+- **It does not mean** the query is proven on Aura. Relate is not Aura's Cypher engine, and the generated `LOAD CSV` script is a second implementation of Aura's Import; RELATE.md lists where each is known to differ. A pass is evidence, not proof, until parity has been checked against Aura.
+- **It does not replace section 3's runtime gate.** The gate proves the destination registers the package and converts its reference ontology for Import; Relate proves neither.
 - **SKIPPED is not a pass.** Every SKIPPED query still needs the manual Aura test TESTS.md's "How to run" describes.
 
 An IMPORT-FAIL makes every query result in that run untrusted: fix the data or the reference ontology first, then re-run. A disagreement between TESTS.md's sample-data profile and the CSVs is a stale-TESTS.md finding whichever side is wrong.
@@ -598,7 +598,7 @@ Warnings (2)
 The handoff summary must name:
 
 - Files created or changed.
-- Checks actually run, including whether ONTOLOGY.json validated against the bundled `ontology-graph-spec.schema.json`, **the ontology graph spec version its `schema` field declares and that it matches the bundle's pin**, the spec-library release the check ran with and its result, and the runtime gate's `REGISTER` and `IMPORT CONVERT` results with the destination commit they ran against. The test-mode summary from 5e: the run folder under `output/cypherlite-tests/`, the Cypherlite version, the per-package status counts, one line for every FAIL, ENGINE-GAP, UNSURE and IMPORT-FAIL, and every SKIPPED query by name with the reason — those still need manual testing on Aura, so point the tester at TESTS.md for them. Say that a Cypherlite pass is evidence, not proof.
+- Checks actually run, including whether ONTOLOGY.json validated against the bundled `ontology-graph-spec.schema.json`, **the ontology graph spec version its `schema` field declares and that it matches the bundle's pin**, the spec-library release the check ran with and its result, and the runtime gate's `REGISTER` and `IMPORT CONVERT` results with the destination commit they ran against. The test-mode summary from 5e: the run folder under `output/relate-tests/`, the Relate version, the per-package status counts, one line for every FAIL, ENGINE-GAP, UNSURE and IMPORT-FAIL, and every SKIPPED query by name with the reason — those still need manual testing on Aura, so point the tester at TESTS.md for them. Say that a Relate pass is evidence, not proof.
 - The spec-library release the destination embeds, when it differs from the pin, and any pinned-release feature the package uses that the destination will drop.
 - Every remaining `TODO(review):` with its path — calling out `inferred description` items the user has not yet confirmed.
 - Every agent-loadable file over 45,000 characters, with its size and what drove it. (TESTS.md, human_description.md and the CSVs are exempt and need no mention.)

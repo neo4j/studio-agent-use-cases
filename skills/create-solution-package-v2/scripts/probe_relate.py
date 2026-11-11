@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Probe the installed Cypherlite for every behaviour test mode relies on (CYPHERLITE.md).
+"""Probe the installed Relate for every behaviour test mode relies on (RELATE.md).
 
-Usage: python3 probe_cypherlite.py <repo-root> [--out DIR] [--only PREFIX] [--jobs N]
+Usage: python3 probe_relate.py <repo-root> [--out DIR] [--only PREFIX] [--jobs N]
 
 Each case runs against a fresh temporary directory store and is recorded as
   SUPPORTED    - behaves as Neo4j does
@@ -13,12 +13,12 @@ from a live run, and belongs on the Aura parity list.
 Besides the hand-written cases it (a) inventories the Cypher constructs every package's QUERIES.md and
 SETUP.md actually use and maps each to the cases covering it, flagging any construct no case covers,
 and (b) EXPLAINs every annotated statement in every package (the corpus). Writes probe.json and
-probe.md under --out (default output/cypherlite-tests/probe-<timestamp>/). Standard library only."""
+probe.md under --out (default output/relate-tests/probe-<timestamp>/). Standard library only."""
 import argparse, collections, concurrent.futures, csv, dataclasses, datetime, json, math, os, pathlib
 import re, shutil, subprocess, sys, tempfile
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
-import cypherlite_cli as cl  # noqa: E402
+import relate_cli as cl  # noqa: E402
 from annotations import parse_statements, strip_cypher_noise  # noqa: E402
 
 ROOT = None  # repo root, set in main
@@ -301,8 +301,10 @@ def seek_check(R, store, csv_dir):
     obs = (f"20,000 nodes: with NODE KEY {[o for o, _ in keyed]} {tk / 1e6:.2f} ms; "
            f"without a constraint {[o for o, _ in plain]} {tp / 1e6:.2f} ms")
     if tk * 5 < tp:
-        return "SUPPORTED", "the key lookup is served by the constraint (the plan does not name a seek operator: " \
-                            "Neo4j shows NodeUniqueIndexSeek); " + obs
+        seek = any("Seek" in o for o, _ in keyed)
+        return "SUPPORTED", "the key lookup is served by the constraint (" + \
+            ("the plan names an index seek; Neo4j's operator is NodeUniqueIndexSeek" if seek else
+             "the plan does not name a seek operator: Neo4j shows NodeUniqueIndexSeek") + "); " + obs
     return "DIFFERENT", "no evidence the constraint serves the lookup; " + obs
 
 
@@ -594,7 +596,10 @@ cy("value_type", "valueType() and IS :: type predicates (used by the landing che
 # ---------------------------------------------------------------- procedures
 
 def fulltext_check(R, store, csv_dir):
-    R("CREATE (:SSN {ssn: '123-45-6789'}), (:SSN {ssn: '123-45-6788'}), (:SSN {ssn: '999-99-9999'})")
+    # '123-45-0000' shares the 123 and 45 groups but is four edits away: a keyword analyser keeps each SSN
+    # one token, so it must not match. An engine that splits on '-' matches it through the shared groups.
+    R("CREATE (:SSN {ssn: '123-45-6789'}), (:SSN {ssn: '123-45-6788'}), (:SSN {ssn: '123-45-0000'}), "
+      "(:SSN {ssn: '999-99-9999'})")
     block = next((s["block"] for s in parse_statements(ROOT / "identity-validation" / "SETUP.md")
                   if "FULLTEXT" in s["cypher"]), None)
     c = R(block)
@@ -608,7 +613,7 @@ def fulltext_check(R, store, csv_dir):
     want = ["123-45-6788", "123-45-6789"]
     R("CREATE (:SSN {ssn: 'hello world'})")
     probes = []
-    for term in ("123-45-6789", "123\\\\-45\\\\-6789", "hello", "hello~1", "helo~1", "hello world"):
+    for term in ("123", "123-45-6789", "123\\\\-45\\\\-6789", "hello", "hello~1", "helo~1", "hello world"):
         x = R(f"CALL db.index.fulltext.queryNodes('ssnFuzzyIndex', '{term}') YIELD node RETURN node.ssn AS ssn")
         probes.append(f"{term!r}→{[y['ssn'] for y in x.rows] if not x.exit else err(x)}")
     a = R("CALL db.index.fulltext.listAvailableAnalyzers()")
@@ -643,8 +648,10 @@ case("proc.show_procedures", "Procedures", "SHOW PROCEDURES (what is available)"
 def envelope_check(R, store, csv_dir):
     r = R("RETURN 1 AS x, 'a' AS y")
     keys = sorted(r.last)
-    want = ["columnTypes", "columns", "notifications", "rows", "truncated"]
-    return ("SUPPORTED" if keys == want else "DIFFERENT"), f"keys {keys}; {fmt(r.last)}"
+    want = {"columnTypes", "columns", "notifications", "rows", "truncated"}  # what relate_cli.py reads
+    extra = sorted(set(keys) - want)
+    obs = f"keys {keys}" + (f" (extra, unused: {extra})" if extra else "") + f"; {fmt(r.last)}"
+    return ("SUPPORTED" if want <= set(keys) else "DIFFERENT"), obs
 
 
 case("cli.envelope", "CLI", "--mode envelope shape", check=envelope_check, neo4j="n/a (CLI contract)")
@@ -665,7 +672,10 @@ case("cli.exit_unknown_function", "CLI", "Exit code for an unknown function",
 case("cli.exit_unknown_procedure", "CLI", "Exit code for an unknown procedure",
      check=exit_check("CALL apoc.help('x')", 6), neo4j="n/a (6 expected; APOC/GDS gaps classify on it)")
 case("cli.exit_timeout", "CLI", "Exit code for --timeout",
-     check=exit_check("UNWIND range(1, 1000000000) AS x WITH x WHERE x < 0 RETURN count(*)", 7, timeout="300ms"),
+     # Two small ranges rather than one huge one: Relate refuses range(1, 1000000000) as a 97 GB value
+     # (exit 1, kind capacity) before the timeout can fire.
+     check=exit_check("UNWIND range(1, 100000) AS a UNWIND range(1, 100000) AS b WITH a WHERE a < 0 "
+                      "RETURN count(*)", 7, timeout="300ms"),
      neo4j="n/a (expect 7)")
 case("cli.exit_runtime", "CLI", "Exit code for a runtime error (division by zero)",
      check=exit_check("RETURN 1 / 0 AS x", 1), neo4j="Neo4j raises an ArithmeticException (/ by zero).")
@@ -791,7 +801,7 @@ def clone_check(R, store, csv_dir):
         shutil.rmtree(dest.parent, ignore_errors=True)
 
 
-case("cli.clone", "CLI", "cypherlite clone SOURCE DEST", check=clone_check, neo4j="n/a")
+case("cli.clone", "CLI", "relate clone SOURCE DEST", check=clone_check, neo4j="n/a")
 
 
 def script_check(R, store, csv_dir):
@@ -818,7 +828,7 @@ case("cli.read_only", "CLI", "--read-only rejects writes and allows reads", chec
 # ---------------------------------------------------------------- ontology namespace
 
 def ontology_check(R, store, csv_dir):
-    env = {"CYPHERLITE_PREVIEW": "ontology"}
+    env = {"RELATE_PREVIEW": "ontology"}
     doc = (ROOT / "patient-journey" / "ONTOLOGY.json").read_text()
     s = R("CALL db.ontology.set($doc)", params={"doc": doc}, env=env)
     obs = [f"set(package document): exit {s.exit}{' ' + err(s) if s.exit else ''}"]
@@ -841,7 +851,7 @@ def ontology_check(R, store, csv_dir):
     return status, "; ".join(obs)
 
 
-case("ontology.set_apply", "Ontology", "db.ontology.set/apply with a package's ONTOLOGY.json (CYPHERLITE_PREVIEW=ontology)",
+case("ontology.set_apply", "Ontology", "db.ontology.set/apply with a package's ONTOLOGY.json (RELATE_PREVIEW=ontology)",
      check=ontology_check, neo4j="Packages pin ontology-graph-spec 1.0.0 with extensions data_source_tables/"
                                  "data_source_mappings; Aura has no db.ontology.* procedures.")
 
@@ -1004,7 +1014,7 @@ def main():
     a = ap.parse_args()
     ROOT = pathlib.Path(a.root).resolve()
     stamp = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
-    out = pathlib.Path(a.out) if a.out else ROOT / "output" / "cypherlite-tests" / f"probe-{stamp}"
+    out = pathlib.Path(a.out) if a.out else ROOT / "output" / "relate-tests" / f"probe-{stamp}"
     out.mkdir(parents=True, exist_ok=True)
 
     datetime_cases()
@@ -1034,7 +1044,7 @@ def main():
 
     version = cl.version()
     (out / "probe.json").write_text(json.dumps({"version": version, "cases": rows, "inventory": inv_rows}, indent=1))
-    md = [f"# Cypherlite capability probe", "", f"Version: `{json.dumps(version)}`  ", f"Run: {stamp}", ""]
+    md = [f"# Relate capability probe", "", f"Version: `{json.dumps(version)}`  ", f"Run: {stamp}", ""]
     counts = collections.Counter(r["status"] for r in rows)
     md += ["| Status | Cases |", "| --- | --- |"] + [f"| {k} | {v} |" for k, v in sorted(counts.items())] + [""]
     md += ["## Construct inventory (packages' QUERIES.md and SETUP.md)", "",

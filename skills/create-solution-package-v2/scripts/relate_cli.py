@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
-"""Thin wrapper over the cypherlite CLI, shared by the create-solution-package-v2 test-mode scripts.
+"""Thin wrapper over the relate CLI, shared by the create-solution-package-v2 test-mode scripts.
 
-Every call sets CYPHERLITE_TELEMETRY=0 (telemetry defaults to on), uses --mode envelope, passes
+Every call sets RELATE_TELEMETRY=0 (telemetry defaults to on), uses --mode envelope, passes
 --max-rows 0 unless told otherwise (the CLI caps rows at 100 under an agent harness), and binds
 parameters as JSON: a bare `123` would arrive as an INTEGER, so strings are always quoted.
-CYPHERLITE.md records the behaviours relied on here. Standard library only."""
+RELATE.md records the behaviours relied on here. Standard library only."""
 import dataclasses, json, os, shutil, subprocess, time
 
-BIN = shutil.which("cypherlite") or os.path.expanduser("~/.local/bin/cypherlite")
-ENV = {**os.environ, "CYPHERLITE_TELEMETRY": "0"}
+BIN = shutil.which("relate") or os.path.expanduser("~/.local/bin/relate")
+ENV = {**os.environ, "RELATE_TELEMETRY": "0"}
 
 
 @dataclasses.dataclass

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Load a package's sample data into a Cypherlite store and check it landed as ONTOLOGY.json says.
+"""Load a package's sample data into a Relate store and check it landed as ONTOLOGY.json says.
 
 Usage: python3 import_check.py <package-dir> --store DIR [--out DIR] [--no-load]
 
@@ -19,7 +19,7 @@ Standard library only."""
 import argparse, collections, csv, datetime, decimal, json, pathlib, re, sys, time
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
-import cypherlite_cli as cl  # noqa: E402
+import relate_cli as cl  # noqa: E402
 import ontology_to_cypher as gen  # noqa: E402
 
 ISO_DATETIME = re.compile(gen.ISO_DATETIME.replace("\\\\", "\\"))
