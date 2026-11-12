@@ -5,8 +5,7 @@ Usage: python3 check_relate.py [--json]
 
 Checks Python, finds the relate binary ($RELATE_BIN, PATH, ~/.local/bin/relate), compares its version
 with the pin in RELATE.md and runs one statement. When Relate is missing it checks what the installer
-needs instead: a supported OS, the GitHub CLI, a login, and access to the internal relatedb/relate repo.
-It installs nothing and changes nothing.
+needs instead: a supported OS, curl and ssh-keygen. It installs nothing and changes nothing.
 
 Exit codes:
   0  ready: Relate is installed at the pinned version and runs
@@ -21,8 +20,7 @@ import json, os, platform, shutil, subprocess, sys, pathlib
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 import relate_cli as cl  # noqa: E402
 
-INSTALL = ('gh api repos/relatedb/relate/contents/distribution/install.sh -H "Accept: application/vnd.github.raw" '
-           '| GITHUB_TOKEN=$(gh auth token) sh')
+INSTALL = "curl -sSfL https://relatedb.ai/install.sh | bash"
 
 
 def sh(*args, timeout=30):
@@ -33,6 +31,14 @@ def sh(*args, timeout=30):
         return None, str(e)
 
 
+def older_than_pin(version):
+    """True when version is an X.Y.Z older than the pin; False when newer, equal or unparseable."""
+    try:
+        return tuple(map(int, version.split("."))) < tuple(map(int, cl.PINNED_VERSION.split(".")))
+    except (AttributeError, ValueError):
+        return False
+
+
 def install_prerequisites():
     """What the installer needs, each as (name, ok, detail)."""
     out = []
@@ -41,18 +47,7 @@ def install_prerequisites():
                 f"{system} {platform.machine()}" + ("" if system in ("Darwin", "Linux") else
                 " — the installer supports macOS and Linux only; on Windows, download relate-windows-amd64.exe "
                 "from the relatedb/relate release page and set RELATE_BIN to its path")))
-    gh = shutil.which("gh")
-    out.append(("GitHub CLI (gh)", bool(gh), gh or "not found — install it from https://cli.github.com"))
-    if gh:
-        # `gh auth token`, not `gh auth status`: status exits 1 if any stored account fails, even when the
-        # active one works, and the installer only needs the active account's token.
-        code, msg = sh("gh", "auth", "token")
-        out.append(("gh logged in", code == 0, "yes" if code == 0 else "no — run: gh auth login"))
-        if code == 0:
-            code, msg = sh("gh", "api", "repos/relatedb/relate", "--jq", ".full_name")
-            out.append(("access to relatedb/relate", code == 0,
-                        "yes" if code == 0 else "no — the repository is internal to the Neo4j GitHub organisation; "
-                        "ask for access, or build without Relate"))
+    out.append(("curl", bool(shutil.which("curl")), shutil.which("curl") or "not found — install curl"))
     out.append(("ssh-keygen (verifies the release signature)", bool(shutil.which("ssh-keygen")),
                 shutil.which("ssh-keygen") or "not found — install openssh-client"))
     return out
@@ -86,8 +81,11 @@ def main():
                                + (f": {res.message}" if res and res.message else "") + ". Reinstall it:\n  " + INSTALL)
         elif v.get("version") != cl.PINNED_VERSION:
             r.update(status="version-differs", exit=2)
+            older = older_than_pin(v.get("version"))
             r["advice"].append(f"Relate {v.get('version')} is installed; the skill is pinned to {cl.PINNED_VERSION}. "
-                               "Test mode can run, but re-run the probe first and compare it with RELATE.md:\n"
+                               + ("It is older than the pin: update it with `relate upgrade` (which installs the "
+                                  "latest release), then check again. " if older else "")
+                               + "To use this version as it is, re-run the probe first and compare it with RELATE.md:\n"
                                "  python3 <skill-path>/scripts/probe_relate.py <repo-root>")
         else:
             r.update(status="ready", exit=0)

@@ -37,20 +37,20 @@ It installs nothing. Act on its first line:
 | Result | What to do |
 | ------ | ---------- |
 | `READY` | Carry on. |
-| `INSTALLED, DIFFERENT VERSION` | Tell the user which version they have and that the skill was checked against the pin in RELATE.md. Run the probe (`python3 <skill-path>/scripts/probe_relate.py <repo-root>`, a few minutes), compare its summary with RELATE.md's capability matrix, and tell the user about any row that changed before you rely on test-mode results. Then carry on. |
+| `INSTALLED, DIFFERENT VERSION` | Tell the user which version they have and that the skill was checked against the pin in RELATE.md. If theirs is older, offer `relate upgrade`, which updates it in place to the latest release (run it only on their go-ahead), then check again. Otherwise run the probe (`python3 <skill-path>/scripts/probe_relate.py <repo-root>`, a few minutes), compare its summary with RELATE.md's capability matrix, and tell the user about any row that changed before you rely on test-mode results. Then carry on. |
 | `NOT INSTALLED` or `INSTALLED, NOT WORKING` | Tell the user, then offer the two ways forward below. |
 | `PYTHON TOO OLD` | The scripts need Python 3.9 or later. Say so; the build can continue without Relate. |
 
 When Relate is missing, explain it to the user in a few sentences, then let them choose:
 
 - **What it is and why:** test mode imports the package's sample data into a throwaway local Relate database and runs every query, so wrong queries and stale expectations are caught before handoff instead of in a manual Aura session.
-- **Install it.** Show the prerequisites `check_relate.py` printed and how to fix any marked missing. `relatedb/relate` is internal to the Neo4j GitHub organisation, so the user needs the GitHub CLI logged in to an account with access. The install command is:
+- **Install it.** Show the prerequisites `check_relate.py` printed and how to fix any marked missing (macOS or Linux, `curl`, `ssh-keygen`). The install command is:
 
   ```bash
-  gh api repos/relatedb/relate/contents/distribution/install.sh -H "Accept: application/vnd.github.raw" | GITHUB_TOKEN=$(gh auth token) sh
+  curl -sSfL https://relatedb.ai/install.sh | bash
   ```
 
-  It downloads the latest release and verifies its signature and checksum before installing it to `~/.local/bin/relate`. **Run it only when the user says to:** it downloads and runs an installer. Then run `check_relate.py` again. The installer always takes the latest release, so a fresh install is often newer than the pin; handle that as `INSTALLED, DIFFERENT VERSION`. RELATE.md has the details, including Windows.
+  It downloads the latest release from the public `relatedb/relate` repository and verifies its signature and checksum before installing it to `~/.local/bin/relate`. No GitHub account is needed. **Run it only when the user says to:** it downloads and runs an installer. Then run `check_relate.py` again. The installer always takes the latest release, so once Relate moves past the pin, a fresh install is newer; handle that as `INSTALLED, DIFFERENT VERSION`. RELATE.md has the details, including Windows.
 - **Carry on without it.** In create mode the package is still built in full; see "Without Relate". Test mode has nothing to do without Relate: say so, and stop.
 
 Ask once. If the user chooses to carry on without Relate, do not raise it again until the handoff.

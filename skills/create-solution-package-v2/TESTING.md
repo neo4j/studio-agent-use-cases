@@ -126,7 +126,7 @@ For every query left as JUDGE, read its section in `report.md` and, where the he
 
 1. **Invariant first.** It is the contract. Check every clause of it against the rows: membership, exclusions, ordering, bounds. Example: "never the anchor", "ordered by PatientCount descending", "no more than `$limit`".
 2. **Expected second, where stated.** Compare counts and named values. Ignore row order unless the query has an `ORDER BY`. Where TESTS.md says something is not fixed ("which pairs are returned is not fixed", a tie at fifth place), do not hold the result to it.
-3. **Allow for the engine differences RELATE.md lists.** The two result differences Cypherlite had, `toString(datetime)` dropping zero seconds and `round()` on negative half-way values, are gone at Relate 0.1.3. The remaining ones are in the import (empty cells, a BOM, bare paths, the space-separated datetime), which the generator already handles, and fulltext, which is skipped.
+3. **Allow for the engine differences RELATE.md lists.** The two result differences Cypherlite had, `toString(datetime)` dropping zero seconds and `round()` on negative half-way values, are gone in Relate. The remaining ones are in the import (empty cells, a BOM, bare paths, the space-separated datetime), which the generator already handles, and fulltext, which is skipped.
 4. **Record the verdict**, quoting evidence from the rows: the counts you checked, the named entities you found or did not find.
 
    ```bash
@@ -153,7 +153,7 @@ Before you call any failure a package fault:
 - **Workaround rewrite:** you may try a rewrite in a scratch copy of the query, never in the package, and report with `--workaround` whether it passed. It never counts as PASS.
 - **Exit codes are not enough on their own:**
   - exit 6 also covers runtime type errors such as `/ by zero`, so read the message;
-  - exit 7 is a timeout. A slow query on Relate is not a package fault unless it would be slow on Neo4j too. Say which you believe and why. Reproduce the cost on a tiny graph, for example by timing the same shape at increasing bounds; that tells an engine that does not prune or stop early from a query that really explodes. Relate 0.1.3 stops early under `LIMIT`, but a `REPEATABLE ELEMENTS` search that must enumerate every route is still slow: RELATE.md records ev-route-planning's two route queries that time out even at 600 s.
+  - exit 7 is a timeout. A slow query on Relate is not a package fault unless it would be slow on Neo4j too. Say which you believe and why. Reproduce the cost on a tiny graph, for example by timing the same shape at increasing bounds; that tells an engine that does not prune or stop early from a query that really explodes. Relate stops early under `LIMIT`, but a `REPEATABLE ELEMENTS` search that must enumerate every route is still slow: RELATE.md records ev-route-planning's two route queries that do not finish, and that its "Feasible routes" query needs `--timeout 120s`.
 
 ### 7. Teardown
 

@@ -15,36 +15,36 @@ A pass on Relate is evidence, not proof. Relate is not Aura's Cypher engine, and
 Relate is Cypherlite renamed. The project moved from `neo4j-labs/cypherlite` to [`relatedb/relate`](https://github.com/relatedb/relate), and its version numbering restarted at 0.1.0 (9 November 2026). The skill is pinned to:
 
 ```json
-{"arch":"aarch64","license":"Apache 2.0 (binary)","name":"relate","os":"macos","version":"0.1.3"}
+{"arch":"aarch64","license":"Apache 2.0 (binary)","name":"relate","os":"macos","version":"1.0.1"}
 ```
 
-The probe was re-run on this version on 11 November 2026, and every row below is from that run. The previous pin was Cypherlite 0.13.0 (`{"arch":"aarch64","name":"cypherlite","os":"macos","version":"0.13.0"}`). "Changes since Cypherlite 0.13.0" below lists what moved.
+The probe was run on this version on 12 November 2026, and every row below is from that run unless it names another version. Earlier pins were Relate 0.1.3 (11 November 2026) and, before the rename, Cypherlite 0.13.0. "Changes since Cypherlite 0.13.0" below lists what moved at each step.
 
-- **Source:** `relatedb/relate` release `v0.1.3` (11 November 2026). Installed by the repo's `distribution/install.sh` (also served at `https://relatedb.ai/install.sh`) to `~/.local/bin/relate`.
+- **Source:** `relatedb/relate` release `v1.0.1` (12 November 2026), a public repository. Installed by its `distribution/install.sh`, served at `https://relatedb.ai/install.sh`, to `~/.local/bin/relate`.
 - **Verification:** the install script authenticates `SHA256SUMS` against its SSHSIG signature (`SHA256SUMS.sig`) with `ssh-keygen` and the `relate-release` ED25519 key pinned in the script. It then checks the binary's SHA-256 against `SHA256SUMS`, and fails closed if either check fails.
 - **Check first:** `python3 scripts/check_relate.py` reports whether Relate is installed, at which version, and whether it runs. When it is missing, it checks what the installer needs. It installs nothing. SKILL.md's "Before you start: Relate" says what the agent does with each result.
-- **Prerequisites:** macOS or Linux; the GitHub CLI logged in (`gh auth login`) to an account with access to `relatedb/relate`, which is internal to the Neo4j GitHub organisation; `ssh-keygen`; Python 3.9 or later for the scripts.
+- **Prerequisites:** macOS or Linux, `curl`, `ssh-keygen`, and Python 3.9 or later for the scripts. No GitHub account or token is needed.
 - **Install:**
 
   ```bash
-  gh api repos/relatedb/relate/contents/distribution/install.sh -H "Accept: application/vnd.github.raw" | GITHUB_TOKEN=$(gh auth token) sh
+  curl -sSfL https://relatedb.ai/install.sh | bash
   ```
 
-  This fetches the repository's current installer and runs it with your GitHub token. The token is needed because the repository is internal; without it the installer stops with a 404. The copy served at `https://relatedb.ai/install.sh` lagged the repository's on 11 November 2026, so prefer this one. The command was checked from a clean `HOME` on 12 November 2026.
-- **Version:** the installer has no version option; it always installs the latest release. On 12 November 2026 that was already `v1.0.1`, ahead of the pin. A newer version is usable, but re-run the probe and compare it with this file before trusting test-mode results; `check_relate.py` reports this as `INSTALLED, DIFFERENT VERSION`. `relate upgrade --check` reports the latest release without changing anything.
-- **Where the scripts look:** `$RELATE_BIN`, then `relate` on `PATH`, then `~/.local/bin/relate`. So a binary the installer put outside `PATH` is still found. On Windows, the installer does not run: download `relate-windows-amd64.exe` from the release page and set `RELATE_BIN` to its path.
+  The served installer matched the repository's `distribution/install.sh` on 12 November 2026. It reads the latest release from `https://relatedb.ai/releases.json` and downloads the assets from the public GitHub release, with no API call and no token. (Until 1.0.1 the repository was internal and the installer needed `GITHUB_TOKEN`.)
+- **Version:** the installer has no version option; it always installs the latest release. When Relate moves past the pin, a fresh install is newer: usable, but re-run the probe and compare it with this file before trusting test-mode results. `check_relate.py` reports this as `INSTALLED, DIFFERENT VERSION`. An older install updates in place with `relate upgrade`, which also installs the latest release; `relate upgrade --check` reports the latest release without changing anything.
+- **Where the scripts look:** `$RELATE_BIN`, then `relate` on `PATH`, then `~/.local/bin/relate`. So a binary the installer put outside `PATH` is still found. On Windows, the installer does not run: download `relate-windows-amd64.exe` from the release page and set `RELATE_BIN` to its path. The scripts have not been run on Windows.
 - A leftover `~/.local/bin/cypherlite` is not used by any script and can be removed.
 - **Telemetry** is on by default. Every script sets `RELATE_TELEMETRY=0` (`scripts/relate_cli.py`). `DO_NOT_TRACK=1` and `relate telemetry off` also disable it. The old `CYPHERLITE_*` variables are ignored, and Relate warns when one is set.
 
 ### Other surfaces (not used yet)
 
-| Surface | State at v0.1.3 |
+| Surface | State at v1.0.1 |
 | ------- | --------------- |
-| Python | `relate_db-0.1.3` abi3 wheels for macOS, Linux and Windows are release assets (`pip install <wheel>`). It is `relate-db` on PyPI once published, and is imported as `import relate`. The source builds with maturin from `surfaces/relate-python`. |
-| Rust | Cargo workspace (`relate/*`, `surfaces/*`). The crate is `relate`; until crates.io publication it is used as a git dependency (`cargo add --git https://github.com/relatedb/relate relate`). |
-| Node | `@relate/relate` in `clients/javascript`, a C ABI client over the `relate-ffi` tarballs attached to each release (Node 18+). The browser WASM build is `@relate/relate-wasm` (`surfaces/relate-wasm`). |
+| Python | `pip install relate-db` (on PyPI at 1.0.1; abi3 wheels for macOS, Linux and Windows), imported as `import relate`. The source builds with maturin from `surfaces/relate-python`. |
+| Rust | The crate `relate` is on crates.io at 1.0.1 (`cargo add relate`). Cargo workspace: `relate/*`, `surfaces/*`. |
+| Node | `npm install @relate/relate` (on npm at 1.0.1, Node 18+), a C ABI client over the `relate-ffi` libraries, from `clients/javascript`. The browser WASM build is `@relate/relate-wasm` (`surfaces/relate-wasm`). |
 
-The skill uses the CLI only. The Python wheel is the natural next step if one-process-per-statement start-up ever matters. At present it does not: a full patient-journey import is about 9 s.
+The skill uses the CLI only. The Python wheel is the natural next step if one-process-per-statement start-up ever matters. At present it does not: a full patient-journey import is about 8.5 s.
 
 ## How test mode calls the CLI
 
@@ -87,9 +87,9 @@ The probe ran 252 cases:
 
 | Status | Cases |
 | ------ | ----- |
-| SUPPORTED | 229 |
+| SUPPORTED | 228 |
 | DIFFERENT | 6 |
-| UNSUPPORTED | 17 |
+| UNSUPPORTED | 18 |
 
 Phase 3 added one case, `cypher.limit_short_circuit`, after patient-journey's test run turned it up. Phase 4 added `cypher.allreduce_pruning`, after ev-route-planning's three route queries timed out. The Aura parity run then settled five verify rows; one of them, `toInteger(' 5')`, moved from DIFFERENT to SUPPORTED.
 
@@ -97,7 +97,9 @@ Its full output, with every observation, is under `output/relate-tests/probe-<ti
 
 ### Changes since Cypherlite 0.13.0
 
-On Cypherlite 0.13.0 the probe gave 221 SUPPORTED, 15 DIFFERENT and 16 UNSUPPORTED. On Relate 0.1.3:
+On Cypherlite 0.13.0 the probe gave 221 SUPPORTED, 15 DIFFERENT and 16 UNSUPPORTED; on Relate 0.1.3, 229, 6 and 17; on Relate 1.0.1, 228, 6 and 18.
+
+From Cypherlite 0.13.0 to Relate 0.1.3:
 
 | Case | Cypherlite 0.13.0 | Relate 0.1.3 |
 | ---- | ----------------- | ------------ |
@@ -111,6 +113,14 @@ On Cypherlite 0.13.0 the probe gave 221 SUPPORTED, 15 DIFFERENT and 16 UNSUPPORT
 | `schema.node_key.seek` | SUPPORTED; plan showed `NodeByLabelScan` | SUPPORTED; plan names `NodeIndexSeek RANGE INDEX` |
 
 Two cases changed only because the probe's own checks were out of date, and both checks were fixed. `cli.envelope` now allows the extra `planCache` and `timings` keys. `cli.exit_timeout` now uses a statement that runs past the timeout without hitting the capacity limit. Error messages were reworded (`UnknownFunction: unknown function foo.bar()`, not `` `foo.bar` ``), but every exit code and `kind` is unchanged.
+
+From Relate 0.1.3 to 1.0.1, one case changed:
+
+| Case | Relate 0.1.3 | Relate 1.0.1 |
+| ---- | ------------ | ------------ |
+| `cypher.shortest_path_same_node`: `shortestPath((a)-[:R*0..8]->(a))` | SUPPORTED: a zero-length path | UNSUPPORTED: exit 1, `ShortestPathCommonEndNodes`: "The shortest path algorithm does not work when the start and end nodes are the same". The 1.0.1 release notes say Relate now enforces Neo4j's 51N23 common-end rule. Whether Neo4j also rejects this with a lower bound of 0 is not yet checked on Aura. |
+
+Every other observation is the same apart from timings. The 1.0.1 release notes also tighten Cypher validation "to match live Neo4j"; the probe's 107 package statements still all plan.
 
 ### Every package statement, planned
 
@@ -176,7 +186,7 @@ The probe greps every package's Cypher, with comments and strings removed, and m
 | `datetime()` with millis, with an offset, with no zone | SUPPORTED (verify) | ISO form kept; no zone means UTC | Same on Aura (default zone UTC) |
 | `datetime('2024-01-02')` | SUPPORTED (verify) | Midnight UTC, `2024-01-02T00:00:00Z` | Midnight UTC |
 | `datetime('2024-01-02 03:04:05')` (space separator) | DIFFERENT (verify) | Accepted; serialises as `2024-01-02T03:04:05Z` | Rejected (the ISO parser needs `T`) |
-| Throughput: full patient-journey import | SUPPORTED | 36 statements, 27,401 CSV lines, 9 s; 13,023 nodes and 31,394 relationships | Aura Import takes tens of seconds |
+| Throughput: full patient-journey import | SUPPORTED | 36 statements, 27,401 CSV lines, 8.5 s; 13,023 nodes and 31,394 relationships | Aura Import takes tens of seconds |
 
 ### Schema
 
@@ -199,7 +209,7 @@ The probe greps every package's Cypher, with comments and strings removed, and m
 All SUPPORTED with Neo4j's results unless listed below:
 
 - **Subqueries:** `COLLECT {}` (with `ORDER BY`), `COUNT {}` and `count{}` in `WHERE`, `EXISTS {}` (pattern and `MATCH … WHERE`), `CALL {}` with an importing `WITH`, unit `CALL {}`, `CALL (x) {}`, and `CALL (x) { … NEXT … }`.
-- **Shortest paths:** legacy `shortestPath` (`*1..5`, `*0..8`, and a node to itself, which gives a zero-length path (verify)) and `allShortestPaths` (undirected, type disjunction, `*..8`).
+- **Shortest paths:** legacy `shortestPath` (`*1..5`, `*0..8`; from a node to itself it is rejected, see the table below) and `allShortestPaths` (undirected, type disjunction, `*..8`).
 - **Patterns:** bounded and upper-only variable length; quantified path patterns in every shape the packages use; `[r:!T]`; `(x:A|B)`; `WHERE r:T`; `MATCH REPEATABLE ELEMENTS` with `allReduce`.
 - **Functions:**
   - `startNode`, `endNode`, `elementId` (a STRING, comparable), and `reduce` (including map accumulators and over `relationships(p)`);
@@ -212,8 +222,9 @@ All SUPPORTED with Neo4j's results unless listed below:
 
 | Case | Status | Observed | Neo4j |
 | ---- | ------ | -------- | ----- |
-| `allReduce` prunes `REPEATABLE ELEMENTS` expansion | SUPPORTED on the probe; **DIFFERENT (performance, verify)** on ev-route-planning | On the probe's 8-node complete graph, with `allReduce` failing after the first hop, bounds 4 and 6 both take 0.06 s (Cypherlite: 0.04 s and 0.44 s). But ev-route-planning's three Cypher 25 route queries (`{1,14}`) are still slow. "Feasible routes" (`LIMIT $limit`) now returns its 50 rows in about 60 s, because `LIMIT` stops early. "Lane feasibility" (aggregates over every route) and "Best route, scored" (`ORDER BY … LIMIT 1`, which needs every route) still run past 10 minutes. Whether Neo4j prunes these enough to finish is unconfirmed. | `allReduce` is evaluated during expansion, so a prefix that fails it is never extended |
+| `allReduce` prunes `REPEATABLE ELEMENTS` expansion | SUPPORTED on the probe; **DIFFERENT (performance, verify)** on ev-route-planning | On the probe's 8-node complete graph, with `allReduce` failing after the first hop, bounds 4 and 6 both take 0.06 s (Cypherlite: 0.04 s and 0.44 s). But ev-route-planning's three Cypher 25 route queries (`{1,14}`) are still slow. "Feasible routes" (`LIMIT $limit`) returns its 50 rows in about 60 s on both 0.1.3 and 1.0.1, because `LIMIT` stops early. "Lane feasibility" (aggregates over every route) and "Best route, scored" (`ORDER BY … LIMIT 1`, which needs every route) still do not finish: past 120 s on 1.0.1, and past 10 minutes on 0.1.3. Whether Neo4j prunes these enough to finish is unconfirmed. | `allReduce` is evaluated during expansion, so a prefix that fails it is never extended |
 | `LIMIT` stops the pattern match early | SUPPORTED | Over 1,124,250 matches, `LIMIT 1` takes 0.06 s against 0.68 s for `count(*)` (Cypherlite: 2.9 s against 2.4 s). A `LIMIT` after `ORDER BY` still needs every match. | Streams: `LIMIT 1` returns after the first match |
+| `shortestPath` from a node to itself, `*0..8` | UNSUPPORTED (verify) | Exit 1, kind `execution`, `ShortestPathCommonEndNodes`: "The shortest path algorithm does not work when the start and end nodes are the same." Relate 0.1.3 returned a zero-length path | Neo4j's 51N23 rule rejects a shortest path whose ends are the same node; whether it applies with a lower bound of 0 is not yet checked on Aura. No package query asks for a path from a node to itself |
 
 ### Procedures
 
@@ -238,7 +249,7 @@ All SUPPORTED with Neo4j's results unless listed below:
 | BOM kept in the first header key | The generator detects a BOM and addresses that column by its raw key (`` row.`﻿id` ``). This works today. | `ontology_to_cypher.py` `BOM_STAYS_IN_FIRST_KEY` |
 | Empty cells arrive as `''`, where Neo4j's `,,` is null | Every conversion reads `null` and `''` alike as empty, which is also Import's rule (Import nulls `''` before sending rows). No change is needed whichever way Neo4j behaves. | `ontology_to_cypher.py` `conv` |
 | `LOAD CSV … CALL IN TRANSACTIONS` rejected | Not needed. The generator emits plain `LOAD CSV … MERGE`, one statement per mapping; the largest package imports in seconds. | — |
-| ev-route-planning's full-enumeration route queries do not finish | "Lane feasibility" and "Best route, scored" time out even at `--timeout 600s`. Record them as ENGINE-GAP, with the `allReduce` row above as the evidence; they need manual testing on Aura. "Feasible routes" finishes close to the default 60 s, so run ev-route-planning with `--timeout 120s` and say so. | TESTING.md, "Engine or package?" |
+| ev-route-planning's full-enumeration route queries do not finish | "Lane feasibility" and "Best route, scored" time out even at `--timeout 120s` on 1.0.1 (and at `600s` on 0.1.3). Record them as ENGINE-GAP, with the `allReduce` row above as the evidence; they need manual testing on Aura. "Feasible routes" finishes close to the default 60 s, so run ev-route-planning with `--timeout 120s` and say so. | TESTING.md, "Engine or package?" |
 | Fulltext ignores the analyser | Classify any query calling `db.index.fulltext.*` as SKIPPED (manual testing on Aura). Still run the `CREATE FULLTEXT INDEX` statement in SETUP.md: it succeeds, and it checks the statement's syntax. | `run_queries.py` classification |
 | APOC and GDS absent | SKIPPED, judged from the heading label, `@prerequisites` and the Cypher. A query that reads what a skipped query writes is SKIPPED too. | `run_queries.py` classification |
 | Exit 6 covers runtime type errors | Classify by message: `UnknownFunction` / `ProcedureNotFound` on `apoc.` or `gds.` means SKIPPED; a construct named UNSUPPORTED above means ENGINE-GAP; anything else is a package fault (FAIL) once reduced to a minimal reproduction. | `run_queries.py` |
@@ -299,7 +310,7 @@ Re-checked against Relate 0.1.3. The numbering is new; resolved asks are listed 
 8. **Confirm Neo4j parity on the remaining verify rows:**
    - bare-path LOAD CSV;
    - `,,` as null;
-   - `shortestPath` from a node to itself.
+   - `shortestPath` from a node to itself with a lower bound of 0: Relate 1.0.1 rejects it as `ShortestPathCommonEndNodes` (51N23); Relate 0.1.3 returned a zero-length path.
 
    These need an Aura run; the team may already know.
 9. **Report write counters.** The envelope of a write statement carries no counts (nodes or relationships created, deleted, set), so a test has to diff the graph to see what a write did. Neo4j returns them with every result.

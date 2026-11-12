@@ -12,7 +12,7 @@ from __future__ import annotations
 
 import dataclasses, json, os, shutil, subprocess, sys, time
 
-PINNED_VERSION = "0.1.3"   # RELATE.md, "Pinned version"; change both together
+PINNED_VERSION = "1.0.1"   # RELATE.md, "Pinned version"; change both together
 MIN_PYTHON = (3, 9)
 DEFAULT_PATH = os.path.expanduser("~/.local/bin/relate")   # where Relate's install.sh puts it
 
@@ -30,11 +30,9 @@ ENV = {**os.environ, "RELATE_TELEMETRY": "0"}
 
 MISSING = f"""Relate is not installed, so test mode cannot run.
 
-Relate is the embedded Cypher engine test mode imports packages into. Install it (macOS or Linux;
-the repository is internal, so the installer needs a GitHub token with access to relatedb/relate):
+Relate is the embedded Cypher engine test mode imports packages into. Install it (macOS or Linux):
 
-  gh api repos/relatedb/relate/contents/distribution/install.sh -H "Accept: application/vnd.github.raw" \\
-    | GITHUB_TOKEN=$(gh auth token) sh
+  curl -sSfL https://relatedb.ai/install.sh | bash
 
 It installs to {DEFAULT_PATH}. Then check with:  python3 <skill-path>/scripts/check_relate.py
 Without Relate, a package can still be built, but no query is executed: every query needs manual

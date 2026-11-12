@@ -416,7 +416,9 @@ cy("shortest_path_zero", "Legacy shortestPath *0..8 between distinct nodes",
    "RETURN [n IN nodes(path) | n.id] AS ids", [[[1, 2, 3]]], uses=("shortestPath",))
 cy("shortest_path_same_node", "Legacy shortestPath *0..8 from a node to itself",
    "MATCH (a:P {id: 1}) MATCH path = shortestPath((a)-[:R*0..8]->(a)) RETURN length(path)", [[0]],
-   neo4j="Zero-length path when the lower bound is 0.", verify=True, uses=("shortestPath",))
+   neo4j="Either a zero-length path, because the lower bound is 0, or Neo4j's 51N23 rejection "
+         "(ShortestPathCommonEndNodes) for a path whose start and end are the same node; not yet checked on Aura.",
+   verify=True, uses=("shortestPath",))
 cy("all_shortest_paths", "Legacy allShortestPaths, undirected, type disjunction, *..8",
    "MATCH (a:P {id: 1}), (c:P {id: 3}) MATCH path = allShortestPaths((a)-[:R|S*..8]-(c)) "
    "RETURN [n IN nodes(path) | n.id] AS ids", [[[1, 2, 3]], [[1, 4, 3]], [[1, 5, 3]]], ordered=False,
