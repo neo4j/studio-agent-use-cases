@@ -502,6 +502,8 @@ The greps over-report by design. `schema` may appear legitimately in a domain se
 
 ## 5e. Local execution (Relate)
 
+**If Relate is not installed** (`scripts/check_relate.py` says so), this section is not run. Record that in the handoff: no query was executed, and every query in QUERIES.md needs manual testing on Aura. SKILL.md's "Without Relate" says how the rest of the build changes. Do not treat the missing run as a finding against the package.
+
 Run test mode on the package ([TESTING.md](TESTING.md)): it imports the sample data into a throwaway Relate store with a `LOAD CSV` script generated from ONTOLOGY.json, checks the data landed as the reference ontology says, runs SETUP.md, then runs every query in file order and judges each result against its TESTS.md section.
 
 ```bash
@@ -598,7 +600,7 @@ Warnings (2)
 The handoff summary must name:
 
 - Files created or changed.
-- Checks actually run, including whether ONTOLOGY.json validated against the bundled `ontology-graph-spec.schema.json`, **the ontology graph spec version its `schema` field declares and that it matches the bundle's pin**, the spec-library release the check ran with and its result, and the runtime gate's `REGISTER` and `IMPORT CONVERT` results with the destination commit they ran against. The test-mode summary from 5e: the run folder under `output/relate-tests/`, the Relate version, the per-package status counts, one line for every FAIL, ENGINE-GAP, UNSURE and IMPORT-FAIL, and every SKIPPED query by name with the reason — those still need manual testing on Aura, so point the tester at TESTS.md for them. Say that a Relate pass is evidence, not proof.
+- Checks actually run, including whether ONTOLOGY.json validated against the bundled `ontology-graph-spec.schema.json`, **the ontology graph spec version its `schema` field declares and that it matches the bundle's pin**, the spec-library release the check ran with and its result, and the runtime gate's `REGISTER` and `IMPORT CONVERT` results with the destination commit they ran against. The test-mode summary from 5e: the run folder under `output/relate-tests/`, the Relate version, the per-package status counts, one line for every FAIL, ENGINE-GAP, UNSURE and IMPORT-FAIL, and every SKIPPED query by name with the reason — those still need manual testing on Aura, so point the tester at TESTS.md for them. Say that a Relate pass is evidence, not proof. If Relate was not installed, say instead that test mode did not run and no query was executed, and list every query by heading as needing manual testing on Aura.
 - The spec-library release the destination embeds, when it differs from the pin, and any pinned-release feature the package uses that the destination will drop.
 - Every remaining `TODO(review):` with its path — calling out `inferred description` items the user has not yet confirmed.
 - Every agent-loadable file over 45,000 characters, with its size and what drove it. (TESTS.md, human_description.md and the CSVs are exempt and need no mention.)

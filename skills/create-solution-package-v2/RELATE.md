@@ -22,13 +22,18 @@ The probe was re-run on this version on 11 November 2026, and every row below is
 
 - **Source:** `relatedb/relate` release `v0.1.3` (11 November 2026). Installed by the repo's `distribution/install.sh` (also served at `https://relatedb.ai/install.sh`) to `~/.local/bin/relate`.
 - **Verification:** the install script authenticates `SHA256SUMS` against its SSHSIG signature (`SHA256SUMS.sig`) with `ssh-keygen` and the `relate-release` ED25519 key pinned in the script. It then checks the binary's SHA-256 against `SHA256SUMS`, and fails closed if either check fails.
+- **Check first:** `python3 scripts/check_relate.py` reports whether Relate is installed, at which version, and whether it runs. When it is missing, it checks what the installer needs. It installs nothing. SKILL.md's "Before you start: Relate" says what the agent does with each result.
+- **Prerequisites:** macOS or Linux; the GitHub CLI logged in (`gh auth login`) to an account with access to `relatedb/relate`, which is internal to the Neo4j GitHub organisation; `ssh-keygen`; Python 3.9 or later for the scripts.
 - **Install:**
 
   ```bash
-  GITHUB_TOKEN=$(gh auth token) sh <relate-checkout>/distribution/install.sh
+  gh api repos/relatedb/relate/contents/distribution/install.sh -H "Accept: application/vnd.github.raw" | GITHUB_TOKEN=$(gh auth token) sh
   ```
 
-  `relatedb/relate` is an internal repository, so the script needs `GITHUB_TOKEN` to reach the release; without it, it stops with a 404. The copy served at `https://relatedb.ai/install.sh` lagged the repository's on 11 November 2026, so prefer the checkout's. The script installs the latest release. To pin, compare `relate --version --json` with the pin above, and re-run the probe if it differs. `relate upgrade --check` reports the latest release without changing anything. A leftover `~/.local/bin/cypherlite` is not used by any script and can be removed.
+  This fetches the repository's current installer and runs it with your GitHub token. The token is needed because the repository is internal; without it the installer stops with a 404. The copy served at `https://relatedb.ai/install.sh` lagged the repository's on 11 November 2026, so prefer this one. The command was checked from a clean `HOME` on 12 November 2026.
+- **Version:** the installer has no version option; it always installs the latest release. On 12 November 2026 that was already `v1.0.1`, ahead of the pin. A newer version is usable, but re-run the probe and compare it with this file before trusting test-mode results; `check_relate.py` reports this as `INSTALLED, DIFFERENT VERSION`. `relate upgrade --check` reports the latest release without changing anything.
+- **Where the scripts look:** `$RELATE_BIN`, then `relate` on `PATH`, then `~/.local/bin/relate`. So a binary the installer put outside `PATH` is still found. On Windows, the installer does not run: download `relate-windows-amd64.exe` from the release page and set `RELATE_BIN` to its path.
+- A leftover `~/.local/bin/cypherlite` is not used by any script and can be removed.
 - **Telemetry** is on by default. Every script sets `RELATE_TELEMETRY=0` (`scripts/relate_cli.py`). `DO_NOT_TRACK=1` and `relate telemetry off` also disable it. The old `CYPHERLITE_*` variables are ignored, and Relate warns when one is set.
 
 ### Other surfaces (not used yet)

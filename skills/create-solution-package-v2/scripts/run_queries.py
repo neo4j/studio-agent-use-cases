@@ -469,6 +469,7 @@ def write_summary(run_dir):
 # ---------------------------------------------------------------- commands
 
 def cmd_run(a):
+    cl.require()   # exits with the install guidance when Relate is missing
     root = pathlib.Path(a.root).resolve() if a.root else find_root(pathlib.Path.cwd().resolve())
     pkgs = packages(root, a.packages)
     stamp = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")

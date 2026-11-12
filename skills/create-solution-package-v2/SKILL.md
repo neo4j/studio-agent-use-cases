@@ -1,6 +1,6 @@
 ---
 name: create-solution-package-v2
-description: Experimental v2 of create-solution-package. Use only when the user names create-solution-package-v2. Two modes. `create <source>` builds a new Neo4j industry solution package for Aura's onboarding agent — reference ontology (ONTOLOGY.json), sample CSVs with import mappings, Cypher queries, agent guidance and a human description — and tests it on Relate as it goes. `test [package]` imports a package's sample data into a throwaway Relate database, checks the data landed as the reference ontology says, and runs every query against TESTS.md; with no package named it tests every package in the repo. Updating or migrating an existing package stays in v1.
+description: Experimental v2 of create-solution-package. Use only when the user names create-solution-package-v2. Two modes. `create <source>` builds a new Neo4j industry solution package for Aura's onboarding agent — reference ontology (ONTOLOGY.json), sample CSVs with import mappings, Cypher queries, agent guidance and a human description — and tests it on Relate as it goes. `test [package]` imports a package's sample data into a throwaway Relate database, checks the data landed as the reference ontology says, and runs every query against TESTS.md; with no package named it tests every package in the repo. Without Relate installed, create still builds the package and flags every query for manual testing on Aura. Updating or migrating an existing package stays in v1.
 ---
 
 # Create a Solution Package (v2, experimental)
@@ -15,14 +15,53 @@ This is v2 of create-solution-package, an experiment in testing packages on Rela
 
 | Mode | When | What to do |
 | ---- | ---- | ---------- |
-| **create** | The request names `create`, or gives a source to build a package from (industry links, a reference ontology, sample Cypher). | Follow the build order below. It is v1's, except that the draft is tested on Relate as it is built (steps 2 and 4). |
-| **test** | The request names `test`. | Follow [TESTING.md](TESTING.md). With no package named, test every package in `catalog.json` plus any root folder holding an `ONTOLOGY.json` that the catalogue does not list. With one named, test only that package. |
+| **create** | The request names `create`, or gives a source to build a package from (industry links, a reference ontology, sample Cypher). | Follow the build order below. It is v1's, except that the draft is tested on Relate as it is built (steps 2 and 4). Without Relate, build it anyway: see "Without Relate". |
+| **test** | The request names `test`. | Needs Relate (see "Before you start: Relate"). Follow [TESTING.md](TESTING.md). With no package named, test every package in `catalog.json` plus any root folder holding an `ONTOLOGY.json` that the catalogue does not list. With one named, test only that package. |
 
 If the request is neither — it asks to update, migrate or clean up an existing package — say that v2 does not do that and that v1 (`create-solution-package`) does. Do not improvise a migration here.
 
 Test mode reports problems; it never fixes them. It never edits a package, never edits v1, and never rewrites a query to make it pass. Proposed fixes go in the report.
 
 Companion skills: [ONTOLOGY_SPEC_FORMAT.md](ONTOLOGY_SPEC_FORMAT.md) is the contract for `ONTOLOGY.json` — follow it exactly; its authority is `ontology-graph-spec.schema.json`, bundled here. [VALIDATION.md](VALIDATION.md) is the check suite to run before handing off. [TESTING.md](TESTING.md) is the test-mode procedure, and [RELATE.md](RELATE.md) records the pinned Relate version, what it can and cannot run, and the workaround for each gap. `scripts/` holds the tools VALIDATION.md and TESTING.md use. ONTOLOGY_SPEC_FORMAT.md and PACKAGE_FORMAT.md are v1's, unchanged: where they mention MIGRATION.md, that procedure lives in v1; and where PACKAGE_FORMAT.md says testing against a database is manual and outside package creation, this file's step 4 replaces it — the package format itself is unchanged.
+
+## Before you start: Relate
+
+Test mode needs Relate, an embedded Cypher engine that runs as a single local binary. Many users will not have it. Check before anything else, in either mode:
+
+```bash
+python3 <skill-path>/scripts/check_relate.py
+```
+
+It installs nothing. Act on its first line:
+
+| Result | What to do |
+| ------ | ---------- |
+| `READY` | Carry on. |
+| `INSTALLED, DIFFERENT VERSION` | Tell the user which version they have and that the skill was checked against the pin in RELATE.md. Run the probe (`python3 <skill-path>/scripts/probe_relate.py <repo-root>`, a few minutes), compare its summary with RELATE.md's capability matrix, and tell the user about any row that changed before you rely on test-mode results. Then carry on. |
+| `NOT INSTALLED` or `INSTALLED, NOT WORKING` | Tell the user, then offer the two ways forward below. |
+| `PYTHON TOO OLD` | The scripts need Python 3.9 or later. Say so; the build can continue without Relate. |
+
+When Relate is missing, explain it to the user in a few sentences, then let them choose:
+
+- **What it is and why:** test mode imports the package's sample data into a throwaway local Relate database and runs every query, so wrong queries and stale expectations are caught before handoff instead of in a manual Aura session.
+- **Install it.** Show the prerequisites `check_relate.py` printed and how to fix any marked missing. `relatedb/relate` is internal to the Neo4j GitHub organisation, so the user needs the GitHub CLI logged in to an account with access. The install command is:
+
+  ```bash
+  gh api repos/relatedb/relate/contents/distribution/install.sh -H "Accept: application/vnd.github.raw" | GITHUB_TOKEN=$(gh auth token) sh
+  ```
+
+  It downloads the latest release and verifies its signature and checksum before installing it to `~/.local/bin/relate`. **Run it only when the user says to:** it downloads and runs an installer. Then run `check_relate.py` again. The installer always takes the latest release, so a fresh install is often newer than the pin; handle that as `INSTALLED, DIFFERENT VERSION`. RELATE.md has the details, including Windows.
+- **Carry on without it.** In create mode the package is still built in full; see "Without Relate". Test mode has nothing to do without Relate: say so, and stop.
+
+Ask once. If the user chooses to carry on without Relate, do not raise it again until the handoff.
+
+## Without Relate
+
+Create mode works without Relate; only the query execution is lost. Build everything as the build order says, with these changes:
+
+- **Step 4 runs no test mode.** Write TESTS.md from the working note and from the CSVs alone. Every Expected figure must be derived from the CSVs, by reading them or with a short script, never estimated. The rule "never write a result that was neither observed nor derived from the CSVs" still applies; with nothing observed, every figure is derived. Write the Invariant and Expected fields as carefully as you would for a run, since they are what the manual tester will check against.
+- **VALIDATION.md section 5e is not run.** Every other check in VALIDATION.md still runs, including the static query checks in section 5 and the runtime gate.
+- **The handoff says so first.** Open the test-mode part of the handoff with: no query was executed, because Relate is not installed. List every query in QUERIES.md by its heading as needing manual testing on Aura, following TESTS.md's "How to run". Then say that installing Relate (see "Before you start: Relate") and running `test <package>` would check the queries locally.
 
 **The bundled schema is the only ontology graph spec.** Never fetch one over the network or reason from a remembered version — the bundled file is pinned deliberately, and packages are bound to it. ONTOLOGY_SPEC_FORMAT.md carries the pinned version and its provenance; every package you build declares it in `ONTOLOGY.json`'s `schema` field.
 
@@ -216,7 +255,7 @@ Everything concrete about the bundled sample data, in one file the runtime never
 
 Write it immediately after QUERIES.md, from the working note kept at step 2 and from reading the CSVs: it states what each query should return on the bundled data, derived from the seeded design. It is the specification the manual tester works from, the oracle VALIDATION.md checks for completeness, and the reference an engineer curating the package needs. It is exempt from the size limit — detail is free here, because none of it reaches the consuming agent.
 
-Package creation runs test mode ([TESTING.md](TESTING.md)) on the draft as soon as QUERIES.md and TESTS.md exist, and again after every change to the data, the queries or TESTS.md. The rules:
+When Relate is available, package creation runs test mode ([TESTING.md](TESTING.md)) on the draft as soon as QUERIES.md and TESTS.md exist, and again after every change to the data, the queries or TESTS.md. Without Relate, see "Without Relate". The rules:
 
 - **A FAIL is a blocker.** So are IMPORT-FAIL and BLOCKED. Each sends the build back: to the CSVs or the generator when the data cannot produce the pattern, to the query when the Cypher is wrong, to TESTS.md when the expectation is stale. Fix the cause and re-run; never tune TESTS.md to match a wrong result.
 - **Never write a result into TESTS.md that was not either observed in a run or derived from the CSVs.** A count you computed from the CSVs and a count test mode observed are both fine, and they should agree; say which a figure is when it matters. A figure that is neither is invented.
@@ -481,6 +520,6 @@ Aim for something a reader gets through in two or three minutes — roughly 400 
 
 Run [VALIDATION.md](VALIDATION.md) in full. Inconsistency between reference ontology, data, and queries is the most common failure — and annotations widen that check: descriptions, sample values, allowed values, counts, query annotations, and CSVs must all tell the same story. The second most common failure is now sample-data detail leaking into a file the consuming agent reads; check QUERIES.md and SKILL.md for it specifically.
 
-Your handoff summary must give the final test-mode summary — the run folder, the per-package table, one line for every FAIL, ENGINE-GAP, UNSURE and IMPORT-FAIL, every SKIPPED query that still needs manual testing on Aura, and the Relate version — and must list every remaining `TODO(review):` with its path (including `inferred description` items the user hasn't confirmed), whether the reference ontology validated against the bundled schema, passed the spec-library check (and with which npm release), and was accepted by the destination runtime — registration and Import conversion both — the ontology graph spec version its `schema` field declares, any agent-loadable file near the 50,000-character limit, whether `human_description.md` covers every node, relationship and property in the reference ontology, and any assumption that needs domain-owner review. In `neo4j/studio-agent-use-cases`, also run `scripts/validate-new-packages.py` and the unit tests, which CI runs on the pull request.
+Your handoff summary must give the final test-mode summary — the run folder, the per-package table, one line for every FAIL, ENGINE-GAP, UNSURE and IMPORT-FAIL, every SKIPPED query that still needs manual testing on Aura, and the Relate version; or, without Relate, the statement that no query was executed and the list of every query needing manual testing on Aura — and must list every remaining `TODO(review):` with its path (including `inferred description` items the user hasn't confirmed), whether the reference ontology validated against the bundled schema, passed the spec-library check (and with which npm release), and was accepted by the destination runtime — registration and Import conversion both — the ontology graph spec version its `schema` field declares, any agent-loadable file near the 50,000-character limit, whether `human_description.md` covers every node, relationship and property in the reference ontology, and any assumption that needs domain-owner review. In `neo4j/studio-agent-use-cases`, also run `scripts/validate-new-packages.py` and the unit tests, which CI runs on the pull request.
 
 `human_description.md` is the one part of the package nothing downstream verifies — no schema rejects it, no query fails against it, and no agent ever reads it back. Say plainly in the handoff that it needs a human read before the package ships.

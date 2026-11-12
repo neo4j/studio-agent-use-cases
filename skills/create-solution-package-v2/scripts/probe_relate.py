@@ -14,6 +14,8 @@ Besides the hand-written cases it (a) inventories the Cypher constructs every pa
 SETUP.md actually use and maps each to the cases covering it, flagging any construct no case covers,
 and (b) EXPLAINs every annotated statement in every package (the corpus). Writes probe.json and
 probe.md under --out (default output/relate-tests/probe-<timestamp>/). Standard library only."""
+from __future__ import annotations
+
 import argparse, collections, concurrent.futures, csv, dataclasses, datetime, json, math, os, pathlib
 import re, shutil, subprocess, sys, tempfile
 
@@ -1012,6 +1014,7 @@ def main():
     ap.add_argument("--only", default="")
     ap.add_argument("--jobs", type=int, default=6)
     a = ap.parse_args()
+    cl.require()
     ROOT = pathlib.Path(a.root).resolve()
     stamp = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
     out = pathlib.Path(a.out) if a.out else ROOT / "output" / "relate-tests" / f"probe-{stamp}"

@@ -15,9 +15,9 @@ Every Relate behaviour this procedure relies on is recorded in [RELATE.md](RELAT
 
 ## Before you start
 
-- **Version:** check `relate --version --json` against the pin in RELATE.md.
-  - If Relate is missing, install it as RELATE.md describes.
-  - If it is a different version, say so and re-run the probe before trusting any result:
+- **Relate:** run `python3 scripts/check_relate.py` and act on its result as SKILL.md's "Before you start: Relate" says.
+  - If Relate is missing, test mode cannot run. Say so, offer the install described there, and stop. `run_queries.py run` and `probe_relate.py` exit with the same install guidance rather than a traceback. `judge` and `report` work without Relate, on results already saved.
+  - If it is a different version from the pin in RELATE.md, say so and re-run the probe before trusting any result:
     ```bash
     python3 scripts/probe_relate.py <repo-root>
     ```

@@ -47,8 +47,10 @@ def py_conv(v, typ):
         if typ == "ZONED DATETIME":
             if not ISO_DATETIME.match(t):
                 return None
-            d = datetime.datetime.fromisoformat(t.replace("Z", "+00:00"))
-            return (d if d.tzinfo else d.replace(tzinfo=datetime.UTC)).astimezone(datetime.UTC)
+            # Python 3.9's fromisoformat takes neither "Z" nor a fraction of other than 3 or 6 digits.
+            iso = re.sub(r"\.(\d+)", lambda m: "." + (m.group(1) + "000000")[:6], t.replace("Z", "+00:00"))
+            d = datetime.datetime.fromisoformat(iso)
+            return (d if d.tzinfo else d.replace(tzinfo=datetime.timezone.utc)).astimezone(datetime.timezone.utc)
     except (ValueError, ArithmeticError):
         return None
     raise gen.ShapeError(f"type {typ!r} not supported")
@@ -298,6 +300,7 @@ if __name__ == "__main__":
     ap.add_argument("--out")
     ap.add_argument("--no-load", action="store_true")
     a = ap.parse_args()
+    cl.require()
     try:
         res = run(a.package, a.store, a.out, not a.no_load)
     except gen.ShapeError as e:
