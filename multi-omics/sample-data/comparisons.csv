@@ -1,0 +1,7 @@
+comparisonId,name,comparisonType
+CMP-LIV-MASLD,MASLD vs control (liver),disease_vs_control
+CMP-LIV-MASH,MASH vs simple steatosis (liver),disease_severity
+CMP-LIV-DIA,"MASLD vs control, DIA-PASEF replication (liver)",disease_vs_control
+CMP-ISL-T2D,Type 2 diabetes vs non-diabetic (islets),disease_vs_control
+CMP-ADI-METS,Metabolic syndrome vs control (visceral adipose),disease_vs_control
+CMP-ADI-IR,Insulin resistant vs insulin sensitive (visceral adipose),phenotype_stratified
