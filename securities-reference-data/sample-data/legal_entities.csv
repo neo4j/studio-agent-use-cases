@@ -1,0 +1,501 @@
+entityId,name,lei,countryCode,sector
+LE-0001,Brookline Financial Group plc,B18P000V4Y863R37K174,GB,Financials
+LE-0002,Brookline Capital Markets Limited,KX0K00YTG3XRMJ8A4N49,GB,Financials
+LE-0003,Brookline Securities LLC,WRHR00LZ3ZUSNV6JH138,US,Financials
+LE-0004,Brookline Investment Holdings Limited,0AA8004WP9YDQLFDSL59,GB,Financials
+LE-0005,Brookline Asset Management Limited,55ZA00FYT4810BS8ZD81,GB,Financials
+LE-0006,Harrowgate Bancorp Inc.,XK3K000DRNYP3K6SEA38,US,Financials
+LE-0007,Harrowgate Securities LLC,8ZNF002D4LD8SAZM4R72,US,Financials
+LE-0008,Harrowgate Europe S.A.,F1H400DJPXKEZBR3LW75,FR,Financials
+LE-0009,Harrowgate Depositary Trust Company,8A6400KTN7A2UX3XA553,US,Financials
+LE-0010,Harrowgate Investment Management LLC,9GBS007T9M15605JKC42,US,Financials
+LE-0011,Meridian Kapital AG,YEZD008QGBLKX6X9QS91,CH,Financials
+LE-0012,Meridian Kapital Markets AG,J4CH00A0648R31RMDZ56,CH,Financials
+LE-0013,Meridian Securities (Europe) GmbH,PB3N00ZG8RSMC0T1M317,DE,Financials
+LE-0014,Meridian Fondsverwaltung AG,MBD60041CNXNA8N15L40,CH,Financials
+LE-0015,Banque Lumiere SA,UL9600E7JFT9BPXKFK59,FR,Financials
+LE-0016,Lumiere Marches de Capitaux SA,JZAL00LST8RV5E21Z530,FR,Financials
+LE-0017,Shinonome Financial Group K.K.,0N2Y002RKPJEYMPECX18,JP,Financials
+LE-0018,Shinonome Securities K.K.,Y00500NVK9RMV8UH1551,JP,Financials
+LE-0019,Shinonome International plc,QVZJ001MPNHUSNMF4Q94,GB,Financials
+LE-0020,Shinonome Asset Management K.K.,ZZGU00PW0EZ49EAEQ591,JP,Financials
+LE-0021,Calloway Trust Bancorp Inc.,AT4J0011WHKHERS9GD27,US,Financials
+LE-0022,"Calloway Trust Bank, N.A.",FJ6R00N80ANC0JA98M94,US,Financials
+LE-0023,Brookhaven Partners Holdings LLC,ZF2600WYWG9CK63YVC20,US,Financials
+LE-0024,Brookhaven Partners LLC,62L300KY30S4309SQQ56,US,Financials
+LE-0025,Vantor Bank N.V.,D02R00BMRY3RMAT3WY38,NL,Financials
+LE-0026,Vantor Capital Markets N.V.,LSML00EPNVC2LSQHA885,NL,Financials
+LE-0027,Aldermoor Investors Limited,133G00SWZCR6THMGDE09,GB,Financials
+LE-0028,Northgate Capital Management LLC,Q2M4008KMS6B899V6G87,US,Financials
+LE-0029,Westmark Asset Management Inc.,U3J500ZFCUFYQLED3749,US,Financials
+LE-0030,Tidewater Pensions Trustee Limited,1LC200WL4WQ4FZLZ0A94,GB,Financials
+LE-0031,Quillon Software Inc.,R4FB00ZRYXNYAK4U8135,US,Information Technology
+LE-0032,Quillon Software Technologies Inc.,L2EG00AYDFWL867X5546,US,Information Technology
+LE-0033,Ostrander Energy Inc.,H06X00GTKCQMTRMT2A29,US,Energy
+LE-0034,Ostrander Energy Operations Inc.,C0QU00A5J8BBZ5SZBT66,US,Energy
+LE-0035,Ostrander Energy Technologies Inc.,96JU0020DSY7PPKDWX71,US,Energy
+LE-0036,Ostrander Energy Capital LLC,7DHB005U83WSFWGGT733,US,Energy
+LE-0037,Ostrander Energy Operations plc,SYH300AU0188K111GY82,GB,Energy
+LE-0038,Pellucid Health Inc.,N1J20029DY8ERMC7GE56,US,Health Care
+LE-0039,Pellucid Health Capital LLC,0HCN00FP81EQ4GNN5Z31,US,Health Care
+LE-0040,Fennimore Pharmaceuticals Inc.,VZMS00V0GJPVLLZKRD51,US,Health Care
+LE-0041,Fennimore Pharmaceuticals Asia AG,0WUG00NV4BV4NFRKKV87,DE,Health Care
+LE-0042,Jessop Retail Inc.,9D7C00PXDCNX3X3BXA82,US,Consumer Discretionary
+LE-0043,Jessop Retail Asia AG,MHMT002MSY71AQMN8W40,DE,Consumer Discretionary
+LE-0044,Jessop Retail Americas Inc.,LAPB00CQ037KJT3C5219,US,Consumer Discretionary
+LE-0045,Jessop Retail Asia Inc.,T59K009QLYDTPKP99D93,US,Consumer Discretionary
+LE-0046,Varnell Aerospace Inc.,Q397000QXVL4QA17Z974,US,Industrials
+LE-0047,Varnell Aerospace Asia plc,WARE00L8LPTA2ARBEX64,GB,Industrials
+LE-0048,Varnell Aerospace Operations AG,4GL300TRP3KJJQRQHV26,DE,Industrials
+LE-0049,Zentara Payments Inc.,URCH00FJDEL55YDAJS23,US,Financials
+LE-0050,Zentara Payments Capital LLC,AFTW00XQ9GXFCG6PMT84,US,Financials
+LE-0051,Zentara Payments Americas Inc.,9R1B007V9EKJEYE0N397,US,Financials
+LE-0052,Oakhurst Homes Inc.,BWCR00XH0N77D0FX0T36,US,Real Estate
+LE-0053,Oakhurst Homes Asia Inc.,AFAY006PAG6VLRBWQY68,US,Real Estate
+LE-0054,Oakhurst Homes Capital LLC,0EWX00X4ZYYD36H5WN86,US,Real Estate
+LE-0055,Sorrel Bay Utilities Inc.,ZYDF00ZHA2NEZ9RGYH30,US,Utilities
+LE-0056,Sorrel Bay Utilities International Inc.,SD9Z00TH89VCHP5L7Y07,US,Utilities
+LE-0057,Sorrel Bay Utilities Capital LLC,QT60002NBQ2FX6TY7A14,US,Utilities
+LE-0058,Sorrel Bay Utilities Technologies Inc.,D80R00G1WEKK2PVCSU74,US,Utilities
+LE-0059,Sorrel Bay Utilities Operations Inc.,Q4J300PE2YYUNNXYCF17,US,Utilities
+LE-0060,Ivel Semiconductors Inc.,WS8A00QWM5L88AXF1K34,US,Information Technology
+LE-0061,Ivel Semiconductors Capital LLC,ZVCN00X1JFTMAH4LQK19,US,Information Technology
+LE-0062,Tavira Telecom Inc.,ST1T00R1AJKJQENYZD93,US,Communication Services
+LE-0063,Tavira Telecom Operations Inc.,FAC000ES7R72D8FS0N56,US,Communication Services
+LE-0064,Gantry Steel Inc.,5S7N00NWZX0HR07WLQ92,US,Materials
+LE-0065,Gantry Steel International plc,9B9N005GZFE0BQA74F25,GB,Materials
+LE-0066,Gantry Steel Services Inc.,R5EC00XV4N56QUNBKJ84,US,Materials
+LE-0067,Gantry Steel Capital LLC,AFJX00XG01WP7G9V7C73,US,Materials
+LE-0068,Pemberly Media Inc.,6J2K00XA3W9TZ76ZY910,US,Communication Services
+LE-0069,Pemberly Media Asia Inc.,JR0W00ZL43S8EMBWR591,US,Communication Services
+LE-0070,Pemberly Media Capital LLC,7CBT00JT5V8Z22PDEW85,US,Communication Services
+LE-0071,Quorra Biotech Inc.,5SR2006HB7CRUYN9C667,US,Health Care
+LE-0072,Quorra Biotech Capital LLC,3PEK00XH8F0NWQTU0S63,US,Health Care
+LE-0073,Quorra Biotech Asia Inc.,8TDM00Y81W2Z5HW1GR83,US,Health Care
+LE-0074,Quorra Biotech Operations plc,157F007M93BNJTQY0W54,GB,Health Care
+LE-0075,Northam Rail Corp.,YC8D00HT6AT03HC6GC15,CA,Industrials
+LE-0076,Northam Rail Asia AG,NQPP0061320DWPXAFW48,DE,Industrials
+LE-0077,Rennick Mining Holdings Corp.,3U9100DXM4K8JFNN9R52,CA,Materials
+LE-0078,Rennick Mining Capital LLC,DBCW00Y867TYM1SF9P52,US,Materials
+LE-0079,Rennick Mining Asia plc,W6PE00FRH4NFDRWMBZ18,GB,Materials
+LE-0080,Rennick Mining Technologies Corp.,G3C800NJWU1BM0QUPC49,CA,Materials
+LE-0081,Hollis & Crane plc,RHDY00VKY7C8ZA3XML88,GB,Industrials
+LE-0082,Hollis & Crane Capital LLC,FUJ800Y5RNHH640H9U03,US,Industrials
+LE-0083,Hollis & Crane Services plc,YZYY007P6QQXKNYZ8Q18,GB,Industrials
+LE-0084,Hollis & Crane Asia AG,DW4000J5U4UE3YN3Q243,DE,Industrials
+LE-0085,Wexcombe Breweries plc,HVGV00CSMS79CVZWZ537,GB,Consumer Staples
+LE-0086,Wexcombe Breweries Technologies plc,ELCA00WH99NPX8007X70,GB,Consumer Staples
+LE-0087,Wexcombe Breweries Asia Inc.,W6VA00DBUKG4KEM08Q25,US,Consumer Staples
+LE-0088,Wexcombe Breweries Operations plc,6F3W00DVTTYPS95C4V02,GB,Consumer Staples
+LE-0089,Larchmont Insurance Holdings plc,SXAC00RZFHQ541Q64E10,GB,Financials
+LE-0090,Larchmont Insurance Technologies plc,23LQ00L2QXCEKJ771025,GB,Financials
+LE-0091,Larchmont Insurance Europe plc,VG0600XHRLPLTP85M024,GB,Financials
+LE-0092,Larchmont Insurance Finance S.A.,8QLK00UQ3VMMQ6BDM669,LU,Financials
+LE-0093,Larchmont Insurance Services plc,XXZU00L17CXGST654X14,GB,Financials
+LE-0094,Tessaly Water plc,MV4400LRHAQ8DY315Z74,GB,Utilities
+LE-0095,Tessaly Water Operations AG,4XDC006P1T1T1Q83H744,DE,Utilities
+LE-0096,Tessaly Water Technologies plc,2KFP00FN6CZKYRCUQA61,GB,Utilities
+LE-0097,Tessaly Water Europe plc,ABTE00ULFTVAN5AYJY32,GB,Utilities
+LE-0098,Tessaly Water Europe AG,XKB5002B9XFWRYJFSB19,DE,Utilities
+LE-0099,Yarrow Paper plc,6WM900N5SKHEWTPVPP09,IE,Materials
+LE-0100,Yarrow Paper Operations plc,EA9J00ZVQFBXDLMCRY21,IE,Materials
+LE-0101,Yarrow Paper International AG,12TD00WUQCDM1V7LZV90,DE,Materials
+LE-0102,Yarrow Paper International II AG,QDCM001BKAK1FNRGBP95,DE,Materials
+LE-0103,Arbeck Motoren AG,RBNH00M45NUH9JE7MK88,DE,Consumer Discretionary
+LE-0104,Arbeck Motoren Capital LLC,NT5J006A89HB7FYVA913,US,Consumer Discretionary
+LE-0105,Arbeck Motoren Asia plc,XQHP00F1FR6KCEX99C44,GB,Consumer Discretionary
+LE-0106,Arbeck Motoren International AG,DFCC0057MZLWGYK9TF82,DE,Consumer Discretionary
+LE-0107,Arbeck Motoren Operations Inc.,CE1Q00NMFR8C1HQCYV02,US,Consumer Discretionary
+LE-0108,Vellmar Chemie AG,CUS400S4SX71T9RJM045,DE,Materials
+LE-0109,Vellmar Chemie Operations Inc.,6YKL00XARLWZR73MYA60,US,Materials
+LE-0110,Lindqvist Logistik AG,9D8B00HPU3LS6029T921,DE,Industrials
+LE-0111,Lindqvist Logistik International plc,PM6U009BNMUR71AC9935,GB,Industrials
+LE-0112,Lindqvist Logistik Operations plc,8YZE00B8YE8TBFV4P332,GB,Industrials
+LE-0113,Delacroix Luxe SA,F4U700F8HAF8PR7SU497,FR,Consumer Discretionary
+LE-0114,Delacroix Luxe International Inc.,8YTC003UC94R0GM4HR38,US,Consumer Discretionary
+LE-0115,Delacroix Luxe Finance B.V.,NANA0072DBC47NLGD529,NL,Consumer Discretionary
+LE-0116,Marchetti Alimentaire SA,CLCH00L8TRWYC2T27J53,FR,Consumer Staples
+LE-0117,Marchetti Alimentaire Services SA,KE900063GCC111G5KJ53,FR,Consumer Staples
+LE-0118,Marchetti Alimentaire Technologies SA,2Y6800HF2XQMSYNEYE74,FR,Consumer Staples
+LE-0119,Marchetti Alimentaire Services II SA,MWP300HBE8ZRTT0VPR07,FR,Consumer Staples
+LE-0120,Ambrel Glas N.V.,9QTU00CB8L8DCLKUMX05,NL,Materials
+LE-0121,Ambrel Glas Capital LLC,YRHG00P3B31RYJXFG891,US,Materials
+LE-0122,Ambrel Glas Americas N.V.,SQYC001CKVULCFXEDA02,NL,Materials
+LE-0123,Rostova Shipping N.V.,93GG00SVYVHVW9TM2Q77,NL,Industrials
+LE-0124,Rostova Shipping Europe AG,DG4Y000RCAQ6YDJHL125,DE,Industrials
+LE-0125,Rostova Shipping Services N.V.,60T100W3NGY5RAEPRH46,NL,Industrials
+LE-0126,Rostova Shipping Finance B.V.,KXSK00LRQ4LSA047S355,NL,Industrials
+LE-0127,Rostova Shipping Americas N.V.,50ZV00DAZ4H9T268FC32,NL,Industrials
+LE-0128,Ulvik Seafood AG,4PPY00ZLB2LMEDLM1958,CH,Consumer Staples
+LE-0129,Ulvik Seafood Services AG,AVT800J4C3CC3QYNAJ78,DE,Consumer Staples
+LE-0130,Ulvik Seafood Operations AG,2K7G006E250R8F88YN02,CH,Consumer Staples
+LE-0131,Ulvik Seafood Finance S.A.,FA8H00YL3F83HREZW488,LU,Consumer Staples
+LE-0132,Ulvik Seafood Technologies AG,BASA00Q26EUUHYZC8L90,CH,Consumer Staples
+LE-0133,Mirelle Cosmetics AG,WNN300LBABRHMDGHUF34,CH,Consumer Staples
+LE-0134,Mirelle Cosmetics Asia AG,QXUT00WKEH2TBBZCNC48,DE,Consumer Staples
+LE-0135,Hoshida Motors Holdings K.K.,639200QTAB8704J8FK50,JP,Consumer Discretionary
+LE-0136,Hoshida Motors Europe K.K.,S7NU0069YGZX5U4HS926,JP,Consumer Discretionary
+LE-0137,Hoshida Motors Europe plc,8VAW00D1XUPLCCM1B606,GB,Consumer Discretionary
+LE-0138,Asakura Chemical K.K.,RL3Y004H4LNUBKZ8R078,JP,Materials
+LE-0139,Asakura Chemical Americas plc,6BX200NK0F6QVWA1YD70,GB,Materials
+LE-0140,Asakura Chemical Finance S.A.,DERA0062295DU9Z8F853,LU,Materials
+LE-0141,Tsukimi Foods Holdings K.K.,BWQU005C6L22FN7DC207,JP,Consumer Staples
+LE-0142,Tsukimi Foods Finance B.V.,WRDN00K0DUU8VH4ELN63,NL,Consumer Staples
+LE-0143,Jadecrest Properties Limited,V7E000SMW81EFRTYWG89,HK,Real Estate
+LE-0144,Jadecrest Properties Operations Limited,23K5000DDFLWEXRXKA11,HK,Real Estate
+LE-0145,Jadecrest Properties Finance S.A.,UPNV002QBSU265D5KU34,LU,Real Estate
+LE-0146,Jadecrest Properties Services Limited,83FN001KN60VZFBRLG97,HK,Real Estate
+LE-0147,Harbourline Ports Limited,1MGE00KBY303SR0KAA64,HK,Industrials
+LE-0148,Harbourline Ports Capital LLC,PBKX00EYB6QCBBD2QJ20,US,Industrials
+LE-0149,Harbourline Ports Services Inc.,K0AZ00MQPRZKSNNMT983,US,Industrials
+LE-0150,Alderney Metals Inc.,SGR100AJ9JN5R0TB0F41,US,Materials
+LE-0151,Alderney Metals Capital LLC,0YZH0055ZC4Z7SAKQW55,US,Materials
+LE-0152,Halsall Retail Inc.,9T6000ACJTESQ37R0516,US,Consumer Discretionary
+LE-0153,Halsall Retail Services Inc.,A9010096Q5WGS6UTN382,US,Consumer Discretionary
+LE-0154,Halsall Retail Europe plc,M46Z006H66V8HNHB0A56,GB,Consumer Discretionary
+LE-0155,Halsall Retail Services II Inc.,XPGJ00SZKHFBDM04GW75,US,Consumer Discretionary
+LE-0156,Ironside Therapeutics Inc.,2SKW00ARRSVVJQ92YC86,US,Health Care
+LE-0157,Ironside Therapeutics Asia Inc.,8H8K00C69QY304JFN421,US,Health Care
+LE-0158,Ironside Therapeutics International Inc.,79RA00DR2MHDAFQMX524,US,Health Care
+LE-0159,Ironside Therapeutics International II Inc.,VP0200NHUT9FHSWSY456,US,Health Care
+LE-0160,Ironside Therapeutics Services AG,HRY000TX62US4F9JL215,DE,Health Care
+LE-0161,Zennor Power Inc.,G80400DRC56S3EQXSL81,US,Utilities
+LE-0162,Zennor Power Operations Inc.,PSDM00TBCHY7XR69QT46,US,Utilities
+LE-0163,Penrose Assurance Inc.,5ZRP00FQPD2NMKH1XF86,US,Financials
+LE-0164,Penrose Assurance Services plc,ZSSR00VUD31NMEYRF257,GB,Financials
+LE-0165,Saltash Industries Holdings Inc.,RXEG00ZMPTAF5K0TZD33,US,Industrials
+LE-0166,Saltash Industries International Inc.,N0QW004FXLHNMCKAPK66,US,Industrials
+LE-0167,Saltash Industries Services Inc.,K9VL00NP4RCDCL9PSV80,US,Industrials
+LE-0168,Marlow Power Inc.,46JG00HNZEB7SW7HGQ97,US,Utilities
+LE-0169,Marlow Power Capital LLC,NJ5L00NQ24B4DUK4Z996,US,Utilities
+LE-0170,Marlow Power International Inc.,BGH800FF22PZYZBZ5942,US,Utilities
+LE-0171,Ottery Medical Inc.,HDQX0096YVKE68N0UB07,US,Health Care
+LE-0172,Ottery Medical International Inc.,BP11003RRKSTPRJ68427,US,Health Care
+LE-0173,Ulverby Electronics Inc.,9FRT004V5VSL1WGL2P37,US,Information Technology
+LE-0174,Ulverby Electronics Asia Inc.,YK1H00HZKU752NUMZE46,US,Information Technology
+LE-0175,Ulverby Electronics Asia plc,NHM600N1S60ZNYTWWZ89,GB,Information Technology
+LE-0176,Ulverby Electronics Asia II Inc.,S4NL00S3V45NU9T2CK18,US,Information Technology
+LE-0177,Ulverby Electronics International AG,UBUZ00UEHBEPJKXW0P81,DE,Information Technology
+LE-0178,Wendover Diagnostics Inc.,EATH009002YWXEAQH357,US,Health Care
+LE-0179,Wendover Diagnostics International Inc.,U1T200KJRQCYSG8CJP16,US,Health Care
+LE-0180,Wendover Diagnostics Services Inc.,B4J3002FU2TXU4FMWS70,US,Health Care
+LE-0181,Wendover Diagnostics Operations Inc.,9ZZR0083G5167VR5N839,US,Health Care
+LE-0182,Wendover Diagnostics Capital LLC,BPSP00XQES76GG291019,US,Health Care
+LE-0183,Lowmoor Energy Holdings Inc.,PTYQ00ZPUVWRKFSAC544,US,Energy
+LE-0184,Lowmoor Energy Capital LLC,KC52006FRE1D3BXPX623,US,Energy
+LE-0185,Lowmoor Energy Asia Inc.,UNBP0055D7U746DB5C22,US,Energy
+LE-0186,Lowmoor Energy Technologies plc,MQCC00PJ7XDJ82X2W023,GB,Energy
+LE-0187,Hartwell Networks Inc.,YGT200Q5SUYLHFSUQV84,US,Communication Services
+LE-0188,Hartwell Networks Europe AG,1GZV00Y5B2RE1ABP7E16,DE,Communication Services
+LE-0189,Hartwell Networks Americas AG,SSFN00CLZK8KK3D4S551,DE,Communication Services
+LE-0190,Zennor Industries Inc.,8RUV00YK73DTN9AN3T76,US,Industrials
+LE-0191,Zennor Industries Asia Inc.,JD30008LELU63HDMTN36,US,Industrials
+LE-0192,Hartwell Industries Holdings Inc.,K14900YFP0V3CMFQL327,US,Industrials
+LE-0193,Hartwell Industries Services plc,VGL200WY8ZK3LV9NSR14,GB,Industrials
+LE-0194,Upwey Diagnostics Inc.,7FDT00WJ11P9MTDTFH26,US,Health Care
+LE-0195,Upwey Diagnostics Europe plc,L5JJ00QJVQ64GDBCV409,GB,Health Care
+LE-0196,Upwey Diagnostics Services plc,9SKA00MBACHU4VDZZ906,GB,Health Care
+LE-0197,Upwey Diagnostics Asia Inc.,AMWV006EYYVJX6WQPD02,US,Health Care
+LE-0198,Hartwell Media Inc.,TLZU006630L4TAM9SX50,US,Communication Services
+LE-0199,Hartwell Media Europe Inc.,22K400DL9XQBNHRCRR85,US,Communication Services
+LE-0200,Rydal Engineering Inc.,2CTT00Y9K8XE57CRXJ70,US,Industrials
+LE-0201,Rydal Engineering Capital LLC,QVJ200LQ7PYTWVFF5P89,US,Industrials
+LE-0202,Rydal Engineering Operations Inc.,5Z6Q004P0QSYZ9X9FT76,US,Industrials
+LE-0203,Rydal Engineering International AG,GD0S00YT331WLJHCM263,DE,Industrials
+LE-0204,Grantley Utilities Holdings Inc.,C0D200G33QUFH2QU2B35,US,Utilities
+LE-0205,Grantley Utilities Capital LLC,JDR100RLTAWK8RVBWG82,US,Utilities
+LE-0206,Grantley Utilities Europe Inc.,YYWN00MECBU9TA4PP080,US,Utilities
+LE-0207,Grantley Utilities Technologies Inc.,FAGM0045STA7WQQN7383,US,Utilities
+LE-0208,Cobalt Communications Inc.,P5VQ0065ADM5H006AE12,US,Communication Services
+LE-0209,Cobalt Communications Asia AG,L8CR007TUSZ10EVALP97,DE,Communication Services
+LE-0210,Cobalt Communications Operations Inc.,RTC600FFLB3WA6C7XA45,US,Communication Services
+LE-0211,Cobalt Communications Capital LLC,QJWY0037CM3N0TL5UF79,US,Communication Services
+LE-0212,Cobalt Communications Operations II Inc.,UR7W007UZEGB7T8WTZ29,US,Communication Services
+LE-0213,Aster Media Inc.,80EE00Y460N0EUUHDX16,US,Communication Services
+LE-0214,Aster Media Operations plc,T1DP00XY1VYBKBBG4A62,GB,Communication Services
+LE-0215,Aster Media Capital LLC,RJY0004GZGGQMX5YU223,US,Communication Services
+LE-0216,Aster Media Americas Inc.,DL9X00ZPFXE1USK5TZ86,US,Communication Services
+LE-0217,Davenham Utilities Inc.,PACV00PNKVRZKWVQFW20,US,Utilities
+LE-0218,Davenham Utilities Technologies Inc.,LB9Y00BGA517LVWH1U23,US,Utilities
+LE-0219,Marlow Beverages Inc.,6MLM00WSDV5ERNQ18F89,US,Consumer Staples
+LE-0220,Marlow Beverages Capital LLC,PPEQ00ZUQV0CKQ0FYD63,US,Consumer Staples
+LE-0221,Marlow Beverages Technologies AG,RMVH00THJZEA664Y4B72,DE,Consumer Staples
+LE-0222,Marlow Beverages Operations Inc.,NWVP00UWR738L3NMBQ84,US,Consumer Staples
+LE-0223,Wendover Chemicals Inc.,K57X00BU0YWNNG2D6C28,US,Materials
+LE-0224,Wendover Chemicals Capital LLC,RC2G0016MPHB44XCPQ36,US,Materials
+LE-0225,Wendover Chemicals International Inc.,PQ7B00LX8VPHG4ZPJN88,US,Materials
+LE-0226,Yeoford Industries Inc.,E7VK00837Q4PTET26661,US,Industrials
+LE-0227,Yeoford Industries International plc,YAA50020DM4R500BCG08,GB,Industrials
+LE-0228,Dunmore Systems Holdings Inc.,PM2N00FFJ656FPX49R76,US,Information Technology
+LE-0229,Dunmore Systems Europe Inc.,NKN0009D7MLN0KUTG538,US,Information Technology
+LE-0230,Ottery Realty Inc.,H0Z3004Y82MVNXFMEK67,US,Real Estate
+LE-0231,Ottery Realty Operations plc,4N2P00MM0675TSUK5U30,GB,Real Estate
+LE-0232,Ottery Realty Capital LLC,30F600TAL79DQFH5X969,US,Real Estate
+LE-0233,Ottery Realty Asia Inc.,3R8P00XYH1FXPVM0RW16,US,Real Estate
+LE-0234,Ottery Realty Technologies AG,77S800QWBT7U0G4GT340,DE,Real Estate
+LE-0235,Davenham Financial Inc.,Z423000XM2RS48SWEH84,US,Financials
+LE-0236,Davenham Financial Capital LLC,SGEF00QSRH0YKTFK7043,US,Financials
+LE-0237,Davenham Financial Technologies plc,BP3400ZXU9UPYT2GMJ17,GB,Financials
+LE-0238,Ingleby Systems Holdings Inc.,64LN00EZ9TKTRG6C4P30,US,Information Technology
+LE-0239,Ingleby Systems Americas AG,ARJ9005928BFBSX0U856,DE,Information Technology
+LE-0240,Ingleby Systems Services AG,TWDN00Z96WEEB3ZF9V48,DE,Information Technology
+LE-0241,Ingleby Systems International AG,K834005L0U18W7Y1US45,DE,Information Technology
+LE-0242,Marlow Renewables Holdings Inc.,5U8Q00S0RTCXKER7HX94,US,Energy
+LE-0243,Marlow Renewables Asia AG,EYQT00TVM4D6MR673Z32,DE,Energy
+LE-0244,Marlow Renewables Europe Inc.,2VC6003YDL8YNBTN4K52,US,Energy
+LE-0245,Fairhaven Diagnostics Holdings Inc.,DUL600M9Z9UU4W4U3684,US,Health Care
+LE-0246,Fairhaven Diagnostics Services AG,NBB000KVCQFWTMEKZS65,DE,Health Care
+LE-0247,Dunmore Chemicals Holdings Inc.,K6RR00NG6WTWCBQ6YB98,US,Materials
+LE-0248,Dunmore Chemicals Services Inc.,X1BL003FRHXYBG4H7Z16,US,Materials
+LE-0249,Thornbury Communications Inc.,U6YW00P1N28H2JAZE121,US,Communication Services
+LE-0250,Thornbury Communications International Inc.,2N2000ANHYCCWHLF3614,US,Communication Services
+LE-0251,Brantwood Electronics Inc.,4MCQ00D6W8MZGTKXKX10,US,Information Technology
+LE-0252,Brantwood Electronics Operations Inc.,1FYT00UADQFW28RP6507,US,Information Technology
+LE-0253,Alderney Properties Inc.,N69M00WW4W0EUCQ5J960,US,Real Estate
+LE-0254,Alderney Properties Asia Inc.,P7SR00PG4Z388KN3V326,US,Real Estate
+LE-0255,Alderney Properties Capital LLC,32YZ009GQ9BLD8RMQA71,US,Real Estate
+LE-0256,Alderney Properties Americas Inc.,LPU700Z8JDG0LUBR6158,US,Real Estate
+LE-0257,Alderney Properties Technologies AG,2X7Z00NKAJR1L10Z8G74,DE,Real Estate
+LE-0258,Millbrook Media Inc.,6AN200DR1L9EE1P95588,US,Communication Services
+LE-0259,Millbrook Media Capital LLC,9RLY006HR9EACPRM5381,US,Communication Services
+LE-0260,Millbrook Media Operations AG,TVAW002NW3MAR12Y2R29,DE,Communication Services
+LE-0261,Millbrook Media Americas Inc.,KKDX00CXWB56DBE1DM24,US,Communication Services
+LE-0262,Millbrook Media Operations II AG,T6UB007D8QCHPEFBPT85,DE,Communication Services
+LE-0263,Winslade Assurance Inc.,9R6G00XF2WBUUDJSBS22,US,Financials
+LE-0264,Winslade Assurance Services Inc.,DDAN00QFUZXASTDXUP58,US,Financials
+LE-0265,Winslade Assurance Technologies Inc.,3P5N00NSZTWPE1YBKH49,US,Financials
+LE-0266,Winslade Assurance Capital LLC,0XNH0074KYQUEUB99Q25,US,Financials
+LE-0267,Ironside Assurance Holdings Inc.,5J6A00JFBVKU8PDP8450,US,Financials
+LE-0268,Ironside Assurance Services Inc.,FASV00RX74YJ0YSLBW41,US,Financials
+LE-0269,Wendover Therapeutics Holdings Inc.,1U9000ZWXFLGBY7XTD46,US,Health Care
+LE-0270,Wendover Therapeutics International plc,8HJW00CVQW9MASJJV475,GB,Health Care
+LE-0271,Ulverby Power Holdings plc,LBZC00S2YHU062BZZA51,GB,Utilities
+LE-0272,Ulverby Power Asia plc,ZB2Z00GGYENDSARUS869,GB,Utilities
+LE-0273,Ulverby Power Operations AG,J99U00UA9UL9HLLCFY89,DE,Utilities
+LE-0274,Ulverby Power Technologies plc,AVPA00840X5DL32HPG89,GB,Utilities
+LE-0275,Orwell Diagnostics plc,AM91001G16BAF1JVKF67,GB,Health Care
+LE-0276,Orwell Diagnostics Technologies Inc.,E3X900NTP4B9NX0CKM21,US,Health Care
+LE-0277,Orwell Diagnostics Capital LLC,70LA004T57VJQMJ7L833,US,Health Care
+LE-0278,Upwey Properties Holdings plc,5EWU004MYY1R834KZ479,GB,Real Estate
+LE-0279,Upwey Properties Finance B.V.,8WBH00T89Y4NNYLRHC18,NL,Real Estate
+LE-0280,Upwey Properties Americas Inc.,JJ5F00UQL8LN7XF1QN10,US,Real Estate
+LE-0281,Upwey Properties Asia plc,BJYD00KHSB8LTUJ1B892,GB,Real Estate
+LE-0282,Upwey Properties Services Inc.,S1NL0021DM1731EWQL32,US,Real Estate
+LE-0283,Winslade Foods plc,NRAJ005UFME8YXZPWP32,GB,Consumer Staples
+LE-0284,Winslade Foods International Inc.,Y4JK008SJN4PU8WRHC72,US,Consumer Staples
+LE-0285,Winslade Foods Services plc,GDGD00QHHA4RZV41N111,GB,Consumer Staples
+LE-0286,Ottery Minerals plc,3K6T00DCHF32YP4BV646,GB,Materials
+LE-0287,Ottery Minerals Services plc,MLBT006BSUUYKY38SD80,GB,Materials
+LE-0288,Ottery Minerals Americas AG,D60Z006872J5WQZXU174,DE,Materials
+LE-0289,Ottery Minerals International plc,UAJT00T25EX9BA7DLK39,GB,Materials
+LE-0290,Ottery Minerals Americas plc,YBXN007T565PRQZT8V05,GB,Materials
+LE-0291,Valemont Materials plc,GMVR00EARWKY6LA1KD45,GB,Materials
+LE-0292,Valemont Materials Technologies plc,N87J005SVKMPPLUS3E56,GB,Materials
+LE-0293,Valemont Materials Finance S.A.,SGGE0099TETCQLDC4J93,LU,Materials
+LE-0294,Dunmore Medical Holdings plc,7R6C003MWDTUULR65J87,GB,Health Care
+LE-0295,Dunmore Medical International plc,BTBS00TLCZG9YK5J1V46,GB,Health Care
+LE-0296,Northwick Household plc,HE4Z00ZV330HKRBZBJ73,GB,Consumer Staples
+LE-0297,Northwick Household Capital LLC,U6CV00FWN3M1KQ4YHM34,US,Consumer Staples
+LE-0298,Northwick Household Europe plc,DVYY00LMUMATEEZYKH32,GB,Consumer Staples
+LE-0299,Northwick Household Services plc,5CQN00DV7U4UYP27ST42,GB,Consumer Staples
+LE-0300,Brantwood Estates plc,YLDS003DCP4S4NTXVX95,GB,Real Estate
+LE-0301,Brantwood Estates Operations plc,4BLA00YN7QD4CM9XUM87,GB,Real Estate
+LE-0302,Juniper Therapeutics plc,6Z7L00F83FQJP9TYTA61,GB,Health Care
+LE-0303,Juniper Therapeutics Finance S.A.,AFB500NEQ9P0NTS32892,LU,Health Care
+LE-0304,Quarrington Leisure plc,SMRP00L39M9W9FPMZC79,GB,Consumer Discretionary
+LE-0305,Quarrington Leisure Asia plc,FJQF0005QUNVXP94Z044,GB,Consumer Discretionary
+LE-0306,Quarrington Leisure Technologies Inc.,DR7Z00D03GW3JMWX2161,US,Consumer Discretionary
+LE-0307,Quarrington Leisure Europe plc,8D8Y00DXCYFAB6KYG643,GB,Consumer Discretionary
+LE-0308,Aster Systems plc,GE81000PU83ERUGLHH15,GB,Information Technology
+LE-0309,Aster Systems Services Inc.,4ESW00LK2F3GDMWUFS64,US,Information Technology
+LE-0310,Aster Systems Finance B.V.,MTKM00FJ3MK0LMTFCN79,NL,Information Technology
+LE-0311,Aster Systems Americas Inc.,JSAR0051JSGKR098N386,US,Information Technology
+LE-0312,Aster Systems International Inc.,6WPA00HQYCYG3F6ZYM38,US,Information Technology
+LE-0313,Millbrook Medical AG,65B300V2W94XVMC01K80,DE,Health Care
+LE-0314,Millbrook Medical Operations Inc.,JY2400348LSQR4W3PE41,US,Health Care
+LE-0315,Winslade Communications AG,VLYD005WRE6KKSBA0M44,DE,Communication Services
+LE-0316,Winslade Communications Services Inc.,CDRH005HNT583TF8DC15,US,Communication Services
+LE-0317,Langdale Retail AG,FRTD000YC35NBF7HYQ82,DE,Consumer Discretionary
+LE-0318,Langdale Retail International plc,X3Q5000TDRU8F9RYDA28,GB,Consumer Discretionary
+LE-0319,Netherby Communications AG,8A4P004Y794QC8DZU924,DE,Communication Services
+LE-0320,Netherby Communications Operations Inc.,06MS00S37987GQ900T25,US,Communication Services
+LE-0321,Netherby Communications Europe plc,F58E009M7776GAEKER14,GB,Communication Services
+LE-0322,Netherby Communications Finance S.A.,D4Z2000F7CHSPTNVQR80,LU,Communication Services
+LE-0323,Eskdale Software AG,321C006WYJBE8UMMX036,DE,Information Technology
+LE-0324,Eskdale Software International AG,3QRU009J3SY2HXK8HV15,DE,Information Technology
+LE-0325,Yeoford Power AG,P2D900UJYJWC3UFQ5L78,DE,Utilities
+LE-0326,Yeoford Power Services AG,VL3200AVVX5XJVBSB560,DE,Utilities
+LE-0327,Yeoford Power Finance B.V.,5UPN00PZ59NC1REUY472,NL,Utilities
+LE-0328,Ironside Networks Holdings AG,U5WF008ZDL625A3J8W73,DE,Communication Services
+LE-0329,Ironside Networks Services AG,VJFU00W7B3CMZMT82G95,DE,Communication Services
+LE-0330,Ironside Networks Finance S.A.,G53V00Z4D0ZWCCR78216,LU,Communication Services
+LE-0331,Tarrant Utilities AG,AMEN00HBY1XP3U9FUP21,DE,Utilities
+LE-0332,Tarrant Utilities Technologies Inc.,4NAB00L2GMENDUSPZ888,US,Utilities
+LE-0333,Glenrock Financial SA,UCXR0088HA5T8W566928,FR,Financials
+LE-0334,Glenrock Financial Europe AG,AG2200Y9MCMEVACR2163,DE,Financials
+LE-0335,Glenrock Financial Operations plc,EAPN00VYXSA0CTTFGJ66,GB,Financials
+LE-0336,Glenrock Financial Services Inc.,XDTV00Z6PJK3FMUL4N85,US,Financials
+LE-0337,Yeoford Automotive SA,HQKY003T63HDX5UZB556,FR,Consumer Discretionary
+LE-0338,Yeoford Automotive Americas Inc.,D8T900UD1MB1QLXNXU43,US,Consumer Discretionary
+LE-0339,Juniper Software SA,W3Q2002SUR7VX3H21311,FR,Information Technology
+LE-0340,Juniper Software International SA,6WWG002RT9TUJM4N9350,FR,Information Technology
+LE-0341,Juniper Software Asia Inc.,UBJU0049CG05K8Z4S489,US,Information Technology
+LE-0342,Juniper Software International II SA,CYQH00HZDZVTYN93RZ53,FR,Information Technology
+LE-0343,Brantwood Properties Holdings SA,QA9000NNEV0ZMRM01V03,FR,Real Estate
+LE-0344,Brantwood Properties Finance S.A.,5V5000TY0YEQ1JH5PE23,LU,Real Estate
+LE-0345,Brantwood Properties Technologies SA,DTWW00L4ZPAUJM6EBU24,FR,Real Estate
+LE-0346,Brantwood Properties Asia SA,ZVVV005KGE6VU2VH8S06,FR,Real Estate
+LE-0347,Grantley Software Holdings SA,GXZ600ZA0YG411DDZR92,FR,Information Technology
+LE-0348,Grantley Software Operations Inc.,JSGW0070G8KNS3XHDK25,US,Information Technology
+LE-0349,Grantley Software Services AG,6G9W00WZJVGL4B5WFA90,DE,Information Technology
+LE-0350,Grantley Software Americas Inc.,039000FA62A9BQ5AZ783,US,Information Technology
+LE-0351,Grantley Software Finance S.A.,X7SW00Y8VW09SUQ83308,LU,Information Technology
+LE-0352,Juniper Financial SA,QJ4R00EQAXZMWXXYPG87,FR,Financials
+LE-0353,Juniper Financial Finance B.V.,JNTA00NSNDJPM64LUD62,NL,Financials
+LE-0354,Juniper Financial Americas plc,EABZ00STK5T8BX0DWV08,GB,Financials
+LE-0355,Juniper Financial Technologies AG,XPTC00T78YF8YRH6D259,DE,Financials
+LE-0356,Quarrington Electronics SA,LA1V009LZQ1GAN24ZU32,FR,Information Technology
+LE-0357,Quarrington Electronics Finance S.A.,1J5300Z9ELJCA11WGP48,LU,Information Technology
+LE-0358,Nakashima Automotive K.K.,K8JL00G1QCWG0XME0P68,JP,Consumer Discretionary
+LE-0359,Nakashima Automotive Finance S.A.,42T40065U4KRAB73C075,LU,Consumer Discretionary
+LE-0360,Nakashima Automotive Services K.K.,5YU1008H2P66BCPV6S80,JP,Consumer Discretionary
+LE-0361,Nakashima Automotive International AG,71DE00KTBDVH9N0QLR22,DE,Consumer Discretionary
+LE-0362,Kawabe Beverages Holdings K.K.,X7PC002KA5PBR8WFHM69,JP,Consumer Staples
+LE-0363,Kawabe Beverages Services K.K.,V5XJ00MHX7SA58YF2V38,JP,Consumer Staples
+LE-0364,Ishikari Gas K.K.,GSF000U4R77R1Z327669,JP,Utilities
+LE-0365,Ishikari Gas Finance B.V.,YJPT006SQB00F113NW89,NL,Utilities
+LE-0366,Ishikari Energy Holdings K.K.,CFR100ZZFT7VLK567S40,JP,Energy
+LE-0367,Ishikari Energy Capital LLC,MRK600NS1V65BUAND816,US,Energy
+LE-0368,Ishikari Energy Americas K.K.,K0AB00V2PT0NHXG45S13,JP,Energy
+LE-0369,Fujisaki Utilities K.K.,DV3G00BHCBBRBYSBY839,JP,Utilities
+LE-0370,Fujisaki Utilities Finance S.A.,7PSY006H7G6ZD9S4D935,LU,Utilities
+LE-0371,Sanjo Medical K.K.,QBN500FUB2C8DX6FRU28,JP,Health Care
+LE-0372,Sanjo Medical Capital LLC,Y7LU00C5WR2EQSRE7G78,US,Health Care
+LE-0373,Sanjo Medical Operations K.K.,B6S400HVB2HJ2DE37968,JP,Health Care
+LE-0374,Sanjo Medical Americas AG,Q7G000NKTE9NCCQ24332,DE,Health Care
+LE-0375,Sanjo Medical Europe AG,V57B00MNMTVRD1HBRV24,DE,Health Care
+LE-0376,Nakashima Systems K.K.,F46U00DJ4DRP2MTKT425,JP,Information Technology
+LE-0377,Nakashima Systems Finance B.V.,PZQR00TFMBUUH98SQY53,NL,Information Technology
+LE-0378,Nakashima Systems Technologies Inc.,CNUM00PBKUA0RQCEFS70,US,Information Technology
+LE-0379,Nakashima Systems Technologies plc,7083006LHHTPXR3RP839,GB,Information Technology
+LE-0380,Nakashima Systems Europe K.K.,VHLU0058TWD2ZGL4HX91,JP,Information Technology
+LE-0381,Yoshino Machinery K.K.,VX2U00FLEVWS2L8QEY47,JP,Industrials
+LE-0382,Yoshino Machinery Asia K.K.,WZ7D00B55ZV0VZZ86M70,JP,Industrials
+LE-0383,Yoshino Machinery Europe plc,1MFY00UHW10AQ8VUWF94,GB,Industrials
+LE-0384,Yoshino Renewables K.K.,8TW200AHHUS9HRWRML79,JP,Energy
+LE-0385,Yoshino Renewables Services AG,CFYY00D16HJS2SL3AN94,DE,Energy
+LE-0386,Yoshino Renewables Operations plc,HPK600EWGU4JPJTC1R43,GB,Energy
+LE-0387,Yoshino Renewables Finance S.A.,P0UD002ARHT3G7JSCY52,LU,Energy
+LE-0388,Yoshino Renewables Americas Inc.,ZGH300BKN5FN250KR404,US,Energy
+LE-0389,Fujisaki Leisure K.K.,7FX3004H1FFX0NFEH934,JP,Consumer Discretionary
+LE-0390,Fujisaki Leisure Finance S.A.,UTBJ0051ZX4D71SS2807,LU,Consumer Discretionary
+LE-0391,Fujisaki Leisure Europe K.K.,FA5800SL5QJ7RU2WKH82,JP,Consumer Discretionary
+LE-0392,Fujisaki Leisure Asia K.K.,7GHR0038S869XXZ8B321,JP,Consumer Discretionary
+LE-0393,Nakashima Engineering K.K.,K3FC00B7K6WM8JV88D23,JP,Industrials
+LE-0394,Nakashima Engineering Capital LLC,ETUU00U0VBA3EN6ULT28,US,Industrials
+LE-0395,Nakashima Engineering Technologies AG,ZMRH00Z9H3TS1Q2WY484,DE,Industrials
+LE-0396,Nakashima Engineering Services plc,4N9U002MCCX76AF5QG32,GB,Industrials
+LE-0397,Ishikari Utilities K.K.,G8DH002EYZ47KY2BTS07,JP,Utilities
+LE-0398,Ishikari Utilities Capital LLC,LUSM00X6ZARMAHLN9E45,US,Utilities
+LE-0399,Alderney Diagnostics Corp.,Z3UE00CTG8X9F27EPY43,CA,Health Care
+LE-0400,Alderney Diagnostics Capital LLC,DVWS00UJ85HFMKF60R26,US,Health Care
+LE-0401,Alderney Diagnostics Technologies AG,Y55J00F32ELQTM3HLZ13,DE,Health Care
+LE-0402,Alderney Diagnostics Europe Inc.,H9DS00ZREHPFC7L3VF15,US,Health Care
+LE-0403,Aster Medical Corp.,MSFA00VBMF2XARJS7481,CA,Health Care
+LE-0404,Aster Medical Europe Corp.,N4ZG00SQL4KA69VTCK24,CA,Health Care
+LE-0405,Aster Medical Americas AG,6B0N00DRB7DTA316HJ56,DE,Health Care
+LE-0406,Aster Medical Technologies plc,7YRV00WRQ1JTQZLCFE19,GB,Health Care
+LE-0407,Glenrock Networks Corp.,QGHU00NG9T1V7MN80T54,CA,Communication Services
+LE-0408,Glenrock Networks Asia plc,GVAE001U4FGA3VABTR83,GB,Communication Services
+LE-0409,Glenrock Networks Capital LLC,5HBK001LRBWXARJRWB63,US,Communication Services
+LE-0410,Glenrock Networks Operations plc,2SKB00DHR7U1M13NDS03,GB,Communication Services
+LE-0411,Northwick Energy Corp.,E68W00BDZEPF4UN7LJ02,CA,Energy
+LE-0412,Northwick Energy International Corp.,FQYT00FSTYE8N1UNEA98,CA,Energy
+LE-0413,Northwick Energy Technologies Inc.,7LYH00L7P9AN4BQYWN76,US,Energy
+LE-0414,Glenrock Energy Corp.,JZDK00NF0J7JPAJJ1033,CA,Energy
+LE-0415,Glenrock Energy Capital LLC,UCF800JGYYCYTH6D3D33,US,Energy
+LE-0416,Glenrock Energy Technologies Corp.,K3P100BHYQ683438BG93,CA,Energy
+LE-0417,Glenrock Energy Europe Inc.,RZUF0014VRM88VLUFF57,US,Energy
+LE-0418,Ottery Power Holdings N.V.,17EK00B6RVS3ZCMF5R51,NL,Utilities
+LE-0419,Ottery Power Services N.V.,NP3S00E113Z94WJ8CH17,NL,Utilities
+LE-0420,Ottery Power Americas Inc.,CRYA00GSD9FWZVEEX836,US,Utilities
+LE-0421,Northwick Media N.V.,FKKJ00PJNDLELY9STJ88,NL,Communication Services
+LE-0422,Northwick Media Finance S.A.,DJLY000ANYU1TJMXFE18,LU,Communication Services
+LE-0423,Northwick Media International N.V.,FVGG00VDAYFA9D02S077,NL,Communication Services
+LE-0424,Northwick Media Asia N.V.,TLPH00JZ3HXA1G7G4182,NL,Communication Services
+LE-0425,Farleigh Financial N.V.,TNKW00YG4C6JEWYBJB83,NL,Financials
+LE-0426,Farleigh Financial Operations plc,ZKR900MF52V27CH8JT52,GB,Financials
+LE-0427,Brantwood Financial N.V.,3RUG003S09JMNSKRUF52,NL,Financials
+LE-0428,Brantwood Financial Americas plc,P3AJ00Z41AS6DNK2TP54,GB,Financials
+LE-0429,Brantwood Financial Capital LLC,1NZH002FGAVFR0F31671,US,Financials
+LE-0430,Brantwood Financial Asia N.V.,578M00PR0D7AAH5KRN27,NL,Financials
+LE-0431,Brantwood Financial Americas N.V.,H2Z2002MNY0KUBTHUB34,NL,Financials
+LE-0432,Ingleby Communications AG,SE2G00PR4XJL3LZNS598,CH,Communication Services
+LE-0433,Ingleby Communications Technologies AG,GNSL00U36X0CFXT80030,CH,Communication Services
+LE-0434,Ingleby Communications Americas AG,V0J400BB2AHHXG3WEF45,DE,Communication Services
+LE-0435,Ingleby Communications Asia AG,1VUY00VB3A2RVFAT9276,CH,Communication Services
+LE-0436,Langdale Engineering Holdings AG,PSH200B96RU6DNCZ9859,CH,Industrials
+LE-0437,Langdale Engineering Operations AG,YCRG00TEPY18GTURYZ87,CH,Industrials
+LE-0438,Langdale Engineering Services Inc.,9DXW008UZWPJDYP0KC09,US,Industrials
+LE-0439,Langdale Engineering Services AG,HASA00V01TEAAZ5ULH68,CH,Industrials
+LE-0440,Brantwood Media AG,CM7P00P49L0MY4GH4V04,CH,Communication Services
+LE-0441,Brantwood Media Americas AG,YSG8001AL6MT9R8PVH36,DE,Communication Services
+LE-0442,Brantwood Media Europe Inc.,GNA500TP3AR709MN4Q25,US,Communication Services
+LE-0443,Eskdale Apparel AG,Y6XM00RW73HCZ0WU3981,CH,Consumer Discretionary
+LE-0444,Eskdale Apparel Finance S.A.,0FHY00ST4M0D4706T725,LU,Consumer Discretionary
+LE-0445,Eskdale Apparel Operations Inc.,ZY8Q00CJ54FZD3RA8P33,US,Consumer Discretionary
+LE-0446,Eskdale Apparel Asia AG,TZS400DBVQSFJBZAKG75,CH,Consumer Discretionary
+LE-0447,Eskdale Apparel Europe AG,VWA700J58CP8DNDJK289,CH,Consumer Discretionary
+LE-0448,Saltash Minerals Limited,EXD20064LJJCUX9K3H96,HK,Materials
+LE-0449,Saltash Minerals Asia Limited,VZYJ002K7E3NT5HM6P03,HK,Materials
+LE-0450,Saltash Minerals Asia AG,TYAN00FM8V5FEY8UEU66,DE,Materials
+LE-0451,Winslade Power Limited,A1RC00R27F7A5UYTWN89,HK,Utilities
+LE-0452,Winslade Power Technologies plc,ANZV0018TBWXHRUPYA18,GB,Utilities
+LE-0453,Winslade Power Finance B.V.,24P500R7MZ4MYN6EUV59,NL,Utilities
+LE-0454,Redcliffe Retail Holdings Limited,7W2J00X0FJY4QMX6P724,HK,Consumer Discretionary
+LE-0455,Redcliffe Retail Finance S.A.,HDK000GW3847CPZBUJ96,LU,Consumer Discretionary
+LE-0456,Saltash Estates Holdings Limited,013C00VPLSCM7H16NL80,HK,Real Estate
+LE-0457,Saltash Estates Finance S.A.,8DKH00DZBQ7J13WQPV14,LU,Real Estate
+LE-0458,Saltash Estates Services plc,L5LV00MDNACH3JKWAV25,GB,Real Estate
+LE-0459,Dunmore Industries plc,CL0000BB34FSAYE1RD91,IE,Industrials
+LE-0460,Dunmore Industries Services Inc.,MJMX005DNN8ESNZHZS23,US,Industrials
+LE-0461,Dunmore Industries Asia plc,46Y5004L1PDYU2KUAS86,GB,Industrials
+LE-0462,Dunmore Industries International plc,J8CQ00EZDML1C8C9H926,GB,Industrials
+LE-0463,Quarrington Beverages plc,XSUA00R115GQLPGHVU67,IE,Consumer Staples
+LE-0464,Quarrington Beverages International plc,8GW7008PZ9ACRNW23J16,GB,Consumer Staples
+LE-0465,Quarrington Beverages Capital LLC,FYNW00NGTXABU02CJP97,US,Consumer Staples
+LE-0466,Quarrington Beverages Americas plc,QQLX00GWEENR29959W85,GB,Consumer Staples
+LE-0467,Zennor Medical plc,DVMJ0019RQBAS15QAV51,IE,Health Care
+LE-0468,Zennor Medical Technologies plc,RFPX00BHJ87ZVHJBTM69,IE,Health Care
+LE-0469,Zennor Medical Operations AG,EK3M00G6EWZEJ2MXFQ25,DE,Health Care
+LE-0470,Zennor Medical Americas plc,K6NV00B9QXGSCB27NV22,IE,Health Care
+LE-0471,Zennor Medical Capital LLC,8X75001A9L45871NX426,US,Health Care
+LE-0472,United States Department of the Treasury,U061005PM5T4LBSXZL84,US,Government
+LE-0473,UK Debt Management Office,HGV0009W0MMN6G22UW40,GB,Government
+LE-0474,Bundesrepublik Deutschland - Finanzagentur GmbH,XMM400U02583E3THB045,DE,Government
+LE-0475,Agence France Tresor,PAV300N0LRJZS5RLEQ15,FR,Government
+LE-0476,Ministry of Finance Japan,SMJ100HPXDRPGVCW8146,JP,Government
+LE-0477,Halvorsen Industrie AG,H2VV00MX1TES9ZLNZH74,DE,Industrials
+LE-0478,Halvorsen Finance B.V.,BZYJ00119XM7GL4GYQ50,NL,Industrials
+LE-0479,Halvorsen North America Inc.,JFTF00QAPYNU225XLP15,US,Industrials
+LE-0480,Halvorsen Capital LLC,DLBK00AT4NAD4NW24J94,US,Industrials
+LE-0481,Halvorsen Antriebstechnik GmbH,,DE,Industrials
+LE-0482,Kairo Denki Holdings K.K.,2VKN00E7W9XTS0TMXS48,JP,Information Technology
+LE-0483,Kairo Denki Finance B.V.,CE6800V7CVKSY55QSV77,NL,Information Technology
+LE-0484,Kairo Denki Devices K.K.,TGG6009CAU7PYEX48482,JP,Information Technology
+LE-0485,Sakuragi Capital K.K.,206V00SQZD4NMGLQER36,JP,Financials
+LE-0486,Calder Brennan plc,AZ7W00WPDGF1WTS35456,GB,Consumer Staples
+LE-0487,Calder Brennan Finance B.V.,DAQC00QDH8NTJVXEVD10,NL,Consumer Staples
+LE-0488,Kestrel Vale Resources Inc.,6XQA007WLQ82V23C2T17,US,Materials
+LE-0489,Korvara Robotics Inc.,935R00NBH4S22P83WA80,US,Industrials
+LE-0490,Kingsvale Retail plc,NSRC0083S2X0KAP1AA83,GB,Consumer Discretionary
+LE-0491,Solanum Networks Inc.,ZMUR000CDK4S58HBKM58,US,Information Technology
+LE-0492,Solenne Therapeutics Inc.,9ZRS00HLKF82MYHP3824,US,Health Care
+LE-0493,Aldermoor Investment Funds ICAV,3YTJ00CGRM3LTH6RCR89,IE,Financials
+LE-0494,Northgate Funds Trust,X66K007VESG0ZF4UKZ72,US,Financials
+LE-0495,Westmark Funds Inc.,84Q0005KJCJJ0DYKXB43,US,Financials
+LE-0496,Brookline Investment Funds OEIC,3SXH00GJ68UZJX4BLL10,GB,Financials
+LE-0497,Harrowgate ETF Trust,6HVD00KSAZDWXS336107,US,Financials
+LE-0498,Meridian SICAV,8RBN001A0FJCE359MH82,CH,Financials
+LE-0499,Shinonome Global Funds plc,PMR900SGV7U3Q63YXX97,IE,Financials
+LE-0500,Tidewater Pension Scheme Trust,KAZT006A8X14XX4LNB69,GB,Financials
