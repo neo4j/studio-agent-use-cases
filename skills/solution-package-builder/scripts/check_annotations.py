@@ -2,9 +2,10 @@
 """Check ONTOLOGY.json annotations against the bundled sample data (VALIDATION.md sections 3, 3b and 4).
 
 Usage: python3 check_annotations.py <package-dir>
-Also checks the two rules the schema and the spec library miss but the destination enforces: a constraint
-flag repeated across entries of one label or relationship type (duplicate constraint names), and repeated
-endpoint pairs in a relationship table whose mapping key cannot tell them apart (MERGE collapses them).
+Also checks the three rules the schema and the spec library miss but the destination enforces: a constraint
+flag repeated across entries of one label or relationship type (duplicate constraint names), repeated
+endpoint pairs in a relationship table whose mapping key cannot tell them apart (MERGE collapses them), and,
+when the package bundles tables, a property type Import does not support for local CSV imports (DATE above all).
 Prints BLOCKER / WARN / NOTE / COUNT lines and ends with "done". Standard library only."""
 import csv, json, re, sys, pathlib, collections
 
@@ -14,6 +15,11 @@ out = lambda level, msg: print(f"{level} {msg}")
 
 SAMPLE = re.compile(r"e\.g\. `([^`]+)`\.?\s*$")
 NUMERIC_OR_CODED = re.compile(r"^(INTEGER|FLOAT|DATE|ZONED |LOCAL |DURATION|BOOLEAN)")
+# The types Import supports for local CSV imports (upx SUPPORTED_CSV_TYPE_OPTIONS_COMPLETED); the rest of the
+# Neo4jType enum converts cleanly and is then flagged "Not supported in local imports".
+LOCAL_IMPORT_SCALARS = ("STRING", "INTEGER", "FLOAT", "BOOLEAN", "ZONED DATETIME")
+LOCAL_IMPORT_TYPES = set(LOCAL_IMPORT_SCALARS) | {f"LIST<{t}>" for t in LOCAL_IMPORT_SCALARS} \
+    | {f"VECTOR<{t}>" for t in ("FLOAT", "FLOAT32", "INTEGER", "INTEGER32", "INTEGER16", "INTEGER8")}
 
 # Blocker: extensions anywhere except root data_source_tables/data_source_mappings and node display.
 RENAMED = {"tables": "data_source_tables", "mappings": "data_source_mappings"}
@@ -94,9 +100,13 @@ for mp in mappings:
             ident = tuple(r.get(mp["properties"][k]["column"], "") for k in kp)
             if all(ident): identities[mp["node"]].add(ident)
 
-# Per-property checks: description, length, sample, one_of / pattern.
+# Per-property checks: local-import type, description, length, sample, one_of / pattern.
 def check_props(owner, props):
     for prop, d in (props or {}).items():
+        if tables and d.get("type") not in LOCAL_IMPORT_TYPES:
+            fix = "; store calendar dates as ZONED DATETIME at midnight UTC" if "DATE" in str(d.get("type")) else ""
+            out("BLOCKER", f"type {d.get('type')} of {owner}.{prop} is not supported in local imports "
+                f"(use {', '.join(LOCAL_IMPORT_SCALARS)}, a LIST<...> of one, or a VECTOR<...>{fix})")
         desc = d.get("description", "")
         if not desc: out("WARN", f"no description: {owner}.{prop}"); continue
         if len(desc) > 1024: out("BLOCKER", f"description over 1024 chars: {owner}.{prop}")
