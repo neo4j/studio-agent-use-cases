@@ -1,0 +1,1412 @@
+{
+ "schema": "https://neo4j.com/docs/ontology-graph-spec/1.0.0/schema.json",
+ "id": "securities-reference-data",
+ "version": "1",
+ "name": "Securities Reference Data and Look-through Exposure",
+ "description": "A pragmatic reading of the FIBO Securities (SEC) domain for security master and exposure analysis: securities and the legal entities that issue them, issuer groups, market identifiers under several schemes, exchange listings and tickers over time, depositary receipts and convertibles that link one security to another, offerings and their underwriters, and funds that hold securities directly and through other funds' units. Answers identifier resolution and reconciliation, point-in-time ticker lookup, stale listings, issuer-group capital structure, every route to an issuer's risk, look-through exposure and concentration, and affiliated underwriting. Adapted from FIBO (Financial Industry Business Ontology), Securities (SEC) domain, https://github.com/edmcouncil/fibo, Copyright (c) 2013-2026 EDM Council, Inc. (also EDM Association dba EDM Council, Inc.) and Copyright (c) 2013-2025 Object Management Group, Inc., used under the MIT License (https://opensource.org/licenses/MIT). A simplification for demonstration, not FIBO itself, and not endorsed by the EDM Council.",
+ "nodes": {
+  "LegalEntity": {
+   "label": "LegalEntity",
+   "description": "An organisation that plays a role in the securities lifecycle: it issues securities (a company, a financing subsidiary, a fund vehicle, a sovereign or agency issuer), underwrites offerings, issues depositary receipts as depositary, or manages funds. Roles are relationships, not labels, so one entity can be issuer, underwriter and manager at once. Corporate groups are trees of these nodes joined by DIRECTLY_CONSOLIDATED_BY; the top of the tree is the ultimate parent against which issuer exposure is aggregated.",
+   "aliases": [
+    "Issuer",
+    "Party",
+    "Organisation",
+    "Company"
+   ],
+   "properties": {
+    "entityId": {
+     "type": "STRING",
+     "key": true,
+     "description": "Identifier of the legal entity, unique within the dataset and stable across loads. Distinct from the LEI, which not every entity has. e.g. `LE-0500`."
+    },
+    "name": {
+     "type": "STRING",
+     "must_exist": true,
+     "description": "Registered legal name of the entity, including its legal-form suffix (Inc., plc, AG, K.K., B.V.). e.g. `Sorrel Bay Utilities Technologies Inc.`."
+    },
+    "lei": {
+     "type": "STRING",
+     "pattern": "^[A-Z0-9]{18}[0-9]{2}$",
+     "description": "ISO 17442 Legal Entity Identifier: 18 alphanumeric characters and two check digits. Empty when the entity has no LEI. e.g. `UBJU0049CG05K8Z4S489`."
+    },
+    "countryCode": {
+     "type": "STRING",
+     "pattern": "^[A-Z]{2}$",
+     "description": "Country of incorporation (for a sovereign issuer, the sovereign itself), as an ISO 3166-1 alpha-2 code. e.g. `DE`."
+    },
+    "sector": {
+     "type": "STRING",
+     "description": "Principal business activity of the entity, as a sector name from the industry classification the user applies (FIBO recognises GICS and ICB classifiers); Government for sovereign and agency issuers. An open set: no fixed list. e.g. `Utilities`."
+    }
+   },
+   "extensions": {
+    "display": {
+     "x": 0,
+     "y": 0
+    }
+   }
+  },
+  "Security": {
+   "label": "Security",
+   "description": "A tradable financial instrument issued by one legal entity: a share, a preferred share, a depositary receipt, a bond, a convertible or a fund unit. FIBO's security class hierarchy is carried as the securityType property. Its identifiers, exchange listings, the offerings that distributed it, the funds that hold it, and any security it converts into or represents are all reached through relationships.",
+   "aliases": [
+    "Financial instrument",
+    "Instrument",
+    "Issue"
+   ],
+   "reference": "https://spec.edmcouncil.org/fibo/ontology/FBC/FinancialInstruments/FinancialInstruments/Security",
+   "properties": {
+    "securityId": {
+     "type": "STRING",
+     "key": true,
+     "description": "Internal identifier of the security, unique within the dataset and stable across loads. Market identifiers (ISIN, CUSIP, SEDOL, FIGI) are separate Identifier nodes, because they can be missing, change or collide. e.g. `SEC-00191`."
+    },
+    "name": {
+     "type": "STRING",
+     "must_exist": true,
+     "description": "Descriptive name of the security: issuer short name plus instrument description, in the spirit of an ISO 18774 financial instrument short name. e.g. `Cobalt Communications Capital LLC 1.500% Sr Notes 2019`."
+    },
+    "securityType": {
+     "type": "STRING",
+     "must_exist": true,
+     "one_of": [
+      "common share",
+      "preferred share",
+      "depositary receipt",
+      "corporate bond",
+      "government bond",
+      "municipal bond",
+      "convertible bond",
+      "asset-backed security",
+      "mortgage-backed security",
+      "money market instrument",
+      "fund unit"
+     ],
+     "description": "Kind of security, using FIBO class labels: common share, preferred share, depositary receipt (evidence of deposited shares of another issuer), corporate, government or municipal bond, convertible bond (also exchangeable bonds that convert into another issuer's shares), asset-backed or mortgage-backed security, money market instrument (traded short-term debt), or fund unit (a share of a pooled fund). e.g. `corporate bond`."
+    },
+    "cfiCode": {
+     "type": "STRING",
+     "pattern": "^[A-Z]{6}$",
+     "aliases": [
+      "CFI code"
+     ],
+     "reference": "https://spec.edmcouncil.org/fibo/ontology/SEC/Securities/SecuritiesClassification/FinancialInstrumentClassificationCode",
+     "description": "ISO 10962 Classification of Financial Instruments (CFI) code: six capital letters, category and group first (ES common shares, EP preferred, ED depositary receipts, DB bonds, DC convertibles, C* collective investment vehicles). e.g. `DBFUFR`."
+    },
+    "currency": {
+     "type": "STRING",
+     "pattern": "^[A-Z]{3}$",
+     "description": "Currency of denomination: the currency of the face amount and coupon for debt, of the nominal value for shares. ISO 4217 alphabetic code. e.g. `USD`."
+    },
+    "issueDate": {
+     "type": "ZONED DATETIME",
+     "description": "Date the security was first issued (for a share, its first listing or incorporation of the class). Only the calendar date carries meaning; the time is always midnight UTC. e.g. `2016-01-10T00:00:00Z`."
+    },
+    "maturityDate": {
+     "type": "ZONED DATETIME",
+     "description": "Date the principal falls due for repayment. Empty for shares, fund units and perpetual instruments. A security whose maturity date has passed is expected to be delisted. Only the calendar date carries meaning; the time is always midnight UTC. e.g. `2019-01-10T00:00:00Z`."
+    },
+    "couponRate": {
+     "type": "FLOAT",
+     "aliases": [
+      "Coupon"
+     ],
+     "reference": "https://spec.edmcouncil.org/fibo/ontology/SEC/Debt/Bonds/BondCoupon",
+     "description": "Interest rate the issuer promises to pay, as an annual percentage of the face value (5.25 means 5.25% a year). Debt only; empty for shares and fund units. e.g. `1.500`."
+    },
+    "seniority": {
+     "type": "STRING",
+     "one_of": [
+      "senior secured",
+      "senior unsecured",
+      "subordinated",
+      "junior subordinated"
+     ],
+     "reference": "https://spec.edmcouncil.org/fibo/ontology/SEC/Debt/DebtInstruments/isSubordinatedTo",
+     "description": "Rank of a debt security's claim in liquidation, highest first: senior secured (backed by collateral), senior unsecured, subordinated (paid after senior debt), junior subordinated (after other subordinated debt). Debt only; empty for shares and fund units. e.g. `senior unsecured`."
+    },
+    "faceAmountOutstanding": {
+     "type": "FLOAT",
+     "description": "Principal amount of the issue outstanding, in units of the security's currency (not thousands or millions). Debt only; empty for shares and fund units. e.g. `300000000`."
+    },
+    "securityForm": {
+     "type": "STRING",
+     "one_of": [
+      "registered form",
+      "bearer form",
+      "book entry form",
+      "bearer and registered form",
+      "miscellaneous form"
+     ],
+     "reference": "https://spec.edmcouncil.org/fibo/ontology/SEC/Securities/SecuritiesIssuance/SecurityForm",
+     "description": "How ownership of the security is evidenced, using FIBO's security forms: registered (owner recorded on the issuer's or registrar's books), bearer (payable to whoever holds the certificate), book entry (recorded electronically by a central depository), bearer and registered, or miscellaneous. e.g. `book entry form`."
+    },
+    "restriction": {
+     "type": "STRING",
+     "one_of": [
+      "none",
+      "Rule 144A",
+      "Regulation S",
+      "Regulation D"
+     ],
+     "reference": "https://spec.edmcouncil.org/fibo/ontology/SEC/Securities/SecuritiesRestrictions/hasRestriction",
+     "description": "US securities-law exemption that restricts who may hold or resell the security, using FIBO's US securities restrictions: Rule 144A (resale to qualified institutional buyers only), Regulation S (offered outside the US), Regulation D (private placement), or none when freely transferable. e.g. `none`."
+    }
+   },
+   "extensions": {
+    "display": {
+     "x": 420,
+     "y": 0
+    }
+   }
+  },
+  "Identifier": {
+   "label": "Identifier",
+   "description": "A market identifier for a security under one identification scheme: an ISIN (ISO 6166), a national number assigned by a national numbering agency (CUSIP or CINS in North America, SEDOL in the UK and Ireland, Valoren in Switzerland), a Euroclear/Clearstream Common Code, or a FIGI. One node per distinct scheme and value, so two securities sharing an identifier meet at one node. An ISIN embeds the national number (or Common Code for XS ISINs) in characters 3 to 11.",
+   "aliases": [
+    "Security identifier",
+    "Instrument identifier",
+    "Security ID"
+   ],
+   "reference": "https://spec.edmcouncil.org/fibo/ontology/SEC/Securities/SecuritiesIdentification/SecurityIdentifier",
+   "properties": {
+    "identifierId": {
+     "type": "STRING",
+     "key": true,
+     "description": "Scheme and value joined by a colon, so that the same value under two schemes is two identifiers. e.g. `ISIN:DE2997156257`."
+    },
+    "scheme": {
+     "type": "STRING",
+     "must_exist": true,
+     "description": "Identification scheme the value belongs to, spelled ISIN, CUSIP, CINS, SEDOL, Valoren, Common Code or FIGI; other schemes (WKN, RIC, Telekurs) keep their usual names. An open set: no fixed list. e.g. `ISIN`."
+    },
+    "value": {
+     "type": "STRING",
+     "must_exist": true,
+     "description": "The identifier exactly as issued by its scheme, upper case, with no spaces or separators: 12 characters for ISIN and FIGI, 9 for CUSIP, CINS and Common Code, 7 for SEDOL. e.g. `DE2902459721`."
+    }
+   },
+   "extensions": {
+    "display": {
+     "x": 420,
+     "y": -300
+    }
+   }
+  },
+  "Exchange": {
+   "label": "Exchange",
+   "description": "A regulated market or other trading venue that lists securities, identified by its ISO 10383 Market Identifier Code.",
+   "aliases": [
+    "Trading venue",
+    "Stock exchange",
+    "Market"
+   ],
+   "reference": "https://spec.edmcouncil.org/fibo/ontology/FBC/FunctionalEntities/Markets/Exchange",
+   "properties": {
+    "mic": {
+     "type": "STRING",
+     "key": true,
+     "pattern": "^[A-Z0-9]{4}$",
+     "aliases": [
+      "Market Identifier Code"
+     ],
+     "description": "ISO 10383 Market Identifier Code (MIC) of the venue: four characters, letters and digits. e.g. `XTKS`."
+    },
+    "name": {
+     "type": "STRING",
+     "description": "Name of the exchange. e.g. `Toronto Stock Exchange`."
+    },
+    "countryCode": {
+     "type": "STRING",
+     "pattern": "^[A-Z]{2}$",
+     "description": "Country where the exchange operates, as an ISO 3166-1 alpha-2 code. e.g. `US`."
+    }
+   },
+   "extensions": {
+    "display": {
+     "x": 1120,
+     "y": -160
+    }
+   }
+  },
+  "Listing": {
+   "label": "Listing",
+   "description": "One exchange's catalogue entry for a security: the terms on which that exchange makes the security available, including the ticker symbol and the period it was listed. A security may have many listings, past and present; a delisted listing is kept with its delisting date, so tickers can be resolved as of any date.",
+   "aliases": [
+    "Exchange listing"
+   ],
+   "reference": "https://spec.edmcouncil.org/fibo/ontology/SEC/Securities/SecuritiesListings/Listing",
+   "properties": {
+    "listingId": {
+     "type": "STRING",
+     "key": true,
+     "description": "Identifier of the listing, unique within the dataset and stable across loads. e.g. `LST-00146`."
+    },
+    "ticker": {
+     "type": "STRING",
+     "aliases": [
+      "Ticker symbol",
+      "Trading symbol"
+     ],
+     "reference": "https://spec.edmcouncil.org/fibo/ontology/SEC/Securities/SecuritiesIdentification/TickerSymbol",
+     "description": "Ticker symbol on this exchange. Unique within the exchange at any one time but reassignable: after a delisting the exchange may give the same ticker to a different security. Empty where the exchange assigns none (many bond listings). e.g. `MM`."
+    },
+    "listingDate": {
+     "type": "ZONED DATETIME",
+     "reference": "https://spec.edmcouncil.org/fibo/ontology/SEC/Securities/SecuritiesListings/hasListingDate",
+     "description": "Date the security was admitted to trading on this exchange. Only the calendar date carries meaning; the time is always midnight UTC. e.g. `2003-10-03T00:00:00Z`."
+    },
+    "delistingDate": {
+     "type": "ZONED DATETIME",
+     "reference": "https://spec.edmcouncil.org/fibo/ontology/SEC/Securities/SecuritiesListings/hasDelistingDate",
+     "description": "Date the exchange delisted the security; empty while it is still listed. The listing is active on dates from listingDate up to, but not including, delistingDate. Only the calendar date carries meaning; the time is always midnight UTC. e.g. `2025-03-01T00:00:00Z`."
+    },
+    "isPrimary": {
+     "type": "BOOLEAN",
+     "reference": "https://spec.edmcouncil.org/fibo/ontology/SEC/Securities/SecuritiesListings/hasHomeExchange",
+     "description": "True when this exchange is the security's home exchange, its primary market (typically, but not always, in the issuer's country); false for a secondary listing. e.g. `false`."
+    }
+   },
+   "extensions": {
+    "display": {
+     "x": 800,
+     "y": -160
+    }
+   }
+  },
+  "Fund": {
+   "label": "Fund",
+   "description": "A pooled investment vehicle with a portfolio of holdings: a mutual fund, exchange-traded fund, closed-end fund, hedge fund, fund of funds or pension fund. A fund's units are securities in their own right, so a fund holding another fund's units is how look-through chains are built.",
+   "aliases": [
+    "Collective investment vehicle",
+    "Investment fund",
+    "Portfolio"
+   ],
+   "reference": "https://spec.edmcouncil.org/fibo/ontology/SEC/Securities/Pools/CollectiveInvestmentVehicle",
+   "properties": {
+    "fundId": {
+     "type": "STRING",
+     "key": true,
+     "description": "Identifier of the fund, unique within the dataset and stable across loads. e.g. `FND-018`."
+    },
+    "name": {
+     "type": "STRING",
+     "must_exist": true,
+     "description": "Name of the fund. e.g. `Shinonome Global Aggregate Bond Fund`."
+    },
+    "fundType": {
+     "type": "STRING",
+     "one_of": [
+      "mutual fund",
+      "exchange-traded fund",
+      "closed-end investment",
+      "hedge fund",
+      "fund of funds",
+      "pension fund"
+     ],
+     "description": "Kind of fund, using FIBO fund class labels: mutual fund (open-end, units issued and redeemed on demand), exchange-traded fund (units traded on an exchange), closed-end investment (fixed number of units after its initial offering), hedge fund (total-return fund, usually for qualified investors), fund of funds (invests mainly in other funds' units) or pension fund. e.g. `exchange-traded fund`."
+    },
+    "domicile": {
+     "type": "STRING",
+     "pattern": "^[A-Z]{2}$",
+     "description": "Country whose law the fund is constituted under, as an ISO 3166-1 alpha-2 code. e.g. `CH`."
+    },
+    "baseCurrency": {
+     "type": "STRING",
+     "pattern": "^[A-Z]{3}$",
+     "description": "Currency the fund reports its net assets and holding values in, as an ISO 4217 code. e.g. `USD`."
+    },
+    "totalNetAssets": {
+     "type": "FLOAT",
+     "description": "Total net assets of the fund at the reporting date, in units of its base currency. e.g. `3300000000`."
+    },
+    "reportingDate": {
+     "type": "ZONED DATETIME",
+     "description": "Date of the holdings snapshot that the fund's HOLDS relationships describe. Only the calendar date carries meaning; the time is always midnight UTC. e.g. `2026-10-30T00:00:00Z`."
+    }
+   },
+   "extensions": {
+    "display": {
+     "x": 800,
+     "y": 260
+    }
+   }
+  },
+  "Offering": {
+   "label": "Offering",
+   "description": "A securities offering: the sale of one or more newly issued securities to investors on a closing date, distributed by one or more underwriters. It connects issuers to the banks that brought their securities to market.",
+   "aliases": [
+    "Securities offering",
+    "Issuance",
+    "Deal"
+   ],
+   "reference": "https://spec.edmcouncil.org/fibo/ontology/SEC/Securities/SecuritiesIssuance/SecuritiesOffering",
+   "properties": {
+    "offeringId": {
+     "type": "STRING",
+     "key": true,
+     "description": "Identifier of the offering, unique within the dataset and stable across loads. e.g. `OFF-00046`."
+    },
+    "offeringType": {
+     "type": "STRING",
+     "one_of": [
+      "public offering",
+      "private offering",
+      "exempt offering"
+     ],
+     "description": "Kind of offering, using FIBO's labels: public offering (registered for sale to the investing public), private offering (to a limited number of qualified investors), or exempt offering (excused from registration, as under Rule 144A or Regulation S). e.g. `public offering`."
+    },
+    "underwritingType": {
+     "type": "STRING",
+     "one_of": [
+      "firm commitment",
+      "best efforts"
+     ],
+     "description": "Underwriting commitment, using FIBO's offering types: firm commitment (the underwriters buy the whole issue and bear the risk of reselling it) or best efforts (they only undertake to sell as much as they can). e.g. `firm commitment`."
+    },
+    "closingDate": {
+     "type": "ZONED DATETIME",
+     "description": "Date the offering closed and the securities were delivered to investors. Only the calendar date carries meaning; the time is always midnight UTC. e.g. `2012-12-08T00:00:00Z`."
+    }
+   },
+   "extensions": {
+    "display": {
+     "x": 120,
+     "y": 300
+    }
+   }
+  }
+ },
+ "relationships": {
+  "issuedBy": {
+   "type": "ISSUED_BY",
+   "description": "The security was issued by this legal entity — for a bond the obligor, for a share the company, for a depositary receipt the depositary bank, for a fund unit the fund vehicle. Every security has exactly one issuer; an entity may issue many securities, or none.",
+   "reference": "https://spec.edmcouncil.org/fibo/ontology/FBC/FinancialInstruments/FinancialInstruments/Issuer",
+   "from": {
+    "node": "Security",
+    "count": 1
+   },
+   "to": {
+    "node": "LegalEntity"
+   }
+  },
+  "directlyConsolidatedBy": {
+   "type": "DIRECTLY_CONSOLIDATED_BY",
+   "description": "The entity reports this entity as its direct accounting consolidating parent, as in LEI Level 2 relationship records. Following these links upward reaches the group's ultimate parent, against which issuer exposure is aggregated. An entity reports at most one direct parent; a parent may have many subsidiaries.",
+   "aliases": [
+    "Direct parent",
+    "Subsidiary of"
+   ],
+   "reference": "https://spec.edmcouncil.org/fibo/ontology/BE/LegalEntities/LEIEntities/isDirectlyConsolidatedBy",
+   "from": {
+    "node": "LegalEntity",
+    "max_count": 1
+   },
+   "to": {
+    "node": "LegalEntity"
+   }
+  },
+  "identifiedBy": {
+   "type": "IDENTIFIED_BY",
+   "description": "The security is identified by this market identifier. A security is expected to carry at least one identifier and usually carries several (an ISIN, a national number, a FIGI). An identifier is expected to identify exactly one security; one shared by two securities is a data-quality defect.",
+   "from": {
+    "node": "Security",
+    "min_count": 1
+   },
+   "to": {
+    "node": "Identifier"
+   }
+  },
+  "lists": {
+   "type": "LISTS",
+   "description": "The listing makes this security available on its exchange. Every listing lists exactly one security; a security may have many listings across exchanges and over time, or none.",
+   "reference": "https://spec.edmcouncil.org/fibo/ontology/SEC/Securities/SecuritiesListings/lists",
+   "from": {
+    "node": "Listing",
+    "count": 1
+   },
+   "to": {
+    "node": "Security"
+   }
+  },
+  "listedOn": {
+   "type": "LISTED_ON",
+   "description": "The listing is managed by this exchange. Every listing belongs to exactly one exchange; an exchange has many listings.",
+   "from": {
+    "node": "Listing",
+    "count": 1
+   },
+   "to": {
+    "node": "Exchange"
+   }
+  },
+  "represents": {
+   "type": "REPRESENTS",
+   "description": "The depositary receipt is evidence of deposited shares of this underlying security, so holding the receipt is economic exposure to the underlying's issuer, not to the depositary bank that issued the receipt. A depositary receipt represents exactly one underlying security; an underlying may back several receipt programmes, or none.",
+   "aliases": [
+    "Has traded share",
+    "Underlying of"
+   ],
+   "reference": "https://spec.edmcouncil.org/fibo/ontology/SEC/Equities/DepositaryReceipts/hasTradedShare",
+   "from": {
+    "node": "Security",
+    "max_count": 1
+   },
+   "to": {
+    "node": "Security"
+   },
+   "properties": {
+    "multiplier": {
+     "type": "FLOAT",
+     "must_exist": true,
+     "reference": "https://spec.edmcouncil.org/fibo/ontology/SEC/Equities/DepositaryReceipts/hasMultiplier",
+     "description": "Number of underlying shares represented by one depositary receipt; fractional when one receipt is a fraction of a share (0.5 means two receipts per share). e.g. `0.25`."
+    }
+   }
+  },
+  "convertibleInto": {
+   "type": "CONVERTIBLE_INTO",
+   "description": "The convertible security can be converted, at the holder's option under its conversion terms, into this target security — usually the issuer's own common share, or for an exchangeable bond another issuer's share. A convertible converts into at most one target security; a target may be the conversion target of many convertibles.",
+   "aliases": [
+    "Specifies conversion into",
+    "Exchangeable into"
+   ],
+   "reference": "https://spec.edmcouncil.org/fibo/ontology/SEC/Securities/SecuritiesIssuance/specifiesConversionInto",
+   "from": {
+    "node": "Security",
+    "max_count": 1
+   },
+   "to": {
+    "node": "Security"
+   },
+   "properties": {
+    "conversionRatio": {
+     "type": "FLOAT",
+     "must_exist": true,
+     "description": "Number of target shares received on converting one unit of the convertible: one bond of 1,000 in face amount, or one preferred share. e.g. `11.1240`."
+    }
+   }
+  },
+  "unitOf": {
+   "type": "UNIT_OF",
+   "description": "The security is a unit (share class) of this fund: a proportional claim on the fund's assets. A fund-unit security belongs to exactly one fund, and other securities to none; a fund may have several unit classes, or none that trade.",
+   "reference": "https://spec.edmcouncil.org/fibo/ontology/SEC/Funds/Funds/FundUnit",
+   "from": {
+    "node": "Security",
+    "max_count": 1
+   },
+   "to": {
+    "node": "Fund"
+   }
+  },
+  "holds": {
+   "type": "HOLDS",
+   "description": "The fund holds a position in this security at its reporting date. Where the security is another fund's unit, the holding is a look-through link: the fund is exposed to that fund's holdings in proportion to its weight. A fund holds many securities; a security may be held by many funds, or none.",
+   "aliases": [
+    "Position",
+    "Portfolio holding"
+   ],
+   "from": {
+    "node": "Fund"
+   },
+   "to": {
+    "node": "Security"
+   },
+   "properties": {
+    "weightPct": {
+     "type": "FLOAT",
+     "must_exist": true,
+     "aliases": [
+      "Portfolio weight"
+     ],
+     "description": "Market value of the position as a percentage of the fund's total net assets (0-100), at the fund's reporting date. Weights of one fund sum to at most 100; the rest is cash and other assets. Look-through weight is the product of weights along a chain of fund units. e.g. `1.31`."
+    },
+    "marketValue": {
+     "type": "FLOAT",
+     "description": "Market value of the position at the fund's reporting date, in units of the fund's base currency. e.g. `19040000.00`."
+    }
+   }
+  },
+  "managedBy": {
+   "type": "MANAGED_BY",
+   "description": "The fund's portfolio is managed by this legal entity, its fund manager, which makes the investment decisions. Every fund has exactly one manager; a manager may manage many funds.",
+   "aliases": [
+    "Fund manager",
+    "Investment adviser"
+   ],
+   "reference": "https://spec.edmcouncil.org/fibo/ontology/SEC/Funds/Funds/FundManager",
+   "from": {
+    "node": "Fund",
+    "count": 1
+   },
+   "to": {
+    "node": "LegalEntity"
+   }
+  },
+  "offers": {
+   "type": "OFFERS",
+   "description": "The offering sold this newly issued security to investors. An offering offers at least one security; a security may come to market in several offerings (a re-opening or a follow-on), or in none recorded (shares that predate the data, government auctions).",
+   "reference": "https://spec.edmcouncil.org/fibo/ontology/SEC/Securities/SecuritiesIssuance/SecuritiesOffering",
+   "from": {
+    "node": "Offering",
+    "min_count": 1
+   },
+   "to": {
+    "node": "Security"
+   }
+  },
+  "underwrittenBy": {
+   "type": "UNDERWRITTEN_BY",
+   "description": "The legal entity underwrote the offering — bought the securities from the issuer for resale, or sold them on the issuer's behalf. An offering has at least one underwriter and often a syndicate; an entity may underwrite many offerings.",
+   "aliases": [
+    "Underwriter",
+    "Syndicate member"
+   ],
+   "reference": "https://spec.edmcouncil.org/fibo/ontology/SEC/Securities/SecuritiesIssuance/isUnderwrittenBy",
+   "from": {
+    "node": "Offering",
+    "min_count": 1
+   },
+   "to": {
+    "node": "LegalEntity"
+   },
+   "properties": {
+    "role": {
+     "type": "STRING",
+     "must_exist": true,
+     "one_of": [
+      "bookrunner",
+      "lead manager",
+      "co-manager",
+      "selling group member"
+     ],
+     "description": "The underwriter's role in the syndicate, most senior first: bookrunner (runs the order book and allocates), lead manager, co-manager, or selling group member. e.g. `co-manager`."
+    }
+   }
+  }
+ },
+ "extensions": {
+  "data_source_tables": {
+   "legal_entities.csv": {
+    "source": "local",
+    "columns": [
+     {
+      "name": "entityId",
+      "type": "string"
+     },
+     {
+      "name": "name",
+      "type": "string"
+     },
+     {
+      "name": "lei",
+      "type": "string"
+     },
+     {
+      "name": "countryCode",
+      "type": "string"
+     },
+     {
+      "name": "sector",
+      "type": "string"
+     }
+    ]
+   },
+   "securities.csv": {
+    "source": "local",
+    "columns": [
+     {
+      "name": "securityId",
+      "type": "string"
+     },
+     {
+      "name": "name",
+      "type": "string"
+     },
+     {
+      "name": "securityType",
+      "type": "string"
+     },
+     {
+      "name": "cfiCode",
+      "type": "string"
+     },
+     {
+      "name": "currency",
+      "type": "string"
+     },
+     {
+      "name": "issueDate",
+      "type": "string"
+     },
+     {
+      "name": "maturityDate",
+      "type": "string"
+     },
+     {
+      "name": "couponRate",
+      "type": "string"
+     },
+     {
+      "name": "seniority",
+      "type": "string"
+     },
+     {
+      "name": "faceAmountOutstanding",
+      "type": "string"
+     },
+     {
+      "name": "securityForm",
+      "type": "string"
+     },
+     {
+      "name": "restriction",
+      "type": "string"
+     },
+     {
+      "name": "issuerEntityId",
+      "type": "string"
+     }
+    ]
+   },
+   "identifiers.csv": {
+    "source": "local",
+    "columns": [
+     {
+      "name": "securityId",
+      "type": "string"
+     },
+     {
+      "name": "identifierId",
+      "type": "string"
+     },
+     {
+      "name": "scheme",
+      "type": "string"
+     },
+     {
+      "name": "value",
+      "type": "string"
+     }
+    ]
+   },
+   "exchanges.csv": {
+    "source": "local",
+    "columns": [
+     {
+      "name": "mic",
+      "type": "string"
+     },
+     {
+      "name": "name",
+      "type": "string"
+     },
+     {
+      "name": "countryCode",
+      "type": "string"
+     }
+    ]
+   },
+   "listings.csv": {
+    "source": "local",
+    "columns": [
+     {
+      "name": "listingId",
+      "type": "string"
+     },
+     {
+      "name": "securityId",
+      "type": "string"
+     },
+     {
+      "name": "mic",
+      "type": "string"
+     },
+     {
+      "name": "ticker",
+      "type": "string"
+     },
+     {
+      "name": "listingDate",
+      "type": "string"
+     },
+     {
+      "name": "delistingDate",
+      "type": "string"
+     },
+     {
+      "name": "isPrimary",
+      "type": "string"
+     }
+    ]
+   },
+   "funds.csv": {
+    "source": "local",
+    "columns": [
+     {
+      "name": "fundId",
+      "type": "string"
+     },
+     {
+      "name": "name",
+      "type": "string"
+     },
+     {
+      "name": "fundType",
+      "type": "string"
+     },
+     {
+      "name": "domicile",
+      "type": "string"
+     },
+     {
+      "name": "baseCurrency",
+      "type": "string"
+     },
+     {
+      "name": "totalNetAssets",
+      "type": "string"
+     },
+     {
+      "name": "reportingDate",
+      "type": "string"
+     },
+     {
+      "name": "managerEntityId",
+      "type": "string"
+     }
+    ]
+   },
+   "offerings.csv": {
+    "source": "local",
+    "columns": [
+     {
+      "name": "offeringId",
+      "type": "string"
+     },
+     {
+      "name": "offeringType",
+      "type": "string"
+     },
+     {
+      "name": "underwritingType",
+      "type": "string"
+     },
+     {
+      "name": "closingDate",
+      "type": "string"
+     }
+    ]
+   },
+   "entity_parents.csv": {
+    "source": "local",
+    "columns": [
+     {
+      "name": "entityId",
+      "type": "string"
+     },
+     {
+      "name": "parentEntityId",
+      "type": "string"
+     }
+    ]
+   },
+   "depositary_receipts.csv": {
+    "source": "local",
+    "columns": [
+     {
+      "name": "securityId",
+      "type": "string"
+     },
+     {
+      "name": "underlyingSecurityId",
+      "type": "string"
+     },
+     {
+      "name": "multiplier",
+      "type": "string"
+     }
+    ]
+   },
+   "conversions.csv": {
+    "source": "local",
+    "columns": [
+     {
+      "name": "securityId",
+      "type": "string"
+     },
+     {
+      "name": "targetSecurityId",
+      "type": "string"
+     },
+     {
+      "name": "conversionRatio",
+      "type": "string"
+     }
+    ]
+   },
+   "fund_units.csv": {
+    "source": "local",
+    "columns": [
+     {
+      "name": "securityId",
+      "type": "string"
+     },
+     {
+      "name": "fundId",
+      "type": "string"
+     }
+    ]
+   },
+   "holdings.csv": {
+    "source": "local",
+    "columns": [
+     {
+      "name": "fundId",
+      "type": "string"
+     },
+     {
+      "name": "securityId",
+      "type": "string"
+     },
+     {
+      "name": "weightPct",
+      "type": "string"
+     },
+     {
+      "name": "marketValue",
+      "type": "string"
+     }
+    ]
+   },
+   "offering_securities.csv": {
+    "source": "local",
+    "columns": [
+     {
+      "name": "offeringId",
+      "type": "string"
+     },
+     {
+      "name": "securityId",
+      "type": "string"
+     }
+    ]
+   },
+   "offering_underwriters.csv": {
+    "source": "local",
+    "columns": [
+     {
+      "name": "offeringId",
+      "type": "string"
+     },
+     {
+      "name": "entityId",
+      "type": "string"
+     },
+     {
+      "name": "role",
+      "type": "string"
+     }
+    ]
+   }
+  },
+  "data_source_mappings": {
+   "mapping0": [
+    {
+     "type": "NODE",
+     "node": "LegalEntity",
+     "table": "legal_entities.csv",
+     "mode": "MERGE",
+     "key": [
+      "entityId"
+     ],
+     "properties": {
+      "entityId": {
+       "column": "entityId"
+      },
+      "name": {
+       "column": "name"
+      },
+      "lei": {
+       "column": "lei"
+      },
+      "countryCode": {
+       "column": "countryCode"
+      },
+      "sector": {
+       "column": "sector"
+      }
+     }
+    },
+    {
+     "type": "NODE",
+     "node": "Security",
+     "table": "securities.csv",
+     "mode": "MERGE",
+     "key": [
+      "securityId"
+     ],
+     "properties": {
+      "securityId": {
+       "column": "securityId"
+      },
+      "name": {
+       "column": "name"
+      },
+      "securityType": {
+       "column": "securityType"
+      },
+      "cfiCode": {
+       "column": "cfiCode"
+      },
+      "currency": {
+       "column": "currency"
+      },
+      "issueDate": {
+       "column": "issueDate"
+      },
+      "maturityDate": {
+       "column": "maturityDate"
+      },
+      "couponRate": {
+       "column": "couponRate"
+      },
+      "seniority": {
+       "column": "seniority"
+      },
+      "faceAmountOutstanding": {
+       "column": "faceAmountOutstanding"
+      },
+      "securityForm": {
+       "column": "securityForm"
+      },
+      "restriction": {
+       "column": "restriction"
+      }
+     }
+    },
+    {
+     "type": "NODE",
+     "node": "Identifier",
+     "table": "identifiers.csv",
+     "mode": "MERGE",
+     "key": [
+      "identifierId"
+     ],
+     "properties": {
+      "identifierId": {
+       "column": "identifierId"
+      },
+      "scheme": {
+       "column": "scheme"
+      },
+      "value": {
+       "column": "value"
+      }
+     }
+    },
+    {
+     "type": "NODE",
+     "node": "Exchange",
+     "table": "exchanges.csv",
+     "mode": "MERGE",
+     "key": [
+      "mic"
+     ],
+     "properties": {
+      "mic": {
+       "column": "mic"
+      },
+      "name": {
+       "column": "name"
+      },
+      "countryCode": {
+       "column": "countryCode"
+      }
+     }
+    },
+    {
+     "type": "NODE",
+     "node": "Listing",
+     "table": "listings.csv",
+     "mode": "MERGE",
+     "key": [
+      "listingId"
+     ],
+     "properties": {
+      "listingId": {
+       "column": "listingId"
+      },
+      "ticker": {
+       "column": "ticker"
+      },
+      "listingDate": {
+       "column": "listingDate"
+      },
+      "delistingDate": {
+       "column": "delistingDate"
+      },
+      "isPrimary": {
+       "column": "isPrimary"
+      }
+     }
+    },
+    {
+     "type": "NODE",
+     "node": "Fund",
+     "table": "funds.csv",
+     "mode": "MERGE",
+     "key": [
+      "fundId"
+     ],
+     "properties": {
+      "fundId": {
+       "column": "fundId"
+      },
+      "name": {
+       "column": "name"
+      },
+      "fundType": {
+       "column": "fundType"
+      },
+      "domicile": {
+       "column": "domicile"
+      },
+      "baseCurrency": {
+       "column": "baseCurrency"
+      },
+      "totalNetAssets": {
+       "column": "totalNetAssets"
+      },
+      "reportingDate": {
+       "column": "reportingDate"
+      }
+     }
+    },
+    {
+     "type": "NODE",
+     "node": "Offering",
+     "table": "offerings.csv",
+     "mode": "MERGE",
+     "key": [
+      "offeringId"
+     ],
+     "properties": {
+      "offeringId": {
+       "column": "offeringId"
+      },
+      "offeringType": {
+       "column": "offeringType"
+      },
+      "underwritingType": {
+       "column": "underwritingType"
+      },
+      "closingDate": {
+       "column": "closingDate"
+      }
+     }
+    },
+    {
+     "type": "RELATIONSHIP",
+     "relationship": "issuedBy",
+     "table": "securities.csv",
+     "mode": "MERGE",
+     "key": [],
+     "from_node": {
+      "label": "Security",
+      "properties": {
+       "securityId": {
+        "column": "securityId"
+       }
+      }
+     },
+     "to_node": {
+      "label": "LegalEntity",
+      "properties": {
+       "entityId": {
+        "column": "issuerEntityId"
+       }
+      }
+     }
+    },
+    {
+     "type": "RELATIONSHIP",
+     "relationship": "directlyConsolidatedBy",
+     "table": "entity_parents.csv",
+     "mode": "MERGE",
+     "key": [],
+     "from_node": {
+      "label": "LegalEntity",
+      "properties": {
+       "entityId": {
+        "column": "entityId"
+       }
+      }
+     },
+     "to_node": {
+      "label": "LegalEntity",
+      "properties": {
+       "entityId": {
+        "column": "parentEntityId"
+       }
+      }
+     }
+    },
+    {
+     "type": "RELATIONSHIP",
+     "relationship": "identifiedBy",
+     "table": "identifiers.csv",
+     "mode": "MERGE",
+     "key": [],
+     "from_node": {
+      "label": "Security",
+      "properties": {
+       "securityId": {
+        "column": "securityId"
+       }
+      }
+     },
+     "to_node": {
+      "label": "Identifier",
+      "properties": {
+       "identifierId": {
+        "column": "identifierId"
+       }
+      }
+     }
+    },
+    {
+     "type": "RELATIONSHIP",
+     "relationship": "lists",
+     "table": "listings.csv",
+     "mode": "MERGE",
+     "key": [],
+     "from_node": {
+      "label": "Listing",
+      "properties": {
+       "listingId": {
+        "column": "listingId"
+       }
+      }
+     },
+     "to_node": {
+      "label": "Security",
+      "properties": {
+       "securityId": {
+        "column": "securityId"
+       }
+      }
+     }
+    },
+    {
+     "type": "RELATIONSHIP",
+     "relationship": "listedOn",
+     "table": "listings.csv",
+     "mode": "MERGE",
+     "key": [],
+     "from_node": {
+      "label": "Listing",
+      "properties": {
+       "listingId": {
+        "column": "listingId"
+       }
+      }
+     },
+     "to_node": {
+      "label": "Exchange",
+      "properties": {
+       "mic": {
+        "column": "mic"
+       }
+      }
+     }
+    },
+    {
+     "type": "RELATIONSHIP",
+     "relationship": "represents",
+     "table": "depositary_receipts.csv",
+     "mode": "MERGE",
+     "key": [],
+     "from_node": {
+      "label": "Security",
+      "properties": {
+       "securityId": {
+        "column": "securityId"
+       }
+      }
+     },
+     "to_node": {
+      "label": "Security",
+      "properties": {
+       "securityId": {
+        "column": "underlyingSecurityId"
+       }
+      }
+     },
+     "properties": {
+      "multiplier": {
+       "column": "multiplier"
+      }
+     }
+    },
+    {
+     "type": "RELATIONSHIP",
+     "relationship": "convertibleInto",
+     "table": "conversions.csv",
+     "mode": "MERGE",
+     "key": [],
+     "from_node": {
+      "label": "Security",
+      "properties": {
+       "securityId": {
+        "column": "securityId"
+       }
+      }
+     },
+     "to_node": {
+      "label": "Security",
+      "properties": {
+       "securityId": {
+        "column": "targetSecurityId"
+       }
+      }
+     },
+     "properties": {
+      "conversionRatio": {
+       "column": "conversionRatio"
+      }
+     }
+    },
+    {
+     "type": "RELATIONSHIP",
+     "relationship": "unitOf",
+     "table": "fund_units.csv",
+     "mode": "MERGE",
+     "key": [],
+     "from_node": {
+      "label": "Security",
+      "properties": {
+       "securityId": {
+        "column": "securityId"
+       }
+      }
+     },
+     "to_node": {
+      "label": "Fund",
+      "properties": {
+       "fundId": {
+        "column": "fundId"
+       }
+      }
+     }
+    },
+    {
+     "type": "RELATIONSHIP",
+     "relationship": "holds",
+     "table": "holdings.csv",
+     "mode": "MERGE",
+     "key": [],
+     "from_node": {
+      "label": "Fund",
+      "properties": {
+       "fundId": {
+        "column": "fundId"
+       }
+      }
+     },
+     "to_node": {
+      "label": "Security",
+      "properties": {
+       "securityId": {
+        "column": "securityId"
+       }
+      }
+     },
+     "properties": {
+      "weightPct": {
+       "column": "weightPct"
+      },
+      "marketValue": {
+       "column": "marketValue"
+      }
+     }
+    },
+    {
+     "type": "RELATIONSHIP",
+     "relationship": "managedBy",
+     "table": "funds.csv",
+     "mode": "MERGE",
+     "key": [],
+     "from_node": {
+      "label": "Fund",
+      "properties": {
+       "fundId": {
+        "column": "fundId"
+       }
+      }
+     },
+     "to_node": {
+      "label": "LegalEntity",
+      "properties": {
+       "entityId": {
+        "column": "managerEntityId"
+       }
+      }
+     }
+    },
+    {
+     "type": "RELATIONSHIP",
+     "relationship": "offers",
+     "table": "offering_securities.csv",
+     "mode": "MERGE",
+     "key": [],
+     "from_node": {
+      "label": "Offering",
+      "properties": {
+       "offeringId": {
+        "column": "offeringId"
+       }
+      }
+     },
+     "to_node": {
+      "label": "Security",
+      "properties": {
+       "securityId": {
+        "column": "securityId"
+       }
+      }
+     }
+    },
+    {
+     "type": "RELATIONSHIP",
+     "relationship": "underwrittenBy",
+     "table": "offering_underwriters.csv",
+     "mode": "MERGE",
+     "key": [],
+     "from_node": {
+      "label": "Offering",
+      "properties": {
+       "offeringId": {
+        "column": "offeringId"
+       }
+      }
+     },
+     "to_node": {
+      "label": "LegalEntity",
+      "properties": {
+       "entityId": {
+        "column": "entityId"
+       }
+      }
+     },
+     "properties": {
+      "role": {
+       "column": "role"
+      }
+     }
+    }
+   ]
+  }
+ }
+}
