@@ -253,6 +253,33 @@
         ],
         "markdown": "SKILL.md"
       }
+    },
+    {
+      "skillId": "securities-reference-data",
+      "files": {
+        "graph": "ONTOLOGY.json",
+        "skill": [
+          "sample-data/conversions.csv",
+          "sample-data/depositary_receipts.csv",
+          "sample-data/entity_parents.csv",
+          "sample-data/exchanges.csv",
+          "sample-data/fund_units.csv",
+          "sample-data/funds.csv",
+          "sample-data/holdings.csv",
+          "sample-data/identifiers.csv",
+          "sample-data/legal_entities.csv",
+          "sample-data/listings.csv",
+          "sample-data/offering_securities.csv",
+          "sample-data/offering_underwriters.csv",
+          "sample-data/offerings.csv",
+          "sample-data/securities.csv",
+          "human_description.md",
+          "NOTICE.md",
+          "QUERIES.md",
+          "TESTS.md"
+        ],
+        "markdown": "SKILL.md"
+      }
     }
   ]
 }
