@@ -173,7 +173,7 @@ or a query-created entity that should never have been declared — delete it fro
 the reference ontology and document it in SKILL.md. Decide which by asking whether any CSV
 could supply it. There is no third case.
 - Table entries use `source: "local"`, keys equal to the exact CSV filenames, and `columns` listing every CSV header **in header order**, each `"type": "string"`; graph property types are correct for query behaviour (numeric comparisons on numeric types, temporal operations on temporal types). Checked mechanically in 3b.
-- Every node has `extensions.display` with `x`/`y`. Checked mechanically in 3b.
+- Every node has `extensions.display` with `x`/`y`, and the layout is compact enough for Import's fit-to-screen view to show readable labels. Checked mechanically in 3b.
 - Valid JSON only: no comments, trailing commas, or unresolved placeholders.
 
 ### The spec-library check (required)
@@ -249,11 +249,19 @@ Annotations are tested content, not decoration — check them against the same c
 - **Constraint flags are not repeated across entries of one label or relationship type** (§3) — blocker, checked by the script below.
 - Inferred annotations the user has not confirmed are marked `TODO(review): inferred description` — an unmarked, unconfirmed stipulation is a warning.
 
-The bundled script `scripts/check_annotations.py` resolves every mapping to its CSV column and checks the extensions allow-list (naming the pre-release extension keys specifically), display coordinates, the root `id`, table columns against CSV headers, descriptions, samples, value restrictions, endpoint labels, counts, constraint flags repeated across entries of one type, and repeated endpoint pairs a relationship mapping's `key` cannot tell apart (§4):
+The bundled script `scripts/check_annotations.py` resolves every mapping to its CSV column and checks the extensions allow-list (naming the pre-release extension keys specifically), display coordinates (and relays `check_layout.py`'s layout findings as warnings), the root `id`, table columns against CSV headers, descriptions, samples, value restrictions, endpoint labels, counts, constraint flags repeated across entries of one type, and repeated endpoint pairs a relationship mapping's `key` cannot tell apart (§4):
 
 ```bash
 python3 "<skill-path>/scripts/check_annotations.py" "<package-path>"
 ```
+
+Then check the layout. Import fits the whole reference ontology to the screen with labels at a fixed size, so a spread-out layout opens too far zoomed out to read — the fault four shipped packages had to have fixed by hand. `scripts/check_layout.py` measures the median and longest edge, the extent and the closest pair of nodes against the thresholds in ONTOLOGY_SPEC_FORMAT.md's [Display](ONTOLOGY_SPEC_FORMAT.md#display) section:
+
+```bash
+python3 "<skill-path>/scripts/check_layout.py" "<package-path>"
+```
+
+A layout `BLOCKER` blocks the handoff, and a `WARN` should be fixed too: aim for a median edge near 130. Where only the scale is off, `check_layout.py <package-path> --rescale` rescales the coordinates in place (create mode only — in test mode, report it); re-run the check afterwards and move any node left crowded. `check_annotations.py` relays the same findings as `WARN` lines, so a test-mode report shows a spread layout without refusing to run the queries.
 
 Any `BLOCKER` line stops the build: fix the reference ontology or the data, and do not proceed to the runtime gate. The `COUNT` lines show each count claim and the number of nodes it was tested against; a count tested against zero nodes means the node's mapping or identity columns did not resolve, which is itself a finding. Prose multiplicity has no fixed form — read each relationship description and confirm it says what the counts say.
 
@@ -601,6 +609,7 @@ The handoff summary must name:
 
 - Files created or changed.
 - Checks actually run, including whether ONTOLOGY.json validated against the bundled `ontology-graph-spec.schema.json`, **the ontology graph spec version its `schema` field declares and that it matches the bundle's pin**, the spec-library release the check ran with and its result, and the runtime gate's `REGISTER` and `IMPORT CONVERT` results with the destination commit they ran against. The test-mode summary from 5e: the run folder under `output/relate-tests/`, the Relate version, the per-package status counts, one line for every FAIL, ENGINE-GAP, UNSURE and IMPORT-FAIL, and every SKIPPED query by name with the reason — those still need manual testing on Aura, so point the tester at TESTS.md for them. Say that a Relate pass is evidence, not proof. If Relate was not installed, say instead that test mode did not run and no query was executed, and list every query by heading as needing manual testing on Aura.
+- The layout metrics from `check_layout.py` (median edge, longest edge, extent, closest pair), and whether `--rescale` was used.
 - The spec-library release the destination embeds, when it differs from the pin, and any pinned-release feature the package uses that the destination will drop.
 - Every remaining `TODO(review):` with its path — calling out `inferred description` items the user has not yet confirmed.
 - Every agent-loadable file over 45,000 characters, with its size and what drove it. (TESTS.md, human_description.md and the CSVs are exempt and need no mention.)

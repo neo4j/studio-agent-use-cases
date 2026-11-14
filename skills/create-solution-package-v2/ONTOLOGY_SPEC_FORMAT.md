@@ -368,7 +368,19 @@ Each node carries its position in the ontology visualisation as `extensions.disp
 }
 ```
 
-The spec makes `display` optional; this pipeline requires it on every node, spread far enough apart to make labels and relationship directions readable. Leave `colour` and `custom` unset — node colour is assigned by the rendering application.
+The spec makes `display` optional; this pipeline requires it on every node. Leave `colour` and `custom` unset — node colour is assigned by the rendering application.
+
+**Keep the layout compact.** Import fits the whole reference ontology to the screen, and labels are drawn at a fixed size in layout units, so a layout that is spread out opens zoomed far out with labels too small to read. Spreading nodes "for readability" has the opposite effect, and it is the most common layout fault: four packages shipped with median edges of 376–449 display units and had to be tightened by hand. Place nodes on a grid of about 130 units:
+
+| Metric | Aim for | Warning above | Blocker above |
+| ------ | ------- | ------------- | ------------- |
+| Median edge (distance between two nodes a relationship joins) | about 130 | 200 | 250 |
+| Longest edge | up to about 300 | 330 | 450 |
+| Extent (larger side of the bounding box) | as small as the shape allows | 550 | 800 |
+
+Keep every pair of nodes at least 70 apart so circles and labels do not collide; `check_layout.py` warns below 60 and blocks below 30. The thresholds are calibrated on the catalogued packages checked by eye in Import, which all sit at medians of 120–200 with no edge over 325. Put nodes that share many relationships next to each other, so no edge has to cross the whole view.
+
+`scripts/check_layout.py <package>` prints the four metrics and any finding. Where only the scale is wrong, `check_layout.py <package> --rescale` scales every node about the origin to a median edge of 130, rounds to multiples of 5, and rewrites only the coordinates; then re-run the check and move any node that ends up crowded. Rescaling is a create-mode fix: test mode reports a spread layout and never rewrites a package.
 
 ## Annotations for agent reasoning
 
@@ -456,7 +468,7 @@ The script also renames positional entity keys (`n:0` → the node's label; `r:0
 7. Define the CSV tables and their columns in header order.
 8. Add node mappings (`NODE`, mode `MERGE`, `key`) to `extensions.data_source_mappings.mapping0`.
 9. Add relationship mappings and endpoint lookups, with a `key` naming the distinguishing property wherever the domain has parallel relationships between the same two nodes.
-10. Add `extensions.display` coordinates to every node.
+10. Add `extensions.display` coordinates to every node, on a compact grid of about 130 units (see [Display](#display)), and run `scripts/check_layout.py` until it reports no finding.
 11. Create sample CSVs that satisfy the descriptions, value restrictions, and counts — then set each description's trailing `` e.g. `...` `` verbatim from the generated column.
 12. Check every query-referenced label, type, direction, and property against the reference ontology, and every query annotation block against the descriptions. Anything a query references that the reference ontology does not define must be a query-created entity documented in SKILL.md — if it is not, one of the two is wrong.
 13. Run the VALIDATION.md §3 checks, including the spec-library check and the runtime gate. A reference ontology that has never been through the runtime gate is not finished, however clean it looks.
@@ -484,5 +496,5 @@ The script also renames positional entity keys (`n:0` → the node's label; `r:0
 - A relationship table with more than one row for the same endpoint pair has a mapping `key` naming the property that tells those rows apart.
 - Every query label, relationship type, direction, and property exists in the reference ontology, and query annotation blocks agree with its descriptions.
 - Every bundled CSV header row matches its table's `columns` names, in order.
-- Every node has `extensions.display` coordinates.
+- Every node has `extensions.display` coordinates, and `check_layout.py` reports no `BLOCKER` or `WARN`: median edge 200 or less, longest edge 330 or less, extent 550 or less, closest pair 60 or more.
 - The file contains valid JSON with no comments, trailing commas, or unresolved placeholders.

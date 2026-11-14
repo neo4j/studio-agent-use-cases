@@ -50,6 +50,8 @@ The script runs `check_annotations.py`. If it reports any `BLOCKER`, the package
 - the blocker lines are quoted in the report;
 - nothing else runs.
 
+A layout too spread out to read in Import (`check_layout.py`) comes through as a `WARN` line, not a blocker: the queries still run, and the report lists it under the preflight warnings. Test mode never rescales a layout; propose the fix in the report.
+
 If `ontology_to_cypher.py` refuses the ONTOLOGY.json, the package is BLOCKED the same way. That happens on a mapping shape, binding or property type outside what Import loads locally, or on an unmapped entity, all of which make Import refuse too.
 
 ### 2. Fresh store

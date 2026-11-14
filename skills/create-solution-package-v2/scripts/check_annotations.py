@@ -46,6 +46,12 @@ for k, n in m.get("nodes", {}).items():
     if set(d) - {"x", "y"}:
         out("WARN", f"node {k} display carries {sorted(set(d) - {'x', 'y'})}; packages set x/y only")
 
+# Layout compactness. Relayed as WARN so test mode still runs the queries; check_layout.py run on its
+# own (VALIDATION.md 3b) keeps its BLOCKER level, which blocks the handoff.
+from check_layout import findings as layout_findings  # noqa: E402
+for level, msg in layout_findings(m):
+    out("WARN", msg if level == "WARN" else f"{msg} (BLOCKER in check_layout.py)")
+
 # Root identity.
 if m.get("id") != p.resolve().name:
     out("BLOCKER", f"id {m.get('id')!r} != package folder {p.resolve().name!r}")
