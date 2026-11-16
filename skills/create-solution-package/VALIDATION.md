@@ -2,7 +2,7 @@
 
 Run these checks on a generated or edited package before handing it off. Let `<package-path>` be the package folder. Do not rely on a successful build alone: malformed packages are caught and skipped by the registry, so a broken package fails silently by never appearing.
 
-Work through sections 1–6 (including 3b, 5a, 5b, 5c and 5d) and collect every finding — don't stop at the first failure. Then report and resolve findings with the user as described in section 7, and write the handoff described in section 8.
+Work through sections 1–6 (including 3b, 5a, 5b, 5c, 5d and 5e) and collect every finding — don't stop at the first failure. Then report and resolve findings with the user as described in section 7, and write the handoff described in section 8.
 
 Two failure modes dominate. The first is **inconsistency** between reference ontology, data, and queries. The second, since the TESTS.md split, is **sample-data leakage**: concrete detail about the bundled rows appearing in a file the consuming agent reads, where it becomes a false claim about the user's data. Section 5a checks for it mechanically.
 
@@ -22,7 +22,6 @@ Required:
 Confirm:
 
 - All required files exist and are non-empty, and every CSV referenced by ONTOLOGY.json sits below `sample-data/` (at any depth — nested subdirectories are legal).
-- There is no `GRAPH_MODEL.json`. A package carrying one is in the legacy format, or carries a stale copy beside its `ONTOLOGY.json` — blocker either way; convert per ONTOLOGY_SPEC_FORMAT.md's "Converting a legacy graph model" and remove it.
 - There is no `INTRODUCTION.md` — introduction guidance lives inside SKILL.md.
 - `TESTS.md` exists whenever the package bundles sample data. A package with resolving CSVs and no TESTS.md has no test oracle and cannot be verified — blocker. A package with no CSVs at all is a reference-ontology template rather than a working demo; TESTS.md is then not required, and that should be a deliberate choice the handoff names.
 - `human_description.md` exists, spelled exactly so — lower-case, underscore, `.md`. It is required whether or not the package bundles sample data. Missing is a blocker; a variant spelling is a blocker, because the runtime resolves it by name. Its content is checked in section 5d.
@@ -40,8 +39,6 @@ P="<package-path>"
 for f in SKILL.md ONTOLOGY.json QUERIES.md human_description.md; do
   test -s "$P/$f" || echo "MISSING: $f"
 done
-
-test -e "$P/GRAPH_MODEL.json" && echo "BLOCKER: legacy GRAPH_MODEL.json present"
 
 # Variant spellings of human_description.md — the runtime resolves it by name.
 find "$P" -maxdepth 1 -iname 'human*desc*' ! -name 'human_description.md' \
@@ -79,7 +76,6 @@ PY
 - `metadata` values are all strings; `neo4j-card-title`, `neo4j-card-category`, and `neo4j-card-description` are non-empty.
 - **`neo4j-card-category` is one of the allowed values, matched exactly** — `Financial Services`, `Insurance`, `Healthcare & Life Sciences`, `Manufacturing`, `Cybersecurity`, `Industry Agnostic`, or the legacy `General`, `Real-time risk detection`, `Supply Chain`. This is a blocker: the destination validates the field against this closed set and drops the whole package when it fails, with no user-visible error. A descriptive-but-unlisted value is the trap — `Investment Banking` reads perfectly and is rejected. Prefer a non-legacy value for new packages.
 - **No `neo4j-icon-category` key is present.** The field was removed from every package and is referenced nowhere in the destination; emitting it reintroduces a key nothing consumes.
-- **No `neo4j-graph-spec-version` key is present.** It belonged to the legacy format; the spec version now lives in `ONTOLOGY.json`'s `schema` field and is checked in section 3. A leftover key is a blocker, because it asserts a contract the package no longer uses.
 - Invalid YAML or missing required metadata rejects the package.
 
 ## 3. Reference ontology checks
@@ -106,7 +102,7 @@ print('schema OK')
 "
 ```
 
-The schema sets `additionalProperties: false` throughout, so any off-schema key fails here — including every field of the legacy graph-spec format (`mustExist`, `nullable`, root `tables`/`mappings`/`display`, table `fields`, `NodeMapping`/`RelationshipMapping`, `field` references), the pre-release `extensions.tables`/`extensions.mappings` names, a `name` on a node or relationship, a `label` on a constraint, and a missing `schema` or `id`. A schema failure is a blocker.
+The schema sets `additionalProperties: false` throughout, so any off-schema key fails here — including a `name` on a node or relationship, a `label` on a constraint, and a missing `schema` or `id`. A schema failure is a blocker.
 
 **Schema validity is necessary, not sufficient.** The schema is generated from the spec library's own type definitions; it cannot express the library's semantic rules (below), and it cannot tell you whether the destination runtime reads the file. A package that the runtime cannot read is not rejected loudly — it is silently dropped from the destination's catalogue. That is why the spec-library check and the runtime gate below are both required.
 
@@ -136,9 +132,6 @@ elif [ "$PINNED" != "$DECLARED" ]; then
 else
   echo "spec version OK: $DECLARED"
 fi
-
-awk '/^---$/ { n++; next } n == 1' "$P/SKILL.md" | grep -q 'neo4j-graph-spec-version' \
-  && echo "BLOCKER: SKILL.md still declares the retired neo4j-graph-spec-version"
 ```
 
 Resolving a mismatch is a decision for the user, never a silent edit. Either the package predates a spec update and needs migrating to the pinned version, or the pin itself is wrong. Do not "fix" it by rewriting the package's `schema` URI to match the bundle — that asserts a migration that has not happened.
@@ -173,7 +166,7 @@ or a query-created entity that should never have been declared — delete it fro
 the reference ontology and document it in SKILL.md. Decide which by asking whether any CSV
 could supply it. There is no third case.
 - Table entries use `source: "local"`, keys equal to the exact CSV filenames, and `columns` listing every CSV header **in header order**, each `"type": "string"`; graph property types are correct for query behaviour (numeric comparisons on numeric types, temporal operations on temporal types). Checked mechanically in 3b.
-- Every node has `extensions.display` with `x`/`y`. Checked mechanically in 3b.
+- Every node has `extensions.display` with `x`/`y`, and the layout is compact enough for Import's fit-to-screen view to show readable labels. Checked mechanically in 3b.
 - Valid JSON only: no comments, trailing commas, or unresolved placeholders.
 
 ### The spec-library check (required)
@@ -217,7 +210,7 @@ rm -f "$T"
 
 Every package must print `REGISTER OK` and `IMPORT CONVERT OK`. The test is written to surface the runtime's own message, not just a pass/fail, because the message names the rule that broke: `graph-spec contains duplicate constraint name "…"` (a constraint flag repeated across entries of one type), `Unknown Extension type. Keys: [x, y]` (a runtime that does not read the extension layout), `Sample data is incomplete. Missing CSV files: …` (catalog or `sample-data/` out of step with the reference ontology). Delete the temp file afterwards: it lives in someone else's repo.
 
-The gate covers registration, the decode, and the coherence of what the conversion encodes — a conversion that throws nothing can still be lossy, which is how a table-field `name` defect reached production under the legacy format, so the test also asserts every encoded field keeps its name. It does not cover SKILL.md's prose, CSV content or the queries; sections 1, 2, 4 and 5 stand in for those. A gate that passes proves the destination will list the package and can build its Import model; it says nothing about whether the data supports the queries (sections 5 and 5c).
+The gate covers registration, the decode, and the coherence of what the conversion encodes — a conversion that throws nothing can still be lossy, so the test also asserts every encoded field keeps its name. It does not cover SKILL.md's prose, CSV content or the queries; sections 1, 2, 4 and 5 stand in for those. A gate that passes proves the destination will list the package and can build its Import model; it says nothing about whether the data supports the queries (sections 5 and 5c).
 
 Check, too, **which release of the spec library the destination embeds** (for upx, `@neo4j/ontology-graph-spec` in `pnpm-workspace.yaml`). A runtime older than the pin decodes newer fields without complaint and drops them — under `0.9.1`, property `aliases` pass the gate and never reach the Import model. Name the embedded release in the handoff whenever it differs from the pin, and list any pinned-release feature the package uses that the runtime will drop.
 
@@ -227,7 +220,7 @@ Check, too, **which release of the spec library the destination embeds** (for up
 2. **The schema and the runtime disagree at the same pinned release** — as the typed extension values did at an earlier pin. Fix the *pipeline* (this skill), not just the one package.
 3. **The runtime and the pin are on different releases** — either way round. If the runtime is ahead, raise it as a spec-update decision: replace `ontology-graph-spec.schema.json`, update the release line and provenance in ONTOLOGY_SPEC_FORMAT.md, re-validate and migrate every existing package. If the runtime is behind, the package waits for the runtime, or avoids the newer feature. Never edit a reference ontology to fit an unpinned runtime.
 
-Do not assume (3) without evidence: the first real failure under the legacy format was a (2), and the first under this format was a (1).
+Do not assume (3) without evidence.
 
 ## 3b. Annotation checks
 
@@ -249,11 +242,19 @@ Annotations are tested content, not decoration — check them against the same c
 - **Constraint flags are not repeated across entries of one label or relationship type** (§3) — blocker, checked by the script below.
 - Inferred annotations the user has not confirmed are marked `TODO(review): inferred description` — an unmarked, unconfirmed stipulation is a warning.
 
-The bundled script `scripts/check_annotations.py` resolves every mapping to its CSV column and checks the extensions allow-list (naming the pre-release extension keys specifically), display coordinates, the root `id`, table columns against CSV headers, descriptions, samples, value restrictions, endpoint labels, counts, constraint flags repeated across entries of one type, and repeated endpoint pairs a relationship mapping's `key` cannot tell apart (§4):
+The bundled script `scripts/check_annotations.py` resolves every mapping to its CSV column and checks the extensions allow-list, display coordinates (and relays `check_layout.py`'s layout findings as warnings), the root `id`, table columns against CSV headers, descriptions, samples, value restrictions, endpoint labels, counts, constraint flags repeated across entries of one type, and repeated endpoint pairs a relationship mapping's `key` cannot tell apart (§4):
 
 ```bash
 python3 "<skill-path>/scripts/check_annotations.py" "<package-path>"
 ```
+
+Then check the layout. Import fits the whole reference ontology to the screen with labels at a fixed size, so a spread-out layout opens too far zoomed out to read — the fault four shipped packages had to have fixed by hand. `scripts/check_layout.py` measures the median and longest edge, the extent and the closest pair of nodes against the thresholds in ONTOLOGY_SPEC_FORMAT.md's [Display](ONTOLOGY_SPEC_FORMAT.md#display) section:
+
+```bash
+python3 "<skill-path>/scripts/check_layout.py" "<package-path>"
+```
+
+A layout `BLOCKER` blocks the handoff, and a `WARN` should be fixed too: aim for a median edge near 130. Where only the scale is off, `check_layout.py <package-path> --rescale` rescales the coordinates in place (create mode only — in test mode, report it); re-run the check afterwards and move any node left crowded. `check_annotations.py` relays the same findings as `WARN` lines, so a test-mode report shows a spread layout without refusing to run the queries.
 
 Any `BLOCKER` line stops the build: fix the reference ontology or the data, and do not proceed to the runtime gate. The `COUNT` lines show each count claim and the number of nodes it was tested against; a count tested against zero nodes means the node's mapping or identity columns did not resolve, which is itself a finding. Prose multiplicity has no fixed form — read each relationship description and confirm it says what the counts say.
 
@@ -292,7 +293,7 @@ For QUERIES.md (and any supporting `.cypher` file):
 - APOC or GDS use is confined to a clearly labelled section with prerequisites stated — a divider heading such as `## Graph Data Science (optional)` holding only section prose (plugin needs, projection lifecycle, run order), followed by each query under its own `##` heading with the requirement in `@prerequisites` — or, where the package's queries must run in a stated order, each APOC/GDS query is labelled in place with "(requires APOC)" or "(requires GDS)" in its heading and `@prerequisites`.
 - The node-key constraints implied by ONTOLOGY.json (`key: true` properties and composite `KEY` constraints) appear at the end as a reference for checking the live database, introduced by section prose; the individual statements need no annotation blocks.
 
-Running the queries against a database is manual testing, outside this skill's scope. Do not import data or run queries as part of validation, and do not mark queries as unproven. The checks above are static: read every query against ONTOLOGY.json and against the seeded design TESTS.md describes, and confirm by reading the CSVs that each query's pattern is present in the data — a query whose pattern the data cannot produce is a blocker whether or not anyone runs it.
+The checks above are static, and section 5e runs the queries; do both. A passing run does not catch leakage, vocabulary that contradicts the reference ontology, or a threshold reverse-engineered from the seed, and a careful read does not catch a query that returns the wrong rows. Do not mark queries as unproven in the package — test results live in `output/`. For the static half, read every query against ONTOLOGY.json and against the seeded design TESTS.md describes, and confirm by reading the CSVs that each query's pattern is present in the data — a query whose pattern the data cannot produce is a blocker whether or not anyone runs it.
 
 ## 5a. Sample-data leakage checks
 
@@ -377,7 +378,7 @@ TESTS.md is the oracle. It is never loaded by the runtime, so it is exempt from 
 - Every query section states its **Parameters** and an **Invariant**. A section with expected counts but no invariant is a finding: it breaks on the next data regeneration and the breakage looks like a query fault.
 - Invariants are expressed in terms of the seeded design ("returns the twelve Ring A claimants and no unseeded claimant"), not as bare counts. A bare row count is an observation, not an invariant.
 - Any **Expected** counts are derivable from the bundled CSVs, and agree with them.
-- No `TODO(review): unproven query` lines anywhere, and no "queries not executed" section — testing is manual and outside package creation. Remove any left over from older packages.
+- No `TODO(review): unproven query` lines anywhere, and no "queries not executed" or "test results" section — test results live in `output/relate-tests/`, never in the package, and the format is unchanged. Remove any left over from older packages.
 
 Both files carry headings the other does not — prerequisites and the adapting section on one side, how-to-run and the profile on the other, plus any APOC/GDS section heading and the closing node-key constraints section. Exclude those, then compare what remains; the exclusion lists are per-package, so edit them to match.
 
@@ -500,6 +501,37 @@ wc -w "$H"
 
 The greps over-report by design. `schema` may appear legitimately in a domain sense, `row` inside an unrelated word, a label name may coincide with ordinary prose. Read each hit rather than acting on the count — and read the whole file once straight through, which is the only check that catches a page that is accurate and still unreadable.
 
+## 5e. Local execution (Relate)
+
+**If Relate is not installed** (`scripts/check_relate.py` says so), this section is not run. Record that in the handoff: no query was executed, and every query in QUERIES.md needs manual testing on Aura. SKILL.md's "Without Relate" says how the rest of the build changes. Do not treat the missing run as a finding against the package.
+
+Run test mode on the package ([TESTING.md](TESTING.md)): it imports the sample data into a throwaway Relate store with a `LOAD CSV` script generated from ONTOLOGY.json, checks the data landed as the reference ontology says, runs SETUP.md, then runs every query in file order and judges each result against its TESTS.md section.
+
+```bash
+python3 "<skill-path>/scripts/run_queries.py" run "<package-path>"
+```
+
+Each query ends with one status:
+
+| Status | Meaning | In section 7 |
+| ------ | ------- | ------------ |
+| PASS | Ran, and the result satisfies the TESTS.md invariant and expectations | — |
+| FAIL | Package fault: rejected statement, empty or wrong result, or drift caught by `EXPLAIN` | Blocker |
+| ENGINE-GAP | Relate does not support a construct that is valid on Neo4j (RELATE.md names it) | Warning; name it in the handoff |
+| SKIPPED | Needs APOC, GDS or a fulltext procedure, or reads what such a query writes; requires manual testing on Aura | Handoff item, not a finding |
+| NEEDS-PARAMS | No parameter values found in TESTS.md, `@sample` or `@params` | Finding: add the values to TESTS.md's Parameters field |
+| UNSURE | Ran, but the result cannot be judged against TESTS.md with confidence | Warning; put the evidence to the user |
+| BLOCKED / IMPORT-FAIL | Preflight or import failed; see the package report | Blocker |
+
+What a PASS means, and what it does not:
+
+- **It means** the query ran on the bundled sample, imported as Aura's Import would import it, and returned rows that satisfy the invariant TESTS.md states, with the evidence quoted in the report. The landing checks behind it compared the graph with counts computed independently from the CSVs.
+- **It does not mean** the query is proven on Aura. Relate is not Aura's Cypher engine, and the generated `LOAD CSV` script is a second implementation of Aura's Import; RELATE.md lists where each is known to differ. A pass is evidence, not proof, until parity has been checked against Aura.
+- **It does not replace section 3's runtime gate.** The gate proves the destination registers the package and converts its reference ontology for Import; Relate proves neither.
+- **SKIPPED is not a pass.** Every SKIPPED query still needs the manual Aura test TESTS.md's "How to run" describes.
+
+An IMPORT-FAIL makes every query result in that run untrusted: fix the data or the reference ontology first, then re-run. A disagreement between TESTS.md's sample-data profile and the CSVs is a stale-TESTS.md finding whichever side is wrong.
+
 ## 6. SKILL.md content and terminology checks
 
 - The body is terse and agent-facing, with no duplicated runnable queries.
@@ -516,13 +548,13 @@ The greps over-report by design. `schema` may appear legitimately in a domain se
 - Terminology, units, allowed values, directions, and identifiers are consistent across SKILL.md, QUERIES.md, ONTOLOGY.json, and the CSVs — with ONTOLOGY.json's annotations (nodes, relationships, and properties) as the reference vocabulary the other files must agree with.
 - The Reference ontology section summarises rather than redefines: the authoritative meanings live in ONTOLOGY.json's annotations, and SKILL.md says so.
 - SKILL.md instructs the consuming agent to treat those annotations as authoritative when explaining the reference ontology or generating Cypher, and tells it that users may say "model", "graph model", "data model" or "ontology" for the same thing.
-- **Package-wide terminology.** Every package file, TESTS.md included, calls the ontology the reference ontology. "Graph model", "graph data model", "data model" or a bare "model" used as its name, and any mention of `GRAPH_MODEL.json` or `neo4j-graph-spec-version`, is a finding — and a blocker in `human_description.md`. "Schema" is correct only for the live database. Equally a finding: describing the reference ontology in OWL, RDF, reasoning, T-Box/A-Box or "axiom" terms.
+- **Package-wide terminology.** Every package file, TESTS.md included, calls the ontology the reference ontology. "Graph model", "graph data model", "data model" or a bare "model" used as its name is a finding — and a blocker in `human_description.md`. "Schema" is correct only for the live database. Equally a finding: describing the reference ontology in OWL, RDF, reasoning, T-Box/A-Box or "axiom" terms.
 
 ```bash
 P="<package-path>"
 # Candidates only — read each hit. "model" is legitimate in other senses
 # (a pricing model, a risk model); "schema" is legitimate for the live database.
-rg -ni 'graph model|graph data model|data model|\bthe model\b|this model|GRAPH_MODEL|neo4j-graph-spec-version' \
+rg -ni 'graph model|graph data model|data model|\bthe model\b|this model' \
   "$P" --glob '*.md'
 rg -ni '\bOWL\b|\bRDF\b|t-box|a-box|axiom|inference|reasoner' "$P" --glob '*.md'
 ```
@@ -537,7 +569,7 @@ The package's own terminology line ("users may say model, graph model…") is an
 
 Validation findings are decisions for the user, not silent patches. After completing sections 1–6:
 
-1. **Classify** each finding: *blocker* (package would be rejected, fails schema validation, the spec-library check or the runtime gate, declares a spec version other than the bundle's pin or none at all, repeats a constraint flag across entries of one type, collapses parallel relationships under an empty mapping key, has an agent-loadable file over 50,000 characters, a query's pattern cannot be produced by the bundled data, an agent-facing file makes a false claim about the user's data, `human_description.md` is missing or misnamed, or it calls the ontology anything but the reference ontology) or *warning* (works but weakens quality — vague description, untuned threshold, agent-loadable file near the 50,000-character limit).
+1. **Classify** each finding: *blocker* (package would be rejected, fails schema validation, the spec-library check or the runtime gate, declares a spec version other than the bundle's pin or none at all, repeats a constraint flag across entries of one type, collapses parallel relationships under an empty mapping key, has an agent-loadable file over 50,000 characters, a query's pattern cannot be produced by the bundled data, test mode reports a FAIL, IMPORT-FAIL or BLOCKED (5e), an agent-facing file makes a false claim about the user's data, `human_description.md` is missing or misnamed, or it calls the ontology anything but the reference ontology) or *warning* (works but weakens quality — vague description, untuned threshold, agent-loadable file near the 50,000-character limit).
 2. **Report** them together in one summary. For each finding give: the file and location, what's wrong, why it matters, and a concrete proposed fix. Where more than one fix is reasonable, present the options with a recommendation rather than choosing silently.
 3. **Ask** before applying fixes that change meaning — reference ontology changes, description changes, data regeneration, threshold changes, renames. Mechanical corrections (a typo'd field name that must match a CSV header, invalid JSON syntax, a stray row count that belongs in TESTS.md) may be fixed directly and reported.
 4. **Re-run** the affected checks after fixes, and repeat until no blockers remain.
@@ -548,8 +580,8 @@ Example report shape:
 Blockers (3)
 1. QUERIES.md §3 references Claim.amount; ONTOLOGY.json defines amountClaimed.
    Fix: rename in the query (recommended) or add the property to the reference ontology.
-2. ONTOLOGY.json fails schema validation: property "vin" uses "mustExist"
-   (legacy field). Fix: replace with must_exist (mechanical — fixed, please confirm).
+2. ONTOLOGY.json fails schema validation: property "vin" uses the
+   unknown key "mandatory". Fix: replace with must_exist (mechanical — fixed, please confirm).
 3. QUERIES.md §7 @usage says "returns the 12 seeded ring members" — a sample-data
    claim in an agent-facing file. Fix: move the count to TESTS.md and restate the
    guidance as "raise until the group size is improbable for the portfolio in hand"
@@ -569,7 +601,8 @@ Warnings (2)
 The handoff summary must name:
 
 - Files created or changed.
-- Checks actually run, including whether ONTOLOGY.json validated against the bundled `ontology-graph-spec.schema.json`, **the ontology graph spec version its `schema` field declares and that it matches the bundle's pin**, the spec-library release the check ran with and its result, and the runtime gate's `REGISTER` and `IMPORT CONVERT` results with the destination commit they ran against. Queries are not run; say so, and point the tester at TESTS.md.
+- Checks actually run, including whether ONTOLOGY.json validated against the bundled `ontology-graph-spec.schema.json`, **the ontology graph spec version its `schema` field declares and that it matches the bundle's pin**, the spec-library release the check ran with and its result, and the runtime gate's `REGISTER` and `IMPORT CONVERT` results with the destination commit they ran against. The test-mode summary from 5e: the run folder under `output/relate-tests/`, the Relate version, the per-package status counts, one line for every FAIL, ENGINE-GAP, UNSURE and IMPORT-FAIL, and every SKIPPED query by name with the reason — those still need manual testing on Aura, so point the tester at TESTS.md for them. Say that a Relate pass is evidence, not proof. If Relate was not installed, say instead that test mode did not run and no query was executed, and list every query by heading as needing manual testing on Aura.
+- The layout metrics from `check_layout.py` (median edge, longest edge, extent, closest pair), and whether `--rescale` was used.
 - The spec-library release the destination embeds, when it differs from the pin, and any pinned-release feature the package uses that the destination will drop.
 - Every remaining `TODO(review):` with its path — calling out `inferred description` items the user has not yet confirmed.
 - Every agent-loadable file over 45,000 characters, with its size and what drove it. (TESTS.md, human_description.md and the CSVs are exempt and need no mention.)

@@ -1,0 +1,27 @@
+pathwayId,name,source
+R-HSA-74752,Signaling by Insulin receptor,Reactome
+R-HSA-1257604,PIP3 activates AKT signaling,Reactome
+R-HSA-165159,MTOR signalling,Reactome
+R-HSA-400206,Regulation of lipid metabolism by PPARalpha,Reactome
+R-HSA-1989781,PPARA activates gene expression,Reactome
+R-HSA-77289,Mitochondrial Fatty Acid Beta-Oxidation,Reactome
+R-HSA-75105,Fatty acyl-CoA biosynthesis,Reactome
+R-HSA-8963899,Plasma lipoprotein remodeling,Reactome
+R-HSA-1474244,Extracellular matrix organization,Reactome
+R-HSA-1592389,Activation of Matrix Metalloproteinases,Reactome
+R-HSA-449147,Signaling by Interleukins,Reactome
+R-HSA-1280215,Cytokine Signaling in Immune system,Reactome
+R-HSA-70263,Gluconeogenesis,Reactome
+R-HSA-422356,Regulation of insulin secretion,Reactome
+R-HSA-163685,Integration of energy metabolism,Reactome
+R-HSA-191273,Cholesterol biosynthesis,Reactome
+R-HSA-8957322,Metabolism of steroids,Reactome
+R-HSA-381119,Unfolded Protein Response (UPR),Reactome
+R-HSA-9707564,Cytoprotection by HMOX1,Reactome
+R-HSA-1632852,Macroautophagy,Reactome
+R-HSA-381340,Transcriptional regulation of white adipocyte differentiation,Reactome
+R-HSA-70171,Glycolysis,Reactome
+R-HSA-71403,Citric acid cycle (TCA cycle),Reactome
+R-HSA-71291,Metabolism of amino acids and derivatives,Reactome
+R-HSA-9006934,Signaling by Receptor Tyrosine Kinases,Reactome
+R-HSA-5683057,MAPK family signaling cascades,Reactome
