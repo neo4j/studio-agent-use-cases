@@ -1,0 +1,26 @@
+fundId,name,fundType,domicile,baseCurrency,totalNetAssets,reportingDate,managerEntityId
+FND-001,Aldermoor Japan Equity ETF,exchange-traded fund,IE,USD,1850000000,2026-10-30T00:00:00Z,LE-0027
+FND-002,Aldermoor Global Allocation Fund of Funds,fund of funds,IE,USD,2400000000,2026-10-30T00:00:00Z,LE-0027
+FND-003,Aldermoor European Equity Fund,mutual fund,IE,EUR,950000000,2026-10-30T00:00:00Z,LE-0027
+FND-004,Aldermoor Global Corporate Bond Fund,mutual fund,IE,USD,1300000000,2026-10-30T00:00:00Z,LE-0027
+FND-005,Northgate Asia Income Fund,mutual fund,US,USD,780000000,2026-10-30T00:00:00Z,LE-0028
+FND-006,Northgate Global Leaders Fund,mutual fund,US,USD,3100000000,2026-10-30T00:00:00Z,LE-0028
+FND-007,Northgate US Core Equity Fund,mutual fund,US,USD,5200000000,2026-10-30T00:00:00Z,LE-0028
+FND-008,Northgate High Yield Opportunities Fund,closed-end investment,US,USD,640000000,2026-10-30T00:00:00Z,LE-0028
+FND-009,Westmark Dividend Fund,mutual fund,US,USD,1450000000,2026-10-30T00:00:00Z,LE-0029
+FND-010,Westmark International Value Fund,mutual fund,US,USD,820000000,2026-10-30T00:00:00Z,LE-0029
+FND-011,Westmark Macro Opportunities Fund,hedge fund,US,USD,410000000,2026-10-30T00:00:00Z,LE-0029
+FND-012,Westmark Multi-Manager Portfolio,fund of funds,US,USD,1150000000,2026-10-30T00:00:00Z,LE-0029
+FND-013,Brookline Sterling Corporate Bond Fund,mutual fund,GB,GBP,1050000000,2026-10-30T00:00:00Z,LE-0005
+FND-014,Brookline Global Equity Fund,mutual fund,GB,GBP,2200000000,2026-10-30T00:00:00Z,LE-0005
+FND-015,Brookline UK Equity Income Fund,mutual fund,GB,GBP,890000000,2026-10-30T00:00:00Z,LE-0005
+FND-016,Harrowgate US Large Cap ETF,exchange-traded fund,US,USD,7400000000,2026-10-30T00:00:00Z,LE-0010
+FND-017,Harrowgate Treasury Bond ETF,exchange-traded fund,US,USD,2900000000,2026-10-30T00:00:00Z,LE-0010
+FND-018,Harrowgate Investment Grade Corporate ETF,exchange-traded fund,US,USD,3300000000,2026-10-30T00:00:00Z,LE-0010
+FND-019,Harrowgate International Developed ETF,exchange-traded fund,US,USD,2100000000,2026-10-30T00:00:00Z,LE-0010
+FND-020,Meridian Europa Aktien Fonds,mutual fund,CH,CHF,1200000000,2026-10-30T00:00:00Z,LE-0014
+FND-021,Meridian Balanced Portfolio,mutual fund,CH,CHF,1600000000,2026-10-30T00:00:00Z,LE-0014
+FND-022,Shinonome Japan Opportunities Fund,mutual fund,IE,JPY,260000000000,2026-10-30T00:00:00Z,LE-0020
+FND-023,Shinonome Global Aggregate Bond Fund,mutual fund,IE,USD,1700000000,2026-10-30T00:00:00Z,LE-0020
+FND-024,Shinonome Global Convertible Fund,mutual fund,IE,USD,540000000,2026-10-30T00:00:00Z,LE-0020
+FND-025,Tidewater Staff Pension Fund,pension fund,GB,GBP,4300000000,2026-10-30T00:00:00Z,LE-0030

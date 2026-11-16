@@ -1,0 +1,17 @@
+name,uniprot,function,type
+BACE1,P56817,Beta-secretase enzyme that cleaves amyloid precursor protein,Enzyme
+Amyloid-beta,P05067,Peptide fragment of amyloid precursor protein that aggregates into plaques,Peptide
+Tau,P10636,Microtubule-associated protein that forms neurofibrillary tangles,Structural protein
+TREM2,Q9NZC2,Microglial receptor regulating the response to amyloid pathology,Receptor
+LRRK2,Q5S007,Serine/threonine kinase linked to familial Parkinson's disease,Kinase
+GBA1,P04062,Lysosomal enzyme whose variants raise Parkinson's disease risk,Enzyme
+PD-1,Q15116,T-cell checkpoint receptor that dampens anti-tumour immunity,Immune checkpoint
+PD-L1,Q9NZQ7,Ligand of PD-1 expressed by tumour cells,Immune checkpoint
+EGFR,P00533,Receptor tyrosine kinase mutated in a subset of lung cancers,Kinase
+ALK,Q9UM73,Receptor tyrosine kinase activated by gene fusions in lung cancer,Kinase
+KRAS,P01116,GTPase whose G12C mutation drives some lung cancers,Enzyme
+BRAF,P15056,Serine/threonine kinase mutated in about half of melanomas,Kinase
+JAK1,P23458,Tyrosine kinase in cytokine signalling,Kinase
+IL-6R,P08887,Receptor for the pro-inflammatory cytokine interleukin-6,Receptor
+BTK,Q06187,Tyrosine kinase in B-cell and microglial signalling,Kinase
+GLP-1R,P43220,Incretin receptor that stimulates insulin secretion,Receptor

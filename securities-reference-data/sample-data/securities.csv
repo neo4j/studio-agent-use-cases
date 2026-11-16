@@ -1,0 +1,599 @@
+securityId,name,securityType,cfiCode,currency,issueDate,maturityDate,couponRate,seniority,faceAmountOutstanding,securityForm,restriction,issuerEntityId
+SEC-00001,Quillon Software Common Stock,common share,ESVUFR,USD,2016-06-03T00:00:00Z,,,,,registered form,none,LE-0031
+SEC-00002,Quillon Software Inc. 0.750% Sr Notes 2028,corporate bond,DBFUFR,USD,2021-05-19T00:00:00Z,2028-05-19T00:00:00Z,0.750,senior unsecured,1500000000,book entry form,none,LE-0031
+SEC-00003,Quillon Software Inc. 2.500% Sr Notes 2028,corporate bond,DBFUFR,USD,2021-02-21T00:00:00Z,2028-02-21T00:00:00Z,2.500,senior unsecured,1000000000,book entry form,none,LE-0031
+SEC-00004,Quillon Software Inc. 3.625% Sr Notes 2021,corporate bond,DBFUFR,USD,2014-07-07T00:00:00Z,2021-07-07T00:00:00Z,3.625,senior unsecured,750000000,book entry form,none,LE-0031
+SEC-00005,Ostrander Energy Common Stock,common share,ESVUFR,USD,2004-03-19T00:00:00Z,,,,,registered form,none,LE-0033
+SEC-00006,Ostrander Energy Capital LLC 6.500% Sr Sec Notes 2052,corporate bond,DBFSFR,USD,2022-04-11T00:00:00Z,2052-04-11T00:00:00Z,6.500,senior secured,500000000,book entry form,none,LE-0036
+SEC-00007,Pellucid Health Common Stock,common share,ESVUFR,USD,1997-02-13T00:00:00Z,,,,,registered form,none,LE-0038
+SEC-00008,Fennimore Pharmaceuticals Common Stock,common share,ESVUFR,USD,1986-01-01T00:00:00Z,,,,,registered form,none,LE-0040
+SEC-00009,Jessop Retail Common Stock,common share,ESVUFR,USD,1995-06-10T00:00:00Z,,,,,registered form,none,LE-0042
+SEC-00010,Jessop Retail Inc. 6.625% Sr Notes 2032,corporate bond,DBFUFR,USD,2022-09-19T00:00:00Z,2032-09-19T00:00:00Z,6.625,senior unsecured,500000000,book entry form,none,LE-0042
+SEC-00011,Jessop Retail Inc. 3.500% Jr Sub Notes 2038,corporate bond,DBFUFR,USD,2018-12-13T00:00:00Z,2038-12-13T00:00:00Z,3.500,junior subordinated,300000000,book entry form,none,LE-0042
+SEC-00012,Varnell Aerospace Common Stock,common share,ESVUFR,USD,2013-11-19T00:00:00Z,,,,,registered form,none,LE-0046
+SEC-00013,Varnell Aerospace Inc. 3.250% Sr Notes 2044,corporate bond,DBFUFR,USD,2014-07-19T00:00:00Z,2044-07-19T00:00:00Z,3.250,senior unsecured,600000000,book entry form,none,LE-0046
+SEC-00014,Varnell Aerospace Inc. 2.750% Sub Notes 2047,corporate bond,DBFUFR,USD,2017-01-18T00:00:00Z,2047-01-18T00:00:00Z,2.750,subordinated,1500000000,book entry form,none,LE-0046
+SEC-00015,Zentara Payments Common Stock,common share,ESVUFR,USD,1997-09-03T00:00:00Z,,,,,registered form,none,LE-0049
+SEC-00016,Zentara Payments Preferred Shares,preferred share,EPNXFR,USD,2020-06-12T00:00:00Z,,,,,registered form,none,LE-0049
+SEC-00017,Zentara Payments Inc. 4.375% Sr Notes 2035,corporate bond,DBFUFR,USD,2025-07-26T00:00:00Z,2035-07-26T00:00:00Z,4.375,senior unsecured,1000000000,book entry form,none,LE-0049
+SEC-00018,Zentara Payments Inc. 1.500% Sr Notes 2031,corporate bond,DBFUFR,USD,2021-03-04T00:00:00Z,2031-03-04T00:00:00Z,1.500,senior unsecured,750000000,book entry form,none,LE-0049
+SEC-00019,Oakhurst Homes Common Stock,common share,ESVUFR,USD,2015-12-12T00:00:00Z,,,,,registered form,none,LE-0052
+SEC-00020,Oakhurst Homes Capital LLC 0.750% Sr Notes 2033,corporate bond,DBFUFR,USD,2021-02-06T00:00:00Z,2033-02-06T00:00:00Z,0.750,senior unsecured,500000000,book entry form,none,LE-0054
+SEC-00021,Oakhurst Homes Capital LLC 4.750% Sr Notes 2028,corporate bond,DBFUFR,USD,2023-07-28T00:00:00Z,2028-07-28T00:00:00Z,4.750,senior unsecured,600000000,book entry form,none,LE-0054
+SEC-00022,Oakhurst Homes Capital LLC 1.250% Sr Notes 2051,corporate bond,DBFUFR,USD,2021-05-20T00:00:00Z,2051-05-20T00:00:00Z,1.250,senior unsecured,750000000,book entry form,none,LE-0054
+SEC-00023,Oakhurst Homes Inc. 3.750% Sr Notes 2022,corporate bond,DBFUFR,USD,2019-07-10T00:00:00Z,2022-07-10T00:00:00Z,3.750,senior unsecured,750000000,book entry form,none,LE-0052
+SEC-00024,Sorrel Bay Utilities Common Stock,common share,ESVUFR,USD,1986-06-19T00:00:00Z,,,,,registered form,none,LE-0055
+SEC-00025,Sorrel Bay Utilities Capital LLC 5.375% Sr Notes 2026,corporate bond,DBFUFR,USD,2023-11-10T00:00:00Z,2026-11-10T00:00:00Z,5.375,senior unsecured,750000000,book entry form,none,LE-0057
+SEC-00026,Sorrel Bay Utilities Inc. 3.500% Sr Sec Notes 2024,corporate bond,DBFSFR,USD,2014-02-08T00:00:00Z,2024-02-08T00:00:00Z,3.500,senior secured,300000000,book entry form,none,LE-0055
+SEC-00027,Sorrel Bay Utilities Capital LLC 4.875% Sub Notes 2035,corporate bond,DBFUFR,USD,2025-04-23T00:00:00Z,2035-04-23T00:00:00Z,4.875,subordinated,600000000,book entry form,none,LE-0057
+SEC-00028,Ivel Semiconductors Common Stock,common share,ESVUFR,USD,2003-12-08T00:00:00Z,,,,,registered form,none,LE-0060
+SEC-00029,Ivel Semiconductors Inc. 4.000% Sr Notes 2019,corporate bond,DBFUFR,USD,2016-02-02T00:00:00Z,2019-02-02T00:00:00Z,4.000,senior unsecured,1500000000,book entry form,none,LE-0060
+SEC-00030,Ivel Semiconductors Inc. 5.125% Sr Notes 2035,corporate bond,DBFUFR,USD,2025-04-03T00:00:00Z,2035-04-03T00:00:00Z,5.125,senior unsecured,500000000,book entry form,none,LE-0060
+SEC-00031,Ivel Semiconductors Capital LLC 3.125% Sub Notes 2036,corporate bond,DBFUFR,USD,2024-09-09T00:00:00Z,2036-09-09T00:00:00Z,3.125,subordinated,1500000000,book entry form,none,LE-0061
+SEC-00032,Ivel Semiconductors Capital LLC 4.125% Sr Notes 2027,corporate bond,DBFUFR,USD,2017-04-12T00:00:00Z,2027-04-12T00:00:00Z,4.125,senior unsecured,750000000,book entry form,none,LE-0061
+SEC-00033,Ivel Semiconductors Capital LLC 5.875% Sr Notes 2028,corporate bond,DBFUFR,USD,2023-05-26T00:00:00Z,2028-05-26T00:00:00Z,5.875,senior unsecured,1500000000,book entry form,none,LE-0061
+SEC-00034,Tavira Telecom Common Stock,common share,ESVUFR,USD,2008-06-17T00:00:00Z,,,,,registered form,none,LE-0062
+SEC-00035,Tavira Telecom Inc. 4.000% Sr Notes 2026,corporate bond,DBFUFR,USD,2021-05-07T00:00:00Z,2026-05-07T00:00:00Z,4.000,senior unsecured,750000000,book entry form,none,LE-0062
+SEC-00036,Tavira Telecom Inc. 4.375% Sub Notes 2033,corporate bond,DBFUFR,USD,2013-04-10T00:00:00Z,2033-04-10T00:00:00Z,4.375,subordinated,1250000000,book entry form,none,LE-0062
+SEC-00037,Tavira Telecom Inc. 3.250% Sub Notes 2031,corporate bond,DBFUFR,USD,2024-09-06T00:00:00Z,2031-09-06T00:00:00Z,3.250,subordinated,600000000,book entry form,none,LE-0062
+SEC-00038,Tavira Telecom Inc. 4.125% Sr Sec Notes 2035,corporate bond,DBFSFR,USD,2023-07-11T00:00:00Z,2035-07-11T00:00:00Z,4.125,senior secured,500000000,book entry form,none,LE-0062
+SEC-00039,Tavira Telecom Inc. 2.625% Sr Notes 2023,corporate bond,DBFUFR,USD,2018-01-17T00:00:00Z,2023-01-17T00:00:00Z,2.625,senior unsecured,1250000000,book entry form,none,LE-0062
+SEC-00040,Gantry Steel Common Stock,common share,ESVUFR,USD,2014-07-25T00:00:00Z,,,,,registered form,none,LE-0064
+SEC-00041,Pemberly Media Common Stock,common share,ESVUFR,USD,2016-12-10T00:00:00Z,,,,,registered form,none,LE-0068
+SEC-00042,Quorra Biotech Common Stock,common share,ESVUFR,USD,2018-06-24T00:00:00Z,,,,,registered form,none,LE-0071
+SEC-00043,Quorra Biotech Capital LLC 4.125% Sr Notes 2022,corporate bond,DBFUFR,USD,2015-12-26T00:00:00Z,2022-12-26T00:00:00Z,4.125,senior unsecured,1000000000,book entry form,none,LE-0072
+SEC-00044,Quorra Biotech Inc. 3.250% Sr Notes 2029,corporate bond,DBFUFR,USD,2022-03-08T00:00:00Z,2029-03-08T00:00:00Z,3.250,senior unsecured,500000000,book entry form,none,LE-0071
+SEC-00045,Quorra Biotech Capital LLC 5.625% Sr Sec Notes 2052,corporate bond,DBFSFR,USD,2022-09-10T00:00:00Z,2052-09-10T00:00:00Z,5.625,senior secured,750000000,book entry form,none,LE-0072
+SEC-00046,Quorra Biotech Capital LLC 5.875% Sr Notes 2024,corporate bond,DBFUFR,USD,2012-10-17T00:00:00Z,2024-10-17T00:00:00Z,5.875,senior unsecured,1000000000,book entry form,none,LE-0072
+SEC-00047,Northam Rail Common Stock,common share,ESVUFR,CAD,1999-03-06T00:00:00Z,,,,,registered form,none,LE-0075
+SEC-00048,Northam Rail Corp. 3.000% Sr Notes 2025,corporate bond,DBFUFR,CAD,2022-02-14T00:00:00Z,2025-02-14T00:00:00Z,3.000,senior unsecured,1500000000,book entry form,none,LE-0075
+SEC-00049,Rennick Mining Common Stock,common share,ESVUFR,CAD,2018-11-22T00:00:00Z,,,,,registered form,none,LE-0077
+SEC-00050,Rennick Mining Capital LLC 2.250% Sr Notes 2025,corporate bond,DBFUFR,USD,2020-11-06T00:00:00Z,2025-11-06T00:00:00Z,2.250,senior unsecured,1000000000,book entry form,none,LE-0078
+SEC-00051,Rennick Mining Capital LLC 3.250% Sub Notes 2027,corporate bond,DBFUFR,USD,2020-04-28T00:00:00Z,2027-04-28T00:00:00Z,3.250,subordinated,1250000000,book entry form,none,LE-0078
+SEC-00052,Rennick Mining Holdings Corp. 3.000% Sr Notes 2031,corporate bond,DBFUFR,CAD,2021-08-05T00:00:00Z,2031-08-05T00:00:00Z,3.000,senior unsecured,500000000,book entry form,none,LE-0077
+SEC-00053,Rennick Mining Capital LLC 4.750% Sr Notes 2028,corporate bond,DBFUFR,USD,2023-10-02T00:00:00Z,2028-10-02T00:00:00Z,4.750,senior unsecured,300000000,book entry form,none,LE-0078
+SEC-00054,Hollis & Crane Ordinary Shares,common share,ESVUFR,GBP,2008-03-06T00:00:00Z,,,,,registered form,none,LE-0081
+SEC-00055,Wexcombe Breweries Ordinary Shares,common share,ESVUFR,GBP,1987-09-05T00:00:00Z,,,,,registered form,none,LE-0085
+SEC-00056,Wexcombe Breweries plc 4.000% Sr Sec Notes 2030,corporate bond,DBFSFR,GBP,2023-01-12T00:00:00Z,2030-01-12T00:00:00Z,4.000,senior secured,600000000,registered form,none,LE-0085
+SEC-00057,Larchmont Insurance Ordinary Shares,common share,ESVUFR,GBP,1989-12-10T00:00:00Z,,,,,registered form,none,LE-0089
+SEC-00058,Larchmont Insurance Holdings plc 4.125% Sr Notes 2021,corporate bond,DBFUFR,GBP,2014-07-11T00:00:00Z,2021-07-11T00:00:00Z,4.125,senior unsecured,500000000,registered form,none,LE-0089
+SEC-00059,Larchmont Insurance Finance 5.625% Sr Notes 2032,corporate bond,DBFUFR,EUR,2025-03-21T00:00:00Z,2032-03-21T00:00:00Z,5.625,senior unsecured,1500000000,book entry form,Regulation S,LE-0092
+SEC-00060,Tessaly Water Ordinary Shares,common share,ESVUFR,GBP,2002-12-02T00:00:00Z,,,,,registered form,none,LE-0094
+SEC-00061,Yarrow Paper Ordinary Shares,common share,ESVUFR,EUR,2006-02-27T00:00:00Z,,,,,registered form,none,LE-0099
+SEC-00062,Arbeck Motoren Ordinary Shares,common share,ESVUFR,EUR,1995-05-12T00:00:00Z,,,,,registered form,none,LE-0103
+SEC-00063,Arbeck Motoren AG 4.875% Sub Notes 2024,corporate bond,DBFUFR,EUR,2012-07-04T00:00:00Z,2024-07-04T00:00:00Z,4.875,subordinated,1500000000,book entry form,none,LE-0103
+SEC-00064,Arbeck Motoren Capital LLC 6.625% Sr Notes 2033,corporate bond,DBFUFR,USD,2013-02-14T00:00:00Z,2033-02-14T00:00:00Z,6.625,senior unsecured,500000000,book entry form,Rule 144A,LE-0104
+SEC-00065,Arbeck Motoren Capital LLC 6.625% Sr Notes 2027,corporate bond,DBFUFR,USD,2024-03-08T00:00:00Z,2027-03-08T00:00:00Z,6.625,senior unsecured,600000000,book entry form,Rule 144A,LE-0104
+SEC-00066,Arbeck Motoren Capital LLC 3.375% Sr Notes 2029,corporate bond,DBFUFR,USD,2024-01-04T00:00:00Z,2029-01-04T00:00:00Z,3.375,senior unsecured,400000000,book entry form,Rule 144A,LE-0104
+SEC-00067,Vellmar Chemie Ordinary Shares,common share,ESVUFR,EUR,2017-02-06T00:00:00Z,,,,,registered form,none,LE-0108
+SEC-00068,Vellmar Chemie Preferred Shares,preferred share,EPNXFR,EUR,2012-03-23T00:00:00Z,,,,,registered form,none,LE-0108
+SEC-00069,Vellmar Chemie AG 3.125% Sr Sec Notes 2044,corporate bond,DBFSFR,EUR,2024-07-23T00:00:00Z,2044-07-23T00:00:00Z,3.125,senior secured,1500000000,registered form,none,LE-0108
+SEC-00070,Vellmar Chemie AG 2.250% Sub Notes 2025,corporate bond,DBFUFR,EUR,2018-08-01T00:00:00Z,2025-08-01T00:00:00Z,2.250,subordinated,1500000000,book entry form,none,LE-0108
+SEC-00071,Lindqvist Logistik Ordinary Shares,common share,ESVUFR,EUR,2018-01-06T00:00:00Z,,,,,registered form,none,LE-0110
+SEC-00072,Delacroix Luxe Ordinary Shares,common share,ESVUFR,EUR,1994-12-19T00:00:00Z,,,,,registered form,none,LE-0113
+SEC-00073,Delacroix Luxe SA 1.250% Sub Notes 2027,corporate bond,DBFUFR,EUR,2020-01-05T00:00:00Z,2027-01-05T00:00:00Z,1.250,subordinated,400000000,book entry form,none,LE-0113
+SEC-00074,Delacroix Luxe SA 4.000% Sr Notes 2036,corporate bond,DBFUFR,EUR,2016-12-07T00:00:00Z,2036-12-07T00:00:00Z,4.000,senior unsecured,400000000,book entry form,none,LE-0113
+SEC-00075,Marchetti Alimentaire Ordinary Shares,common share,ESVUFR,EUR,2006-09-13T00:00:00Z,,,,,registered form,none,LE-0116
+SEC-00076,Marchetti Alimentaire Preferred Shares,preferred share,EPNXFR,EUR,2008-04-14T00:00:00Z,,,,,registered form,none,LE-0116
+SEC-00077,Ambrel Glas Ordinary Shares,common share,ESVUFR,EUR,1990-02-15T00:00:00Z,,,,,registered form,none,LE-0120
+SEC-00078,Ambrel Glas Preferred Shares,preferred share,EPNXFR,EUR,2013-05-25T00:00:00Z,,,,,registered form,none,LE-0120
+SEC-00079,Ambrel Glas Capital LLC 3.500% Sr Notes 2033,corporate bond,DBFUFR,USD,2021-01-02T00:00:00Z,2033-01-02T00:00:00Z,3.500,senior unsecured,300000000,book entry form,Rule 144A,LE-0121
+SEC-00080,Ambrel Glas Capital LLC 4.250% Sub Notes 2033,corporate bond,DBFUFR,USD,2013-07-18T00:00:00Z,2033-07-18T00:00:00Z,4.250,subordinated,750000000,book entry form,Rule 144A,LE-0121
+SEC-00081,Ambrel Glas Capital LLC 5.500% Sr Notes 2035,corporate bond,DBFUFR,USD,2025-04-17T00:00:00Z,2035-04-17T00:00:00Z,5.500,senior unsecured,500000000,book entry form,Rule 144A,LE-0121
+SEC-00082,Ambrel Glas N.V. 2.625% Jr Sub Notes 2023,corporate bond,DBFUFR,EUR,2018-08-19T00:00:00Z,2023-08-19T00:00:00Z,2.625,junior subordinated,1000000000,book entry form,Regulation S,LE-0120
+SEC-00083,Ambrel Glas Capital LLC 3.375% Sr Notes 2026,corporate bond,DBFUFR,USD,2019-05-27T00:00:00Z,2026-05-27T00:00:00Z,3.375,senior unsecured,500000000,book entry form,Rule 144A,LE-0121
+SEC-00084,Rostova Shipping Ordinary Shares,common share,ESVUFR,EUR,1986-10-15T00:00:00Z,,,,,registered form,none,LE-0123
+SEC-00085,Rostova Shipping N.V. 5.750% Sr Notes 2029,corporate bond,DBFUFR,EUR,2024-04-04T00:00:00Z,2029-04-04T00:00:00Z,5.750,senior unsecured,400000000,book entry form,none,LE-0123
+SEC-00086,Rostova Shipping Finance 1.125% Sr Notes 2032,corporate bond,DBFUFR,EUR,2020-11-05T00:00:00Z,2032-11-05T00:00:00Z,1.125,senior unsecured,1250000000,book entry form,none,LE-0126
+SEC-00087,Rostova Shipping Finance 4.000% Sub Notes 2046,corporate bond,DBFUFR,EUR,2016-12-26T00:00:00Z,2046-12-26T00:00:00Z,4.000,subordinated,600000000,book entry form,none,LE-0126
+SEC-00088,Rostova Shipping N.V. 3.750% Sr Notes 2024,corporate bond,DBFUFR,EUR,2014-12-21T00:00:00Z,2024-12-21T00:00:00Z,3.750,senior unsecured,300000000,book entry form,none,LE-0123
+SEC-00089,Rostova Shipping Finance 2.875% Sr Notes 2031,corporate bond,DBFUFR,EUR,2021-10-22T00:00:00Z,2031-10-22T00:00:00Z,2.875,senior unsecured,750000000,book entry form,none,LE-0126
+SEC-00090,Ulvik Seafood Ordinary Shares,common share,ESVUFR,CHF,2004-03-28T00:00:00Z,,,,,registered form,none,LE-0128
+SEC-00091,Ulvik Seafood Preferred Shares,preferred share,EPNXFR,CHF,2014-06-06T00:00:00Z,,,,,registered form,none,LE-0128
+SEC-00092,Ulvik Seafood AG 5.625% Sr Notes 2022,corporate bond,DBFUFR,CHF,2012-05-11T00:00:00Z,2022-05-11T00:00:00Z,5.625,senior unsecured,400000000,registered form,none,LE-0128
+SEC-00093,Ulvik Seafood AG 4.125% Sr Notes 2037,corporate bond,DBFUFR,CHF,2017-03-06T00:00:00Z,2037-03-06T00:00:00Z,4.125,senior unsecured,400000000,registered form,none,LE-0128
+SEC-00094,Ulvik Seafood AG 6.500% Sub Notes 2032,corporate bond,DBFUFR,EUR,2022-10-08T00:00:00Z,2032-10-08T00:00:00Z,6.500,subordinated,600000000,book entry form,none,LE-0128
+SEC-00095,Ulvik Seafood Finance 3.000% Sr Notes 2022,corporate bond,DBFUFR,EUR,2012-11-18T00:00:00Z,2022-11-18T00:00:00Z,3.000,senior unsecured,600000000,book entry form,none,LE-0131
+SEC-00096,Ulvik Seafood Finance 2.625% Sr Sec Notes 2026,corporate bond,DBFSFR,EUR,2016-07-17T00:00:00Z,2026-07-17T00:00:00Z,2.625,senior secured,500000000,book entry form,none,LE-0131
+SEC-00097,Mirelle Cosmetics Ordinary Shares,common share,ESVUFR,CHF,2013-11-01T00:00:00Z,,,,,registered form,none,LE-0133
+SEC-00098,Mirelle Cosmetics Preferred Shares,preferred share,EPNXFR,CHF,2017-05-07T00:00:00Z,,,,,registered form,none,LE-0133
+SEC-00099,Hoshida Motors Ordinary Shares,common share,ESVUFR,JPY,2010-12-15T00:00:00Z,,,,,registered form,none,LE-0135
+SEC-00100,Hoshida Motors Preferred Shares,preferred share,EPNXFR,JPY,2017-02-23T00:00:00Z,,,,,registered form,none,LE-0135
+SEC-00101,Hoshida Motors Holdings K.K. 4.625% Sr Notes 2034,corporate bond,DBFUFR,JPY,2024-11-11T00:00:00Z,2034-11-11T00:00:00Z,4.625,senior unsecured,75000000000,registered form,none,LE-0135
+SEC-00102,Asakura Chemical Ordinary Shares,common share,ESVUFR,JPY,1994-09-17T00:00:00Z,,,,,registered form,none,LE-0138
+SEC-00103,Asakura Chemical K.K. 3.375% Sr Notes 2028,corporate bond,DBFUFR,EUR,2025-09-15T00:00:00Z,2028-09-15T00:00:00Z,3.375,senior unsecured,300000000,book entry form,Regulation S,LE-0138
+SEC-00104,Asakura Chemical Finance 2.250% Sr Notes 2041,corporate bond,DBFUFR,EUR,2021-12-05T00:00:00Z,2041-12-05T00:00:00Z,2.250,senior unsecured,1000000000,book entry form,Regulation S,LE-0140
+SEC-00105,Tsukimi Foods Ordinary Shares,common share,ESVUFR,JPY,1994-08-18T00:00:00Z,,,,,registered form,none,LE-0141
+SEC-00106,Tsukimi Foods Holdings K.K. 4.000% Sr Notes 2029,corporate bond,DBFUFR,JPY,2019-06-08T00:00:00Z,2029-06-08T00:00:00Z,4.000,senior unsecured,100000000000,registered form,none,LE-0141
+SEC-00107,Tsukimi Foods Finance 2.125% Jr Sub Notes 2025,corporate bond,DBFUFR,EUR,2020-04-07T00:00:00Z,2025-04-07T00:00:00Z,2.125,junior subordinated,500000000,book entry form,none,LE-0142
+SEC-00108,Tsukimi Foods Holdings K.K. 3.125% Sr Notes 2028,corporate bond,DBFUFR,JPY,2018-05-23T00:00:00Z,2028-05-23T00:00:00Z,3.125,senior unsecured,125000000000,registered form,none,LE-0141
+SEC-00109,Jadecrest Properties Ordinary Shares,common share,ESVUFR,HKD,2009-02-27T00:00:00Z,,,,,registered form,none,LE-0143
+SEC-00110,Jadecrest Properties Finance 3.000% Sr Notes 2023,corporate bond,DBFUFR,EUR,2013-06-16T00:00:00Z,2023-06-16T00:00:00Z,3.000,senior unsecured,750000000,book entry form,Regulation S,LE-0145
+SEC-00111,Jadecrest Properties Finance 3.625% Sr Notes 2025,corporate bond,DBFUFR,EUR,2022-03-01T00:00:00Z,2025-03-01T00:00:00Z,3.625,senior unsecured,600000000,book entry form,Regulation S,LE-0145
+SEC-00112,Jadecrest Properties Finance 6.125% Sr Notes 2022,corporate bond,DBFUFR,EUR,2012-08-21T00:00:00Z,2022-08-21T00:00:00Z,6.125,senior unsecured,300000000,book entry form,none,LE-0145
+SEC-00113,Jadecrest Properties Finance 3.500% Sr Notes 2025,corporate bond,DBFUFR,EUR,2015-11-20T00:00:00Z,2025-11-20T00:00:00Z,3.500,senior unsecured,500000000,book entry form,Regulation S,LE-0145
+SEC-00114,Harbourline Ports Ordinary Shares,common share,ESVUFR,HKD,2008-05-14T00:00:00Z,,,,,registered form,none,LE-0147
+SEC-00115,Harbourline Ports Limited 0.750% Sub Notes 2038,corporate bond,DBFUFR,EUR,2018-06-09T00:00:00Z,2038-06-09T00:00:00Z,0.750,subordinated,400000000,book entry form,none,LE-0147
+SEC-00116,Harbourline Ports Capital LLC 4.750% Sr Notes 2043,corporate bond,DBFUFR,USD,2023-10-18T00:00:00Z,2043-10-18T00:00:00Z,4.750,senior unsecured,600000000,book entry form,Rule 144A,LE-0148
+SEC-00117,Harbourline Ports Capital LLC 4.250% Sub Notes 2042,corporate bond,DBFUFR,USD,2022-06-13T00:00:00Z,2042-06-13T00:00:00Z,4.250,subordinated,300000000,book entry form,Rule 144A,LE-0148
+SEC-00118,Harbourline Ports Capital LLC 0.750% Sr Notes 2029,corporate bond,DBFUFR,USD,2019-11-03T00:00:00Z,2029-11-03T00:00:00Z,0.750,senior unsecured,500000000,book entry form,Rule 144A,LE-0148
+SEC-00119,Alderney Metals Common Stock,common share,ESVUFR,USD,1987-06-05T00:00:00Z,,,,,registered form,none,LE-0150
+SEC-00120,Alderney Metals Capital LLC 5.625% Jr Sub Notes 2028,corporate bond,DBFUFR,USD,2023-02-26T00:00:00Z,2028-02-26T00:00:00Z,5.625,junior subordinated,400000000,book entry form,none,LE-0151
+SEC-00121,Alderney Metals Capital LLC 2.625% Sr Notes 2031,corporate bond,DBFUFR,USD,2019-01-14T00:00:00Z,2031-01-14T00:00:00Z,2.625,senior unsecured,300000000,book entry form,none,LE-0151
+SEC-00122,Alderney Metals Inc. 5.125% Sr Notes 2029,corporate bond,DBFUFR,USD,2024-08-26T00:00:00Z,2029-08-26T00:00:00Z,5.125,senior unsecured,1500000000,book entry form,none,LE-0150
+SEC-00123,Alderney Metals Capital LLC 0.625% Sr Notes 2031,corporate bond,DBFUFR,USD,2021-09-04T00:00:00Z,2031-09-04T00:00:00Z,0.625,senior unsecured,1500000000,book entry form,none,LE-0151
+SEC-00124,Alderney Metals Inc. 1.625% Sr Notes 2023,corporate bond,DBFUFR,USD,2018-03-16T00:00:00Z,2023-03-16T00:00:00Z,1.625,senior unsecured,1000000000,book entry form,none,LE-0150
+SEC-00125,Halsall Retail Common Stock,common share,ESVUFR,USD,1990-10-09T00:00:00Z,,,,,registered form,none,LE-0152
+SEC-00126,Halsall Retail Preferred Shares,preferred share,EPNXFR,USD,2012-05-19T00:00:00Z,,,,,registered form,none,LE-0152
+SEC-00127,Halsall Retail Inc. 2.250% Jr Sub Notes 2020,corporate bond,DBFUFR,USD,2015-11-23T00:00:00Z,2020-11-23T00:00:00Z,2.250,junior subordinated,500000000,book entry form,none,LE-0152
+SEC-00128,Ironside Therapeutics Common Stock,common share,ESVUFR,USD,1991-06-23T00:00:00Z,,,,,registered form,none,LE-0156
+SEC-00129,Ironside Therapeutics Inc. 3.250% Sr Notes 2027,corporate bond,DBFUFR,USD,2012-06-06T00:00:00Z,2027-06-06T00:00:00Z,3.250,senior unsecured,1500000000,book entry form,none,LE-0156
+SEC-00130,Ironside Therapeutics Inc. 2.125% Sr Notes 2030,corporate bond,DBFUFR,USD,2020-09-11T00:00:00Z,2030-09-11T00:00:00Z,2.125,senior unsecured,500000000,book entry form,none,LE-0156
+SEC-00131,Ironside Therapeutics Inc. 4.500% Sr Notes 2020,corporate bond,DBFUFR,USD,2013-04-11T00:00:00Z,2020-04-11T00:00:00Z,4.500,senior unsecured,400000000,book entry form,none,LE-0156
+SEC-00132,Ironside Therapeutics Inc. 5.125% Jr Sub Notes 2043,corporate bond,DBFUFR,USD,2023-09-26T00:00:00Z,2043-09-26T00:00:00Z,5.125,junior subordinated,1000000000,book entry form,none,LE-0156
+SEC-00133,Ironside Therapeutics Inc. 3.500% Sr Notes 2031,corporate bond,DBFUFR,USD,2021-12-14T00:00:00Z,2031-12-14T00:00:00Z,3.500,senior unsecured,1000000000,book entry form,none,LE-0156
+SEC-00134,Zennor Power Common Stock,common share,ESVUFR,USD,2016-01-14T00:00:00Z,,,,,registered form,none,LE-0161
+SEC-00135,Zennor Power Inc. 2.000% Sr Sec Notes 2029,corporate bond,DBFSFR,USD,2017-12-26T00:00:00Z,2029-12-26T00:00:00Z,2.000,senior secured,750000000,book entry form,none,LE-0161
+SEC-00136,Zennor Power Inc. 4.625% Sr Notes 2055,corporate bond,DBFUFR,USD,2025-03-21T00:00:00Z,2055-03-21T00:00:00Z,4.625,senior unsecured,750000000,book entry form,none,LE-0161
+SEC-00137,Penrose Assurance Common Stock,common share,ESVUFR,USD,1991-10-20T00:00:00Z,,,,,registered form,none,LE-0163
+SEC-00138,Penrose Assurance Inc. 2.375% Sr Notes 2032,corporate bond,DBFUFR,USD,2020-01-25T00:00:00Z,2032-01-25T00:00:00Z,2.375,senior unsecured,600000000,book entry form,none,LE-0163
+SEC-00139,Penrose Assurance Inc. 5.875% Sr Notes 2025,corporate bond,DBFUFR,USD,2013-09-17T00:00:00Z,2025-09-17T00:00:00Z,5.875,senior unsecured,500000000,book entry form,none,LE-0163
+SEC-00140,Penrose Assurance Inc. 3.000% Jr Sub Notes 2025,corporate bond,DBFUFR,USD,2022-10-13T00:00:00Z,2025-10-13T00:00:00Z,3.000,junior subordinated,400000000,book entry form,none,LE-0163
+SEC-00141,Saltash Industries Common Stock,common share,ESVUFR,USD,1987-07-06T00:00:00Z,,,,,registered form,none,LE-0165
+SEC-00142,Saltash Industries Holdings Inc. 6.750% Sr Sec Notes 2053,corporate bond,DBFSFR,USD,2023-05-21T00:00:00Z,2053-05-21T00:00:00Z,6.750,senior secured,600000000,book entry form,none,LE-0165
+SEC-00143,Saltash Industries Holdings Inc. 2.875% Sub Notes 2021,corporate bond,DBFUFR,USD,2014-01-11T00:00:00Z,2021-01-11T00:00:00Z,2.875,subordinated,750000000,book entry form,none,LE-0165
+SEC-00144,Marlow Power Common Stock,common share,ESVUFR,USD,1993-06-11T00:00:00Z,,,,,registered form,none,LE-0168
+SEC-00145,Ottery Medical Common Stock,common share,ESVUFR,USD,1999-12-15T00:00:00Z,,,,,registered form,none,LE-0171
+SEC-00146,Ottery Medical Inc. 3.625% Sub Notes 2020,corporate bond,DBFUFR,USD,2015-03-15T00:00:00Z,2020-03-15T00:00:00Z,3.625,subordinated,300000000,book entry form,none,LE-0171
+SEC-00147,Ottery Medical Inc. 4.375% Sr Notes 2023,corporate bond,DBFUFR,USD,2013-12-14T00:00:00Z,2023-12-14T00:00:00Z,4.375,senior unsecured,1500000000,book entry form,none,LE-0171
+SEC-00148,Ottery Medical Inc. 1.625% Sr Notes 2048,corporate bond,DBFUFR,USD,2018-07-11T00:00:00Z,2048-07-11T00:00:00Z,1.625,senior unsecured,500000000,book entry form,none,LE-0171
+SEC-00149,Ottery Medical Inc. 3.125% Jr Sub Notes 2031,corporate bond,DBFUFR,USD,2024-03-11T00:00:00Z,2031-03-11T00:00:00Z,3.125,junior subordinated,1000000000,book entry form,none,LE-0171
+SEC-00150,Ulverby Electronics Common Stock,common share,ESVUFR,USD,2015-08-09T00:00:00Z,,,,,registered form,none,LE-0173
+SEC-00151,Ulverby Electronics Preferred Shares,preferred share,EPNXFR,USD,2009-06-10T00:00:00Z,,,,,registered form,none,LE-0173
+SEC-00152,Ulverby Electronics Inc. 2.250% Sub Notes 2017,corporate bond,DBFUFR,USD,2014-02-25T00:00:00Z,2017-02-25T00:00:00Z,2.250,subordinated,750000000,book entry form,none,LE-0173
+SEC-00153,Ulverby Electronics Inc. 2.125% Sr Notes 2036,corporate bond,DBFUFR,USD,2021-10-17T00:00:00Z,2036-10-17T00:00:00Z,2.125,senior unsecured,400000000,book entry form,none,LE-0173
+SEC-00154,Wendover Diagnostics Common Stock,common share,ESVUFR,USD,1988-08-23T00:00:00Z,,,,,registered form,none,LE-0178
+SEC-00155,Wendover Diagnostics Capital LLC 4.125% Sr Notes 2030,corporate bond,DBFUFR,USD,2018-02-20T00:00:00Z,2030-02-20T00:00:00Z,4.125,senior unsecured,500000000,book entry form,none,LE-0182
+SEC-00156,Wendover Diagnostics Capital LLC 3.875% Sub Notes 2022,corporate bond,DBFUFR,USD,2015-11-16T00:00:00Z,2022-11-16T00:00:00Z,3.875,subordinated,1000000000,book entry form,none,LE-0182
+SEC-00157,Wendover Diagnostics Inc. 6.375% Sr Notes 2028,corporate bond,DBFUFR,USD,2023-04-13T00:00:00Z,2028-04-13T00:00:00Z,6.375,senior unsecured,300000000,book entry form,none,LE-0178
+SEC-00158,Wendover Diagnostics Capital LLC 5.750% Sr Notes 2037,corporate bond,DBFUFR,USD,2022-11-18T00:00:00Z,2037-11-18T00:00:00Z,5.750,senior unsecured,750000000,book entry form,none,LE-0182
+SEC-00159,Wendover Diagnostics Capital LLC 0.375% Sr Notes 2048,corporate bond,DBFUFR,USD,2018-05-04T00:00:00Z,2048-05-04T00:00:00Z,0.375,senior unsecured,300000000,book entry form,none,LE-0182
+SEC-00160,Lowmoor Energy Common Stock,common share,ESVUFR,USD,2004-08-10T00:00:00Z,,,,,registered form,none,LE-0183
+SEC-00161,Lowmoor Energy Capital LLC 3.625% Sub Notes 2025,corporate bond,DBFUFR,USD,2013-11-10T00:00:00Z,2025-11-10T00:00:00Z,3.625,subordinated,1250000000,book entry form,none,LE-0184
+SEC-00162,Hartwell Networks Common Stock,common share,ESVUFR,USD,1987-08-26T00:00:00Z,,,,,registered form,none,LE-0187
+SEC-00163,Hartwell Networks Preferred Shares,preferred share,EPNXFR,USD,2016-08-06T00:00:00Z,,,,,registered form,none,LE-0187
+SEC-00164,Hartwell Networks Inc. 3.750% Sub Notes 2035,corporate bond,DBFUFR,USD,2020-12-27T00:00:00Z,2035-12-27T00:00:00Z,3.750,subordinated,750000000,book entry form,none,LE-0187
+SEC-00165,Zennor Industries Common Stock,common share,ESVUFR,USD,2012-02-05T00:00:00Z,,,,,registered form,none,LE-0190
+SEC-00166,Hartwell Industries Common Stock,common share,ESVUFR,USD,1999-10-16T00:00:00Z,,,,,registered form,none,LE-0192
+SEC-00167,Hartwell Industries Holdings Inc. 6.625% Jr Sub Notes 2022,corporate bond,DBFUFR,USD,2012-03-06T00:00:00Z,2022-03-06T00:00:00Z,6.625,junior subordinated,600000000,book entry form,none,LE-0192
+SEC-00168,Hartwell Industries Holdings Inc. 2.375% Sr Sec Notes 2049,corporate bond,DBFSFR,USD,2019-02-17T00:00:00Z,2049-02-17T00:00:00Z,2.375,senior secured,600000000,book entry form,none,LE-0192
+SEC-00169,Hartwell Industries Holdings Inc. 3.125% Sr Notes 2027,corporate bond,DBFUFR,USD,2024-10-14T00:00:00Z,2027-10-14T00:00:00Z,3.125,senior unsecured,300000000,book entry form,none,LE-0192
+SEC-00170,Hartwell Industries Holdings Inc. 3.000% Sr Notes 2035,corporate bond,DBFUFR,USD,2025-08-03T00:00:00Z,2035-08-03T00:00:00Z,3.000,senior unsecured,500000000,book entry form,none,LE-0192
+SEC-00171,Upwey Diagnostics Common Stock,common share,ESVUFR,USD,2006-03-28T00:00:00Z,,,,,registered form,none,LE-0194
+SEC-00172,Upwey Diagnostics Inc. 4.125% Sr Notes 2028,corporate bond,DBFUFR,USD,2021-02-10T00:00:00Z,2028-02-10T00:00:00Z,4.125,senior unsecured,1000000000,book entry form,none,LE-0194
+SEC-00173,Upwey Diagnostics Inc. 3.125% Sr Notes 2023,corporate bond,DBFUFR,USD,2018-09-17T00:00:00Z,2023-09-17T00:00:00Z,3.125,senior unsecured,500000000,book entry form,none,LE-0194
+SEC-00174,Upwey Diagnostics Inc. 4.250% Sub Notes 2033,corporate bond,DBFUFR,USD,2023-05-15T00:00:00Z,2033-05-15T00:00:00Z,4.250,subordinated,750000000,book entry form,none,LE-0194
+SEC-00175,Upwey Diagnostics Inc. 0.625% Sub Notes 2033,corporate bond,DBFUFR,USD,2018-04-14T00:00:00Z,2033-04-14T00:00:00Z,0.625,subordinated,500000000,book entry form,none,LE-0194
+SEC-00176,Upwey Diagnostics Inc. 3.500% Sr Sec Notes 2029,corporate bond,DBFSFR,USD,2019-02-15T00:00:00Z,2029-02-15T00:00:00Z,3.500,senior secured,1250000000,book entry form,none,LE-0194
+SEC-00177,Hartwell Media Common Stock,common share,ESVUFR,USD,2004-02-07T00:00:00Z,,,,,registered form,none,LE-0198
+SEC-00178,Hartwell Media Inc. 4.625% Sr Notes 2027,corporate bond,DBFUFR,USD,2022-01-26T00:00:00Z,2027-01-26T00:00:00Z,4.625,senior unsecured,1000000000,book entry form,none,LE-0198
+SEC-00179,Hartwell Media Inc. 3.750% Sr Notes 2044,corporate bond,DBFUFR,USD,2024-04-07T00:00:00Z,2044-04-07T00:00:00Z,3.750,senior unsecured,1000000000,book entry form,none,LE-0198
+SEC-00180,Hartwell Media Inc. 6.625% Sr Notes 2031,corporate bond,DBFUFR,USD,2024-07-21T00:00:00Z,2031-07-21T00:00:00Z,6.625,senior unsecured,1000000000,book entry form,none,LE-0198
+SEC-00181,Rydal Engineering Common Stock,common share,ESVUFR,USD,2016-08-22T00:00:00Z,,,,,registered form,none,LE-0200
+SEC-00182,Rydal Engineering Inc. 4.250% Sr Notes 2033,corporate bond,DBFUFR,USD,2023-03-01T00:00:00Z,2033-03-01T00:00:00Z,4.250,senior unsecured,400000000,book entry form,none,LE-0200
+SEC-00183,Rydal Engineering Capital LLC 5.625% Sr Notes 2020,corporate bond,DBFUFR,USD,2013-07-03T00:00:00Z,2020-07-03T00:00:00Z,5.625,senior unsecured,1000000000,book entry form,none,LE-0201
+SEC-00184,Rydal Engineering Inc. 3.500% Sr Notes 2022,corporate bond,DBFUFR,USD,2012-01-03T00:00:00Z,2022-01-03T00:00:00Z,3.500,senior unsecured,1500000000,book entry form,none,LE-0200
+SEC-00185,Rydal Engineering Capital LLC 3.125% Sr Notes 2028,corporate bond,DBFUFR,USD,2021-02-05T00:00:00Z,2028-02-05T00:00:00Z,3.125,senior unsecured,600000000,book entry form,none,LE-0201
+SEC-00186,Rydal Engineering Inc. 2.875% Sr Notes 2051,corporate bond,DBFUFR,USD,2021-02-25T00:00:00Z,2051-02-25T00:00:00Z,2.875,senior unsecured,1000000000,book entry form,none,LE-0200
+SEC-00187,Grantley Utilities Common Stock,common share,ESVUFR,USD,1988-07-04T00:00:00Z,,,,,registered form,none,LE-0204
+SEC-00188,Cobalt Communications Common Stock,common share,ESVUFR,USD,2004-03-21T00:00:00Z,,,,,registered form,none,LE-0208
+SEC-00189,Cobalt Communications Capital LLC 3.250% Sr Notes 2018,corporate bond,DBFUFR,USD,2013-06-24T00:00:00Z,2018-06-24T00:00:00Z,3.250,senior unsecured,500000000,book entry form,none,LE-0211
+SEC-00190,Cobalt Communications Inc. 5.625% Sr Notes 2044,corporate bond,DBFUFR,USD,2024-04-19T00:00:00Z,2044-04-19T00:00:00Z,5.625,senior unsecured,1000000000,book entry form,none,LE-0208
+SEC-00191,Cobalt Communications Capital LLC 1.500% Sr Notes 2019,corporate bond,DBFUFR,USD,2016-01-10T00:00:00Z,2019-01-10T00:00:00Z,1.500,senior unsecured,300000000,book entry form,none,LE-0211
+SEC-00192,Cobalt Communications Capital LLC 6.375% Sr Sec Notes 2042,corporate bond,DBFSFR,USD,2012-11-27T00:00:00Z,2042-11-27T00:00:00Z,6.375,senior secured,400000000,book entry form,none,LE-0211
+SEC-00193,Cobalt Communications Capital LLC 3.875% Sub Notes 2034,corporate bond,DBFUFR,USD,2014-01-13T00:00:00Z,2034-01-13T00:00:00Z,3.875,subordinated,1000000000,book entry form,none,LE-0211
+SEC-00194,Aster Media Common Stock,common share,ESVUFR,USD,2002-06-04T00:00:00Z,,,,,registered form,none,LE-0213
+SEC-00195,Aster Media Inc. 4.000% Sr Sec Notes 2022,corporate bond,DBFSFR,USD,2015-01-28T00:00:00Z,2022-01-28T00:00:00Z,4.000,senior secured,750000000,book entry form,none,LE-0213
+SEC-00196,Aster Media Capital LLC 5.250% Sr Notes 2030,corporate bond,DBFUFR,USD,2025-06-02T00:00:00Z,2030-06-02T00:00:00Z,5.250,senior unsecured,400000000,book entry form,none,LE-0215
+SEC-00197,Aster Media Capital LLC 1.500% Sub Notes 2039,corporate bond,DBFUFR,USD,2019-03-06T00:00:00Z,2039-03-06T00:00:00Z,1.500,subordinated,1500000000,book entry form,none,LE-0215
+SEC-00198,Aster Media Inc. 4.500% Sr Sec Notes 2040,corporate bond,DBFSFR,USD,2025-05-12T00:00:00Z,2040-05-12T00:00:00Z,4.500,senior secured,400000000,book entry form,none,LE-0213
+SEC-00199,Davenham Utilities Common Stock,common share,ESVUFR,USD,2018-12-24T00:00:00Z,,,,,registered form,none,LE-0217
+SEC-00200,Davenham Utilities Inc. 0.625% Sr Notes 2025,corporate bond,DBFUFR,USD,2020-09-28T00:00:00Z,2025-09-28T00:00:00Z,0.625,senior unsecured,1250000000,book entry form,none,LE-0217
+SEC-00201,Davenham Utilities Inc. 3.750% Sub Notes 2044,corporate bond,DBFUFR,USD,2024-02-28T00:00:00Z,2044-02-28T00:00:00Z,3.750,subordinated,1500000000,book entry form,none,LE-0217
+SEC-00202,Davenham Utilities Inc. 2.750% Sr Notes 2024,corporate bond,DBFUFR,USD,2017-07-02T00:00:00Z,2024-07-02T00:00:00Z,2.750,senior unsecured,300000000,book entry form,none,LE-0217
+SEC-00203,Marlow Beverages Common Stock,common share,ESVUFR,USD,2002-05-13T00:00:00Z,,,,,registered form,none,LE-0219
+SEC-00204,Marlow Beverages Capital LLC 4.875% Sub Notes 2032,corporate bond,DBFUFR,USD,2025-07-02T00:00:00Z,2032-07-02T00:00:00Z,4.875,subordinated,750000000,book entry form,none,LE-0220
+SEC-00205,Marlow Beverages Inc. 3.625% Sub Notes 2031,corporate bond,DBFUFR,USD,2021-06-15T00:00:00Z,2031-06-15T00:00:00Z,3.625,subordinated,400000000,book entry form,none,LE-0219
+SEC-00206,Wendover Chemicals Common Stock,common share,ESVUFR,USD,2017-12-23T00:00:00Z,,,,,registered form,none,LE-0223
+SEC-00207,Wendover Chemicals Preferred Shares,preferred share,EPNXFR,USD,2017-11-11T00:00:00Z,,,,,registered form,none,LE-0223
+SEC-00208,Wendover Chemicals Inc. 4.125% Sr Notes 2052,corporate bond,DBFUFR,USD,2022-04-24T00:00:00Z,2052-04-24T00:00:00Z,4.125,senior unsecured,1000000000,book entry form,none,LE-0223
+SEC-00209,Wendover Chemicals Inc. 5.875% Jr Sub Notes 2033,corporate bond,DBFUFR,USD,2023-09-20T00:00:00Z,2033-09-20T00:00:00Z,5.875,junior subordinated,300000000,book entry form,none,LE-0223
+SEC-00210,Yeoford Industries Common Stock,common share,ESVUFR,USD,1993-09-14T00:00:00Z,,,,,registered form,none,LE-0226
+SEC-00211,Yeoford Industries Inc. 3.875% Sr Notes 2053,corporate bond,DBFUFR,USD,2023-03-19T00:00:00Z,2053-03-19T00:00:00Z,3.875,senior unsecured,300000000,book entry form,none,LE-0226
+SEC-00212,Dunmore Systems Common Stock,common share,ESVUFR,USD,1985-06-06T00:00:00Z,,,,,registered form,none,LE-0228
+SEC-00213,Dunmore Systems Holdings Inc. 1.750% Sr Notes 2019,corporate bond,DBFUFR,USD,2014-06-05T00:00:00Z,2019-06-05T00:00:00Z,1.750,senior unsecured,500000000,book entry form,none,LE-0228
+SEC-00214,Dunmore Systems Holdings Inc. 5.750% Jr Sub Notes 2053,corporate bond,DBFUFR,USD,2023-01-12T00:00:00Z,2053-01-12T00:00:00Z,5.750,junior subordinated,750000000,book entry form,none,LE-0228
+SEC-00215,Ottery Realty Common Stock,common share,ESVUFR,USD,2006-01-04T00:00:00Z,,,,,registered form,none,LE-0230
+SEC-00216,Davenham Financial Common Stock,common share,ESVUFR,USD,2010-11-15T00:00:00Z,,,,,registered form,none,LE-0235
+SEC-00217,Davenham Financial Capital LLC 2.250% Sr Notes 2029,corporate bond,DBFUFR,USD,2017-10-18T00:00:00Z,2029-10-18T00:00:00Z,2.250,senior unsecured,300000000,book entry form,none,LE-0236
+SEC-00218,Davenham Financial Capital LLC 3.000% Sub Notes 2031,corporate bond,DBFUFR,USD,2019-08-14T00:00:00Z,2031-08-14T00:00:00Z,3.000,subordinated,1000000000,book entry form,none,LE-0236
+SEC-00219,Davenham Financial Inc. 4.250% Sr Notes 2032,corporate bond,DBFUFR,USD,2012-11-24T00:00:00Z,2032-11-24T00:00:00Z,4.250,senior unsecured,1500000000,book entry form,none,LE-0235
+SEC-00220,Davenham Financial Inc. 1.625% Sub Notes 2019,corporate bond,DBFUFR,USD,2014-04-14T00:00:00Z,2019-04-14T00:00:00Z,1.625,subordinated,400000000,book entry form,none,LE-0235
+SEC-00221,Davenham Financial Inc. 1.875% Sr Notes 2033,corporate bond,DBFUFR,USD,2018-05-18T00:00:00Z,2033-05-18T00:00:00Z,1.875,senior unsecured,500000000,book entry form,none,LE-0235
+SEC-00222,Ingleby Systems Common Stock,common share,ESVUFR,USD,2007-09-03T00:00:00Z,,,,,registered form,none,LE-0238
+SEC-00223,Marlow Renewables Common Stock,common share,ESVUFR,USD,2003-05-28T00:00:00Z,,,,,registered form,none,LE-0242
+SEC-00224,Marlow Renewables Preferred Shares,preferred share,EPNXFR,USD,2011-12-05T00:00:00Z,,,,,registered form,none,LE-0242
+SEC-00225,Marlow Renewables Holdings Inc. 1.750% Sr Notes 2030,corporate bond,DBFUFR,USD,2020-04-08T00:00:00Z,2030-04-08T00:00:00Z,1.750,senior unsecured,500000000,book entry form,none,LE-0242
+SEC-00226,Marlow Renewables Holdings Inc. 1.000% Sub Notes 2020,corporate bond,DBFUFR,USD,2017-09-27T00:00:00Z,2020-09-27T00:00:00Z,1.000,subordinated,1000000000,book entry form,none,LE-0242
+SEC-00227,Marlow Renewables Holdings Inc. 3.625% Sr Sec Notes 2030,corporate bond,DBFSFR,USD,2020-11-14T00:00:00Z,2030-11-14T00:00:00Z,3.625,senior secured,500000000,book entry form,none,LE-0242
+SEC-00228,Marlow Renewables Holdings Inc. 2.625% Sr Notes 2027,corporate bond,DBFUFR,USD,2020-05-08T00:00:00Z,2027-05-08T00:00:00Z,2.625,senior unsecured,750000000,book entry form,none,LE-0242
+SEC-00229,Fairhaven Diagnostics Common Stock,common share,ESVUFR,USD,2015-04-27T00:00:00Z,,,,,registered form,none,LE-0245
+SEC-00230,Fairhaven Diagnostics Holdings Inc. 2.500% Sr Notes 2024,corporate bond,DBFUFR,USD,2019-12-11T00:00:00Z,2024-12-11T00:00:00Z,2.500,senior unsecured,1500000000,book entry form,none,LE-0245
+SEC-00231,Fairhaven Diagnostics Holdings Inc. 1.375% Sr Notes 2050,corporate bond,DBFUFR,USD,2020-05-10T00:00:00Z,2050-05-10T00:00:00Z,1.375,senior unsecured,500000000,book entry form,none,LE-0245
+SEC-00232,Dunmore Chemicals Common Stock,common share,ESVUFR,USD,1998-08-13T00:00:00Z,,,,,registered form,none,LE-0247
+SEC-00233,Dunmore Chemicals Preferred Shares,preferred share,EPNXFR,USD,2015-05-16T00:00:00Z,,,,,registered form,none,LE-0247
+SEC-00234,Dunmore Chemicals Holdings Inc. 4.750% Sr Notes 2020,corporate bond,DBFUFR,USD,2013-03-26T00:00:00Z,2020-03-26T00:00:00Z,4.750,senior unsecured,500000000,book entry form,none,LE-0247
+SEC-00235,Dunmore Chemicals Holdings Inc. 6.250% Jr Sub Notes 2031,corporate bond,DBFUFR,USD,2024-05-23T00:00:00Z,2031-05-23T00:00:00Z,6.250,junior subordinated,1000000000,book entry form,none,LE-0247
+SEC-00236,Dunmore Chemicals Holdings Inc. 1.500% Sr Notes 2039,corporate bond,DBFUFR,USD,2019-02-16T00:00:00Z,2039-02-16T00:00:00Z,1.500,senior unsecured,1000000000,book entry form,none,LE-0247
+SEC-00237,Dunmore Chemicals Holdings Inc. 3.625% Sr Notes 2048,corporate bond,DBFUFR,USD,2018-02-06T00:00:00Z,2048-02-06T00:00:00Z,3.625,senior unsecured,500000000,book entry form,none,LE-0247
+SEC-00238,Dunmore Chemicals Holdings Inc. 3.375% Sr Sec Notes 2027,corporate bond,DBFSFR,USD,2022-04-08T00:00:00Z,2027-04-08T00:00:00Z,3.375,senior secured,1500000000,book entry form,none,LE-0247
+SEC-00239,Thornbury Communications Common Stock,common share,ESVUFR,USD,1990-01-20T00:00:00Z,,,,,registered form,none,LE-0249
+SEC-00240,Thornbury Communications Inc. 3.000% Sr Notes 2024,corporate bond,DBFUFR,USD,2017-07-11T00:00:00Z,2024-07-11T00:00:00Z,3.000,senior unsecured,750000000,book entry form,none,LE-0249
+SEC-00241,Thornbury Communications Inc. 0.875% Sr Notes 2036,corporate bond,DBFUFR,USD,2016-06-21T00:00:00Z,2036-06-21T00:00:00Z,0.875,senior unsecured,750000000,book entry form,none,LE-0249
+SEC-00242,Brantwood Electronics Common Stock,common share,ESVUFR,USD,2011-11-17T00:00:00Z,,,,,registered form,none,LE-0251
+SEC-00243,Brantwood Electronics Inc. 3.125% Sr Notes 2023,corporate bond,DBFUFR,USD,2013-12-11T00:00:00Z,2023-12-11T00:00:00Z,3.125,senior unsecured,400000000,book entry form,none,LE-0251
+SEC-00244,Alderney Properties Common Stock,common share,ESVUFR,USD,2010-04-14T00:00:00Z,,,,,registered form,none,LE-0253
+SEC-00245,Alderney Properties Inc. 3.875% Sr Sec Notes 2030,corporate bond,DBFSFR,USD,2020-01-16T00:00:00Z,2030-01-16T00:00:00Z,3.875,senior secured,1500000000,book entry form,none,LE-0253
+SEC-00246,Millbrook Media Common Stock,common share,ESVUFR,USD,2000-07-09T00:00:00Z,,,,,registered form,none,LE-0258
+SEC-00247,Millbrook Media Inc. 4.000% Sr Notes 2031,corporate bond,DBFUFR,USD,2019-09-18T00:00:00Z,2031-09-18T00:00:00Z,4.000,senior unsecured,600000000,book entry form,none,LE-0258
+SEC-00248,Millbrook Media Inc. 4.000% Sr Notes 2039,corporate bond,DBFUFR,USD,2019-04-22T00:00:00Z,2039-04-22T00:00:00Z,4.000,senior unsecured,500000000,book entry form,none,LE-0258
+SEC-00249,Winslade Assurance Common Stock,common share,ESVUFR,USD,2000-11-20T00:00:00Z,,,,,registered form,none,LE-0263
+SEC-00250,Winslade Assurance Capital LLC 4.000% Sr Notes 2028,corporate bond,DBFUFR,USD,2023-11-21T00:00:00Z,2028-11-21T00:00:00Z,4.000,senior unsecured,300000000,book entry form,none,LE-0266
+SEC-00251,Ironside Assurance Common Stock,common share,ESVUFR,USD,1987-12-12T00:00:00Z,,,,,registered form,none,LE-0267
+SEC-00252,Ironside Assurance Holdings Inc. 3.875% Sub Notes 2024,corporate bond,DBFUFR,USD,2019-10-23T00:00:00Z,2024-10-23T00:00:00Z,3.875,subordinated,1500000000,book entry form,none,LE-0267
+SEC-00253,Wendover Therapeutics Common Stock,common share,ESVUFR,USD,2000-11-13T00:00:00Z,,,,,registered form,none,LE-0269
+SEC-00254,Wendover Therapeutics Holdings Inc. 6.125% Sr Notes 2023,corporate bond,DBFUFR,USD,2013-02-17T00:00:00Z,2023-02-17T00:00:00Z,6.125,senior unsecured,1000000000,book entry form,none,LE-0269
+SEC-00255,Wendover Therapeutics Holdings Inc. 2.250% Sr Notes 2023,corporate bond,DBFUFR,USD,2016-03-02T00:00:00Z,2023-03-02T00:00:00Z,2.250,senior unsecured,1250000000,book entry form,none,LE-0269
+SEC-00256,Ulverby Power Ordinary Shares,common share,ESVUFR,GBP,2001-01-06T00:00:00Z,,,,,registered form,none,LE-0271
+SEC-00257,Ulverby Power Holdings plc 3.750% Sr Sec Notes 2029,corporate bond,DBFSFR,EUR,2022-09-13T00:00:00Z,2029-09-13T00:00:00Z,3.750,senior secured,1000000000,book entry form,Regulation S,LE-0271
+SEC-00258,Ulverby Power Holdings plc 2.750% Jr Sub Notes 2041,corporate bond,DBFUFR,EUR,2021-04-07T00:00:00Z,2041-04-07T00:00:00Z,2.750,junior subordinated,1000000000,book entry form,none,LE-0271
+SEC-00259,Ulverby Power Holdings plc 6.625% Sr Notes 2044,corporate bond,DBFUFR,EUR,2024-10-21T00:00:00Z,2044-10-21T00:00:00Z,6.625,senior unsecured,500000000,book entry form,none,LE-0271
+SEC-00260,Ulverby Power Holdings plc 3.125% Sr Sec Notes 2022,corporate bond,DBFSFR,GBP,2012-04-25T00:00:00Z,2022-04-25T00:00:00Z,3.125,senior secured,1000000000,registered form,none,LE-0271
+SEC-00261,Ulverby Power Holdings plc 3.500% Sr Notes 2030,corporate bond,DBFUFR,GBP,2015-01-15T00:00:00Z,2030-01-15T00:00:00Z,3.500,senior unsecured,750000000,registered form,none,LE-0271
+SEC-00262,Orwell Diagnostics Ordinary Shares,common share,ESVUFR,GBP,1988-12-25T00:00:00Z,,,,,registered form,none,LE-0275
+SEC-00263,Orwell Diagnostics plc 0.750% Sr Notes 2022,corporate bond,DBFUFR,GBP,2017-01-08T00:00:00Z,2022-01-08T00:00:00Z,0.750,senior unsecured,500000000,registered form,none,LE-0275
+SEC-00264,Upwey Properties Ordinary Shares,common share,ESVUFR,GBP,2015-04-17T00:00:00Z,,,,,registered form,none,LE-0278
+SEC-00265,Upwey Properties Holdings plc 4.250% Sr Sec Notes 2019,corporate bond,DBFSFR,GBP,2012-12-18T00:00:00Z,2019-12-18T00:00:00Z,4.250,senior secured,400000000,registered form,none,LE-0278
+SEC-00266,Upwey Properties Holdings plc 2.750% Sr Notes 2019,corporate bond,DBFUFR,GBP,2014-08-05T00:00:00Z,2019-08-05T00:00:00Z,2.750,senior unsecured,500000000,registered form,none,LE-0278
+SEC-00267,Winslade Foods Ordinary Shares,common share,ESVUFR,GBP,1994-10-16T00:00:00Z,,,,,registered form,none,LE-0283
+SEC-00268,Winslade Foods plc 4.125% Sr Notes 2015,corporate bond,DBFUFR,EUR,2012-09-06T00:00:00Z,2015-09-06T00:00:00Z,4.125,senior unsecured,1000000000,book entry form,none,LE-0283
+SEC-00269,Winslade Foods plc 2.625% Jr Sub Notes 2036,corporate bond,DBFUFR,GBP,2016-01-11T00:00:00Z,2036-01-11T00:00:00Z,2.625,junior subordinated,750000000,registered form,none,LE-0283
+SEC-00270,Winslade Foods plc 5.625% Sr Notes 2038,corporate bond,DBFUFR,GBP,2023-10-02T00:00:00Z,2038-10-02T00:00:00Z,5.625,senior unsecured,1000000000,registered form,none,LE-0283
+SEC-00271,Winslade Foods plc 0.750% Jr Sub Notes 2049,corporate bond,DBFUFR,EUR,2019-08-11T00:00:00Z,2049-08-11T00:00:00Z,0.750,junior subordinated,400000000,book entry form,none,LE-0283
+SEC-00272,Ottery Minerals Ordinary Shares,common share,ESVUFR,GBP,2000-10-12T00:00:00Z,,,,,registered form,none,LE-0286
+SEC-00273,Valemont Materials Ordinary Shares,common share,ESVUFR,GBP,2007-02-15T00:00:00Z,,,,,registered form,none,LE-0291
+SEC-00274,Valemont Materials plc 3.875% Sr Notes 2046,corporate bond,DBFUFR,GBP,2016-12-28T00:00:00Z,2046-12-28T00:00:00Z,3.875,senior unsecured,600000000,registered form,none,LE-0291
+SEC-00275,Dunmore Medical Ordinary Shares,common share,ESVUFR,GBP,2014-03-02T00:00:00Z,,,,,registered form,none,LE-0294
+SEC-00276,Dunmore Medical Holdings plc 1.125% Sr Notes 2023,corporate bond,DBFUFR,GBP,2018-09-19T00:00:00Z,2023-09-19T00:00:00Z,1.125,senior unsecured,500000000,registered form,none,LE-0294
+SEC-00277,Northwick Household Ordinary Shares,common share,ESVUFR,GBP,2013-03-01T00:00:00Z,,,,,registered form,none,LE-0296
+SEC-00278,Northwick Household plc 0.875% Sr Sec Notes 2021,corporate bond,DBFSFR,GBP,2018-12-21T00:00:00Z,2021-12-21T00:00:00Z,0.875,senior secured,300000000,registered form,none,LE-0296
+SEC-00279,Brantwood Estates Ordinary Shares,common share,ESVUFR,GBP,2018-01-09T00:00:00Z,,,,,registered form,none,LE-0300
+SEC-00280,Brantwood Estates plc 4.250% Sr Notes 2032,corporate bond,DBFUFR,EUR,2012-08-14T00:00:00Z,2032-08-14T00:00:00Z,4.250,senior unsecured,400000000,book entry form,none,LE-0300
+SEC-00281,Brantwood Estates plc 4.250% Sr Notes 2028,corporate bond,DBFUFR,GBP,2025-04-22T00:00:00Z,2028-04-22T00:00:00Z,4.250,senior unsecured,400000000,registered form,none,LE-0300
+SEC-00282,Juniper Therapeutics Ordinary Shares,common share,ESVUFR,GBP,2016-10-10T00:00:00Z,,,,,registered form,none,LE-0302
+SEC-00283,Juniper Therapeutics Preferred Shares,preferred share,EPNXFR,GBP,2015-03-21T00:00:00Z,,,,,registered form,none,LE-0302
+SEC-00284,Juniper Therapeutics Finance 1.625% Jr Sub Notes 2034,corporate bond,DBFUFR,EUR,2014-09-04T00:00:00Z,2034-09-04T00:00:00Z,1.625,junior subordinated,500000000,book entry form,none,LE-0303
+SEC-00285,Juniper Therapeutics plc 3.625% Sub Notes 2034,corporate bond,DBFUFR,EUR,2022-05-17T00:00:00Z,2034-05-17T00:00:00Z,3.625,subordinated,500000000,book entry form,Regulation S,LE-0302
+SEC-00286,Quarrington Leisure Ordinary Shares,common share,ESVUFR,GBP,2000-09-17T00:00:00Z,,,,,registered form,none,LE-0304
+SEC-00287,Quarrington Leisure plc 1.125% Sr Notes 2024,corporate bond,DBFUFR,EUR,2019-06-15T00:00:00Z,2024-06-15T00:00:00Z,1.125,senior unsecured,1250000000,book entry form,none,LE-0304
+SEC-00288,Quarrington Leisure plc 3.000% Sr Notes 2025,corporate bond,DBFUFR,EUR,2015-08-08T00:00:00Z,2025-08-08T00:00:00Z,3.000,senior unsecured,750000000,book entry form,none,LE-0304
+SEC-00289,Quarrington Leisure plc 1.750% Sr Notes 2025,corporate bond,DBFUFR,GBP,2018-06-01T00:00:00Z,2025-06-01T00:00:00Z,1.750,senior unsecured,750000000,registered form,none,LE-0304
+SEC-00290,Aster Systems Ordinary Shares,common share,ESVUFR,GBP,2015-08-24T00:00:00Z,,,,,registered form,none,LE-0308
+SEC-00291,Aster Systems Finance 5.125% Sr Notes 2032,corporate bond,DBFUFR,EUR,2022-03-18T00:00:00Z,2032-03-18T00:00:00Z,5.125,senior unsecured,1000000000,book entry form,none,LE-0310
+SEC-00292,Aster Systems plc 1.125% Sr Notes 2025,corporate bond,DBFUFR,GBP,2020-04-23T00:00:00Z,2025-04-23T00:00:00Z,1.125,senior unsecured,500000000,registered form,none,LE-0308
+SEC-00293,Aster Systems Finance 3.125% Sr Notes 2025,corporate bond,DBFUFR,EUR,2020-08-22T00:00:00Z,2025-08-22T00:00:00Z,3.125,senior unsecured,1000000000,book entry form,none,LE-0310
+SEC-00294,Aster Systems Finance 6.375% Sr Notes 2020,corporate bond,DBFUFR,EUR,2013-03-19T00:00:00Z,2020-03-19T00:00:00Z,6.375,senior unsecured,500000000,book entry form,Regulation S,LE-0310
+SEC-00295,Aster Systems Finance 2.500% Sr Notes 2023,corporate bond,DBFUFR,EUR,2016-11-08T00:00:00Z,2023-11-08T00:00:00Z,2.500,senior unsecured,500000000,book entry form,Regulation S,LE-0310
+SEC-00296,Millbrook Medical Ordinary Shares,common share,ESVUFR,EUR,1994-12-03T00:00:00Z,,,,,registered form,none,LE-0313
+SEC-00297,Millbrook Medical AG 2.000% Sub Notes 2026,corporate bond,DBFUFR,EUR,2019-04-02T00:00:00Z,2026-04-02T00:00:00Z,2.000,subordinated,600000000,registered form,none,LE-0313
+SEC-00298,Millbrook Medical AG 3.625% Sr Notes 2032,corporate bond,DBFUFR,EUR,2020-04-13T00:00:00Z,2032-04-13T00:00:00Z,3.625,senior unsecured,1000000000,registered form,none,LE-0313
+SEC-00299,Millbrook Medical AG 3.625% Sub Notes 2025,corporate bond,DBFUFR,EUR,2018-08-14T00:00:00Z,2025-08-14T00:00:00Z,3.625,subordinated,1000000000,book entry form,none,LE-0313
+SEC-00300,Millbrook Medical AG 4.375% Jr Sub Notes 2028,corporate bond,DBFUFR,EUR,2025-09-23T00:00:00Z,2028-09-23T00:00:00Z,4.375,junior subordinated,400000000,book entry form,Regulation S,LE-0313
+SEC-00301,Winslade Communications Ordinary Shares,common share,ESVUFR,EUR,2001-01-15T00:00:00Z,,,,,registered form,none,LE-0315
+SEC-00302,Winslade Communications AG 6.000% Sr Notes 2053,corporate bond,DBFUFR,EUR,2023-07-28T00:00:00Z,2053-07-28T00:00:00Z,6.000,senior unsecured,400000000,registered form,none,LE-0315
+SEC-00303,Winslade Communications AG 3.250% Sr Notes 2024,corporate bond,DBFUFR,EUR,2017-03-15T00:00:00Z,2024-03-15T00:00:00Z,3.250,senior unsecured,600000000,registered form,none,LE-0315
+SEC-00304,Winslade Communications AG 6.625% Sr Sec Notes 2032,corporate bond,DBFSFR,EUR,2022-11-15T00:00:00Z,2032-11-15T00:00:00Z,6.625,senior secured,1000000000,book entry form,none,LE-0315
+SEC-00305,Winslade Communications AG 2.500% Sr Notes 2019,corporate bond,DBFUFR,EUR,2014-11-16T00:00:00Z,2019-11-16T00:00:00Z,2.500,senior unsecured,400000000,book entry form,none,LE-0315
+SEC-00306,Langdale Retail Ordinary Shares,common share,ESVUFR,EUR,2006-05-20T00:00:00Z,,,,,registered form,none,LE-0317
+SEC-00307,Netherby Communications Ordinary Shares,common share,ESVUFR,EUR,1992-10-26T00:00:00Z,,,,,registered form,none,LE-0319
+SEC-00308,Netherby Communications AG 2.125% Sr Sec Notes 2045,corporate bond,DBFSFR,EUR,2015-01-23T00:00:00Z,2045-01-23T00:00:00Z,2.125,senior secured,300000000,registered form,none,LE-0319
+SEC-00309,Netherby Communications AG 5.000% Sr Notes 2027,corporate bond,DBFUFR,EUR,2022-08-23T00:00:00Z,2027-08-23T00:00:00Z,5.000,senior unsecured,500000000,book entry form,none,LE-0319
+SEC-00310,Netherby Communications Finance 6.375% Sub Notes 2045,corporate bond,DBFUFR,EUR,2025-09-24T00:00:00Z,2045-09-24T00:00:00Z,6.375,subordinated,1250000000,book entry form,none,LE-0322
+SEC-00311,Netherby Communications Finance 3.000% Sr Notes 2036,corporate bond,DBFUFR,EUR,2016-12-24T00:00:00Z,2036-12-24T00:00:00Z,3.000,senior unsecured,1500000000,book entry form,none,LE-0322
+SEC-00312,Eskdale Software Ordinary Shares,common share,ESVUFR,EUR,2011-06-24T00:00:00Z,,,,,registered form,none,LE-0323
+SEC-00313,Eskdale Software AG 4.875% Sub Notes 2019,corporate bond,DBFUFR,EUR,2012-01-22T00:00:00Z,2019-01-22T00:00:00Z,4.875,subordinated,600000000,registered form,none,LE-0323
+SEC-00314,Eskdale Software AG 5.250% Sub Notes 2033,corporate bond,DBFUFR,EUR,2013-08-13T00:00:00Z,2033-08-13T00:00:00Z,5.250,subordinated,300000000,registered form,none,LE-0323
+SEC-00315,Yeoford Power Ordinary Shares,common share,ESVUFR,EUR,2015-03-17T00:00:00Z,,,,,registered form,none,LE-0325
+SEC-00316,Yeoford Power Finance 1.625% Sr Sec Notes 2022,corporate bond,DBFSFR,EUR,2019-02-10T00:00:00Z,2022-02-10T00:00:00Z,1.625,senior secured,1000000000,book entry form,Regulation S,LE-0327
+SEC-00317,Yeoford Power Finance 2.500% Sr Notes 2018,corporate bond,DBFUFR,EUR,2015-12-03T00:00:00Z,2018-12-03T00:00:00Z,2.500,senior unsecured,1000000000,book entry form,none,LE-0327
+SEC-00318,Yeoford Power AG 0.500% Sub Notes 2036,corporate bond,DBFUFR,EUR,2016-02-13T00:00:00Z,2036-02-13T00:00:00Z,0.500,subordinated,750000000,registered form,none,LE-0325
+SEC-00319,Yeoford Power Finance 0.625% Sr Notes 2038,corporate bond,DBFUFR,EUR,2018-11-04T00:00:00Z,2038-11-04T00:00:00Z,0.625,senior unsecured,1500000000,book entry form,Regulation S,LE-0327
+SEC-00320,Yeoford Power Finance 2.250% Sr Notes 2022,corporate bond,DBFUFR,EUR,2019-07-09T00:00:00Z,2022-07-09T00:00:00Z,2.250,senior unsecured,750000000,book entry form,none,LE-0327
+SEC-00321,Ironside Networks Ordinary Shares,common share,ESVUFR,EUR,1995-09-06T00:00:00Z,,,,,registered form,none,LE-0328
+SEC-00322,Ironside Networks Preferred Shares,preferred share,EPNXFR,EUR,2007-09-17T00:00:00Z,,,,,registered form,none,LE-0328
+SEC-00323,Ironside Networks Holdings AG 3.750% Sr Notes 2022,corporate bond,DBFUFR,EUR,2015-04-04T00:00:00Z,2022-04-04T00:00:00Z,3.750,senior unsecured,750000000,book entry form,none,LE-0328
+SEC-00324,Ironside Networks Holdings AG 5.750% Sub Notes 2034,corporate bond,DBFUFR,EUR,2024-04-27T00:00:00Z,2034-04-27T00:00:00Z,5.750,subordinated,750000000,book entry form,none,LE-0328
+SEC-00325,Ironside Networks Finance 3.000% Sub Notes 2028,corporate bond,DBFUFR,EUR,2018-01-11T00:00:00Z,2028-01-11T00:00:00Z,3.000,subordinated,750000000,book entry form,none,LE-0330
+SEC-00326,Ironside Networks Holdings AG 0.875% Sr Notes 2037,corporate bond,DBFUFR,EUR,2017-03-19T00:00:00Z,2037-03-19T00:00:00Z,0.875,senior unsecured,1000000000,registered form,none,LE-0328
+SEC-00327,Tarrant Utilities Ordinary Shares,common share,ESVUFR,EUR,2004-07-06T00:00:00Z,,,,,registered form,none,LE-0331
+SEC-00328,Tarrant Utilities AG 3.500% Sr Notes 2027,corporate bond,DBFUFR,EUR,2015-12-20T00:00:00Z,2027-12-20T00:00:00Z,3.500,senior unsecured,750000000,registered form,none,LE-0331
+SEC-00329,Tarrant Utilities AG 5.375% Sub Notes 2034,corporate bond,DBFUFR,EUR,2022-09-27T00:00:00Z,2034-09-27T00:00:00Z,5.375,subordinated,300000000,registered form,none,LE-0331
+SEC-00330,Tarrant Utilities AG 5.375% Sr Notes 2033,corporate bond,DBFUFR,EUR,2023-12-20T00:00:00Z,2033-12-20T00:00:00Z,5.375,senior unsecured,750000000,registered form,none,LE-0331
+SEC-00331,Tarrant Utilities AG 3.625% Sr Notes 2033,corporate bond,DBFUFR,EUR,2018-05-21T00:00:00Z,2033-05-21T00:00:00Z,3.625,senior unsecured,1250000000,book entry form,none,LE-0331
+SEC-00332,Glenrock Financial Ordinary Shares,common share,ESVUFR,EUR,2003-10-03T00:00:00Z,,,,,registered form,none,LE-0333
+SEC-00333,Glenrock Financial SA 4.500% Sr Notes 2018,corporate bond,DBFUFR,EUR,2013-09-06T00:00:00Z,2018-09-06T00:00:00Z,4.500,senior unsecured,1250000000,book entry form,none,LE-0333
+SEC-00334,Glenrock Financial SA 2.500% Sr Notes 2021,corporate bond,DBFUFR,EUR,2016-07-25T00:00:00Z,2021-07-25T00:00:00Z,2.500,senior unsecured,1500000000,registered form,none,LE-0333
+SEC-00335,Glenrock Financial SA 3.125% Sr Notes 2029,corporate bond,DBFUFR,EUR,2017-02-01T00:00:00Z,2029-02-01T00:00:00Z,3.125,senior unsecured,400000000,registered form,none,LE-0333
+SEC-00336,Yeoford Automotive Ordinary Shares,common share,ESVUFR,EUR,2018-11-19T00:00:00Z,,,,,registered form,none,LE-0337
+SEC-00337,Yeoford Automotive SA 5.875% Sr Sec Notes 2039,corporate bond,DBFSFR,EUR,2024-04-07T00:00:00Z,2039-04-07T00:00:00Z,5.875,senior secured,750000000,book entry form,none,LE-0337
+SEC-00338,Yeoford Automotive SA 0.625% Sr Notes 2031,corporate bond,DBFUFR,EUR,2019-08-26T00:00:00Z,2031-08-26T00:00:00Z,0.625,senior unsecured,500000000,registered form,none,LE-0337
+SEC-00339,Yeoford Automotive SA 1.000% Jr Sub Notes 2027,corporate bond,DBFUFR,EUR,2020-02-05T00:00:00Z,2027-02-05T00:00:00Z,1.000,junior subordinated,1000000000,registered form,none,LE-0337
+SEC-00340,Juniper Software Ordinary Shares,common share,ESVUFR,EUR,2012-10-27T00:00:00Z,,,,,registered form,none,LE-0339
+SEC-00341,Juniper Software Preferred Shares,preferred share,EPNXFR,EUR,2010-05-03T00:00:00Z,,,,,registered form,none,LE-0339
+SEC-00342,Juniper Software SA 6.250% Sr Notes 2035,corporate bond,DBFUFR,EUR,2025-06-02T00:00:00Z,2035-06-02T00:00:00Z,6.250,senior unsecured,1500000000,registered form,none,LE-0339
+SEC-00343,Juniper Software SA 3.000% Sr Notes 2028,corporate bond,DBFUFR,EUR,2018-10-16T00:00:00Z,2028-10-16T00:00:00Z,3.000,senior unsecured,400000000,registered form,none,LE-0339
+SEC-00344,Brantwood Properties Ordinary Shares,common share,ESVUFR,EUR,1985-11-23T00:00:00Z,,,,,registered form,none,LE-0343
+SEC-00345,Brantwood Properties Holdings SA 6.625% Sr Notes 2023,corporate bond,DBFUFR,EUR,2013-03-16T00:00:00Z,2023-03-16T00:00:00Z,6.625,senior unsecured,400000000,registered form,none,LE-0343
+SEC-00346,Brantwood Properties Finance 3.625% Sr Notes 2017,corporate bond,DBFUFR,EUR,2014-03-13T00:00:00Z,2017-03-13T00:00:00Z,3.625,senior unsecured,750000000,book entry form,none,LE-0344
+SEC-00347,Grantley Software Ordinary Shares,common share,ESVUFR,EUR,2014-04-28T00:00:00Z,,,,,registered form,none,LE-0347
+SEC-00348,Grantley Software Holdings SA 2.625% Sr Notes 2050,corporate bond,DBFUFR,EUR,2020-10-10T00:00:00Z,2050-10-10T00:00:00Z,2.625,senior unsecured,400000000,book entry form,none,LE-0347
+SEC-00349,Grantley Software Finance 1.000% Sr Notes 2022,corporate bond,DBFUFR,EUR,2017-07-14T00:00:00Z,2022-07-14T00:00:00Z,1.000,senior unsecured,1500000000,book entry form,Regulation S,LE-0351
+SEC-00350,Grantley Software Finance 5.250% Sr Notes 2037,corporate bond,DBFUFR,EUR,2022-02-12T00:00:00Z,2037-02-12T00:00:00Z,5.250,senior unsecured,1000000000,book entry form,none,LE-0351
+SEC-00351,Grantley Software Finance 1.625% Sub Notes 2027,corporate bond,DBFUFR,EUR,2020-06-26T00:00:00Z,2027-06-26T00:00:00Z,1.625,subordinated,600000000,book entry form,none,LE-0351
+SEC-00352,Grantley Software Finance 2.500% Sub Notes 2047,corporate bond,DBFUFR,EUR,2017-03-10T00:00:00Z,2047-03-10T00:00:00Z,2.500,subordinated,1000000000,book entry form,Regulation S,LE-0351
+SEC-00353,Juniper Financial Ordinary Shares,common share,ESVUFR,EUR,2002-06-07T00:00:00Z,,,,,registered form,none,LE-0352
+SEC-00354,Juniper Financial SA 4.375% Sr Notes 2022,corporate bond,DBFUFR,EUR,2012-04-04T00:00:00Z,2022-04-04T00:00:00Z,4.375,senior unsecured,600000000,registered form,none,LE-0352
+SEC-00355,Juniper Financial Finance 3.000% Sr Notes 2037,corporate bond,DBFUFR,EUR,2022-07-10T00:00:00Z,2037-07-10T00:00:00Z,3.000,senior unsecured,1000000000,book entry form,none,LE-0353
+SEC-00356,Juniper Financial Finance 2.500% Sr Notes 2032,corporate bond,DBFUFR,EUR,2017-07-03T00:00:00Z,2032-07-03T00:00:00Z,2.500,senior unsecured,300000000,book entry form,none,LE-0353
+SEC-00357,Juniper Financial SA 6.125% Sr Notes 2033,corporate bond,DBFUFR,EUR,2023-06-26T00:00:00Z,2033-06-26T00:00:00Z,6.125,senior unsecured,500000000,registered form,none,LE-0352
+SEC-00358,Juniper Financial SA 6.000% Sr Notes 2038,corporate bond,DBFUFR,EUR,2023-03-20T00:00:00Z,2038-03-20T00:00:00Z,6.000,senior unsecured,750000000,registered form,none,LE-0352
+SEC-00359,Quarrington Electronics Ordinary Shares,common share,ESVUFR,EUR,2009-05-13T00:00:00Z,,,,,registered form,none,LE-0356
+SEC-00360,Quarrington Electronics Finance 3.375% Sr Notes 2052,corporate bond,DBFUFR,EUR,2022-06-09T00:00:00Z,2052-06-09T00:00:00Z,3.375,senior unsecured,1000000000,book entry form,Regulation S,LE-0357
+SEC-00361,Nakashima Automotive Ordinary Shares,common share,ESVUFR,JPY,2000-12-28T00:00:00Z,,,,,registered form,none,LE-0358
+SEC-00362,Nakashima Automotive Finance 3.250% Sr Notes 2037,corporate bond,DBFUFR,EUR,2022-04-19T00:00:00Z,2037-04-19T00:00:00Z,3.250,senior unsecured,500000000,book entry form,none,LE-0359
+SEC-00363,Nakashima Automotive Finance 1.375% Sr Notes 2027,corporate bond,DBFUFR,EUR,2017-05-22T00:00:00Z,2027-05-22T00:00:00Z,1.375,senior unsecured,500000000,book entry form,Regulation S,LE-0359
+SEC-00364,Nakashima Automotive K.K. 3.625% Sr Notes 2023,corporate bond,DBFUFR,JPY,2020-04-23T00:00:00Z,2023-04-23T00:00:00Z,3.625,senior unsecured,75000000000,registered form,none,LE-0358
+SEC-00365,Nakashima Automotive K.K. 2.000% Sr Notes 2020,corporate bond,DBFUFR,EUR,2015-08-05T00:00:00Z,2020-08-05T00:00:00Z,2.000,senior unsecured,1000000000,book entry form,Regulation S,LE-0358
+SEC-00366,Kawabe Beverages Ordinary Shares,common share,ESVUFR,JPY,2011-11-02T00:00:00Z,,,,,registered form,none,LE-0362
+SEC-00367,Kawabe Beverages Holdings K.K. 0.875% Sr Notes 2030,corporate bond,DBFUFR,JPY,2015-04-23T00:00:00Z,2030-04-23T00:00:00Z,0.875,senior unsecured,40000000000,registered form,none,LE-0362
+SEC-00368,Kawabe Beverages Holdings K.K. 1.875% Sr Notes 2019,corporate bond,DBFUFR,EUR,2014-07-01T00:00:00Z,2019-07-01T00:00:00Z,1.875,senior unsecured,750000000,book entry form,none,LE-0362
+SEC-00369,Kawabe Beverages Holdings K.K. 4.000% Sr Notes 2023,corporate bond,DBFUFR,JPY,2016-01-15T00:00:00Z,2023-01-15T00:00:00Z,4.000,senior unsecured,75000000000,registered form,none,LE-0362
+SEC-00370,Kawabe Beverages Holdings K.K. 5.750% Sr Notes 2022,corporate bond,DBFUFR,JPY,2012-12-08T00:00:00Z,2022-12-08T00:00:00Z,5.750,senior unsecured,30000000000,registered form,none,LE-0362
+SEC-00371,Kawabe Beverages Holdings K.K. 1.375% Sr Notes 2049,corporate bond,DBFUFR,EUR,2019-02-13T00:00:00Z,2049-02-13T00:00:00Z,1.375,senior unsecured,400000000,book entry form,Regulation S,LE-0362
+SEC-00372,Ishikari Gas Ordinary Shares,common share,ESVUFR,JPY,1987-05-24T00:00:00Z,,,,,registered form,none,LE-0364
+SEC-00373,Ishikari Gas Finance 3.625% Sr Notes 2028,corporate bond,DBFUFR,EUR,2023-02-06T00:00:00Z,2028-02-06T00:00:00Z,3.625,senior unsecured,500000000,book entry form,Regulation S,LE-0365
+SEC-00374,Ishikari Gas Finance 2.250% Sr Notes 2024,corporate bond,DBFUFR,EUR,2017-08-26T00:00:00Z,2024-08-26T00:00:00Z,2.250,senior unsecured,750000000,book entry form,none,LE-0365
+SEC-00375,Ishikari Energy Ordinary Shares,common share,ESVUFR,JPY,2011-10-07T00:00:00Z,,,,,registered form,none,LE-0366
+SEC-00376,Ishikari Energy Holdings K.K. 3.500% Sr Notes 2019,corporate bond,DBFUFR,EUR,2016-11-15T00:00:00Z,2019-11-15T00:00:00Z,3.500,senior unsecured,300000000,book entry form,none,LE-0366
+SEC-00377,Ishikari Energy Holdings K.K. 3.750% Jr Sub Notes 2042,corporate bond,DBFUFR,EUR,2022-09-17T00:00:00Z,2042-09-17T00:00:00Z,3.750,junior subordinated,300000000,book entry form,none,LE-0366
+SEC-00378,Ishikari Energy Capital LLC 4.875% Sr Notes 2042,corporate bond,DBFUFR,USD,2012-07-11T00:00:00Z,2042-07-11T00:00:00Z,4.875,senior unsecured,500000000,book entry form,Rule 144A,LE-0367
+SEC-00379,Fujisaki Utilities Ordinary Shares,common share,ESVUFR,JPY,1991-12-10T00:00:00Z,,,,,registered form,none,LE-0369
+SEC-00380,Fujisaki Utilities Preferred Shares,preferred share,EPNXFR,JPY,2015-03-21T00:00:00Z,,,,,registered form,none,LE-0369
+SEC-00381,Sanjo Medical Ordinary Shares,common share,ESVUFR,JPY,2002-11-20T00:00:00Z,,,,,registered form,none,LE-0371
+SEC-00382,Sanjo Medical Capital LLC 5.500% Sr Notes 2039,corporate bond,DBFUFR,USD,2024-04-27T00:00:00Z,2039-04-27T00:00:00Z,5.500,senior unsecured,1500000000,book entry form,Rule 144A,LE-0372
+SEC-00383,Nakashima Systems Ordinary Shares,common share,ESVUFR,JPY,1990-11-21T00:00:00Z,,,,,registered form,none,LE-0376
+SEC-00384,Nakashima Systems Finance 3.625% Sr Notes 2037,corporate bond,DBFUFR,EUR,2025-01-07T00:00:00Z,2037-01-07T00:00:00Z,3.625,senior unsecured,1500000000,book entry form,none,LE-0377
+SEC-00385,Nakashima Systems K.K. 4.375% Sr Notes 2033,corporate bond,DBFUFR,JPY,2013-04-20T00:00:00Z,2033-04-20T00:00:00Z,4.375,senior unsecured,125000000000,registered form,none,LE-0376
+SEC-00386,Nakashima Systems K.K. 2.875% Sr Notes 2022,corporate bond,DBFUFR,EUR,2019-01-05T00:00:00Z,2022-01-05T00:00:00Z,2.875,senior unsecured,1000000000,book entry form,none,LE-0376
+SEC-00387,Nakashima Systems Finance 4.750% Sub Notes 2028,corporate bond,DBFUFR,EUR,2023-02-23T00:00:00Z,2028-02-23T00:00:00Z,4.750,subordinated,500000000,book entry form,Regulation S,LE-0377
+SEC-00388,Yoshino Machinery Ordinary Shares,common share,ESVUFR,JPY,1985-02-20T00:00:00Z,,,,,registered form,none,LE-0381
+SEC-00389,Yoshino Machinery K.K. 4.250% Sub Notes 2032,corporate bond,DBFUFR,JPY,2022-09-03T00:00:00Z,2032-09-03T00:00:00Z,4.250,subordinated,75000000000,registered form,none,LE-0381
+SEC-00390,Yoshino Renewables Ordinary Shares,common share,ESVUFR,JPY,2010-02-21T00:00:00Z,,,,,registered form,none,LE-0384
+SEC-00391,Yoshino Renewables Finance 6.250% Sr Notes 2015,corporate bond,DBFUFR,EUR,2012-08-24T00:00:00Z,2015-08-24T00:00:00Z,6.250,senior unsecured,1250000000,book entry form,Regulation S,LE-0387
+SEC-00392,Yoshino Renewables K.K. 3.625% Sr Notes 2049,corporate bond,DBFUFR,JPY,2019-07-09T00:00:00Z,2049-07-09T00:00:00Z,3.625,senior unsecured,100000000000,registered form,none,LE-0384
+SEC-00393,Yoshino Renewables K.K. 2.250% Sr Notes 2028,corporate bond,DBFUFR,EUR,2021-07-01T00:00:00Z,2028-07-01T00:00:00Z,2.250,senior unsecured,500000000,book entry form,none,LE-0384
+SEC-00394,Fujisaki Leisure Ordinary Shares,common share,ESVUFR,JPY,2007-11-01T00:00:00Z,,,,,registered form,none,LE-0389
+SEC-00395,Fujisaki Leisure K.K. 1.875% Sr Notes 2024,corporate bond,DBFUFR,EUR,2021-04-10T00:00:00Z,2024-04-10T00:00:00Z,1.875,senior unsecured,1000000000,book entry form,none,LE-0389
+SEC-00396,Nakashima Engineering Ordinary Shares,common share,ESVUFR,JPY,1991-09-18T00:00:00Z,,,,,registered form,none,LE-0393
+SEC-00397,Ishikari Utilities Ordinary Shares,common share,ESVUFR,JPY,2005-05-18T00:00:00Z,,,,,registered form,none,LE-0397
+SEC-00398,Ishikari Utilities Capital LLC 6.250% Sr Notes 2016,corporate bond,DBFUFR,USD,2013-04-17T00:00:00Z,2016-04-17T00:00:00Z,6.250,senior unsecured,1250000000,book entry form,Rule 144A,LE-0398
+SEC-00399,Alderney Diagnostics Common Stock,common share,ESVUFR,CAD,2006-08-13T00:00:00Z,,,,,registered form,none,LE-0399
+SEC-00400,Alderney Diagnostics Corp. 3.625% Sub Notes 2048,corporate bond,DBFUFR,CAD,2018-04-06T00:00:00Z,2048-04-06T00:00:00Z,3.625,subordinated,1250000000,book entry form,none,LE-0399
+SEC-00401,Alderney Diagnostics Corp. 1.750% Sr Sec Notes 2039,corporate bond,DBFSFR,CAD,2019-11-04T00:00:00Z,2039-11-04T00:00:00Z,1.750,senior secured,1500000000,book entry form,none,LE-0399
+SEC-00402,Alderney Diagnostics Corp. 1.500% Sr Notes 2028,corporate bond,DBFUFR,CAD,2018-06-10T00:00:00Z,2028-06-10T00:00:00Z,1.500,senior unsecured,1250000000,book entry form,none,LE-0399
+SEC-00403,Alderney Diagnostics Capital LLC 2.500% Sr Notes 2034,corporate bond,DBFUFR,USD,2014-09-13T00:00:00Z,2034-09-13T00:00:00Z,2.500,senior unsecured,1500000000,book entry form,none,LE-0400
+SEC-00404,Aster Medical Common Stock,common share,ESVUFR,CAD,2015-05-07T00:00:00Z,,,,,registered form,none,LE-0403
+SEC-00405,Glenrock Networks Common Stock,common share,ESVUFR,CAD,1996-07-26T00:00:00Z,,,,,registered form,none,LE-0407
+SEC-00406,Glenrock Networks Capital LLC 3.500% Sr Notes 2016,corporate bond,DBFUFR,USD,2013-03-17T00:00:00Z,2016-03-17T00:00:00Z,3.500,senior unsecured,600000000,book entry form,none,LE-0409
+SEC-00407,Glenrock Networks Capital LLC 1.000% Sr Notes 2029,corporate bond,DBFUFR,USD,2014-07-01T00:00:00Z,2029-07-01T00:00:00Z,1.000,senior unsecured,750000000,book entry form,none,LE-0409
+SEC-00408,Glenrock Networks Capital LLC 4.125% Sub Notes 2026,corporate bond,DBFUFR,USD,2021-03-02T00:00:00Z,2026-03-02T00:00:00Z,4.125,subordinated,750000000,book entry form,none,LE-0409
+SEC-00409,Glenrock Networks Capital LLC 4.000% Sr Notes 2052,corporate bond,DBFUFR,USD,2022-03-08T00:00:00Z,2052-03-08T00:00:00Z,4.000,senior unsecured,500000000,book entry form,none,LE-0409
+SEC-00410,Northwick Energy Common Stock,common share,ESVUFR,CAD,2007-09-23T00:00:00Z,,,,,registered form,none,LE-0411
+SEC-00411,Northwick Energy Preferred Shares,preferred share,EPNXFR,CAD,2010-10-15T00:00:00Z,,,,,registered form,none,LE-0411
+SEC-00412,Northwick Energy Corp. 2.625% Sub Notes 2039,corporate bond,DBFUFR,CAD,2019-05-16T00:00:00Z,2039-05-16T00:00:00Z,2.625,subordinated,600000000,book entry form,none,LE-0411
+SEC-00413,Northwick Energy Corp. 0.750% Sr Notes 2035,corporate bond,DBFUFR,CAD,2020-05-08T00:00:00Z,2035-05-08T00:00:00Z,0.750,senior unsecured,750000000,book entry form,none,LE-0411
+SEC-00414,Northwick Energy Corp. 4.750% Sr Notes 2032,corporate bond,DBFUFR,CAD,2022-07-09T00:00:00Z,2032-07-09T00:00:00Z,4.750,senior unsecured,750000000,book entry form,none,LE-0411
+SEC-00415,Glenrock Energy Common Stock,common share,ESVUFR,CAD,1986-01-01T00:00:00Z,,,,,registered form,none,LE-0414
+SEC-00416,Ottery Power Ordinary Shares,common share,ESVUFR,EUR,1988-02-27T00:00:00Z,,,,,registered form,none,LE-0418
+SEC-00417,Ottery Power Holdings N.V. 2.125% Sr Notes 2033,corporate bond,DBFUFR,EUR,2018-05-15T00:00:00Z,2033-05-15T00:00:00Z,2.125,senior unsecured,1000000000,book entry form,none,LE-0418
+SEC-00418,Northwick Media Ordinary Shares,common share,ESVUFR,EUR,1994-06-09T00:00:00Z,,,,,registered form,none,LE-0421
+SEC-00419,Northwick Media Finance 5.250% Sr Notes 2044,corporate bond,DBFUFR,EUR,2024-11-18T00:00:00Z,2044-11-18T00:00:00Z,5.250,senior unsecured,300000000,book entry form,none,LE-0422
+SEC-00420,Farleigh Financial Ordinary Shares,common share,ESVUFR,EUR,1996-05-09T00:00:00Z,,,,,registered form,none,LE-0425
+SEC-00421,Farleigh Financial N.V. 4.750% Sub Notes 2016,corporate bond,DBFUFR,EUR,2013-01-13T00:00:00Z,2016-01-13T00:00:00Z,4.750,subordinated,1500000000,book entry form,none,LE-0425
+SEC-00422,Farleigh Financial N.V. 4.250% Sr Notes 2028,corporate bond,DBFUFR,EUR,2013-10-03T00:00:00Z,2028-10-03T00:00:00Z,4.250,senior unsecured,600000000,book entry form,Regulation S,LE-0425
+SEC-00423,Farleigh Financial N.V. 3.000% Sub Notes 2018,corporate bond,DBFUFR,EUR,2013-05-09T00:00:00Z,2018-05-09T00:00:00Z,3.000,subordinated,1250000000,book entry form,none,LE-0425
+SEC-00424,Brantwood Financial Ordinary Shares,common share,ESVUFR,EUR,2014-01-10T00:00:00Z,,,,,registered form,none,LE-0427
+SEC-00425,Brantwood Financial Capital LLC 6.375% Sr Notes 2035,corporate bond,DBFUFR,USD,2025-04-07T00:00:00Z,2035-04-07T00:00:00Z,6.375,senior unsecured,1250000000,book entry form,Rule 144A,LE-0429
+SEC-00426,Ingleby Communications Ordinary Shares,common share,ESVUFR,CHF,1998-07-19T00:00:00Z,,,,,registered form,none,LE-0432
+SEC-00427,Ingleby Communications Preferred Shares,preferred share,EPNXFR,CHF,2011-12-01T00:00:00Z,,,,,registered form,none,LE-0432
+SEC-00428,Ingleby Communications AG 2.000% Sr Notes 2022,corporate bond,DBFUFR,EUR,2017-03-06T00:00:00Z,2022-03-06T00:00:00Z,2.000,senior unsecured,1500000000,book entry form,none,LE-0432
+SEC-00429,Langdale Engineering Ordinary Shares,common share,ESVUFR,CHF,1990-04-07T00:00:00Z,,,,,registered form,none,LE-0436
+SEC-00430,Langdale Engineering Holdings AG 0.375% Sub Notes 2036,corporate bond,DBFUFR,CHF,2021-12-19T00:00:00Z,2036-12-19T00:00:00Z,0.375,subordinated,500000000,registered form,none,LE-0436
+SEC-00431,Brantwood Media Ordinary Shares,common share,ESVUFR,CHF,2002-03-09T00:00:00Z,,,,,registered form,none,LE-0440
+SEC-00432,Brantwood Media Preferred Shares,preferred share,EPNXFR,CHF,2012-02-08T00:00:00Z,,,,,registered form,none,LE-0440
+SEC-00433,Eskdale Apparel Ordinary Shares,common share,ESVUFR,CHF,2017-06-12T00:00:00Z,,,,,registered form,none,LE-0443
+SEC-00434,Eskdale Apparel Finance 2.125% Sr Notes 2030,corporate bond,DBFUFR,EUR,2015-08-17T00:00:00Z,2030-08-17T00:00:00Z,2.125,senior unsecured,1500000000,book entry form,none,LE-0444
+SEC-00435,Eskdale Apparel AG 1.250% Jr Sub Notes 2022,corporate bond,DBFUFR,CHF,2017-05-09T00:00:00Z,2022-05-09T00:00:00Z,1.250,junior subordinated,1000000000,registered form,none,LE-0443
+SEC-00436,Eskdale Apparel Finance 6.500% Sr Notes 2029,corporate bond,DBFUFR,EUR,2024-07-04T00:00:00Z,2029-07-04T00:00:00Z,6.500,senior unsecured,500000000,book entry form,none,LE-0444
+SEC-00437,Eskdale Apparel AG 2.250% Sr Notes 2050,corporate bond,DBFUFR,EUR,2020-06-15T00:00:00Z,2050-06-15T00:00:00Z,2.250,senior unsecured,500000000,book entry form,none,LE-0443
+SEC-00438,Eskdale Apparel Finance 0.500% Sr Sec Notes 2022,corporate bond,DBFSFR,EUR,2015-03-02T00:00:00Z,2022-03-02T00:00:00Z,0.500,senior secured,500000000,book entry form,Regulation S,LE-0444
+SEC-00439,Saltash Minerals Ordinary Shares,common share,ESVUFR,HKD,1988-06-14T00:00:00Z,,,,,registered form,none,LE-0448
+SEC-00440,Saltash Minerals Limited 4.375% Sr Notes 2033,corporate bond,DBFUFR,HKD,2023-03-28T00:00:00Z,2033-03-28T00:00:00Z,4.375,senior unsecured,1500000000,registered form,none,LE-0448
+SEC-00441,Saltash Minerals Limited 6.500% Sr Notes 2037,corporate bond,DBFUFR,HKD,2025-02-14T00:00:00Z,2037-02-14T00:00:00Z,6.500,senior unsecured,1000000000,registered form,none,LE-0448
+SEC-00442,Saltash Minerals Limited 6.375% Sr Notes 2032,corporate bond,DBFUFR,HKD,2025-10-14T00:00:00Z,2032-10-14T00:00:00Z,6.375,senior unsecured,600000000,registered form,none,LE-0448
+SEC-00443,Saltash Minerals Limited 3.375% Sr Notes 2037,corporate bond,DBFUFR,HKD,2022-02-23T00:00:00Z,2037-02-23T00:00:00Z,3.375,senior unsecured,600000000,registered form,none,LE-0448
+SEC-00444,Saltash Minerals Limited 1.750% Sr Notes 2027,corporate bond,DBFUFR,EUR,2020-09-14T00:00:00Z,2027-09-14T00:00:00Z,1.750,senior unsecured,400000000,book entry form,Regulation S,LE-0448
+SEC-00445,Winslade Power Ordinary Shares,common share,ESVUFR,HKD,2013-01-06T00:00:00Z,,,,,registered form,none,LE-0451
+SEC-00446,Redcliffe Retail Ordinary Shares,common share,ESVUFR,HKD,1989-11-17T00:00:00Z,,,,,registered form,none,LE-0454
+SEC-00447,Saltash Estates Ordinary Shares,common share,ESVUFR,HKD,2002-12-23T00:00:00Z,,,,,registered form,none,LE-0456
+SEC-00448,Saltash Estates Finance 1.875% Sr Notes 2020,corporate bond,DBFUFR,EUR,2015-09-09T00:00:00Z,2020-09-09T00:00:00Z,1.875,senior unsecured,1250000000,book entry form,Regulation S,LE-0457
+SEC-00449,Saltash Estates Holdings Limited 4.875% Sr Sec Notes 2018,corporate bond,DBFSFR,HKD,2013-09-24T00:00:00Z,2018-09-24T00:00:00Z,4.875,senior secured,1000000000,registered form,none,LE-0456
+SEC-00450,Dunmore Industries Ordinary Shares,common share,ESVUFR,EUR,2007-06-04T00:00:00Z,,,,,registered form,none,LE-0459
+SEC-00451,Dunmore Industries plc 6.500% Jr Sub Notes 2043,corporate bond,DBFUFR,EUR,2013-01-27T00:00:00Z,2043-01-27T00:00:00Z,6.500,junior subordinated,1000000000,registered form,none,LE-0459
+SEC-00452,Dunmore Industries plc 1.500% Sub Notes 2022,corporate bond,DBFUFR,EUR,2017-04-06T00:00:00Z,2022-04-06T00:00:00Z,1.500,subordinated,1000000000,registered form,none,LE-0459
+SEC-00453,Dunmore Industries plc 1.000% Jr Sub Notes 2020,corporate bond,DBFUFR,EUR,2015-01-05T00:00:00Z,2020-01-05T00:00:00Z,1.000,junior subordinated,1250000000,book entry form,none,LE-0459
+SEC-00454,Dunmore Industries plc 3.875% Sub Notes 2019,corporate bond,DBFUFR,EUR,2012-03-22T00:00:00Z,2019-03-22T00:00:00Z,3.875,subordinated,1500000000,registered form,none,LE-0459
+SEC-00455,Quarrington Beverages Ordinary Shares,common share,ESVUFR,EUR,2016-10-09T00:00:00Z,,,,,registered form,none,LE-0463
+SEC-00456,Quarrington Beverages plc 3.625% Sr Notes 2029,corporate bond,DBFUFR,EUR,2022-09-25T00:00:00Z,2029-09-25T00:00:00Z,3.625,senior unsecured,1500000000,registered form,none,LE-0463
+SEC-00457,Zennor Medical Ordinary Shares,common share,ESVUFR,EUR,2008-09-05T00:00:00Z,,,,,registered form,none,LE-0467
+SEC-00458,Zennor Medical Capital LLC 4.875% Sr Notes 2015,corporate bond,DBFUFR,USD,2012-11-14T00:00:00Z,2015-11-14T00:00:00Z,4.875,senior unsecured,1250000000,book entry form,Rule 144A,LE-0471
+SEC-00459,Brookline Financial Group Ordinary Shares,common share,ESVUFR,GBP,2002-09-03T00:00:00Z,,,,,registered form,none,LE-0001
+SEC-00460,Brookline Financial Group 4.375% Sub Notes 2042,corporate bond,DBFUFR,GBP,2012-08-12T00:00:00Z,2042-08-12T00:00:00Z,4.375,subordinated,1500000000,registered form,none,LE-0001
+SEC-00461,Brookline Financial Group 1.875% Sr Notes 2021,corporate bond,DBFUFR,GBP,2014-02-18T00:00:00Z,2021-02-18T00:00:00Z,1.875,senior unsecured,1000000000,registered form,none,LE-0001
+SEC-00462,Harrowgate Bancorp Common Stock,common share,ESVUFR,USD,1996-11-15T00:00:00Z,,,,,registered form,none,LE-0006
+SEC-00463,Harrowgate Bancorp 3.500% Sub Notes 2018,corporate bond,DBFUFR,USD,2015-04-16T00:00:00Z,2018-04-16T00:00:00Z,3.500,subordinated,1500000000,book entry form,none,LE-0006
+SEC-00464,Harrowgate Bancorp 5.625% Sub Notes 2031,corporate bond,DBFUFR,USD,2024-12-25T00:00:00Z,2031-12-25T00:00:00Z,5.625,subordinated,1500000000,book entry form,none,LE-0006
+SEC-00465,Meridian Kapital Ordinary Shares,common share,ESVUFR,CHF,1982-01-26T00:00:00Z,,,,,registered form,none,LE-0011
+SEC-00466,Meridian Kapital 3.375% Sub Notes 2035,corporate bond,DBFUFR,CHF,2015-12-28T00:00:00Z,2035-12-28T00:00:00Z,3.375,subordinated,500000000,registered form,none,LE-0011
+SEC-00467,Meridian Kapital 1.500% Sr Notes 2024,corporate bond,DBFUFR,CHF,2014-09-08T00:00:00Z,2024-09-08T00:00:00Z,1.500,senior unsecured,500000000,registered form,none,LE-0011
+SEC-00468,Meridian Kapital 3.000% Sr Notes 2042,corporate bond,DBFUFR,CHF,2022-02-25T00:00:00Z,2042-02-25T00:00:00Z,3.000,senior unsecured,500000000,registered form,none,LE-0011
+SEC-00469,Banque Lumiere Ordinary Shares,common share,ESVUFR,EUR,1984-01-22T00:00:00Z,,,,,registered form,none,LE-0015
+SEC-00470,Banque Lumiere 3.125% Sub Notes 2032,corporate bond,DBFUFR,EUR,2022-09-02T00:00:00Z,2032-09-02T00:00:00Z,3.125,subordinated,1500000000,registered form,none,LE-0015
+SEC-00471,Shinonome Financial Group Ordinary Shares,common share,ESVUFR,JPY,2003-08-02T00:00:00Z,,,,,registered form,none,LE-0017
+SEC-00472,Shinonome Financial Group 4.500% Sub Notes 2029,corporate bond,DBFUFR,JPY,2022-04-04T00:00:00Z,2029-04-04T00:00:00Z,4.500,subordinated,30000000000,registered form,none,LE-0017
+SEC-00473,Shinonome Financial Group 2.000% Sr Notes 2040,corporate bond,DBFUFR,JPY,2020-10-23T00:00:00Z,2040-10-23T00:00:00Z,2.000,senior unsecured,60000000000,registered form,none,LE-0017
+SEC-00474,Shinonome Financial Group 0.500% Sub Notes 2028,corporate bond,DBFUFR,JPY,2018-12-03T00:00:00Z,2028-12-03T00:00:00Z,0.500,subordinated,150000000000,registered form,none,LE-0017
+SEC-00475,Calloway Trust Bancorp Common Stock,common share,ESVUFR,USD,1992-07-19T00:00:00Z,,,,,registered form,none,LE-0021
+SEC-00476,Calloway Trust Bancorp 2.750% Sr Notes 2046,corporate bond,DBFUFR,USD,2016-08-17T00:00:00Z,2046-08-17T00:00:00Z,2.750,senior unsecured,1000000000,book entry form,none,LE-0021
+SEC-00477,Vantor Bank Ordinary Shares,common share,ESVUFR,EUR,2002-11-02T00:00:00Z,,,,,registered form,none,LE-0025
+SEC-00478,Vantor Bank 3.750% Sr Notes 2027,corporate bond,DBFUFR,EUR,2020-05-13T00:00:00Z,2027-05-13T00:00:00Z,3.750,senior unsecured,300000000,book entry form,Regulation S,LE-0025
+SEC-00479,Vantor Bank 4.125% Sr Notes 2037,corporate bond,DBFUFR,EUR,2017-09-28T00:00:00Z,2037-09-28T00:00:00Z,4.125,senior unsecured,300000000,book entry form,none,LE-0025
+SEC-00480,Treasury Note 6.375% 2033,government bond,DBFGFR,USD,2023-10-12T00:00:00Z,2033-10-12T00:00:00Z,6.375,senior unsecured,20000000000,book entry form,none,LE-0472
+SEC-00481,Treasury Note 3.625% 2028,government bond,DBFGFR,USD,2018-01-14T00:00:00Z,2028-01-14T00:00:00Z,3.625,senior unsecured,50000000000,book entry form,none,LE-0472
+SEC-00482,Treasury Note 3.875% 2018,government bond,DBFGFR,USD,2016-05-19T00:00:00Z,2018-05-19T00:00:00Z,3.875,senior unsecured,40000000000,book entry form,none,LE-0472
+SEC-00483,Treasury Note 6.000% 2029,government bond,DBFGFR,USD,2022-10-05T00:00:00Z,2029-10-05T00:00:00Z,6.000,senior unsecured,30000000000,book entry form,none,LE-0472
+SEC-00484,Treasury Note 2.125% 2029,government bond,DBFGFR,USD,2019-09-18T00:00:00Z,2029-09-18T00:00:00Z,2.125,senior unsecured,40000000000,book entry form,none,LE-0472
+SEC-00485,Treasury Note 3.500% 2029,government bond,DBFGFR,USD,2024-03-15T00:00:00Z,2029-03-15T00:00:00Z,3.500,senior unsecured,30000000000,book entry form,none,LE-0472
+SEC-00486,Gilt 6.375% 2032,government bond,DBFGFR,GBP,2025-05-24T00:00:00Z,2032-05-24T00:00:00Z,6.375,senior unsecured,40000000000,book entry form,none,LE-0473
+SEC-00487,Gilt 1.125% 2022,government bond,DBFGFR,GBP,2020-01-27T00:00:00Z,2022-01-27T00:00:00Z,1.125,senior unsecured,30000000000,book entry form,none,LE-0473
+SEC-00488,Gilt 6.125% 2032,government bond,DBFGFR,GBP,2025-02-12T00:00:00Z,2032-02-12T00:00:00Z,6.125,senior unsecured,20000000000,book entry form,none,LE-0473
+SEC-00489,Gilt 0.750% 2024,government bond,DBFGFR,GBP,2014-08-08T00:00:00Z,2024-08-08T00:00:00Z,0.750,senior unsecured,20000000000,book entry form,none,LE-0473
+SEC-00490,Gilt 6.000% 2053,government bond,DBFGFR,GBP,2023-10-16T00:00:00Z,2053-10-16T00:00:00Z,6.000,senior unsecured,40000000000,book entry form,none,LE-0473
+SEC-00491,Bund 5.000% 2030,government bond,DBFGFR,EUR,2025-06-03T00:00:00Z,2030-06-03T00:00:00Z,5.000,senior unsecured,20000000000,book entry form,none,LE-0474
+SEC-00492,Bund 4.500% 2022,government bond,DBFGFR,EUR,2012-08-02T00:00:00Z,2022-08-02T00:00:00Z,4.500,senior unsecured,40000000000,book entry form,none,LE-0474
+SEC-00493,Bund 6.250% 2035,government bond,DBFGFR,EUR,2025-12-05T00:00:00Z,2035-12-05T00:00:00Z,6.250,senior unsecured,50000000000,book entry form,none,LE-0474
+SEC-00494,Bund 2.125% 2026,government bond,DBFGFR,EUR,2016-10-03T00:00:00Z,2026-10-03T00:00:00Z,2.125,senior unsecured,20000000000,book entry form,none,LE-0474
+SEC-00495,Bund 3.375% 2042,government bond,DBFGFR,EUR,2012-05-07T00:00:00Z,2042-05-07T00:00:00Z,3.375,senior unsecured,20000000000,book entry form,none,LE-0474
+SEC-00496,Bund 5.500% 2027,government bond,DBFGFR,EUR,2025-10-24T00:00:00Z,2027-10-24T00:00:00Z,5.500,senior unsecured,50000000000,book entry form,none,LE-0474
+SEC-00497,OAT 3.625% 2029,government bond,DBFGFR,EUR,2019-07-19T00:00:00Z,2029-07-19T00:00:00Z,3.625,senior unsecured,20000000000,book entry form,none,LE-0475
+SEC-00498,OAT 6.125% 2029,government bond,DBFGFR,EUR,2024-01-24T00:00:00Z,2029-01-24T00:00:00Z,6.125,senior unsecured,20000000000,book entry form,none,LE-0475
+SEC-00499,OAT 1.875% 2030,government bond,DBFGFR,EUR,2020-05-26T00:00:00Z,2030-05-26T00:00:00Z,1.875,senior unsecured,40000000000,book entry form,none,LE-0475
+SEC-00500,OAT 0.625% 2047,government bond,DBFGFR,EUR,2017-06-22T00:00:00Z,2047-06-22T00:00:00Z,0.625,senior unsecured,50000000000,book entry form,none,LE-0475
+SEC-00501,OAT 4.875% 2043,government bond,DBFGFR,EUR,2013-07-24T00:00:00Z,2043-07-24T00:00:00Z,4.875,senior unsecured,50000000000,book entry form,none,LE-0475
+SEC-00502,OAT 2.625% 2051,government bond,DBFGFR,EUR,2021-04-23T00:00:00Z,2051-04-23T00:00:00Z,2.625,senior unsecured,40000000000,book entry form,none,LE-0475
+SEC-00503,OAT 0.500% 2027,government bond,DBFGFR,EUR,2017-01-28T00:00:00Z,2027-01-28T00:00:00Z,0.500,senior unsecured,40000000000,book entry form,none,LE-0475
+SEC-00504,JGB 3.625% 2031,government bond,DBFGFR,JPY,2024-12-20T00:00:00Z,2031-12-20T00:00:00Z,3.625,senior unsecured,5000000000000,book entry form,none,LE-0476
+SEC-00505,JGB 5.375% 2018,government bond,DBFGFR,JPY,2013-03-09T00:00:00Z,2018-03-09T00:00:00Z,5.375,senior unsecured,3000000000000,book entry form,none,LE-0476
+SEC-00506,JGB 0.500% 2031,government bond,DBFGFR,JPY,2021-05-10T00:00:00Z,2031-05-10T00:00:00Z,0.500,senior unsecured,2000000000000,book entry form,none,LE-0476
+SEC-00507,JGB 4.125% 2029,government bond,DBFGFR,JPY,2019-11-10T00:00:00Z,2029-11-10T00:00:00Z,4.125,senior unsecured,5000000000000,book entry form,none,LE-0476
+SEC-00508,JGB 2.625% 2050,government bond,DBFGFR,JPY,2020-05-20T00:00:00Z,2050-05-20T00:00:00Z,2.625,senior unsecured,4000000000000,book entry form,none,LE-0476
+SEC-00509,JGB 4.750% 2032,government bond,DBFGFR,JPY,2022-03-26T00:00:00Z,2032-03-26T00:00:00Z,4.750,senior unsecured,4000000000000,book entry form,none,LE-0476
+SEC-00510,JGB 3.875% 2052,government bond,DBFGFR,JPY,2022-05-01T00:00:00Z,2052-05-01T00:00:00Z,3.875,senior unsecured,5000000000000,book entry form,none,LE-0476
+SEC-00511,Halvorsen Industrie Ordinary Shares,common share,ESVUFR,EUR,1998-12-21T00:00:00Z,,,,,registered form,none,LE-0477
+SEC-00512,Halvorsen Industrie Vorzugsaktien (Preferred Shares),preferred share,EPNXFR,EUR,2006-05-17T00:00:00Z,,,,,registered form,none,LE-0477
+SEC-00513,Halvorsen Finance 1.875% Sr Notes 2029,corporate bond,DBFUFR,EUR,2019-06-15T00:00:00Z,2029-06-15T00:00:00Z,1.875,senior unsecured,750000000,book entry form,Regulation S,LE-0478
+SEC-00514,Halvorsen Finance 4.000% Sr Notes 2028,corporate bond,DBFUFR,EUR,2021-10-07T00:00:00Z,2028-10-07T00:00:00Z,4.000,senior unsecured,1250000000,book entry form,none,LE-0478
+SEC-00515,Halvorsen Finance 3.500% Sub Notes 2050,corporate bond,DBFUFR,EUR,2020-01-09T00:00:00Z,2050-01-09T00:00:00Z,3.500,subordinated,500000000,book entry form,none,LE-0478
+SEC-00516,Halvorsen Capital 4.375% Sr Sec Notes 2030,corporate bond,DBFSFR,USD,2022-07-17T00:00:00Z,2030-07-17T00:00:00Z,4.375,senior secured,500000000,book entry form,Rule 144A,LE-0480
+SEC-00517,Halvorsen Industrie 1.125% Jr Sub Notes 2029,corporate bond,DBFUFR,EUR,2017-11-22T00:00:00Z,2029-11-22T00:00:00Z,1.125,junior subordinated,750000000,registered form,none,LE-0477
+SEC-00518,Kairo Denki Holdings Ordinary Shares,common share,ESVUFR,JPY,1992-11-20T00:00:00Z,,,,,registered form,none,LE-0482
+SEC-00519,Kairo Denki Finance 2.750% Sr Notes 2029,corporate bond,DBFUFR,EUR,2021-08-20T00:00:00Z,2029-08-20T00:00:00Z,2.750,senior unsecured,1250000000,book entry form,none,LE-0483
+SEC-00520,Kairo Denki Holdings 0.000% Convertible Bonds 2029,convertible bond,DCFUFR,JPY,2022-09-14T00:00:00Z,2029-09-14T00:00:00Z,0.000,senior unsecured,60000000000,registered form,none,LE-0482
+SEC-00521,Kairo Denki Holdings American Depositary Receipts,depositary receipt,EDSXFR,USD,2011-03-08T00:00:00Z,,,,,registered form,none,LE-0009
+SEC-00522,Sakuragi Capital Ordinary Shares,common share,ESVUFR,JPY,2004-04-10T00:00:00Z,,,,,registered form,none,LE-0485
+SEC-00523,Sakuragi Capital 0.250% Exchangeable Bonds 2028 (into Kairo Denki Holdings),convertible bond,DCFUFR,JPY,2023-02-21T00:00:00Z,2028-02-21T00:00:00Z,0.250,senior unsecured,25000000000,registered form,none,LE-0485
+SEC-00524,Calder Brennan Ordinary Shares,common share,ESVUFR,GBP,1987-08-15T00:00:00Z,,,,,registered form,none,LE-0486
+SEC-00525,Calder Brennan Finance 0.875% Sr Notes 2029,corporate bond,DBFUFR,EUR,2020-11-06T00:00:00Z,2029-11-06T00:00:00Z,0.875,senior unsecured,300000000,book entry form,Regulation S,LE-0487
+SEC-00526,Calder Brennan plc American Depositary Receipts,depositary receipt,EDSXFR,USD,2002-06-11T00:00:00Z,,,,,registered form,none,LE-0022
+SEC-00527,Hollis & Crane plc American Depositary Receipts,depositary receipt,EDSXFR,USD,2005-07-01T00:00:00Z,,,,,registered form,none,LE-0022
+SEC-00528,Wexcombe Breweries plc American Depositary Receipts,depositary receipt,EDSXFR,USD,2005-05-12T00:00:00Z,,,,,registered form,none,LE-0022
+SEC-00529,Delacroix Luxe SA American Depositary Receipts,depositary receipt,EDSXFR,USD,2007-05-19T00:00:00Z,,,,,registered form,none,LE-0022
+SEC-00530,Hoshida Motors Holdings K.K. American Depositary Receipts,depositary receipt,EDSXFR,USD,2002-05-06T00:00:00Z,,,,,registered form,none,LE-0009
+SEC-00531,Asakura Chemical K.K. American Depositary Receipts,depositary receipt,EDSXFR,USD,1999-04-26T00:00:00Z,,,,,registered form,none,LE-0022
+SEC-00532,Ulvik Seafood AG American Depositary Receipts,depositary receipt,EDSXFR,USD,1997-08-04T00:00:00Z,,,,,registered form,none,LE-0022
+SEC-00533,Arbeck Motoren AG American Depositary Receipts,depositary receipt,EDSXFR,USD,2000-02-12T00:00:00Z,,,,,registered form,none,LE-0022
+SEC-00534,Jadecrest Properties Limited American Depositary Receipts,depositary receipt,EDSXFR,USD,1996-11-24T00:00:00Z,,,,,registered form,none,LE-0022
+SEC-00535,Ambrel Glas N.V. American Depositary Receipts,depositary receipt,EDSXFR,USD,2010-12-03T00:00:00Z,,,,,registered form,none,LE-0022
+SEC-00536,Quorra Biotech 1.000% Convertible Senior Notes 2025,convertible bond,DCFUFR,USD,2019-01-18T00:00:00Z,2025-01-18T00:00:00Z,1.000,senior unsecured,750000000,book entry form,Rule 144A,LE-0071
+SEC-00537,Ivel Semiconductors 0.750% Convertible Senior Notes 2028,convertible bond,DCFUFR,USD,2021-06-09T00:00:00Z,2028-06-09T00:00:00Z,0.750,senior unsecured,750000000,book entry form,Rule 144A,LE-0060
+SEC-00538,Zentara Payments 2.375% Convertible Senior Notes 2028,convertible bond,DCFUFR,USD,2022-12-23T00:00:00Z,2028-12-23T00:00:00Z,2.375,senior unsecured,750000000,book entry form,Rule 144A,LE-0049
+SEC-00539,Delacroix Luxe 0.125% Convertible Senior Notes 2025,convertible bond,DCFUFR,EUR,2020-04-17T00:00:00Z,2025-04-17T00:00:00Z,0.125,senior unsecured,300000000,book entry form,none,LE-0113
+SEC-00540,Hoshida Motors 0.500% Convertible Senior Notes 2027,convertible bond,DCFUFR,JPY,2020-10-20T00:00:00Z,2027-10-20T00:00:00Z,0.500,senior unsecured,300000000,book entry form,none,LE-0135
+SEC-00541,Rennick Mining 2.125% Convertible Senior Notes 2029,convertible bond,DCFUFR,CAD,2023-06-03T00:00:00Z,2029-06-03T00:00:00Z,2.125,senior unsecured,500000000,book entry form,Rule 144A,LE-0077
+SEC-00542,Lindqvist Logistik 1.250% Convertible Senior Notes 2028,convertible bond,DCFUFR,EUR,2022-06-24T00:00:00Z,2028-06-24T00:00:00Z,1.250,senior unsecured,300000000,book entry form,none,LE-0110
+SEC-00543,Kestrel Vale Resources Common Stock,common share,ESVUFR,USD,2008-04-14T00:00:00Z,,,,,registered form,none,LE-0488
+SEC-00544,Korvara Robotics Common Stock,common share,ESVUFR,USD,2021-03-15T00:00:00Z,,,,,registered form,none,LE-0489
+SEC-00545,Kingsvale Retail Ordinary Shares,common share,ESVUFR,GBP,2012-10-02T00:00:00Z,,,,,registered form,none,LE-0490
+SEC-00546,Solanum Networks Common Stock,common share,ESVUFR,USD,2011-09-20T00:00:00Z,,,,,registered form,none,LE-0491
+SEC-00547,Solenne Therapeutics Common Stock,common share,ESVUFR,USD,2022-05-04T00:00:00Z,,,,,registered form,none,LE-0492
+SEC-00548,Ostrander Energy 1.625% Sr Notes 2030,corporate bond,DBFUFR,USD,2018-08-08T00:00:00Z,2030-08-08T00:00:00Z,1.625,senior unsecured,500000000,book entry form,none,LE-0033
+SEC-00549,Ostrander Energy 3.750% Sr Notes 2030,corporate bond,DBFUFR,USD,2020-09-21T00:00:00Z,2030-09-21T00:00:00Z,3.750,senior unsecured,1250000000,book entry form,none,LE-0033
+SEC-00550,Tessaly Water 3.875% Sr Sec Notes 2031,corporate bond,DBFSFR,GBP,2016-09-15T00:00:00Z,2031-09-15T00:00:00Z,3.875,senior secured,1500000000,registered form,none,LE-0094
+SEC-00551,Mirelle Cosmetics 3.000% Sr Notes 2027,corporate bond,DBFUFR,CHF,2019-04-28T00:00:00Z,2027-04-28T00:00:00Z,3.000,senior unsecured,300000000,registered form,none,LE-0133
+SEC-00552,Varnell Aerospace 1.625% Sr Notes 2031,corporate bond,DBFUFR,USD,2021-09-24T00:00:00Z,2031-09-24T00:00:00Z,1.625,senior unsecured,1000000000,book entry form,none,LE-0046
+SEC-00553,Arbeck Motoren AG 3.375% Sr Notes 2028,corporate bond,DBFUFR,EUR,2021-08-07T00:00:00Z,2028-08-07T00:00:00Z,3.375,senior unsecured,1500000000,book entry form,Regulation S,LE-0103
+SEC-00554,Rostova Shipping Finance 0.875% Sr Notes 2051,corporate bond,DBFUFR,EUR,2021-06-16T00:00:00Z,2051-06-16T00:00:00Z,0.875,senior unsecured,600000000,book entry form,Regulation S,LE-0126
+SEC-00555,Delacroix Luxe Finance 3.250% Sr Notes 2050,corporate bond,DBFUFR,EUR,2020-10-25T00:00:00Z,2050-10-25T00:00:00Z,3.250,senior unsecured,1250000000,book entry form,Regulation S,LE-0115
+SEC-00556,Asakura Chemical Finance 1.625% Sr Notes 2030,corporate bond,DBFUFR,EUR,2021-06-21T00:00:00Z,2030-06-21T00:00:00Z,1.625,senior unsecured,1500000000,book entry form,Regulation S,LE-0140
+SEC-00557,Ambrel Glas N.V. 1.375% Sr Notes 2028,corporate bond,DBFUFR,EUR,2021-12-15T00:00:00Z,2028-12-15T00:00:00Z,1.375,senior unsecured,1500000000,book entry form,Regulation S,LE-0120
+SEC-00558,Lindqvist Logistik AG 5.000% Sr Notes 2031,corporate bond,DBFUFR,EUR,2024-12-06T00:00:00Z,2031-12-06T00:00:00Z,5.000,senior unsecured,1250000000,book entry form,Regulation S,LE-0110
+SEC-00559,Tessaly Water plc 1.500% Sr Notes 2024,corporate bond,DBFUFR,GBP,2014-07-24T00:00:00Z,2024-07-15T00:00:00Z,1.500,senior unsecured,1500000000,registered form,none,LE-0094
+SEC-00560,Rostova Shipping Finance 3.500% Sr Notes 2025,corporate bond,DBFUFR,EUR,2018-07-21T00:00:00Z,2025-03-03T00:00:00Z,3.500,senior unsecured,400000000,book entry form,none,LE-0126
+SEC-00561,Wexcombe Breweries 0.875% Sr Notes 2025,corporate bond,DBFUFR,GBP,2015-09-28T00:00:00Z,2025-05-20T00:00:00Z,0.875,senior unsecured,1000000000,registered form,none,LE-0085
+SEC-00562,Larchmont Insurance 6.500% Sub Notes 2033,corporate bond,DBFUFR,GBP,2023-07-24T00:00:00Z,2033-07-24T00:00:00Z,6.500,subordinated,1500000000,registered form,none,LE-0089
+SEC-00563,Tessaly Water 3.500% Sr Sec Notes 2036,corporate bond,DBFSFR,GBP,2024-03-26T00:00:00Z,2036-03-26T00:00:00Z,3.500,senior secured,500000000,registered form,none,LE-0094
+SEC-00564,Larchmont Insurance 3.125% Sr Notes 2030,corporate bond,DBFUFR,GBP,2022-08-23T00:00:00Z,2030-08-23T00:00:00Z,3.125,senior unsecured,400000000,registered form,none,LE-0089
+SEC-00565,Wexcombe Breweries 5.875% Sr Notes 2030,corporate bond,DBFUFR,GBP,2023-03-12T00:00:00Z,2030-03-12T00:00:00Z,5.875,senior unsecured,750000000,registered form,none,LE-0085
+SEC-00566,Hollis & Crane 3.375% Sr Notes 2029,corporate bond,DBFUFR,GBP,2023-02-15T00:00:00Z,2029-02-15T00:00:00Z,3.375,senior unsecured,1000000000,registered form,none,LE-0081
+SEC-00567,Aldermoor Japan Equity ETF Shares,fund unit,CEOGEU,USD,2016-12-22T00:00:00Z,,,,,registered form,none,LE-0493
+SEC-00568,Aldermoor Global Allocation Fund of Funds Units,fund unit,CFOGEU,USD,2012-07-19T00:00:00Z,,,,,registered form,none,LE-0493
+SEC-00569,Aldermoor European Equity Fund Class A Units,fund unit,CIOGEU,EUR,2014-05-07T00:00:00Z,,,,,registered form,none,LE-0493
+SEC-00570,Aldermoor European Equity Fund Class I Units,fund unit,CIOGEU,EUR,2012-01-07T00:00:00Z,,,,,registered form,none,LE-0493
+SEC-00571,Aldermoor Global Corporate Bond Fund Class A Units,fund unit,CIOGEU,USD,2018-10-18T00:00:00Z,,,,,registered form,none,LE-0493
+SEC-00572,Aldermoor Global Corporate Bond Fund Class I Units,fund unit,CIOGEU,USD,2009-02-07T00:00:00Z,,,,,registered form,none,LE-0493
+SEC-00573,Northgate Asia Income Fund Units,fund unit,CIOGEU,USD,2020-02-21T00:00:00Z,,,,,registered form,none,LE-0494
+SEC-00574,Northgate Global Leaders Fund Class A Units,fund unit,CIOGEU,USD,2015-02-04T00:00:00Z,,,,,registered form,none,LE-0494
+SEC-00575,Northgate Global Leaders Fund Class I Units,fund unit,CIOGEU,USD,2020-07-05T00:00:00Z,,,,,registered form,none,LE-0494
+SEC-00576,Northgate US Core Equity Fund Class A Units,fund unit,CIOGEU,USD,2009-12-02T00:00:00Z,,,,,registered form,none,LE-0494
+SEC-00577,Northgate US Core Equity Fund Class I Units,fund unit,CIOGEU,USD,2014-02-24T00:00:00Z,,,,,registered form,none,LE-0494
+SEC-00578,Northgate High Yield Opportunities Fund Units,fund unit,CICGEU,USD,2013-09-01T00:00:00Z,,,,,registered form,none,LE-0494
+SEC-00579,Westmark Dividend Fund Units,fund unit,CIOGEU,USD,2009-08-01T00:00:00Z,,,,,registered form,none,LE-0495
+SEC-00580,Westmark International Value Fund Units,fund unit,CIOGEU,USD,2009-03-04T00:00:00Z,,,,,registered form,none,LE-0495
+SEC-00581,Westmark Macro Opportunities Fund Units,fund unit,CHSMNU,USD,2013-07-06T00:00:00Z,,,,,registered form,none,LE-0495
+SEC-00582,Westmark Multi-Manager Portfolio Units,fund unit,CFOGEU,USD,2012-09-15T00:00:00Z,,,,,registered form,none,LE-0495
+SEC-00583,Brookline Sterling Corporate Bond Fund Class A Units,fund unit,CIOGEU,GBP,2010-08-09T00:00:00Z,,,,,registered form,none,LE-0496
+SEC-00584,Brookline Sterling Corporate Bond Fund Class I Units,fund unit,CIOGEU,GBP,2008-12-24T00:00:00Z,,,,,registered form,none,LE-0496
+SEC-00585,Brookline Global Equity Fund Class A Units,fund unit,CIOGEU,GBP,2016-12-01T00:00:00Z,,,,,registered form,none,LE-0496
+SEC-00586,Brookline Global Equity Fund Class I Units,fund unit,CIOGEU,GBP,2008-01-18T00:00:00Z,,,,,registered form,none,LE-0496
+SEC-00587,Brookline UK Equity Income Fund Units,fund unit,CIOGEU,GBP,2008-04-21T00:00:00Z,,,,,registered form,none,LE-0496
+SEC-00588,Harrowgate US Large Cap ETF Shares,fund unit,CEOGEU,USD,2015-02-22T00:00:00Z,,,,,registered form,none,LE-0497
+SEC-00589,Harrowgate Treasury Bond ETF Shares,fund unit,CEOGEU,USD,2015-04-11T00:00:00Z,,,,,registered form,none,LE-0497
+SEC-00590,Harrowgate Investment Grade Corporate ETF Shares,fund unit,CEOGEU,USD,2020-10-23T00:00:00Z,,,,,registered form,none,LE-0497
+SEC-00591,Harrowgate International Developed ETF Shares,fund unit,CEOGEU,USD,2010-02-07T00:00:00Z,,,,,registered form,none,LE-0497
+SEC-00592,Meridian Europa Aktien Fonds Class A Units,fund unit,CIOGEU,CHF,2019-10-10T00:00:00Z,,,,,registered form,none,LE-0498
+SEC-00593,Meridian Europa Aktien Fonds Class I Units,fund unit,CIOGEU,CHF,2013-11-11T00:00:00Z,,,,,registered form,none,LE-0498
+SEC-00594,Meridian Balanced Portfolio Units,fund unit,CIOGEU,CHF,2017-09-15T00:00:00Z,,,,,registered form,none,LE-0498
+SEC-00595,Shinonome Japan Opportunities Fund Units,fund unit,CIOGEU,JPY,2014-02-17T00:00:00Z,,,,,registered form,none,LE-0499
+SEC-00596,Shinonome Global Aggregate Bond Fund Units,fund unit,CIOGEU,USD,2015-07-11T00:00:00Z,,,,,registered form,none,LE-0499
+SEC-00597,Shinonome Global Convertible Fund Units,fund unit,CIOGEU,USD,2014-12-22T00:00:00Z,,,,,registered form,none,LE-0499
+SEC-00598,Tidewater Staff Pension Fund Units,fund unit,CSOGEU,GBP,2009-12-06T00:00:00Z,,,,,registered form,none,LE-0500

@@ -1,0 +1,9 @@
+name,icd10,us_prevalence,annual_market_usd
+Alzheimer's Disease,G30,6700000,13000000000
+Parkinson's Disease,G20,1000000,5200000000
+Non-Small Cell Lung Cancer,C34,540000,22000000000
+Melanoma,C43,1400000,5000000000
+Rheumatoid Arthritis,M06,1500000,30000000000
+Multiple Sclerosis,G35,1000000,25000000000
+Type 2 Diabetes Mellitus,E11,37000000,60000000000
+Ulcerative Colitis,K51,900000,8000000000

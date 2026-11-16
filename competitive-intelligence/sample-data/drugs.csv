@@ -1,0 +1,148 @@
+id,name,mechanism,administration,status
+ATL-2301,ATL-2301,BACE1 inhibitor,Oral,Active
+BBR-118,BBR-118,BACE1 inhibitor,Oral,Discontinued
+CPA-6672,CPA-6672,BACE1 inhibitor,Oral,Discontinued
+DBU-44,DBU-44,BACE1 inhibitor,Oral,Discontinued
+EPL-907,EPL-907,BACE1 inhibitor,Oral,Discontinued
+FLE-210,FLE-210,BACE1 inhibitor,Oral,Active
+GBL-731,GBL-731,BACE1 inhibitor,Oral,Active
+RPA-550,veltonemab,Anti-Amyloid-beta monoclonal antibody,Intravenous,Approved
+VPA-781,VPA-781,Anti-Amyloid-beta monoclonal antibody,Intravenous,Active
+LPA-404,LPA-404,Tau antisense oligonucleotide,Intrathecal,Active
+TTH-215,TTH-215,Anti-Tau monoclonal antibody,Intravenous,Discontinued
+MBA-077,MBA-077,TREM2 agonist antibody,Intravenous,Active
+ITV-330,ITV-330,EGFR inhibitor,Oral,Active
+JRU-612,JRU-612,JAK1 inhibitor,Oral,Active
+KME-058,KME-058,LRRK2 inhibitor,Oral,Discontinued
+NOO-912,NOO-912,KRAS inhibitor,Oral,Active
+OBR-301,OBR-301,LRRK2 inhibitor,Oral,Active
+HPO-475,veltolimab,Anti-PD-1 monoclonal antibody,Subcutaneous,Approved
+APS-819,brovalimab,Anti-PD-1 monoclonal antibody,Subcutaneous,Approved
+BBR-260,dexolimab,Anti-PD-L1 monoclonal antibody,Intravenous,Approved
+ZBE-933,ZBE-933,Anti-PD-1 x PD-L1 bispecific antibody,Subcutaneous,Active
+ATL-2766,ATL-2766,KRAS inhibitor,Oral,Discontinued
+BBR-7742,BBR-7742,GBA1 activator,Oral,Active
+CPA-5834,CPA-5834,TREM2 agonist antibody,Intravenous,Discontinued
+DBU-2453,DBU-2453,Anti-Amyloid-beta monoclonal antibody,Subcutaneous,Discontinued
+EPL-4858,EPL-4858,BTK inhibitor,Oral,Discontinued
+EPL-7759,EPL-7759,BTK inhibitor,Oral,Discontinued
+EPL-2733,EPL-2733,JAK1 inhibitor,Oral,Active
+FLE-3727,FLE-3727,GLP-1R agonist,Subcutaneous,Active
+GBL-1215,GBL-1215,TREM2 agonist antibody,Intravenous,Active
+GBL-454,GBL-454,BTK inhibitor,Oral,Active
+GBL-9448,GBL-9448,Anti-IL-6R monoclonal antibody,Subcutaneous,Discontinued
+HPA-1036,HPA-1036,Anti-Amyloid-beta monoclonal antibody,Subcutaneous,Active
+LPA-2767,LPA-2767,LRRK2 inhibitor,Oral,Active
+LPA-3882,LPA-3882,LRRK2 inhibitor,Oral,Active
+LPA-6165,LPA-6165,Anti-PD-L1 monoclonal antibody,Subcutaneous,Active
+MBA-2395,MBA-2395,EGFR inhibitor,Oral,Active
+MBA-1624,MBA-1624,TREM2 agonist antibody,Intravenous,Discontinued
+MBA-5167,MBA-5167,EGFR inhibitor,Oral,Active
+NOO-8322,NOO-8322,Anti-Amyloid-beta monoclonal antibody,Intravenous,Discontinued
+NOO-2447,NOO-2447,BRAF inhibitor,Oral,Active
+NOO-1112,NOO-1112,Anti-Tau monoclonal antibody,Intravenous,Active
+OBR-9432,OBR-9432,KRAS inhibitor,Oral,Discontinued
+OBR-4574,OBR-4574,JAK1 inhibitor,Oral,Active
+OBR-9255,OBR-9255,KRAS inhibitor,Oral,Active
+PTE-6697,PTE-6697,KRAS inhibitor,Oral,Active
+PTE-2556,PTE-2556,KRAS inhibitor,Oral,Active
+PTE-3324,veltotinib,EGFR inhibitor,Oral,Approved
+PTE-6649,PTE-6649,Anti-IL-6R monoclonal antibody,Subcutaneous,Discontinued
+PTE-4101,PTE-4101,Anti-Tau monoclonal antibody,Intravenous,Active
+PTE-2617,PTE-2617,BRAF inhibitor,Oral,Discontinued
+QBU-2747,veltozumab,Anti-IL-6R monoclonal antibody,Subcutaneous,Approved
+QBU-3065,QBU-3065,Anti-PD-L1 monoclonal antibody,Subcutaneous,Active
+QBU-9747,quovalimab,Anti-PD-1 monoclonal antibody,Subcutaneous,Approved
+QBU-6665,QBU-6665,LRRK2 inhibitor,Oral,Active
+RPA-902,RPA-902,GLP-1R agonist,Subcutaneous,Discontinued
+SBA-3857,SBA-3857,LRRK2 inhibitor,Oral,Active
+SBA-5329,SBA-5329,BTK inhibitor,Oral,Active
+SBA-1418,veltorafenib,BRAF inhibitor,Oral,Approved
+SBA-1774,SBA-1774,GLP-1R agonist,Subcutaneous,Active
+SBA-4321,SBA-4321,TREM2 agonist antibody,Intravenous,Active
+TTH-5603,TTH-5603,Tau antisense oligonucleotide,Intrathecal,Active
+TTH-7278,TTH-7278,TREM2 agonist antibody,Intravenous,Discontinued
+UBL-5457,UBL-5457,LRRK2 inhibitor,Oral,Active
+UBL-4373,UBL-4373,GBA1 activator,Oral,Active
+UBL-8465,UBL-8465,KRAS inhibitor,Oral,Active
+VPA-9284,VPA-9284,Anti-Amyloid-beta monoclonal antibody,Intravenous,Active
+VPA-4451,brovatinib,ALK inhibitor,Oral,Approved
+WBE-3361,ardilimab,Anti-PD-L1 monoclonal antibody,Intravenous,Approved
+WBE-7745,WBE-7745,Anti-IL-6R monoclonal antibody,Intravenous,Discontinued
+WBE-2342,WBE-2342,GBA1 activator,Oral,Active
+WBE-1715,WBE-1715,GLP-1R agonist,Subcutaneous,Discontinued
+WBE-8842,WBE-8842,Anti-PD-1 monoclonal antibody,Subcutaneous,Active
+WBE-3229,veltorasib,KRAS inhibitor,Oral,Approved
+YTA-3770,YTA-3770,EGFR inhibitor,Oral,Active
+YTA-2032,YTA-2032,TREM2 agonist antibody,Intravenous,Discontinued
+YTA-4979,YTA-4979,KRAS inhibitor,Oral,Active
+YTA-8461,YTA-8461,BRAF inhibitor,Oral,Discontinued
+YTA-2048,YTA-2048,Anti-PD-L1 monoclonal antibody,Subcutaneous,Active
+ZBE-2537,dexotinib,EGFR inhibitor,Oral,Approved
+APS-6967,APS-6967,JAK1 inhibitor,Oral,Discontinued
+APS-7600,APS-7600,Anti-IL-6R monoclonal antibody,Intravenous,Discontinued
+APS-1223,APS-1223,LRRK2 inhibitor,Oral,Discontinued
+BBR-8923,BBR-8923,ALK inhibitor,Oral,Discontinued
+BBR-5119,BBR-5119,ALK inhibitor,Oral,Active
+BBR-6100,BBR-6100,KRAS inhibitor,Oral,Active
+CBO-7889,CBO-7889,Anti-IL-6R monoclonal antibody,Subcutaneous,Discontinued
+CBO-5475,CBO-5475,GBA1 activator,Oral,Active
+CBO-6965,CBO-6965,BTK inhibitor,Oral,Discontinued
+CBO-2727,CBO-2727,Anti-Amyloid-beta monoclonal antibody,Subcutaneous,Active
+DPA-3882,DPA-3882,Anti-IL-6R monoclonal antibody,Intravenous,Active
+DPA-2226,DPA-2226,KRAS inhibitor,Oral,Discontinued
+DPA-7715,DPA-7715,Anti-PD-L1 monoclonal antibody,Intravenous,Active
+DPA-9704,DPA-9704,LRRK2 inhibitor,Oral,Active
+DPA-4366,DPA-4366,BTK inhibitor,Oral,Active
+ETS-9589,ETS-9589,BTK inhibitor,Oral,Active
+ETS-5364,ETS-5364,TREM2 agonist antibody,Intravenous,Discontinued
+ETS-7472,ETS-7472,JAK1 inhibitor,Oral,Discontinued
+ETS-2432,ETS-2432,GLP-1R agonist,Subcutaneous,Active
+ETS-1634,ETS-1634,Tau antisense oligonucleotide,Intrathecal,Active
+FBO-2825,FBO-2825,EGFR inhibitor,Oral,Active
+FBO-6258,FBO-6258,Anti-PD-1 monoclonal antibody,Intravenous,Active
+FBO-3306,FBO-3306,EGFR inhibitor,Oral,Active
+FBO-4183,FBO-4183,Anti-IL-6R monoclonal antibody,Intravenous,Active
+FBO-6040,FBO-6040,EGFR inhibitor,Oral,Discontinued
+GMR-1788,GMR-1788,Anti-PD-L1 monoclonal antibody,Intravenous,Active
+GMR-7690,GMR-7690,GBA1 activator,Oral,Discontinued
+GMR-2359,brovazumab,Anti-IL-6R monoclonal antibody,Subcutaneous,Approved
+GMR-2351,GMR-2351,KRAS inhibitor,Oral,Active
+GMR-9415,GMR-9415,ALK inhibitor,Oral,Active
+HPO-2617,HPO-2617,BTK inhibitor,Oral,Discontinued
+IBN-2726,IBN-2726,BTK inhibitor,Oral,Active
+IBN-2576,IBN-2576,TREM2 agonist antibody,Intravenous,Discontinued
+IBN-9660,IBN-9660,JAK1 inhibitor,Oral,Discontinued
+IBN-3913,IBN-3913,Anti-IL-6R monoclonal antibody,Subcutaneous,Active
+IBN-5680,IBN-5680,KRAS inhibitor,Oral,Active
+IBN-1693,IBN-1693,Anti-PD-1 monoclonal antibody,Subcutaneous,Active
+KTE-5527,KTE-5527,Anti-IL-6R monoclonal antibody,Subcutaneous,Active
+KTE-7033,KTE-7033,EGFR inhibitor,Oral,Active
+KTE-6291,KTE-6291,Anti-Tau monoclonal antibody,Subcutaneous,Active
+KTE-3357,brovarafenib,BRAF inhibitor,Oral,Approved
+LBO-9234,LBO-9234,KRAS inhibitor,Oral,Active
+LBO-1000,LBO-1000,LRRK2 inhibitor,Oral,Discontinued
+LBO-1002,LBO-1002,GBA1 activator,Oral,Active
+LBO-5332,LBO-5332,TREM2 agonist antibody,Intravenous,Active
+LBO-1770,LBO-1770,BRAF inhibitor,Oral,Active
+MPE-604,MPE-604,BRAF inhibitor,Oral,Active
+MPE-7450,MPE-7450,LRRK2 inhibitor,Oral,Active
+MPE-140,MPE-140,EGFR inhibitor,Oral,Active
+MPE-2783,veltoglutide,GLP-1R agonist,Oral,Approved
+MPE-3136,MPE-3136,TREM2 agonist antibody,Intravenous,Active
+MPE-3132,MPE-3132,Anti-PD-1 monoclonal antibody,Subcutaneous,Discontinued
+MPE-6073,MPE-6073,LRRK2 inhibitor,Oral,Discontinued
+NBE-7666,NBE-7666,Anti-PD-L1 monoclonal antibody,Intravenous,Active
+NBE-2028,NBE-2028,Anti-Amyloid-beta monoclonal antibody,Intravenous,Active
+NBE-3555,NBE-3555,TREM2 agonist antibody,Intravenous,Active
+NBE-7019,NBE-7019,ALK inhibitor,Oral,Active
+NBE-649,NBE-649,KRAS inhibitor,Oral,Active
+OTA-7255,brovaglutide,GLP-1R agonist,Oral,Approved
+OTA-6663,OTA-6663,GBA1 activator,Oral,Active
+OTA-4314,OTA-4314,GLP-1R agonist,Subcutaneous,Discontinued
+PPE-6287,galpolimab,Anti-PD-1 monoclonal antibody,Subcutaneous,Approved
+PPE-9880,PPE-9880,TREM2 agonist antibody,Intravenous,Active
+PPE-3787,veltocitinib,JAK1 inhibitor,Oral,Approved
+PPE-5278,PPE-5278,LRRK2 inhibitor,Oral,Discontinued
+PPE-5902,PPE-5902,Anti-Amyloid-beta monoclonal antibody,Intravenous,Discontinued
+PPE-1178,PPE-1178,Anti-PD-L1 monoclonal antibody,Subcutaneous,Active

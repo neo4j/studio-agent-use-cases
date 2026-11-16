@@ -1,0 +1,325 @@
+nct_id,title,status,start_date,enrollment,termination_reason,drugId,phaseName,diseaseName
+NCT99001013,A Phase 1 Study of ATL-2301 in Healthy Volunteers and Patients with Alzheimer's Disease,Completed,2017-09-11T00:00:00Z,76,,ATL-2301,Phase 1,Alzheimer's Disease
+NCT99002314,A Phase 2 Study of ATL-2301 in Alzheimer's Disease,Terminated,2019-01-24T00:00:00Z,344,Slow enrolment,ATL-2301,Phase 2,Alzheimer's Disease
+NCT99003615,A Phase 2 Study of ATL-2301 in Alzheimer's Disease,Completed,2021-10-28T00:00:00Z,214,,ATL-2301,Phase 2,Alzheimer's Disease
+NCT99004916,A Phase 3 Study of ATL-2301 Versus Standard of Care in Alzheimer's Disease,Not yet recruiting,2027-11-09T00:00:00Z,825,,ATL-2301,Phase 3,Alzheimer's Disease
+NCT99006217,A Phase 1 Study of BBR-118 in Healthy Volunteers and Patients with Alzheimer's Disease,Completed,2012-05-14T00:00:00Z,42,,BBR-118,Phase 1,Alzheimer's Disease
+NCT99007518,A Phase 2 Study of BBR-118 in Alzheimer's Disease,Completed,2014-11-05T00:00:00Z,162,,BBR-118,Phase 2,Alzheimer's Disease
+NCT99008819,A Phase 3 Study of BBR-118 Versus Standard of Care in Alzheimer's Disease,Terminated,2017-02-01T00:00:00Z,1484,Safety concerns: cognitive worsening versus placebo,BBR-118,Phase 3,Alzheimer's Disease
+NCT99010120,A Phase 1 Study of CPA-6672 in Healthy Volunteers and Patients with Alzheimer's Disease,Completed,2013-11-12T00:00:00Z,118,,CPA-6672,Phase 1,Alzheimer's Disease
+NCT99011421,A Phase 2 Study of CPA-6672 in Alzheimer's Disease,Terminated,2016-08-18T00:00:00Z,293,Lack of efficacy at the interim analysis,CPA-6672,Phase 2,Alzheimer's Disease
+NCT99012722,A Phase 1 Study of DBU-44 in Healthy Volunteers and Patients with Alzheimer's Disease,Completed,2012-02-02T00:00:00Z,85,,DBU-44,Phase 1,Alzheimer's Disease
+NCT99014023,A Phase 2 Study of DBU-44 in Alzheimer's Disease,Completed,2014-06-13T00:00:00Z,333,,DBU-44,Phase 2,Alzheimer's Disease
+NCT99015324,A Phase 3 Study of DBU-44 Versus Standard of Care in Alzheimer's Disease,Terminated,2016-03-20T00:00:00Z,1305,Safety concerns: liver enzyme elevations,DBU-44,Phase 3,Alzheimer's Disease
+NCT99016625,A Phase 1 Study of EPL-907 in Healthy Volunteers and Patients with Alzheimer's Disease,Completed,2015-11-13T00:00:00Z,95,,EPL-907,Phase 1,Alzheimer's Disease
+NCT99017926,A Phase 2 Study of EPL-907 in Alzheimer's Disease,Completed,2018-10-21T00:00:00Z,158,,EPL-907,Phase 2,Alzheimer's Disease
+NCT99019227,A Phase 1 Study of FLE-210 in Healthy Volunteers and Patients with Alzheimer's Disease,Completed,2022-01-15T00:00:00Z,33,,FLE-210,Phase 1,Alzheimer's Disease
+NCT99020528,A Phase 2 Study of FLE-210 in Alzheimer's Disease,Recruiting,2025-03-24T00:00:00Z,215,,FLE-210,Phase 2,Alzheimer's Disease
+NCT99021829,A Phase 1 Study of GBL-731 in Healthy Volunteers and Patients with Alzheimer's Disease,"Active, not recruiting",2025-10-27T00:00:00Z,49,,GBL-731,Phase 1,Alzheimer's Disease
+NCT99023130,A Phase 1 Study of RPA-550 in Healthy Volunteers and Patients with Alzheimer's Disease,Completed,2014-10-23T00:00:00Z,34,,RPA-550,Phase 1,Alzheimer's Disease
+NCT99024431,A Phase 2 Study of RPA-550 in Alzheimer's Disease,Completed,2016-02-27T00:00:00Z,326,,RPA-550,Phase 2,Alzheimer's Disease
+NCT99025732,A Phase 3 Study of veltonemab Versus Standard of Care in Alzheimer's Disease,Completed,2019-04-03T00:00:00Z,2354,,RPA-550,Phase 3,Alzheimer's Disease
+NCT99027033,A Post-Marketing Study of veltonemab in Alzheimer's Disease,Recruiting,2024-07-16T00:00:00Z,2912,,RPA-550,Phase 4,Alzheimer's Disease
+NCT99028334,A Phase 1 Study of VPA-781 in Healthy Volunteers and Patients with Alzheimer's Disease,Completed,2018-03-08T00:00:00Z,35,,VPA-781,Phase 1,Alzheimer's Disease
+NCT99029635,A Phase 2 Study of VPA-781 in Alzheimer's Disease,Completed,2020-02-14T00:00:00Z,420,,VPA-781,Phase 2,Alzheimer's Disease
+NCT99030936,A Phase 3 Study of VPA-781 Versus Standard of Care in Alzheimer's Disease,"Active, not recruiting",2023-06-03T00:00:00Z,746,,VPA-781,Phase 3,Alzheimer's Disease
+NCT99032237,A Phase 1 Study of LPA-404 in Healthy Volunteers and Patients with Alzheimer's Disease,Completed,2021-07-20T00:00:00Z,58,,LPA-404,Phase 1,Alzheimer's Disease
+NCT99033538,A Phase 2 Study of LPA-404 in Alzheimer's Disease,Recruiting,2024-04-25T00:00:00Z,240,,LPA-404,Phase 2,Alzheimer's Disease
+NCT99034839,A Phase 1 Study of TTH-215 in Healthy Volunteers and Patients with Alzheimer's Disease,Completed,2016-05-19T00:00:00Z,56,,TTH-215,Phase 1,Alzheimer's Disease
+NCT99036140,A Phase 2 Study of TTH-215 in Alzheimer's Disease,Terminated,2019-09-09T00:00:00Z,183,Futility boundary crossed at the interim analysis,TTH-215,Phase 2,Alzheimer's Disease
+NCT99037441,A Phase 1 Study of MBA-077 in Healthy Volunteers and Patients with Alzheimer's Disease,Recruiting,2025-05-12T00:00:00Z,108,,MBA-077,Phase 1,Alzheimer's Disease
+NCT99038742,A Phase 1 Study of ITV-330 in Healthy Volunteers and Patients with Non-Small Cell Lung Cancer,Completed,2019-11-21T00:00:00Z,34,,ITV-330,Phase 1,Non-Small Cell Lung Cancer
+NCT99040043,A Phase 2 Study of ITV-330 in Non-Small Cell Lung Cancer,Completed,2021-01-24T00:00:00Z,394,,ITV-330,Phase 2,Non-Small Cell Lung Cancer
+NCT99041344,A Phase 3 Study of ITV-330 Versus Standard of Care in Non-Small Cell Lung Cancer,Recruiting,2024-06-16T00:00:00Z,2195,,ITV-330,Phase 3,Non-Small Cell Lung Cancer
+NCT99042645,A Phase 1 Study of JRU-612 in Healthy Volunteers and Patients with Rheumatoid Arthritis,Completed,2022-06-27T00:00:00Z,25,,JRU-612,Phase 1,Rheumatoid Arthritis
+NCT99043946,A Phase 2 Study of JRU-612 in Rheumatoid Arthritis,"Active, not recruiting",2024-01-13T00:00:00Z,229,,JRU-612,Phase 2,Rheumatoid Arthritis
+NCT99045247,A Phase 1 Study of KME-058 in Healthy Volunteers and Patients with Parkinson's Disease,Completed,2020-12-26T00:00:00Z,78,,KME-058,Phase 1,Parkinson's Disease
+NCT99046548,A Phase 2 Study of KME-058 in Parkinson's Disease,Terminated,2023-02-12T00:00:00Z,243,Safety concerns: adverse events exceeded the prespecified threshold,KME-058,Phase 2,Parkinson's Disease
+NCT99047849,A Phase 1 Study of NOO-912 in Healthy Volunteers and Patients with Non-Small Cell Lung Cancer,Completed,2022-12-07T00:00:00Z,72,,NOO-912,Phase 1,Non-Small Cell Lung Cancer
+NCT99049150,A Phase 2 Study of NOO-912 in Non-Small Cell Lung Cancer,Recruiting,2025-10-06T00:00:00Z,412,,NOO-912,Phase 2,Non-Small Cell Lung Cancer
+NCT99050451,A Phase 1 Study of OBR-301 in Healthy Volunteers and Patients with Parkinson's Disease,Recruiting,2025-04-03T00:00:00Z,61,,OBR-301,Phase 1,Parkinson's Disease
+NCT99051752,A Phase 1 Study of HPO-475 in Healthy Volunteers and Patients with Non-Small Cell Lung Cancer,Completed,2012-07-19T00:00:00Z,120,,HPO-475,Phase 1,Non-Small Cell Lung Cancer
+NCT99053053,A Phase 2 Study of HPO-475 in Non-Small Cell Lung Cancer,Completed,2013-03-10T00:00:00Z,266,,HPO-475,Phase 2,Non-Small Cell Lung Cancer
+NCT99054354,A Phase 2 Study of HPO-475 in Melanoma,Completed,2014-04-16T00:00:00Z,224,,HPO-475,Phase 2,Melanoma
+NCT99055655,A Phase 3 Study of veltolimab Versus Standard of Care in Non-Small Cell Lung Cancer,Completed,2015-11-26T00:00:00Z,1505,,HPO-475,Phase 3,Non-Small Cell Lung Cancer
+NCT99056956,A Phase 3 Study of veltolimab Versus Standard of Care in Melanoma,Completed,2016-05-04T00:00:00Z,1071,,HPO-475,Phase 3,Melanoma
+NCT99058257,A Post-Marketing Study of veltolimab in Non-Small Cell Lung Cancer,Completed,2019-04-11T00:00:00Z,3903,,HPO-475,Phase 4,Non-Small Cell Lung Cancer
+NCT99059558,A Post-Marketing Study of veltolimab in Melanoma,Completed,2020-01-17T00:00:00Z,1801,,HPO-475,Phase 4,Melanoma
+NCT99060859,A Phase 1 Study of APS-819 in Healthy Volunteers and Patients with Non-Small Cell Lung Cancer,Completed,2013-03-15T00:00:00Z,40,,APS-819,Phase 1,Non-Small Cell Lung Cancer
+NCT99062160,A Phase 2 Study of APS-819 in Non-Small Cell Lung Cancer,Completed,2014-06-05T00:00:00Z,209,,APS-819,Phase 2,Non-Small Cell Lung Cancer
+NCT99063461,A Phase 2 Study of APS-819 in Melanoma,Completed,2015-03-03T00:00:00Z,104,,APS-819,Phase 2,Melanoma
+NCT99064762,A Phase 3 Study of brovalimab Versus Standard of Care in Non-Small Cell Lung Cancer,Completed,2016-07-02T00:00:00Z,510,,APS-819,Phase 3,Non-Small Cell Lung Cancer
+NCT99066063,A Phase 3 Study of brovalimab Versus Standard of Care in Melanoma,Completed,2017-09-12T00:00:00Z,1528,,APS-819,Phase 3,Melanoma
+NCT99067364,A Phase 1 Study of BBR-260 in Healthy Volunteers and Patients with Non-Small Cell Lung Cancer,Completed,2014-02-08T00:00:00Z,41,,BBR-260,Phase 1,Non-Small Cell Lung Cancer
+NCT99068665,A Phase 2 Study of BBR-260 in Non-Small Cell Lung Cancer,Completed,2016-02-03T00:00:00Z,136,,BBR-260,Phase 2,Non-Small Cell Lung Cancer
+NCT99069966,A Phase 3 Study of dexolimab Versus Standard of Care in Non-Small Cell Lung Cancer,Completed,2018-11-06T00:00:00Z,865,,BBR-260,Phase 3,Non-Small Cell Lung Cancer
+NCT99071267,A Phase 1 Study of ZBE-933 in Healthy Volunteers and Patients with Non-Small Cell Lung Cancer,Completed,2021-09-08T00:00:00Z,74,,ZBE-933,Phase 1,Non-Small Cell Lung Cancer
+NCT99072568,A Phase 2 Study of ZBE-933 in Non-Small Cell Lung Cancer,"Active, not recruiting",2023-08-24T00:00:00Z,235,,ZBE-933,Phase 2,Non-Small Cell Lung Cancer
+NCT99073869,A Phase 1 Study of ATL-2766 in Healthy Volunteers and Patients with Non-Small Cell Lung Cancer,Completed,2011-03-03T00:00:00Z,120,,ATL-2766,Phase 1,Non-Small Cell Lung Cancer
+NCT99075170,A Phase 2 Study of ATL-2766 in Non-Small Cell Lung Cancer,Terminated,2014-11-22T00:00:00Z,373,Futility boundary crossed at the interim analysis,ATL-2766,Phase 2,Non-Small Cell Lung Cancer
+NCT99076471,A Phase 1 Study of BBR-7742 in Healthy Volunteers and Patients with Parkinson's Disease,Recruiting,2025-06-20T00:00:00Z,114,,BBR-7742,Phase 1,Parkinson's Disease
+NCT99077772,A Phase 1 Study of CPA-5834 in Healthy Volunteers and Patients with Alzheimer's Disease,Completed,2017-02-05T00:00:00Z,25,,CPA-5834,Phase 1,Alzheimer's Disease
+NCT99079073,A Phase 2 Study of CPA-5834 in Alzheimer's Disease,Completed,2020-04-02T00:00:00Z,218,,CPA-5834,Phase 2,Alzheimer's Disease
+NCT99080374,A Phase 1 Study of DBU-2453 in Healthy Volunteers and Patients with Alzheimer's Disease,Withdrawn,2019-06-19T00:00:00Z,,Sponsor decision: portfolio reprioritisation,DBU-2453,Phase 1,Alzheimer's Disease
+NCT99081675,A Phase 1 Study of EPL-4858 in Healthy Volunteers and Patients with Multiple Sclerosis,Completed,2022-04-23T00:00:00Z,98,,EPL-4858,Phase 1,Multiple Sclerosis
+NCT99082976,A Phase 2 Study of EPL-4858 in Multiple Sclerosis,Terminated,2024-02-26T00:00:00Z,185,Lack of efficacy at the interim analysis,EPL-4858,Phase 2,Multiple Sclerosis
+NCT99084277,A Phase 1 Study of EPL-7759 in Healthy Volunteers and Patients with Multiple Sclerosis,Terminated,2024-09-15T00:00:00Z,78,Futility boundary crossed at the interim analysis,EPL-7759,Phase 1,Multiple Sclerosis
+NCT99085578,A Phase 1 Study of EPL-2733 in Healthy Volunteers and Patients with Ulcerative Colitis,Completed,2021-05-12T00:00:00Z,104,,EPL-2733,Phase 1,Ulcerative Colitis
+NCT99086879,A Phase 2 Study of EPL-2733 in Ulcerative Colitis,Recruiting,2024-07-01T00:00:00Z,110,,EPL-2733,Phase 2,Ulcerative Colitis
+NCT99088180,A Phase 1 Study of FLE-3727 in Healthy Volunteers and Patients with Type 2 Diabetes Mellitus,Completed,2026-04-18T00:00:00Z,71,,FLE-3727,Phase 1,Type 2 Diabetes Mellitus
+NCT99089481,A Phase 2 Study of FLE-3727 in Type 2 Diabetes Mellitus,Not yet recruiting,2027-05-07T00:00:00Z,369,,FLE-3727,Phase 2,Type 2 Diabetes Mellitus
+NCT99090782,A Phase 1 Study of GBL-1215 in Healthy Volunteers and Patients with Alzheimer's Disease,Completed,2023-04-08T00:00:00Z,45,,GBL-1215,Phase 1,Alzheimer's Disease
+NCT99092083,A Phase 2 Study of GBL-1215 in Alzheimer's Disease,Recruiting,2025-07-03T00:00:00Z,171,,GBL-1215,Phase 2,Alzheimer's Disease
+NCT99093384,A Phase 1 Study of GBL-454 in Healthy Volunteers and Patients with Multiple Sclerosis,Completed,2019-07-20T00:00:00Z,30,,GBL-454,Phase 1,Multiple Sclerosis
+NCT99094685,A Phase 2 Study of GBL-454 in Multiple Sclerosis,Completed,2021-10-08T00:00:00Z,312,,GBL-454,Phase 2,Multiple Sclerosis
+NCT99095986,A Phase 3 Study of GBL-454 Versus Standard of Care in Multiple Sclerosis,Recruiting,2024-03-05T00:00:00Z,2548,,GBL-454,Phase 3,Multiple Sclerosis
+NCT99097287,A Phase 1 Study of GBL-9448 in Healthy Volunteers and Patients with Rheumatoid Arthritis,Completed,2013-06-23T00:00:00Z,25,,GBL-9448,Phase 1,Rheumatoid Arthritis
+NCT99098588,A Phase 2 Study of GBL-9448 in Rheumatoid Arthritis,Completed,2016-08-02T00:00:00Z,246,,GBL-9448,Phase 2,Rheumatoid Arthritis
+NCT99099889,A Phase 3 Study of GBL-9448 Versus Standard of Care in Rheumatoid Arthritis,Withdrawn,2018-04-17T00:00:00Z,,Sponsor decision: portfolio reprioritisation,GBL-9448,Phase 3,Rheumatoid Arthritis
+NCT99101190,A Phase 1 Study of HPA-1036 in Healthy Volunteers and Patients with Alzheimer's Disease,Recruiting,2024-01-22T00:00:00Z,32,,HPA-1036,Phase 1,Alzheimer's Disease
+NCT99102491,A Phase 1 Study of LPA-2767 in Healthy Volunteers and Patients with Parkinson's Disease,"Active, not recruiting",2024-09-12T00:00:00Z,116,,LPA-2767,Phase 1,Parkinson's Disease
+NCT99103792,A Phase 1 Study of LPA-3882 in Healthy Volunteers and Patients with Parkinson's Disease,Completed,2021-01-21T00:00:00Z,99,,LPA-3882,Phase 1,Parkinson's Disease
+NCT99105093,A Phase 2 Study of LPA-3882 in Parkinson's Disease,Completed,2023-09-20T00:00:00Z,317,,LPA-3882,Phase 2,Parkinson's Disease
+NCT99106394,A Phase 3 Study of LPA-3882 Versus Standard of Care in Parkinson's Disease,Recruiting,2024-03-12T00:00:00Z,1081,,LPA-3882,Phase 3,Parkinson's Disease
+NCT99107695,A Phase 1 Study of LPA-6165 in Healthy Volunteers and Patients with Melanoma,Completed,2024-03-04T00:00:00Z,107,,LPA-6165,Phase 1,Melanoma
+NCT99108996,A Phase 2 Study of LPA-6165 in Melanoma,Recruiting,2025-04-10T00:00:00Z,199,,LPA-6165,Phase 2,Melanoma
+NCT99110297,A Phase 1 Study of MBA-2395 in Healthy Volunteers and Patients with Non-Small Cell Lung Cancer,"Active, not recruiting",2022-01-23T00:00:00Z,117,,MBA-2395,Phase 1,Non-Small Cell Lung Cancer
+NCT99111598,A Phase 1 Study of MBA-1624 in Healthy Volunteers and Patients with Alzheimer's Disease,Completed,2018-11-17T00:00:00Z,87,,MBA-1624,Phase 1,Alzheimer's Disease
+NCT99112899,A Phase 2 Study of MBA-1624 in Alzheimer's Disease,Terminated,2021-03-27T00:00:00Z,226,Futility boundary crossed at the interim analysis,MBA-1624,Phase 2,Alzheimer's Disease
+NCT99114200,A Phase 1 Study of MBA-5167 in Healthy Volunteers and Patients with Non-Small Cell Lung Cancer,Completed,2024-07-04T00:00:00Z,39,,MBA-5167,Phase 1,Non-Small Cell Lung Cancer
+NCT99115501,A Phase 2 Study of MBA-5167 in Non-Small Cell Lung Cancer,Completed,2025-03-09T00:00:00Z,145,,MBA-5167,Phase 2,Non-Small Cell Lung Cancer
+NCT99116802,A Phase 3 Study of MBA-5167 Versus Standard of Care in Non-Small Cell Lung Cancer,Not yet recruiting,2027-10-12T00:00:00Z,1406,,MBA-5167,Phase 3,Non-Small Cell Lung Cancer
+NCT99118103,A Phase 1 Study of NOO-8322 in Healthy Volunteers and Patients with Alzheimer's Disease,Completed,2017-11-10T00:00:00Z,27,,NOO-8322,Phase 1,Alzheimer's Disease
+NCT99119404,A Phase 2 Study of NOO-8322 in Alzheimer's Disease,Terminated,2019-11-25T00:00:00Z,211,Sponsor decision: portfolio reprioritisation,NOO-8322,Phase 2,Alzheimer's Disease
+NCT99120705,A Phase 1 Study of NOO-2447 in Healthy Volunteers and Patients with Melanoma,Completed,2022-05-23T00:00:00Z,27,,NOO-2447,Phase 1,Melanoma
+NCT99122006,A Phase 2 Study of NOO-2447 in Melanoma,Recruiting,2024-05-12T00:00:00Z,115,,NOO-2447,Phase 2,Melanoma
+NCT99123307,A Phase 1 Study of NOO-1112 in Healthy Volunteers and Patients with Alzheimer's Disease,Completed,2020-02-01T00:00:00Z,93,,NOO-1112,Phase 1,Alzheimer's Disease
+NCT99124608,A Phase 2 Study of NOO-1112 in Alzheimer's Disease,Completed,2023-02-08T00:00:00Z,289,,NOO-1112,Phase 2,Alzheimer's Disease
+NCT99125909,A Phase 3 Study of NOO-1112 Versus Standard of Care in Alzheimer's Disease,Recruiting,2024-07-11T00:00:00Z,1328,,NOO-1112,Phase 3,Alzheimer's Disease
+NCT99127210,A Phase 1 Study of OBR-9432 in Healthy Volunteers and Patients with Non-Small Cell Lung Cancer,Completed,2020-02-04T00:00:00Z,102,,OBR-9432,Phase 1,Non-Small Cell Lung Cancer
+NCT99128511,A Phase 2 Study of OBR-9432 in Non-Small Cell Lung Cancer,Terminated,2022-09-04T00:00:00Z,284,Lack of efficacy at the interim analysis,OBR-9432,Phase 2,Non-Small Cell Lung Cancer
+NCT99129812,A Phase 1 Study of OBR-4574 in Healthy Volunteers and Patients with Rheumatoid Arthritis,Recruiting,2025-06-01T00:00:00Z,118,,OBR-4574,Phase 1,Rheumatoid Arthritis
+NCT99131113,A Phase 1 Study of OBR-9255 in Healthy Volunteers and Patients with Non-Small Cell Lung Cancer,Completed,2021-05-21T00:00:00Z,114,,OBR-9255,Phase 1,Non-Small Cell Lung Cancer
+NCT99132414,A Phase 2 Study of OBR-9255 in Non-Small Cell Lung Cancer,Completed,2024-04-16T00:00:00Z,102,,OBR-9255,Phase 2,Non-Small Cell Lung Cancer
+NCT99133715,A Phase 3 Study of OBR-9255 Versus Standard of Care in Non-Small Cell Lung Cancer,Not yet recruiting,2027-11-26T00:00:00Z,2246,,OBR-9255,Phase 3,Non-Small Cell Lung Cancer
+NCT99135016,A Phase 1 Study of PTE-6697 in Healthy Volunteers and Patients with Non-Small Cell Lung Cancer,Completed,2023-12-19T00:00:00Z,93,,PTE-6697,Phase 1,Non-Small Cell Lung Cancer
+NCT99136317,A Phase 2 Study of PTE-6697 in Non-Small Cell Lung Cancer,Completed,2024-11-07T00:00:00Z,175,,PTE-6697,Phase 2,Non-Small Cell Lung Cancer
+NCT99137618,A Phase 3 Study of PTE-6697 Versus Standard of Care in Non-Small Cell Lung Cancer,Recruiting,2025-06-08T00:00:00Z,2565,,PTE-6697,Phase 3,Non-Small Cell Lung Cancer
+NCT99138919,A Phase 1 Study of PTE-2556 in Healthy Volunteers and Patients with Non-Small Cell Lung Cancer,Completed,2026-01-08T00:00:00Z,27,,PTE-2556,Phase 1,Non-Small Cell Lung Cancer
+NCT99140220,A Phase 2 Study of PTE-2556 in Non-Small Cell Lung Cancer,Not yet recruiting,2027-04-03T00:00:00Z,281,,PTE-2556,Phase 2,Non-Small Cell Lung Cancer
+NCT99141521,A Phase 1 Study of PTE-3324 in Healthy Volunteers and Patients with Non-Small Cell Lung Cancer,Completed,2016-04-16T00:00:00Z,71,,PTE-3324,Phase 1,Non-Small Cell Lung Cancer
+NCT99142822,A Phase 2 Study of PTE-3324 in Non-Small Cell Lung Cancer,Completed,2019-11-24T00:00:00Z,238,,PTE-3324,Phase 2,Non-Small Cell Lung Cancer
+NCT99144123,A Phase 3 Study of veltotinib Versus Standard of Care in Non-Small Cell Lung Cancer,Completed,2021-07-06T00:00:00Z,2656,,PTE-3324,Phase 3,Non-Small Cell Lung Cancer
+NCT99145424,A Post-Marketing Study of veltotinib in Non-Small Cell Lung Cancer,Completed,2022-05-12T00:00:00Z,509,,PTE-3324,Phase 4,Non-Small Cell Lung Cancer
+NCT99146725,A Phase 1 Study of PTE-6649 in Healthy Volunteers and Patients with Rheumatoid Arthritis,Completed,2017-07-13T00:00:00Z,109,,PTE-6649,Phase 1,Rheumatoid Arthritis
+NCT99148026,A Phase 2 Study of PTE-6649 in Rheumatoid Arthritis,Completed,2020-05-14T00:00:00Z,255,,PTE-6649,Phase 2,Rheumatoid Arthritis
+NCT99149327,A Phase 3 Study of PTE-6649 Versus Standard of Care in Rheumatoid Arthritis,Completed,2023-08-05T00:00:00Z,1984,,PTE-6649,Phase 3,Rheumatoid Arthritis
+NCT99150628,A Phase 1 Study of PTE-4101 in Healthy Volunteers and Patients with Alzheimer's Disease,Completed,2019-04-24T00:00:00Z,94,,PTE-4101,Phase 1,Alzheimer's Disease
+NCT99151929,A Phase 2 Study of PTE-4101 in Alzheimer's Disease,Completed,2021-12-18T00:00:00Z,332,,PTE-4101,Phase 2,Alzheimer's Disease
+NCT99153230,A Phase 3 Study of PTE-4101 Versus Standard of Care in Alzheimer's Disease,Recruiting,2024-08-01T00:00:00Z,1918,,PTE-4101,Phase 3,Alzheimer's Disease
+NCT99154531,A Phase 1 Study of PTE-2617 in Healthy Volunteers and Patients with Melanoma,Completed,2018-03-13T00:00:00Z,79,,PTE-2617,Phase 1,Melanoma
+NCT99155832,A Phase 2 Study of PTE-2617 in Melanoma,Completed,2019-08-03T00:00:00Z,344,,PTE-2617,Phase 2,Melanoma
+NCT99157133,A Phase 1 Study of QBU-2747 in Healthy Volunteers and Patients with Rheumatoid Arthritis,Completed,2017-05-28T00:00:00Z,59,,QBU-2747,Phase 1,Rheumatoid Arthritis
+NCT99158434,A Phase 2 Study of QBU-2747 in Rheumatoid Arthritis,Completed,2018-03-15T00:00:00Z,99,,QBU-2747,Phase 2,Rheumatoid Arthritis
+NCT99159735,A Phase 3 Study of veltozumab Versus Standard of Care in Rheumatoid Arthritis,Completed,2020-09-09T00:00:00Z,692,,QBU-2747,Phase 3,Rheumatoid Arthritis
+NCT99161036,A Phase 1 Study of QBU-3065 in Healthy Volunteers and Patients with Non-Small Cell Lung Cancer,Completed,2018-08-04T00:00:00Z,73,,QBU-3065,Phase 1,Non-Small Cell Lung Cancer
+NCT99162337,A Phase 2 Study of QBU-3065 in Non-Small Cell Lung Cancer,Completed,2021-09-27T00:00:00Z,163,,QBU-3065,Phase 2,Non-Small Cell Lung Cancer
+NCT99163638,A Phase 3 Study of QBU-3065 Versus Standard of Care in Non-Small Cell Lung Cancer,"Active, not recruiting",2024-12-17T00:00:00Z,2069,,QBU-3065,Phase 3,Non-Small Cell Lung Cancer
+NCT99164939,A Phase 1 Study of QBU-9747 in Healthy Volunteers and Patients with Melanoma,Completed,2019-11-07T00:00:00Z,55,,QBU-9747,Phase 1,Melanoma
+NCT99166240,A Phase 2 Study of QBU-9747 in Melanoma,Completed,2021-03-15T00:00:00Z,196,,QBU-9747,Phase 2,Melanoma
+NCT99167541,A Phase 3 Study of quovalimab Versus Standard of Care in Melanoma,Completed,2022-04-27T00:00:00Z,1017,,QBU-9747,Phase 3,Melanoma
+NCT99168842,A Phase 1 Study of QBU-6665 in Healthy Volunteers and Patients with Parkinson's Disease,Completed,2023-05-23T00:00:00Z,101,,QBU-6665,Phase 1,Parkinson's Disease
+NCT99170143,A Phase 2 Study of QBU-6665 in Parkinson's Disease,Completed,2024-04-15T00:00:00Z,387,,QBU-6665,Phase 2,Parkinson's Disease
+NCT99171444,A Phase 3 Study of QBU-6665 Versus Standard of Care in Parkinson's Disease,Not yet recruiting,2027-06-11T00:00:00Z,752,,QBU-6665,Phase 3,Parkinson's Disease
+NCT99172745,A Phase 1 Study of RPA-902 in Healthy Volunteers and Patients with Type 2 Diabetes Mellitus,Completed,2014-10-15T00:00:00Z,42,,RPA-902,Phase 1,Type 2 Diabetes Mellitus
+NCT99174046,A Phase 2 Study of RPA-902 in Type 2 Diabetes Mellitus,Completed,2016-03-22T00:00:00Z,263,,RPA-902,Phase 2,Type 2 Diabetes Mellitus
+NCT99175347,A Phase 1 Study of SBA-3857 in Healthy Volunteers and Patients with Parkinson's Disease,Recruiting,2024-02-28T00:00:00Z,109,,SBA-3857,Phase 1,Parkinson's Disease
+NCT99176648,A Phase 1 Study of SBA-5329 in Healthy Volunteers and Patients with Multiple Sclerosis,Recruiting,2025-01-27T00:00:00Z,120,,SBA-5329,Phase 1,Multiple Sclerosis
+NCT99177949,A Phase 1 Study of SBA-1418 in Healthy Volunteers and Patients with Melanoma,Completed,2014-12-01T00:00:00Z,44,,SBA-1418,Phase 1,Melanoma
+NCT99179250,A Phase 2 Study of SBA-1418 in Melanoma,Completed,2017-01-07T00:00:00Z,151,,SBA-1418,Phase 2,Melanoma
+NCT99180551,A Phase 3 Study of veltorafenib Versus Standard of Care in Melanoma,Completed,2020-03-12T00:00:00Z,1429,,SBA-1418,Phase 3,Melanoma
+NCT99181852,A Phase 1 Study of SBA-1774 in Healthy Volunteers and Patients with Type 2 Diabetes Mellitus,Not yet recruiting,2027-08-14T00:00:00Z,106,,SBA-1774,Phase 1,Type 2 Diabetes Mellitus
+NCT99183153,A Phase 1 Study of SBA-4321 in Healthy Volunteers and Patients with Alzheimer's Disease,Completed,2022-10-26T00:00:00Z,48,,SBA-4321,Phase 1,Alzheimer's Disease
+NCT99184454,A Phase 2 Study of SBA-4321 in Alzheimer's Disease,Completed,2023-06-11T00:00:00Z,144,,SBA-4321,Phase 2,Alzheimer's Disease
+NCT99185755,A Phase 3 Study of SBA-4321 Versus Standard of Care in Alzheimer's Disease,Suspended,2025-12-20T00:00:00Z,473,Slow enrolment,SBA-4321,Phase 3,Alzheimer's Disease
+NCT99187056,A Phase 1 Study of TTH-5603 in Healthy Volunteers and Patients with Alzheimer's Disease,Completed,2016-09-16T00:00:00Z,78,,TTH-5603,Phase 1,Alzheimer's Disease
+NCT99188357,A Phase 2 Study of TTH-5603 in Alzheimer's Disease,Completed,2019-02-15T00:00:00Z,346,,TTH-5603,Phase 2,Alzheimer's Disease
+NCT99189658,A Phase 3 Study of TTH-5603 Versus Standard of Care in Alzheimer's Disease,"Active, not recruiting",2022-04-26T00:00:00Z,1283,,TTH-5603,Phase 3,Alzheimer's Disease
+NCT99190959,A Phase 1 Study of TTH-7278 in Healthy Volunteers and Patients with Alzheimer's Disease,Completed,2013-06-16T00:00:00Z,98,,TTH-7278,Phase 1,Alzheimer's Disease
+NCT99192260,A Phase 2 Study of TTH-7278 in Alzheimer's Disease,Terminated,2014-07-17T00:00:00Z,235,Futility boundary crossed at the interim analysis,TTH-7278,Phase 2,Alzheimer's Disease
+NCT99193561,A Phase 1 Study of UBL-5457 in Healthy Volunteers and Patients with Parkinson's Disease,Completed,2022-09-17T00:00:00Z,31,,UBL-5457,Phase 1,Parkinson's Disease
+NCT99194862,A Phase 2 Study of UBL-5457 in Parkinson's Disease,Recruiting,2024-02-27T00:00:00Z,171,,UBL-5457,Phase 2,Parkinson's Disease
+NCT99196163,A Phase 1 Study of UBL-4373 in Healthy Volunteers and Patients with Parkinson's Disease,Completed,2017-01-27T00:00:00Z,90,,UBL-4373,Phase 1,Parkinson's Disease
+NCT99197464,A Phase 2 Study of UBL-4373 in Parkinson's Disease,Completed,2019-05-16T00:00:00Z,187,,UBL-4373,Phase 2,Parkinson's Disease
+NCT99198765,A Phase 3 Study of UBL-4373 Versus Standard of Care in Parkinson's Disease,"Active, not recruiting",2022-07-12T00:00:00Z,359,,UBL-4373,Phase 3,Parkinson's Disease
+NCT99200066,A Phase 1 Study of UBL-8465 in Healthy Volunteers and Patients with Non-Small Cell Lung Cancer,Recruiting,2024-02-01T00:00:00Z,60,,UBL-8465,Phase 1,Non-Small Cell Lung Cancer
+NCT99201367,A Phase 1 Study of VPA-9284 in Healthy Volunteers and Patients with Alzheimer's Disease,Completed,2020-03-12T00:00:00Z,33,,VPA-9284,Phase 1,Alzheimer's Disease
+NCT99202668,A Phase 2 Study of VPA-9284 in Alzheimer's Disease,"Active, not recruiting",2023-09-19T00:00:00Z,338,,VPA-9284,Phase 2,Alzheimer's Disease
+NCT99203969,A Phase 1 Study of VPA-4451 in Healthy Volunteers and Patients with Non-Small Cell Lung Cancer,Completed,2016-10-23T00:00:00Z,37,,VPA-4451,Phase 1,Non-Small Cell Lung Cancer
+NCT99205270,A Phase 2 Study of VPA-4451 in Non-Small Cell Lung Cancer,Completed,2019-09-23T00:00:00Z,97,,VPA-4451,Phase 2,Non-Small Cell Lung Cancer
+NCT99206571,A Phase 3 Study of brovatinib Versus Standard of Care in Non-Small Cell Lung Cancer,Completed,2022-05-22T00:00:00Z,351,,VPA-4451,Phase 3,Non-Small Cell Lung Cancer
+NCT99207872,A Post-Marketing Study of brovatinib in Non-Small Cell Lung Cancer,Recruiting,2025-09-18T00:00:00Z,3917,,VPA-4451,Phase 4,Non-Small Cell Lung Cancer
+NCT99209173,A Phase 1 Study of WBE-3361 in Healthy Volunteers and Patients with Non-Small Cell Lung Cancer,Completed,2019-07-16T00:00:00Z,86,,WBE-3361,Phase 1,Non-Small Cell Lung Cancer
+NCT99210474,A Phase 2 Study of WBE-3361 in Non-Small Cell Lung Cancer,Completed,2021-02-20T00:00:00Z,133,,WBE-3361,Phase 2,Non-Small Cell Lung Cancer
+NCT99211775,A Phase 3 Study of ardilimab Versus Standard of Care in Non-Small Cell Lung Cancer,Completed,2022-04-23T00:00:00Z,470,,WBE-3361,Phase 3,Non-Small Cell Lung Cancer
+NCT99213076,A Phase 1 Study of WBE-7745 in Healthy Volunteers and Patients with Rheumatoid Arthritis,Completed,2014-09-05T00:00:00Z,90,,WBE-7745,Phase 1,Rheumatoid Arthritis
+NCT99214377,A Phase 2 Study of WBE-7745 in Rheumatoid Arthritis,Completed,2015-08-03T00:00:00Z,142,,WBE-7745,Phase 2,Rheumatoid Arthritis
+NCT99215678,A Phase 3 Study of WBE-7745 Versus Standard of Care in Rheumatoid Arthritis,Terminated,2017-06-08T00:00:00Z,1292,Sponsor decision: portfolio reprioritisation,WBE-7745,Phase 3,Rheumatoid Arthritis
+NCT99216979,A Phase 1 Study of WBE-2342 in Healthy Volunteers and Patients with Parkinson's Disease,Not yet recruiting,2027-07-25T00:00:00Z,74,,WBE-2342,Phase 1,Parkinson's Disease
+NCT99218280,A Phase 1 Study of WBE-1715 in Healthy Volunteers and Patients with Type 2 Diabetes Mellitus,Completed,2014-12-11T00:00:00Z,82,,WBE-1715,Phase 1,Type 2 Diabetes Mellitus
+NCT99219581,A Phase 1 Study of WBE-8842 in Healthy Volunteers and Patients with Non-Small Cell Lung Cancer,Recruiting,2024-01-11T00:00:00Z,52,,WBE-8842,Phase 1,Non-Small Cell Lung Cancer
+NCT99220882,A Phase 1 Study of WBE-3229 in Healthy Volunteers and Patients with Non-Small Cell Lung Cancer,Completed,2014-07-14T00:00:00Z,100,,WBE-3229,Phase 1,Non-Small Cell Lung Cancer
+NCT99222183,A Phase 2 Study of WBE-3229 in Non-Small Cell Lung Cancer,Completed,2017-07-11T00:00:00Z,237,,WBE-3229,Phase 2,Non-Small Cell Lung Cancer
+NCT99223484,A Phase 3 Study of veltorasib Versus Standard of Care in Non-Small Cell Lung Cancer,Completed,2019-10-10T00:00:00Z,932,,WBE-3229,Phase 3,Non-Small Cell Lung Cancer
+NCT99224785,A Post-Marketing Study of veltorasib in Non-Small Cell Lung Cancer,Completed,2022-02-20T00:00:00Z,2685,,WBE-3229,Phase 4,Non-Small Cell Lung Cancer
+NCT99226086,A Phase 1 Study of YTA-3770 in Healthy Volunteers and Patients with Non-Small Cell Lung Cancer,Completed,2021-03-05T00:00:00Z,75,,YTA-3770,Phase 1,Non-Small Cell Lung Cancer
+NCT99227387,A Phase 2 Study of YTA-3770 in Non-Small Cell Lung Cancer,Completed,2024-02-27T00:00:00Z,150,,YTA-3770,Phase 2,Non-Small Cell Lung Cancer
+NCT99228688,A Phase 3 Study of YTA-3770 Versus Standard of Care in Non-Small Cell Lung Cancer,Not yet recruiting,2027-02-05T00:00:00Z,1534,,YTA-3770,Phase 3,Non-Small Cell Lung Cancer
+NCT99229989,A Phase 1 Study of YTA-2032 in Healthy Volunteers and Patients with Alzheimer's Disease,Terminated,2023-03-09T00:00:00Z,24,Sponsor decision: portfolio reprioritisation,YTA-2032,Phase 1,Alzheimer's Disease
+NCT99231290,A Phase 1 Study of YTA-4979 in Healthy Volunteers and Patients with Non-Small Cell Lung Cancer,Completed,2024-02-20T00:00:00Z,87,,YTA-4979,Phase 1,Non-Small Cell Lung Cancer
+NCT99232591,A Phase 2 Study of YTA-4979 in Non-Small Cell Lung Cancer,Recruiting,2025-02-08T00:00:00Z,299,,YTA-4979,Phase 2,Non-Small Cell Lung Cancer
+NCT99233892,A Phase 1 Study of YTA-8461 in Healthy Volunteers and Patients with Melanoma,Completed,2021-02-18T00:00:00Z,61,,YTA-8461,Phase 1,Melanoma
+NCT99235193,A Phase 2 Study of YTA-8461 in Melanoma,Terminated,2023-06-14T00:00:00Z,397,Sponsor decision: portfolio reprioritisation,YTA-8461,Phase 2,Melanoma
+NCT99236494,A Phase 1 Study of YTA-2048 in Healthy Volunteers and Patients with Non-Small Cell Lung Cancer,Recruiting,2025-09-13T00:00:00Z,69,,YTA-2048,Phase 1,Non-Small Cell Lung Cancer
+NCT99237795,A Phase 1 Study of ZBE-2537 in Healthy Volunteers and Patients with Non-Small Cell Lung Cancer,Completed,2016-01-22T00:00:00Z,107,,ZBE-2537,Phase 1,Non-Small Cell Lung Cancer
+NCT99239096,A Phase 2 Study of ZBE-2537 in Non-Small Cell Lung Cancer,Completed,2018-06-26T00:00:00Z,390,,ZBE-2537,Phase 2,Non-Small Cell Lung Cancer
+NCT99240397,A Phase 3 Study of dexotinib Versus Standard of Care in Non-Small Cell Lung Cancer,Completed,2019-01-09T00:00:00Z,764,,ZBE-2537,Phase 3,Non-Small Cell Lung Cancer
+NCT99241698,A Post-Marketing Study of dexotinib in Non-Small Cell Lung Cancer,Completed,2021-03-08T00:00:00Z,1413,,ZBE-2537,Phase 4,Non-Small Cell Lung Cancer
+NCT99242999,A Phase 1 Study of APS-6967 in Healthy Volunteers and Patients with Ulcerative Colitis,Terminated,2017-06-03T00:00:00Z,46,Futility boundary crossed at the interim analysis,APS-6967,Phase 1,Ulcerative Colitis
+NCT99244300,A Phase 1 Study of APS-7600 in Healthy Volunteers and Patients with Rheumatoid Arthritis,Completed,2015-04-23T00:00:00Z,39,,APS-7600,Phase 1,Rheumatoid Arthritis
+NCT99245601,A Phase 1 Study of APS-1223 in Healthy Volunteers and Patients with Parkinson's Disease,Completed,2021-02-28T00:00:00Z,88,,APS-1223,Phase 1,Parkinson's Disease
+NCT99246902,A Phase 2 Study of APS-1223 in Parkinson's Disease,Terminated,2024-05-10T00:00:00Z,96,Safety concerns: adverse events exceeded the prespecified threshold,APS-1223,Phase 2,Parkinson's Disease
+NCT99248203,A Phase 1 Study of BBR-8923 in Healthy Volunteers and Patients with Non-Small Cell Lung Cancer,Terminated,2023-05-18T00:00:00Z,67,Sponsor decision: portfolio reprioritisation,BBR-8923,Phase 1,Non-Small Cell Lung Cancer
+NCT99249504,A Phase 1 Study of BBR-5119 in Healthy Volunteers and Patients with Non-Small Cell Lung Cancer,Recruiting,2024-05-17T00:00:00Z,70,,BBR-5119,Phase 1,Non-Small Cell Lung Cancer
+NCT99250805,A Phase 1 Study of BBR-6100 in Healthy Volunteers and Patients with Non-Small Cell Lung Cancer,Completed,2026-06-25T00:00:00Z,83,,BBR-6100,Phase 1,Non-Small Cell Lung Cancer
+NCT99252106,A Phase 2 Study of BBR-6100 in Non-Small Cell Lung Cancer,Not yet recruiting,2027-12-03T00:00:00Z,102,,BBR-6100,Phase 2,Non-Small Cell Lung Cancer
+NCT99253407,A Phase 1 Study of CBO-7889 in Healthy Volunteers and Patients with Rheumatoid Arthritis,Terminated,2022-06-20T00:00:00Z,116,Safety concerns: adverse events exceeded the prespecified threshold,CBO-7889,Phase 1,Rheumatoid Arthritis
+NCT99254708,A Phase 1 Study of CBO-5475 in Healthy Volunteers and Patients with Parkinson's Disease,Recruiting,2025-12-12T00:00:00Z,98,,CBO-5475,Phase 1,Parkinson's Disease
+NCT99256009,A Phase 1 Study of CBO-6965 in Healthy Volunteers and Patients with Multiple Sclerosis,Completed,2012-04-13T00:00:00Z,80,,CBO-6965,Phase 1,Multiple Sclerosis
+NCT99257310,A Phase 2 Study of CBO-6965 in Multiple Sclerosis,Terminated,2015-11-10T00:00:00Z,181,Sponsor decision: portfolio reprioritisation,CBO-6965,Phase 2,Multiple Sclerosis
+NCT99258611,A Phase 1 Study of CBO-2727 in Healthy Volunteers and Patients with Alzheimer's Disease,Not yet recruiting,2027-07-08T00:00:00Z,118,,CBO-2727,Phase 1,Alzheimer's Disease
+NCT99259912,A Phase 1 Study of DPA-3882 in Healthy Volunteers and Patients with Rheumatoid Arthritis,Recruiting,2024-02-04T00:00:00Z,59,,DPA-3882,Phase 1,Rheumatoid Arthritis
+NCT99261213,A Phase 1 Study of DPA-2226 in Healthy Volunteers and Patients with Non-Small Cell Lung Cancer,Completed,2017-06-05T00:00:00Z,102,,DPA-2226,Phase 1,Non-Small Cell Lung Cancer
+NCT99262514,A Phase 2 Study of DPA-2226 in Non-Small Cell Lung Cancer,Terminated,2018-02-16T00:00:00Z,307,Sponsor decision: portfolio reprioritisation,DPA-2226,Phase 2,Non-Small Cell Lung Cancer
+NCT99263815,A Phase 1 Study of DPA-7715 in Healthy Volunteers and Patients with Melanoma,Recruiting,2025-11-28T00:00:00Z,87,,DPA-7715,Phase 1,Melanoma
+NCT99265116,A Phase 1 Study of DPA-9704 in Healthy Volunteers and Patients with Parkinson's Disease,Completed,2024-11-21T00:00:00Z,76,,DPA-9704,Phase 1,Parkinson's Disease
+NCT99266417,A Phase 2 Study of DPA-9704 in Parkinson's Disease,Recruiting,2025-02-19T00:00:00Z,99,,DPA-9704,Phase 2,Parkinson's Disease
+NCT99267718,A Phase 1 Study of DPA-4366 in Healthy Volunteers and Patients with Multiple Sclerosis,Completed,2023-11-11T00:00:00Z,101,,DPA-4366,Phase 1,Multiple Sclerosis
+NCT99269019,A Phase 2 Study of DPA-4366 in Multiple Sclerosis,Recruiting,2024-12-02T00:00:00Z,317,,DPA-4366,Phase 2,Multiple Sclerosis
+NCT99270320,A Phase 1 Study of ETS-9589 in Healthy Volunteers and Patients with Multiple Sclerosis,"Active, not recruiting",2023-08-23T00:00:00Z,105,,ETS-9589,Phase 1,Multiple Sclerosis
+NCT99271621,A Phase 1 Study of ETS-5364 in Healthy Volunteers and Patients with Alzheimer's Disease,Completed,2012-01-18T00:00:00Z,85,,ETS-5364,Phase 1,Alzheimer's Disease
+NCT99272922,A Phase 2 Study of ETS-5364 in Alzheimer's Disease,Completed,2015-11-15T00:00:00Z,138,,ETS-5364,Phase 2,Alzheimer's Disease
+NCT99274223,A Phase 3 Study of ETS-5364 Versus Standard of Care in Alzheimer's Disease,Terminated,2017-12-24T00:00:00Z,1349,Sponsor decision: portfolio reprioritisation,ETS-5364,Phase 3,Alzheimer's Disease
+NCT99275524,A Phase 1 Study of ETS-7472 in Healthy Volunteers and Patients with Rheumatoid Arthritis,Completed,2018-06-15T00:00:00Z,62,,ETS-7472,Phase 1,Rheumatoid Arthritis
+NCT99276825,A Phase 2 Study of ETS-7472 in Rheumatoid Arthritis,Terminated,2019-03-21T00:00:00Z,91,Safety concerns: adverse events exceeded the prespecified threshold,ETS-7472,Phase 2,Rheumatoid Arthritis
+NCT99278126,A Phase 1 Study of ETS-2432 in Healthy Volunteers and Patients with Type 2 Diabetes Mellitus,Completed,2023-10-19T00:00:00Z,68,,ETS-2432,Phase 1,Type 2 Diabetes Mellitus
+NCT99279427,A Phase 2 Study of ETS-2432 in Type 2 Diabetes Mellitus,"Active, not recruiting",2024-08-01T00:00:00Z,197,,ETS-2432,Phase 2,Type 2 Diabetes Mellitus
+NCT99280728,A Phase 1 Study of ETS-1634 in Healthy Volunteers and Patients with Alzheimer's Disease,Completed,2024-05-17T00:00:00Z,72,,ETS-1634,Phase 1,Alzheimer's Disease
+NCT99282029,A Phase 2 Study of ETS-1634 in Alzheimer's Disease,Completed,2026-04-12T00:00:00Z,153,,ETS-1634,Phase 2,Alzheimer's Disease
+NCT99283330,A Phase 3 Study of ETS-1634 Versus Standard of Care in Alzheimer's Disease,Not yet recruiting,2027-06-05T00:00:00Z,1357,,ETS-1634,Phase 3,Alzheimer's Disease
+NCT99284631,A Phase 1 Study of FBO-2825 in Healthy Volunteers and Patients with Non-Small Cell Lung Cancer,Not yet recruiting,2027-11-27T00:00:00Z,53,,FBO-2825,Phase 1,Non-Small Cell Lung Cancer
+NCT99285932,A Phase 1 Study of FBO-6258 in Healthy Volunteers and Patients with Melanoma,Not yet recruiting,2027-05-10T00:00:00Z,47,,FBO-6258,Phase 1,Melanoma
+NCT99287233,A Phase 1 Study of FBO-3306 in Healthy Volunteers and Patients with Non-Small Cell Lung Cancer,Completed,2026-01-27T00:00:00Z,106,,FBO-3306,Phase 1,Non-Small Cell Lung Cancer
+NCT99288534,A Phase 2 Study of FBO-3306 in Non-Small Cell Lung Cancer,Not yet recruiting,2027-03-19T00:00:00Z,409,,FBO-3306,Phase 2,Non-Small Cell Lung Cancer
+NCT99289835,A Phase 1 Study of FBO-4183 in Healthy Volunteers and Patients with Rheumatoid Arthritis,Recruiting,2024-05-17T00:00:00Z,54,,FBO-4183,Phase 1,Rheumatoid Arthritis
+NCT99291136,A Phase 1 Study of FBO-6040 in Healthy Volunteers and Patients with Non-Small Cell Lung Cancer,Completed,2020-04-06T00:00:00Z,45,,FBO-6040,Phase 1,Non-Small Cell Lung Cancer
+NCT99292437,A Phase 2 Study of FBO-6040 in Non-Small Cell Lung Cancer,Completed,2022-03-03T00:00:00Z,116,,FBO-6040,Phase 2,Non-Small Cell Lung Cancer
+NCT99293738,A Phase 1 Study of GMR-1788 in Healthy Volunteers and Patients with Melanoma,Completed,2021-06-27T00:00:00Z,101,,GMR-1788,Phase 1,Melanoma
+NCT99295039,A Phase 2 Study of GMR-1788 in Melanoma,Recruiting,2024-02-13T00:00:00Z,366,,GMR-1788,Phase 2,Melanoma
+NCT99296340,A Phase 1 Study of GMR-7690 in Healthy Volunteers and Patients with Parkinson's Disease,Completed,2015-06-16T00:00:00Z,76,,GMR-7690,Phase 1,Parkinson's Disease
+NCT99297641,A Phase 2 Study of GMR-7690 in Parkinson's Disease,Terminated,2016-10-01T00:00:00Z,268,Safety concerns: adverse events exceeded the prespecified threshold,GMR-7690,Phase 2,Parkinson's Disease
+NCT99298942,A Phase 1 Study of GMR-2359 in Healthy Volunteers and Patients with Rheumatoid Arthritis,Completed,2016-10-23T00:00:00Z,76,,GMR-2359,Phase 1,Rheumatoid Arthritis
+NCT99300243,A Phase 2 Study of GMR-2359 in Rheumatoid Arthritis,Completed,2017-07-02T00:00:00Z,176,,GMR-2359,Phase 2,Rheumatoid Arthritis
+NCT99301544,A Phase 3 Study of brovazumab Versus Standard of Care in Rheumatoid Arthritis,Completed,2019-06-18T00:00:00Z,617,,GMR-2359,Phase 3,Rheumatoid Arthritis
+NCT99302845,A Phase 1 Study of GMR-2351 in Healthy Volunteers and Patients with Non-Small Cell Lung Cancer,Completed,2023-05-28T00:00:00Z,60,,GMR-2351,Phase 1,Non-Small Cell Lung Cancer
+NCT99304146,A Phase 2 Study of GMR-2351 in Non-Small Cell Lung Cancer,Completed,2026-02-22T00:00:00Z,343,,GMR-2351,Phase 2,Non-Small Cell Lung Cancer
+NCT99305447,A Phase 3 Study of GMR-2351 Versus Standard of Care in Non-Small Cell Lung Cancer,Not yet recruiting,2027-04-17T00:00:00Z,525,,GMR-2351,Phase 3,Non-Small Cell Lung Cancer
+NCT99306748,A Phase 1 Study of GMR-9415 in Healthy Volunteers and Patients with Non-Small Cell Lung Cancer,Completed,2021-02-20T00:00:00Z,87,,GMR-9415,Phase 1,Non-Small Cell Lung Cancer
+NCT99308049,A Phase 2 Study of GMR-9415 in Non-Small Cell Lung Cancer,Completed,2024-06-02T00:00:00Z,219,,GMR-9415,Phase 2,Non-Small Cell Lung Cancer
+NCT99309350,A Phase 3 Study of GMR-9415 Versus Standard of Care in Non-Small Cell Lung Cancer,Recruiting,2025-07-15T00:00:00Z,2301,,GMR-9415,Phase 3,Non-Small Cell Lung Cancer
+NCT99310651,A Phase 1 Study of HPO-2617 in Healthy Volunteers and Patients with Multiple Sclerosis,Completed,2021-04-04T00:00:00Z,120,,HPO-2617,Phase 1,Multiple Sclerosis
+NCT99311952,A Phase 2 Study of HPO-2617 in Multiple Sclerosis,Terminated,2024-02-09T00:00:00Z,379,Lack of efficacy at the interim analysis,HPO-2617,Phase 2,Multiple Sclerosis
+NCT99313253,A Phase 1 Study of IBN-2726 in Healthy Volunteers and Patients with Multiple Sclerosis,Recruiting,2024-12-04T00:00:00Z,107,,IBN-2726,Phase 1,Multiple Sclerosis
+NCT99314554,A Phase 1 Study of IBN-2576 in Healthy Volunteers and Patients with Alzheimer's Disease,Completed,2022-08-16T00:00:00Z,40,,IBN-2576,Phase 1,Alzheimer's Disease
+NCT99315855,A Phase 2 Study of IBN-2576 in Alzheimer's Disease,Completed,2023-10-17T00:00:00Z,410,,IBN-2576,Phase 2,Alzheimer's Disease
+NCT99317156,A Phase 1 Study of IBN-9660 in Healthy Volunteers and Patients with Ulcerative Colitis,Terminated,2016-05-04T00:00:00Z,104,Futility boundary crossed at the interim analysis,IBN-9660,Phase 1,Ulcerative Colitis
+NCT99318457,A Phase 1 Study of IBN-3913 in Healthy Volunteers and Patients with Rheumatoid Arthritis,Completed,2025-10-22T00:00:00Z,62,,IBN-3913,Phase 1,Rheumatoid Arthritis
+NCT99319758,A Phase 2 Study of IBN-3913 in Rheumatoid Arthritis,Not yet recruiting,2027-10-21T00:00:00Z,139,,IBN-3913,Phase 2,Rheumatoid Arthritis
+NCT99321059,A Phase 1 Study of IBN-5680 in Healthy Volunteers and Patients with Non-Small Cell Lung Cancer,Completed,2024-08-28T00:00:00Z,34,,IBN-5680,Phase 1,Non-Small Cell Lung Cancer
+NCT99322360,A Phase 2 Study of IBN-5680 in Non-Small Cell Lung Cancer,"Active, not recruiting",2025-01-17T00:00:00Z,124,,IBN-5680,Phase 2,Non-Small Cell Lung Cancer
+NCT99323661,A Phase 1 Study of IBN-1693 in Healthy Volunteers and Patients with Non-Small Cell Lung Cancer,Completed,2020-12-01T00:00:00Z,24,,IBN-1693,Phase 1,Non-Small Cell Lung Cancer
+NCT99324962,A Phase 2 Study of IBN-1693 in Non-Small Cell Lung Cancer,Completed,2022-12-20T00:00:00Z,388,,IBN-1693,Phase 2,Non-Small Cell Lung Cancer
+NCT99326263,A Phase 3 Study of IBN-1693 Versus Standard of Care in Non-Small Cell Lung Cancer,Recruiting,2025-04-13T00:00:00Z,2589,,IBN-1693,Phase 3,Non-Small Cell Lung Cancer
+NCT99327564,A Phase 1 Study of KTE-5527 in Healthy Volunteers and Patients with Rheumatoid Arthritis,"Active, not recruiting",2025-03-01T00:00:00Z,78,,KTE-5527,Phase 1,Rheumatoid Arthritis
+NCT99328865,A Phase 1 Study of KTE-7033 in Healthy Volunteers and Patients with Non-Small Cell Lung Cancer,Completed,2023-01-13T00:00:00Z,68,,KTE-7033,Phase 1,Non-Small Cell Lung Cancer
+NCT99330166,A Phase 2 Study of KTE-7033 in Non-Small Cell Lung Cancer,Recruiting,2025-12-22T00:00:00Z,408,,KTE-7033,Phase 2,Non-Small Cell Lung Cancer
+NCT99331467,A Phase 1 Study of KTE-6291 in Healthy Volunteers and Patients with Alzheimer's Disease,Completed,2026-01-15T00:00:00Z,90,,KTE-6291,Phase 1,Alzheimer's Disease
+NCT99332768,A Phase 2 Study of KTE-6291 in Alzheimer's Disease,Not yet recruiting,2027-01-21T00:00:00Z,173,,KTE-6291,Phase 2,Alzheimer's Disease
+NCT99334069,A Phase 1 Study of KTE-3357 in Healthy Volunteers and Patients with Melanoma,Completed,2013-09-27T00:00:00Z,62,,KTE-3357,Phase 1,Melanoma
+NCT99335370,A Phase 2 Study of KTE-3357 in Melanoma,Completed,2014-09-20T00:00:00Z,244,,KTE-3357,Phase 2,Melanoma
+NCT99336671,A Phase 3 Study of brovarafenib Versus Standard of Care in Melanoma,Completed,2017-09-20T00:00:00Z,1574,,KTE-3357,Phase 3,Melanoma
+NCT99337972,A Post-Marketing Study of brovarafenib in Melanoma,Completed,2018-03-13T00:00:00Z,1886,,KTE-3357,Phase 4,Melanoma
+NCT99339273,A Phase 1 Study of LBO-9234 in Healthy Volunteers and Patients with Non-Small Cell Lung Cancer,Completed,2020-01-24T00:00:00Z,69,,LBO-9234,Phase 1,Non-Small Cell Lung Cancer
+NCT99340574,A Phase 2 Study of LBO-9234 in Non-Small Cell Lung Cancer,Completed,2022-03-15T00:00:00Z,234,,LBO-9234,Phase 2,Non-Small Cell Lung Cancer
+NCT99341875,A Phase 3 Study of LBO-9234 Versus Standard of Care in Non-Small Cell Lung Cancer,"Active, not recruiting",2024-12-15T00:00:00Z,2768,,LBO-9234,Phase 3,Non-Small Cell Lung Cancer
+NCT99343176,A Phase 1 Study of LBO-1000 in Healthy Volunteers and Patients with Parkinson's Disease,Completed,2016-04-11T00:00:00Z,116,,LBO-1000,Phase 1,Parkinson's Disease
+NCT99344477,A Phase 2 Study of LBO-1000 in Parkinson's Disease,Terminated,2018-07-15T00:00:00Z,409,Sponsor decision: portfolio reprioritisation,LBO-1000,Phase 2,Parkinson's Disease
+NCT99345778,A Phase 1 Study of LBO-1002 in Healthy Volunteers and Patients with Parkinson's Disease,Completed,2019-03-14T00:00:00Z,36,,LBO-1002,Phase 1,Parkinson's Disease
+NCT99347079,A Phase 2 Study of LBO-1002 in Parkinson's Disease,Completed,2021-09-18T00:00:00Z,394,,LBO-1002,Phase 2,Parkinson's Disease
+NCT99348380,A Phase 3 Study of LBO-1002 Versus Standard of Care in Parkinson's Disease,Suspended,2023-11-27T00:00:00Z,1895,Slow enrolment,LBO-1002,Phase 3,Parkinson's Disease
+NCT99349681,A Phase 1 Study of LBO-5332 in Healthy Volunteers and Patients with Alzheimer's Disease,Suspended,2025-05-03T00:00:00Z,81,Slow enrolment,LBO-5332,Phase 1,Alzheimer's Disease
+NCT99350982,A Phase 1 Study of LBO-1770 in Healthy Volunteers and Patients with Melanoma,Recruiting,2025-07-02T00:00:00Z,98,,LBO-1770,Phase 1,Melanoma
+NCT99352283,A Phase 1 Study of MPE-604 in Healthy Volunteers and Patients with Melanoma,Completed,2024-10-15T00:00:00Z,88,,MPE-604,Phase 1,Melanoma
+NCT99353584,A Phase 2 Study of MPE-604 in Melanoma,Completed,2025-07-16T00:00:00Z,135,,MPE-604,Phase 2,Melanoma
+NCT99354885,A Phase 3 Study of MPE-604 Versus Standard of Care in Melanoma,Not yet recruiting,2027-11-18T00:00:00Z,1112,,MPE-604,Phase 3,Melanoma
+NCT99356186,A Phase 1 Study of MPE-7450 in Healthy Volunteers and Patients with Parkinson's Disease,Completed,2021-04-21T00:00:00Z,71,,MPE-7450,Phase 1,Parkinson's Disease
+NCT99357487,A Phase 2 Study of MPE-7450 in Parkinson's Disease,Completed,2022-11-12T00:00:00Z,411,,MPE-7450,Phase 2,Parkinson's Disease
+NCT99358788,A Phase 3 Study of MPE-7450 Versus Standard of Care in Parkinson's Disease,"Active, not recruiting",2024-03-14T00:00:00Z,2773,,MPE-7450,Phase 3,Parkinson's Disease
+NCT99360089,A Phase 1 Study of MPE-140 in Healthy Volunteers and Patients with Non-Small Cell Lung Cancer,Recruiting,2025-11-19T00:00:00Z,113,,MPE-140,Phase 1,Non-Small Cell Lung Cancer
+NCT99361390,A Phase 1 Study of MPE-2783 in Healthy Volunteers and Patients with Type 2 Diabetes Mellitus,Completed,2019-06-09T00:00:00Z,28,,MPE-2783,Phase 1,Type 2 Diabetes Mellitus
+NCT99362691,A Phase 2 Study of MPE-2783 in Type 2 Diabetes Mellitus,Completed,2020-01-28T00:00:00Z,144,,MPE-2783,Phase 2,Type 2 Diabetes Mellitus
+NCT99363992,A Phase 3 Study of veltoglutide Versus Standard of Care in Type 2 Diabetes Mellitus,Completed,2023-03-04T00:00:00Z,2120,,MPE-2783,Phase 3,Type 2 Diabetes Mellitus
+NCT99365293,A Post-Marketing Study of veltoglutide in Type 2 Diabetes Mellitus,Recruiting,2024-09-18T00:00:00Z,2022,,MPE-2783,Phase 4,Type 2 Diabetes Mellitus
+NCT99366594,A Phase 1 Study of MPE-3136 in Healthy Volunteers and Patients with Alzheimer's Disease,Completed,2023-07-21T00:00:00Z,57,,MPE-3136,Phase 1,Alzheimer's Disease
+NCT99367895,A Phase 2 Study of MPE-3136 in Alzheimer's Disease,Completed,2025-10-21T00:00:00Z,174,,MPE-3136,Phase 2,Alzheimer's Disease
+NCT99369196,A Phase 3 Study of MPE-3136 Versus Standard of Care in Alzheimer's Disease,Not yet recruiting,2027-01-11T00:00:00Z,556,,MPE-3136,Phase 3,Alzheimer's Disease
+NCT99370497,A Phase 1 Study of MPE-3132 in Healthy Volunteers and Patients with Melanoma,Completed,2020-10-03T00:00:00Z,82,,MPE-3132,Phase 1,Melanoma
+NCT99371798,A Phase 2 Study of MPE-3132 in Melanoma,Completed,2022-04-01T00:00:00Z,128,,MPE-3132,Phase 2,Melanoma
+NCT99373099,A Phase 3 Study of MPE-3132 Versus Standard of Care in Melanoma,Terminated,2023-02-06T00:00:00Z,2796,Lack of efficacy at the interim analysis,MPE-3132,Phase 3,Melanoma
+NCT99374400,A Phase 1 Study of MPE-6073 in Healthy Volunteers and Patients with Parkinson's Disease,Completed,2020-02-04T00:00:00Z,120,,MPE-6073,Phase 1,Parkinson's Disease
+NCT99375701,A Phase 2 Study of MPE-6073 in Parkinson's Disease,Terminated,2021-11-08T00:00:00Z,270,Futility boundary crossed at the interim analysis,MPE-6073,Phase 2,Parkinson's Disease
+NCT99377002,A Phase 1 Study of NBE-7666 in Healthy Volunteers and Patients with Melanoma,Completed,2021-07-07T00:00:00Z,98,,NBE-7666,Phase 1,Melanoma
+NCT99378303,A Phase 2 Study of NBE-7666 in Melanoma,Completed,2024-05-05T00:00:00Z,398,,NBE-7666,Phase 2,Melanoma
+NCT99379604,A Phase 3 Study of NBE-7666 Versus Standard of Care in Melanoma,Recruiting,2025-08-16T00:00:00Z,2754,,NBE-7666,Phase 3,Melanoma
+NCT99380905,A Phase 1 Study of NBE-2028 in Healthy Volunteers and Patients with Alzheimer's Disease,Completed,2023-09-01T00:00:00Z,35,,NBE-2028,Phase 1,Alzheimer's Disease
+NCT99382206,A Phase 2 Study of NBE-2028 in Alzheimer's Disease,"Active, not recruiting",2024-09-08T00:00:00Z,116,,NBE-2028,Phase 2,Alzheimer's Disease
+NCT99383507,A Phase 1 Study of NBE-3555 in Healthy Volunteers and Patients with Alzheimer's Disease,Completed,2023-10-22T00:00:00Z,97,,NBE-3555,Phase 1,Alzheimer's Disease
+NCT99384808,A Phase 2 Study of NBE-3555 in Alzheimer's Disease,Completed,2026-06-20T00:00:00Z,150,,NBE-3555,Phase 2,Alzheimer's Disease
+NCT99386109,A Phase 3 Study of NBE-3555 Versus Standard of Care in Alzheimer's Disease,Not yet recruiting,2027-03-14T00:00:00Z,2149,,NBE-3555,Phase 3,Alzheimer's Disease
+NCT99387410,A Phase 1 Study of NBE-7019 in Healthy Volunteers and Patients with Non-Small Cell Lung Cancer,Completed,2021-01-28T00:00:00Z,43,,NBE-7019,Phase 1,Non-Small Cell Lung Cancer
+NCT99388711,A Phase 2 Study of NBE-7019 in Non-Small Cell Lung Cancer,"Active, not recruiting",2024-09-06T00:00:00Z,136,,NBE-7019,Phase 2,Non-Small Cell Lung Cancer
+NCT99390012,A Phase 1 Study of NBE-649 in Healthy Volunteers and Patients with Non-Small Cell Lung Cancer,Completed,2021-01-08T00:00:00Z,40,,NBE-649,Phase 1,Non-Small Cell Lung Cancer
+NCT99391313,A Phase 2 Study of NBE-649 in Non-Small Cell Lung Cancer,"Active, not recruiting",2023-12-15T00:00:00Z,326,,NBE-649,Phase 2,Non-Small Cell Lung Cancer
+NCT99392614,A Phase 1 Study of OTA-7255 in Healthy Volunteers and Patients with Type 2 Diabetes Mellitus,Completed,2016-03-24T00:00:00Z,83,,OTA-7255,Phase 1,Type 2 Diabetes Mellitus
+NCT99393915,A Phase 2 Study of OTA-7255 in Type 2 Diabetes Mellitus,Completed,2017-10-15T00:00:00Z,236,,OTA-7255,Phase 2,Type 2 Diabetes Mellitus
+NCT99395216,A Phase 3 Study of brovaglutide Versus Standard of Care in Type 2 Diabetes Mellitus,Completed,2019-06-19T00:00:00Z,719,,OTA-7255,Phase 3,Type 2 Diabetes Mellitus
+NCT99396517,A Phase 1 Study of OTA-6663 in Healthy Volunteers and Patients with Parkinson's Disease,Completed,2021-01-16T00:00:00Z,112,,OTA-6663,Phase 1,Parkinson's Disease
+NCT99397818,A Phase 2 Study of OTA-6663 in Parkinson's Disease,Completed,2023-03-26T00:00:00Z,134,,OTA-6663,Phase 2,Parkinson's Disease
+NCT99399119,A Phase 3 Study of OTA-6663 Versus Standard of Care in Parkinson's Disease,Suspended,2025-07-21T00:00:00Z,936,Slow enrolment,OTA-6663,Phase 3,Parkinson's Disease
+NCT99400420,A Phase 1 Study of OTA-4314 in Healthy Volunteers and Patients with Type 2 Diabetes Mellitus,Completed,2023-11-13T00:00:00Z,36,,OTA-4314,Phase 1,Type 2 Diabetes Mellitus
+NCT99401721,A Phase 2 Study of OTA-4314 in Type 2 Diabetes Mellitus,Terminated,2024-06-10T00:00:00Z,368,Safety concerns: adverse events exceeded the prespecified threshold,OTA-4314,Phase 2,Type 2 Diabetes Mellitus
+NCT99403022,A Phase 1 Study of PPE-6287 in Healthy Volunteers and Patients with Melanoma,Completed,2015-02-01T00:00:00Z,76,,PPE-6287,Phase 1,Melanoma
+NCT99404323,A Phase 2 Study of PPE-6287 in Melanoma,Completed,2016-08-13T00:00:00Z,223,,PPE-6287,Phase 2,Melanoma
+NCT99405624,A Phase 3 Study of galpolimab Versus Standard of Care in Melanoma,Completed,2017-02-27T00:00:00Z,1056,,PPE-6287,Phase 3,Melanoma
+NCT99406925,A Phase 1 Study of PPE-9880 in Healthy Volunteers and Patients with Alzheimer's Disease,Completed,2021-10-09T00:00:00Z,61,,PPE-9880,Phase 1,Alzheimer's Disease
+NCT99408226,A Phase 2 Study of PPE-9880 in Alzheimer's Disease,"Active, not recruiting",2024-01-24T00:00:00Z,206,,PPE-9880,Phase 2,Alzheimer's Disease
+NCT99409527,A Phase 1 Study of PPE-3787 in Healthy Volunteers and Patients with Rheumatoid Arthritis,Completed,2015-04-24T00:00:00Z,96,,PPE-3787,Phase 1,Rheumatoid Arthritis
+NCT99410828,A Phase 2 Study of PPE-3787 in Rheumatoid Arthritis,Completed,2017-01-27T00:00:00Z,255,,PPE-3787,Phase 2,Rheumatoid Arthritis
+NCT99412129,A Phase 2 Study of PPE-3787 in Ulcerative Colitis,Completed,2018-02-08T00:00:00Z,321,,PPE-3787,Phase 2,Ulcerative Colitis
+NCT99413430,A Phase 3 Study of veltocitinib Versus Standard of Care in Rheumatoid Arthritis,Completed,2019-10-20T00:00:00Z,2346,,PPE-3787,Phase 3,Rheumatoid Arthritis
+NCT99414731,A Phase 3 Study of veltocitinib Versus Standard of Care in Ulcerative Colitis,Completed,2020-10-07T00:00:00Z,2177,,PPE-3787,Phase 3,Ulcerative Colitis
+NCT99416032,A Phase 1 Study of PPE-5278 in Healthy Volunteers and Patients with Parkinson's Disease,Completed,2013-11-27T00:00:00Z,70,,PPE-5278,Phase 1,Parkinson's Disease
+NCT99417333,A Phase 2 Study of PPE-5278 in Parkinson's Disease,Terminated,2014-06-20T00:00:00Z,358,Sponsor decision: portfolio reprioritisation,PPE-5278,Phase 2,Parkinson's Disease
+NCT99418634,A Phase 1 Study of PPE-5902 in Healthy Volunteers and Patients with Alzheimer's Disease,Completed,2015-04-28T00:00:00Z,112,,PPE-5902,Phase 1,Alzheimer's Disease
+NCT99419935,A Phase 2 Study of PPE-5902 in Alzheimer's Disease,Terminated,2016-08-14T00:00:00Z,225,Lack of efficacy at the interim analysis,PPE-5902,Phase 2,Alzheimer's Disease
+NCT99421236,A Phase 1 Study of PPE-1178 in Healthy Volunteers and Patients with Non-Small Cell Lung Cancer,"Active, not recruiting",2024-08-24T00:00:00Z,95,,PPE-1178,Phase 1,Non-Small Cell Lung Cancer
