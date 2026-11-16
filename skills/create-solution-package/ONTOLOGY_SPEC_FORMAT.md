@@ -368,7 +368,19 @@ Each node carries its position in the ontology visualisation as `extensions.disp
 }
 ```
 
-The spec makes `display` optional; this pipeline requires it on every node, spread far enough apart to make labels and relationship directions readable. Leave `colour` and `custom` unset — node colour is assigned by the rendering application.
+The spec makes `display` optional; this pipeline requires it on every node. Leave `colour` and `custom` unset — node colour is assigned by the rendering application.
+
+**Keep the layout compact.** Import fits the whole reference ontology to the screen, and labels are drawn at a fixed size in layout units, so a layout that is spread out opens zoomed far out with labels too small to read. Spreading nodes "for readability" has the opposite effect, and it is the most common layout fault: four packages shipped with median edges of 376–449 display units and had to be tightened by hand. Place nodes on a grid of about 130 units:
+
+| Metric | Aim for | Warning above | Blocker above |
+| ------ | ------- | ------------- | ------------- |
+| Median edge (distance between two nodes a relationship joins) | about 130 | 200 | 250 |
+| Longest edge | up to about 300 | 330 | 450 |
+| Extent (larger side of the bounding box) | as small as the shape allows | 550 | 800 |
+
+Keep every pair of nodes at least 70 apart so circles and labels do not collide; `check_layout.py` warns below 60 and blocks below 30. The thresholds are calibrated on the catalogued packages checked by eye in Import, which all sit at medians of 120–200 with no edge over 325. Put nodes that share many relationships next to each other, so no edge has to cross the whole view.
+
+`scripts/check_layout.py <package>` prints the four metrics and any finding. Where only the scale is wrong, `check_layout.py <package> --rescale` scales every node about the origin to a median edge of 130, rounds to multiples of 5, and rewrites only the coordinates; then re-run the check and move any node that ends up crowded. Rescaling is a create-mode fix: test mode reports a spread layout and never rewrites a package.
 
 ## Annotations for agent reasoning
 
@@ -417,34 +429,6 @@ Populate `name` at the root only. Nodes and relationships have no `name` field; 
 - The spec library carries semantic checks the schema cannot express — count conflicts, `one_of` with `pattern`, description length, label tokens, mapping keys, column names. VALIDATION.md §3 runs it with the npm release that matches the pin; no toolchain beyond Node is needed.
 - The sample-value convention and the requirement that prose multiplicity matches the counts are this pipeline's own. Nothing but this pipeline validates them — which makes VALIDATION.md §3b the only thing standing between a plausible-looking annotation and a false one.
 
-## Converting a legacy graph model
-
-Packages built before this pin ship a `GRAPH_MODEL.json` in the older graph-spec format. Convert it with `scripts/convert_legacy.py` and prove the result with `scripts/compare_ontology.py`, as part of the whole-package procedure in [MIGRATION.md](MIGRATION.md) — never by hand-editing the legacy file. The table records what the script does, for review.
-
-| Legacy `GRAPH_MODEL.json` | `ONTOLOGY.json` |
-| ------------------------- | --------------- |
-| `version: "4.0.0"` | `schema: "https://neo4j.com/docs/ontology-graph-spec/1.0.0/schema.json"`, `version: "1"`, and `id` set to the package folder name |
-| `metadata.neo4j-graph-spec-version` in SKILL.md | Removed — the `schema` field declares the spec |
-| `mustExist` (or older `nullable: false`) | `must_exist: true` |
-| Root `tables` | `extensions.data_source_tables` |
-| Table `fields` map (`{ "col": { "name": "col", "type": "string" } }`) | Table `columns` array, in CSV header order (`[{ "name": "col", "type": "string" }]`) |
-| `primaryKeys`, `foreignKeys` | Omitted for CSV tables (`primary_keys`, `foreign_keys` if ever needed) |
-| Root `mappings` array | `extensions.data_source_mappings.mapping0` |
-| `"type": "NodeMapping"` (or older `"node"`) | `"type": "NODE"` |
-| `"type": "RelationshipMapping"` (or older `"relationship"`) | `"type": "RELATIONSHIP"` |
-| Relationship mapping `from` / `to` with `node` | `from_node` / `to_node` with the endpoint node's `label` |
-| `{ "field": "col" }` in property mappings | `{ "column": "col" }` |
-| `matchLabel` | `match_label` (packages leave it unset) |
-| `display.nodes.<key>` | `nodes.<key>.extensions.display` |
-| `extensions.sample` | Trailing `` e.g. `...` `` in the property description |
-| `extensions.cardinality` | Target `count`/`min_count`/`max_count`, plus prose in the description |
-| Relationship target `property` | Removed |
-| Positional keys (`n:0`, `r:1`) | Readable keys (label for nodes, camelCase for relationships) |
-
-The script also renames positional entity keys (`n:0` → the node's label; `r:0` → the relationship type in camelCase, prefixed and suffixed with its node labels where one type joins several pairs), and drops legacy `indexes` and `extensions`, logging each so their meaning can be moved by hand. It warns — it does not fix — on the two things a faithful conversion carries over but the destination will not accept: a constraint flag repeated across entries of one relationship type or label (legacy files routinely set `mustExist` on every reuse of a type), and a relationship table with repeated endpoint pairs under an empty mapping `key`. Both are meaning changes for the migration plan; see [Constraint flags on shared labels and types](#constraint-flags-on-shared-labels-and-types) and [Relationship mappings](#relationship-mappings).
-
-**Pre-release `ONTOLOGY.json`.** A package converted before the spec renamed its root extensions carries `extensions.tables` and `extensions.mappings`. That shape fails the bundled schema; the fix is the rename alone — `tables` → `data_source_tables`, `mappings` → `data_source_mappings` — with nothing else touched, proved by `compare_ontology.py` against the file before the rename (it reads both names). `inventory.py` reports this generation separately from the legacy `GRAPH_MODEL.json` ones.
-
 ## Authoring order
 
 1. Define node keys, labels, and identifiers.
@@ -456,7 +440,7 @@ The script also renames positional entity keys (`n:0` → the node's label; `r:0
 7. Define the CSV tables and their columns in header order.
 8. Add node mappings (`NODE`, mode `MERGE`, `key`) to `extensions.data_source_mappings.mapping0`.
 9. Add relationship mappings and endpoint lookups, with a `key` naming the distinguishing property wherever the domain has parallel relationships between the same two nodes.
-10. Add `extensions.display` coordinates to every node.
+10. Add `extensions.display` coordinates to every node, on a compact grid of about 130 units (see [Display](#display)), and run `scripts/check_layout.py` until it reports no finding.
 11. Create sample CSVs that satisfy the descriptions, value restrictions, and counts — then set each description's trailing `` e.g. `...` `` verbatim from the generated column.
 12. Check every query-referenced label, type, direction, and property against the reference ontology, and every query annotation block against the descriptions. Anything a query references that the reference ontology does not define must be a query-created entity documented in SKILL.md — if it is not, one of the two is wrong.
 13. Run the VALIDATION.md §3 checks, including the spec-library check and the runtime gate. A reference ontology that has never been through the runtime gate is not finished, however clean it looks.
@@ -484,5 +468,5 @@ The script also renames positional entity keys (`n:0` → the node's label; `r:0
 - A relationship table with more than one row for the same endpoint pair has a mapping `key` naming the property that tells those rows apart.
 - Every query label, relationship type, direction, and property exists in the reference ontology, and query annotation blocks agree with its descriptions.
 - Every bundled CSV header row matches its table's `columns` names, in order.
-- Every node has `extensions.display` coordinates.
+- Every node has `extensions.display` coordinates, and `check_layout.py` reports no `BLOCKER` or `WARN`: median edge 200 or less, longest edge 330 or less, extent 550 or less, closest pair 60 or more.
 - The file contains valid JSON with no comments, trailing commas, or unresolved placeholders.

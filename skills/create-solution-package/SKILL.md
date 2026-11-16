@@ -1,6 +1,6 @@
 ---
 name: create-solution-package
-description: Build a Neo4j industry solution package — a reference ontology (ontology graph spec JSON, also called a graph model or model), sample CSV data with import mappings, proven Cypher queries, agent guidance, and a human-readable description of the package — for Aura's onboarding agent. Use whenever a user wants to create, draft, scaffold, rebuild, or review a solution package, industry use case, or vertical quick start, e.g. "make a package like insurance-claims-fraud for telecoms" — and to update, migrate, upgrade or clean up an existing package to the latest package spec, e.g. "update patient-journey to the latest package spec". The output is a starting point for human curation, not a finished product.
+description: Build a Neo4j industry solution package — a reference ontology (ONTOLOGY.json), sample CSV data with import mappings, proven Cypher queries, agent guidance and a human-readable description — for Aura's onboarding agent, testing it on Relate as it goes. Use whenever a user wants to create, draft, scaffold, rebuild or review a solution package, industry use case or vertical quick start, e.g. "make a package like insurance-claims-fraud for telecoms"; and to test a package: `test [package]` imports its sample data into a throwaway Relate database, checks the data landed as the reference ontology says, and runs every query against TESTS.md. Without Relate installed, create still builds the package and flags every query for manual testing on Aura. The output is a starting point for human curation, not a finished product.
 ---
 
 # Create a Solution Package
@@ -9,7 +9,60 @@ A solution package is an agent skill that Aura's onboarding agent loads to help 
 
 Your job: take the user's raw inputs and produce a complete, consistent draft package. An engineer will curate it — flag anything you're unsure about with `TODO(review):` rather than silently guessing.
 
-Companion skills: [ONTOLOGY_SPEC_FORMAT.md](ONTOLOGY_SPEC_FORMAT.md) is the contract for `ONTOLOGY.json` — follow it exactly; its authority is `ontology-graph-spec.schema.json`, bundled here. [VALIDATION.md](VALIDATION.md) is the check suite to run before handing off. [MIGRATION.md](MIGRATION.md) is the procedure for updating an existing package, and `scripts/` holds the tools it and VALIDATION.md use.
+## Modes
+
+This skill tests packages on Relate, an embedded openCypher engine, as it builds them. It has two modes. Decide which from the request before doing anything else.
+
+| Mode | When | What to do |
+| ---- | ---- | ---------- |
+| **create** | The request names `create`, or gives a source to build a package from (industry links, a reference ontology, sample Cypher). | Follow the build order below. The draft is tested on Relate as it is built (steps 2 and 4). Without Relate, build it anyway: see "Without Relate". |
+| **test** | The request names `test`. | Needs Relate (see "Before you start: Relate"). Follow [TESTING.md](TESTING.md). With no package named, test every package in `catalog.json` plus any root folder holding an `ONTOLOGY.json` that the catalogue does not list. With one named, test only that package. |
+
+
+If the request is neither (for example, it asks to update an existing package), say this skill does not do that.
+
+Test mode reports problems; it never fixes them. It never edits a package and never rewrites a query to make it pass. Proposed fixes go in the report.
+
+Companion skills: [ONTOLOGY_SPEC_FORMAT.md](ONTOLOGY_SPEC_FORMAT.md) is the contract for `ONTOLOGY.json` — follow it exactly; its authority is `ontology-graph-spec.schema.json`, bundled here. [VALIDATION.md](VALIDATION.md) is the check suite to run before handing off. [TESTING.md](TESTING.md) is the test-mode procedure, and [RELATE.md](RELATE.md) records the pinned Relate version, what it can and cannot run, and the workaround for each gap. `scripts/` holds the tools VALIDATION.md and TESTING.md use. Where PACKAGE_FORMAT.md says testing against a database is manual and outside package creation, this file's step 4 replaces it — the package format itself is unchanged.
+
+## Before you start: Relate
+
+Test mode needs Relate, an embedded Cypher engine that runs as a single local binary. Many users will not have it. Check before anything else, in either mode:
+
+```bash
+python3 <skill-path>/scripts/check_relate.py
+```
+
+It installs nothing. Act on its first line:
+
+| Result | What to do |
+| ------ | ---------- |
+| `READY` | Carry on. |
+| `INSTALLED, DIFFERENT VERSION` | Tell the user which version they have and that the skill was checked against the pin in RELATE.md. If theirs is older, offer `relate upgrade`, which updates it in place to the latest release (run it only on their go-ahead), then check again. Otherwise run the probe (`python3 <skill-path>/scripts/probe_relate.py <repo-root>`, a few minutes), compare its summary with RELATE.md's capability matrix, and tell the user about any row that changed before you rely on test-mode results. Then carry on. |
+| `NOT INSTALLED` or `INSTALLED, NOT WORKING` | Tell the user, then offer the two ways forward below. |
+| `PYTHON TOO OLD` | The scripts need Python 3.9 or later. Say so; the build can continue without Relate. |
+
+When Relate is missing, explain it to the user in a few sentences, then let them choose:
+
+- **What it is and why:** test mode imports the package's sample data into a throwaway local Relate database and runs every query, so wrong queries and stale expectations are caught before handoff instead of in a manual Aura session.
+- **Install it.** Show the prerequisites `check_relate.py` printed and how to fix any marked missing (macOS or Linux, `curl`, `ssh-keygen`). The install command is:
+
+  ```bash
+  curl -sSfL https://relatedb.ai/install.sh | bash
+  ```
+
+  It downloads the latest release from the public `relatedb/relate` repository and verifies its signature and checksum before installing it to `~/.local/bin/relate`. No GitHub account is needed. **Run it only when the user says to:** it downloads and runs an installer. Then run `check_relate.py` again. The installer always takes the latest release, so once Relate moves past the pin, a fresh install is newer; handle that as `INSTALLED, DIFFERENT VERSION`. RELATE.md has the details, including Windows.
+- **Carry on without it.** In create mode the package is still built in full; see "Without Relate". Test mode has nothing to do without Relate: say so, and stop.
+
+Ask once. If the user chooses to carry on without Relate, do not raise it again until the handoff.
+
+## Without Relate
+
+Create mode works without Relate; only the query execution is lost. Build everything as the build order says, with these changes:
+
+- **Step 4 runs no test mode.** Write TESTS.md from the working note and from the CSVs alone. Every Expected figure must be derived from the CSVs, by reading them or with a short script, never estimated. The rule "never write a result that was neither observed nor derived from the CSVs" still applies; with nothing observed, every figure is derived. Write the Invariant and Expected fields as carefully as you would for a run, since they are what the manual tester will check against.
+- **VALIDATION.md section 5e is not run.** Every other check in VALIDATION.md still runs, including the static query checks in section 5 and the runtime gate.
+- **The handoff says so first.** Open the test-mode part of the handoff with: no query was executed, because Relate is not installed. List every query in QUERIES.md by its heading as needing manual testing on Aura, following TESTS.md's "How to run". Then say that installing Relate (see "Before you start: Relate") and running `test <package>` would check the queries locally.
 
 **The bundled schema is the only ontology graph spec.** Never fetch one over the network or reason from a remembered version — the bundled file is pinned deliberately, and packages are bound to it. ONTOLOGY_SPEC_FORMAT.md carries the pinned version and its provenance; every package you build declares it in `ONTOLOGY.json`'s `schema` field.
 
@@ -69,16 +122,12 @@ Complex packages may add supporting files (`.md` or `.cypher` only) when they ar
 
 Parser contract for SKILL.md: begins with YAML frontmatter delimited by `---`; `name` is 1–64 chars matching `^[a-z0-9]+(?:-[a-z0-9]+)*$`; `description` is non-empty, specific, and at most 1024 characters (it is the trigger text — state the industry, the use cases, and the capabilities); all `metadata` values are strings and the `neo4j-card-*` fields are non-empty; there is no `neo4j-graph-spec-version` key (retired — the spec version lives in `ONTOLOGY.json`); the Markdown body after frontmatter is non-empty.
 
-## Updating an existing package
-
-When the request is to update, migrate, upgrade or clean up a package that already exists, follow [MIGRATION.md](MIGRATION.md) instead of the build order below. The deliverable is one branch and one pull request against `neo4j/studio-agent-use-cases` per package. The short version: inventory the package without changing it, convert the ontology with the bundled script and prove nothing changed in meaning, fold everything outside the format into the files the format defines, present the plan and wait for approval, then execute, validate and open the PR. Preserve curated content; never rename what users depend on; never delete a file without saying where its content went.
-
 ## Inputs to gather
 
 Ask for whatever is missing, but don't block — draft and flag instead:
 
 1. **Industry links** — pages explaining the industry and use cases (neo4j.com/developer/industry-use-cases/ pages are ideal). Fetch and read them; they drive the use cases, terminology, and caveats.
-2. **Reference ontology** — ideally ontology graph spec JSON; the user may call it a model or graph model. From a description or diagram, build it yourself and mark it `TODO(review)`. From a legacy package's `GRAPH_MODEL.json`, convert it using ONTOLOGY_SPEC_FORMAT.md's "Converting a legacy graph model".
+2. **Reference ontology** — ideally ontology graph spec JSON; the user may call it a model or graph model. From a description or diagram, build it yourself and mark it `TODO(review)`.
 3. **Sample Cypher** — proven queries. If none provided, draft a small set from the use cases.
 
 Also confirm: package name (kebab-case), a one-line industry qualifier, and the primary use cases (3–5).
@@ -90,6 +139,8 @@ Each artifact constrains the next — build in this order.
 ### 1. ONTOLOGY.json
 
 Follow [ONTOLOGY_SPEC_FORMAT.md](ONTOLOGY_SPEC_FORMAT.md) exactly, and build against the bundled `ontology-graph-spec.schema.json` — read it if you need to settle a question the format doc leaves open, and never substitute a remote or remembered version. Set `schema` to the pinned spec URI, `id` to the package folder name, and `version` to `"1"` for a new package. Every property a query will touch must exist with the correct graph type; every node identifier is marked `key: true` (composite keys via an explicit `KEY` constraint); every CSV is declared in `extensions.data_source_tables` and bound in `extensions.data_source_mappings.mapping0` (`NODE`/`RELATIONSHIP`, mode `MERGE`, `key` arrays); every node gets `extensions.display` coordinates. Those three are the only extensions a package writes — no `custom`, no `indexes`, nothing else.
+
+**Place the nodes close together.** Import fits the whole reference ontology to the screen, so a spread-out layout opens zoomed so far out that the labels cannot be read — the most common layout fault in shipped packages. Lay nodes out on a grid of about 130 display units, with nodes that share relationships side by side and every pair at least 70 apart, then run `scripts/check_layout.py <package>`: it must report no `BLOCKER` or `WARN`. Where only the scale is off, `--rescale` fixes it in place. ONTOLOGY_SPEC_FORMAT.md's [Display](ONTOLOGY_SPEC_FORMAT.md#display) has the thresholds.
 
 Two rules the schema and the spec library do not enforce but the destination does, both learned the hard way: **a `must_exist`, `unique` or `key` flag goes on one entry per relationship type or label** — where a type is reused between node pairs, flag it on one entry and say "Expected on every `<TYPE>` relationship" in the others' descriptions, or the duplicate constraint names get the whole package dropped; and **parallel relationships need a mapping `key`** — several relationships of one type between the same two nodes (charging options at a site) collapse into one under `MERGE` unless the relationship mapping's `key` names the property that tells them apart. ONTOLOGY_SPEC_FORMAT.md's "Constraint flags on shared labels and types" and "Relationship mappings" have the details.
 
@@ -110,7 +161,7 @@ This confirmation happens at step 1 deliberately: once CSVs and queries exist, a
 
 One CSV per table in the spec. The header row must match the table's `columns` names exactly, in order and including case — the Import tool depends on it. **Deliberately seed the patterns the queries detect**: a fraud package contains an actual ring, a routing package contains a reachable route. Size the data so results are meaningful rather than trivial, and keep signal rows distinguishable from a realistic non-matching background. A query that returns zero rows against the sample data is a broken package, and so, less obviously, is one that returns only the seeded pattern because nothing else exists: a sample with no non-matching activity shows what the pattern looks like but never shows a filter removing anything. Where the queries search activity — transactions, encounters, claims — aim for a few thousand rows of it, the scale at which a demo starts to look like real data. Structural reference data (a bill of materials, a regulatory sourcebook) needs only as many rows as the structure being demonstrated, which is often tens. Either way, include for each filter a query applies a seeded near-miss that the earlier, broader query catches and the stricter one rejects.
 
-**Scale the entities with the activity.** Density, not row count, decides whether path and cycle queries stay usable: five thousand transactions over forty accounts puts every account in thousands of rings, and the queries stop meaning anything. Size the node counts so the broad queries return a result a person could review, check it by simulating each query over the generated CSVs before writing TESTS.md, and thin the background until it does. Generate with a seeded, deterministic script kept outside the package, and say in TESTS.md how the data was designed.
+**Scale the entities with the activity.** Density, not row count, decides whether path and cycle queries stay usable: five thousand transactions over forty accounts puts every account in thousands of rings, and the queries stop meaning anything. Size the node counts so the broad queries return a result a person could review. Once QUERIES.md and TESTS.md exist (steps 3 and 4), run test mode on the draft ([TESTING.md](TESTING.md)), use what it reports — row counts, run times, which seeded entities each query returns and which background ones leak in — to tune density and thresholds, and repeat until the queries pass. Regenerate the CSVs with the generator script, never by hand, and update TESTS.md from the new data before each re-run. Generate with a seeded, deterministic script kept outside the package, and say in TESTS.md how the data was designed.
 
 The data must also satisfy the reference ontology's annotations: every value conforms to its property's confirmed `description` (unit, encoding, scope) and to its `one_of` or `pattern`, and every relationship's counts and prose multiplicity hold. Once the CSVs exist, backfill each property description's trailing `` e.g. `...` `` with a real value taken verbatim from the mapped column — from an unremarkable background row, never a seeded ring member or anchor, because the sample is there to show a value's shape and should carry no signal.
 
@@ -170,7 +221,7 @@ The agent runs these as-is when the database matches the reference ontology and 
 - **Where a query writes an entity the reference ontology cannot declare**, say so in the preamble's prerequisites: name it, and state that it does not exist in a freshly imported database. A reader who runs the queries in isolation has no other way to know.
 - **Annotation blocks inherit the reference ontology's vocabulary.** When `@description`, `@params`, or `@usage` explains a property or relationship, use the wording, unit, scope, allowed values, and direction from its ONTOLOGY.json annotations — never a paraphrase that could drift (if the reference ontology says dose per administration in milligrams, the annotation doesn't say "daily dosage"). The reference ontology's descriptions, the query annotations, and the queries themselves must read as one coherent artifact.
 - Bound every variable-length traversal. The exception is a walk over a structure that is acyclic by construction (a bill of materials, a containment hierarchy), where a fixed bound would silently drop deep branches and report them as false results: leave it unbounded and say in `@usage` that the walk is unbounded and relies on the structure being acyclic.
-- Isolate optional APOC/GDS material in its own clearly labelled section: a divider heading such as `## Graph Data Science (optional)` carrying only section prose — the plugin requirement, the projection's lifecycle, and the order the statements run in (project, run, drop) — followed by each statement under its own `##` heading with the requirement repeated in `@prerequisites`. When the package's queries must run in a stated order, label each APOC/GDS query in place instead ("(requires APOC)" in its heading and in `@prerequisites`) rather than moving it. Algorithm queries that stream one row per node need a `$limit` or an aggregation, or they return the whole graph. Do not mark queries as unproven: testing against a database is a manual step outside package creation, and TESTS.md is what the tester works from. Do not mark queries as unproven: testing against a database is a manual step outside package creation, and TESTS.md is what the tester works from.
+- Isolate optional APOC/GDS material in its own clearly labelled section: a divider heading such as `## Graph Data Science (optional)` carrying only section prose — the plugin requirement, the projection's lifecycle, and the order the statements run in (project, run, drop) — followed by each statement under its own `##` heading with the requirement repeated in `@prerequisites`. When the package's queries must run in a stated order, label each APOC/GDS query in place instead ("(requires APOC)" in its heading and in `@prerequisites`) rather than moving it. Algorithm queries that stream one row per node need a `$limit` or an aggregation, or they return the whole graph. Do not mark queries as unproven in the package: test results live in `output/`, never in the package, and TESTS.md stays what the tester on Aura works from. Test mode skips APOC and GDS queries, so they still need that manual test.
 - **Design rationale is not query material.** Why the reference ontology diverges from a published source page, why a query differs from the one on that page — that is a line or two in SKILL.md's Reference ontology section, or a supporting rationale file if it genuinely needs more. It does not belong between the queries.
 - End with the node-key constraints implied by ONTOLOGY.json (`key: true` properties and any composite `KEY` constraints), framed as a reference for checking the live database. Import creates them from ONTOLOGY.json, so they are there to verify the expected constraints, not to build them. Section prose introduces them; the individual statements need no annotation blocks.
 
@@ -203,7 +254,13 @@ Everything concrete about the bundled sample data, in one file the runtime never
 
 Write it immediately after QUERIES.md, from the working note kept at step 2 and from reading the CSVs: it states what each query should return on the bundled data, derived from the seeded design. It is the specification the manual tester works from, the oracle VALIDATION.md checks for completeness, and the reference an engineer curating the package needs. It is exempt from the size limit — detail is free here, because none of it reaches the consuming agent.
 
-Package creation does not run the queries. Testing against a database is manual and outside this skill's scope, so do not run imports, do not mark queries as unproven, and do not invent observed results.
+When Relate is available, package creation runs test mode ([TESTING.md](TESTING.md)) on the draft as soon as QUERIES.md and TESTS.md exist, and again after every change to the data, the queries or TESTS.md. Without Relate, see "Without Relate". The rules:
+
+- **A FAIL is a blocker.** So are IMPORT-FAIL and BLOCKED. Each sends the build back: to the CSVs or the generator when the data cannot produce the pattern, to the query when the Cypher is wrong, to TESTS.md when the expectation is stale. Fix the cause and re-run; never tune TESTS.md to match a wrong result.
+- **Never write a result into TESTS.md that was not either observed in a run or derived from the CSVs.** A count you computed from the CSVs and a count test mode observed are both fine, and they should agree; say which a figure is when it matters. A figure that is neither is invented.
+- **ENGINE-GAP is not a package fault**, but say so in the handoff with the RELATE.md entry it rests on. **UNSURE** goes to the user with the evidence. **NEEDS-PARAMS** means TESTS.md's Parameters field is missing a value — add it.
+- **SKIPPED queries (APOC, GDS, fulltext) are untested.** They still need manual testing on Aura, and the handoff says so, naming each one.
+- **Test results live in `output/relate-tests/`, never in the package.** Do not add a results file, a status column or a "tested on" note to any package file; a tested package is indistinguishable from an untested one.
 
 Structure:
 
@@ -462,6 +519,6 @@ Aim for something a reader gets through in two or three minutes — roughly 400 
 
 Run [VALIDATION.md](VALIDATION.md) in full. Inconsistency between reference ontology, data, and queries is the most common failure — and annotations widen that check: descriptions, sample values, allowed values, counts, query annotations, and CSVs must all tell the same story. The second most common failure is now sample-data detail leaking into a file the consuming agent reads; check QUERIES.md and SKILL.md for it specifically.
 
-Your handoff summary must list every remaining `TODO(review):` with its path (including `inferred description` items the user hasn't confirmed), whether the reference ontology validated against the bundled schema, passed the spec-library check (and with which npm release), and was accepted by the destination runtime — registration and Import conversion both — the ontology graph spec version its `schema` field declares, any agent-loadable file near the 50,000-character limit, whether `human_description.md` covers every node, relationship and property in the reference ontology, and any assumption that needs domain-owner review. In `neo4j/studio-agent-use-cases`, also run `scripts/validate-new-packages.py` and the unit tests, which CI runs on the pull request.
+Your handoff summary must give the final test-mode summary — the run folder, the per-package table, one line for every FAIL, ENGINE-GAP, UNSURE and IMPORT-FAIL, every SKIPPED query that still needs manual testing on Aura, and the Relate version; or, without Relate, the statement that no query was executed and the list of every query needing manual testing on Aura — and must list every remaining `TODO(review):` with its path (including `inferred description` items the user hasn't confirmed), whether the reference ontology validated against the bundled schema, passed the spec-library check (and with which npm release), and was accepted by the destination runtime — registration and Import conversion both — the ontology graph spec version its `schema` field declares, the layout metrics `check_layout.py` reported, any agent-loadable file near the 50,000-character limit, whether `human_description.md` covers every node, relationship and property in the reference ontology, and any assumption that needs domain-owner review. In `neo4j/studio-agent-use-cases`, also run `scripts/validate-new-packages.py` and the unit tests, which CI runs on the pull request.
 
 `human_description.md` is the one part of the package nothing downstream verifies — no schema rejects it, no query fails against it, and no agent ever reads it back. Say plainly in the handoff that it needs a human read before the package ships.

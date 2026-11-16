@@ -71,7 +71,6 @@ Choose the category that best represents the card, and never invent a value — 
 - `description` must be non-empty and at most 1024 characters.
 - `metadata` values must be strings.
 - All three `neo4j-card-*` fields — `title`, `category`, `description` — are required and non-empty, and `category` must be one of the allowed values above, matched exactly.
-- No `neo4j-icon-category` or `neo4j-graph-spec-version` key is present.
 - Markdown after frontmatter must be non-empty.
 
 ### The role map
@@ -256,8 +255,6 @@ Use [ONTOLOGY_SPEC_FORMAT.md](ONTOLOGY_SPEC_FORMAT.md) for the complete field-by
 The consuming agent should treat these annotations as the authoritative meaning of each term — when explaining the reference ontology, adapting queries to user data, or generating new Cypher, its wording must agree with them.
 
 Note that the trailing `` e.g. `...` `` sample values are the one place sample data legitimately reaches the consuming agent. They are there to show the shape of a value, not to describe the user's data, and an agent should read them as such.
-
-Packages built before the ontology graph spec ship a `GRAPH_MODEL.json` in the older graph-spec format. ONTOLOGY_SPEC_FORMAT.md's "Converting a legacy graph model" maps every old field to its replacement.
 
 ### Minimal two-node pattern
 
