@@ -280,6 +280,43 @@
         ],
         "markdown": "SKILL.md"
       }
+    },
+    {
+      "skillId": "multi-omics",
+      "files": {
+        "graph": "ONTOLOGY.json",
+        "skill": [
+          "sample-data/comparison_diseases.csv",
+          "sample-data/comparison_experiments.csv",
+          "sample-data/comparison_samples.csv",
+          "sample-data/comparisons.csv",
+          "sample-data/disease_pathways.csv",
+          "sample-data/diseases.csv",
+          "sample-data/experiment_samples.csv",
+          "sample-data/experiments.csv",
+          "sample-data/gene_differentials.csv",
+          "sample-data/gene_diseases.csv",
+          "sample-data/gene_values.csv",
+          "sample-data/genes.csv",
+          "sample-data/go_terms.csv",
+          "sample-data/pathways.csv",
+          "sample-data/phenotypes.csv",
+          "sample-data/projects.csv",
+          "sample-data/protein_differentials.csv",
+          "sample-data/protein_go.csv",
+          "sample-data/protein_interactions.csv",
+          "sample-data/protein_pathways.csv",
+          "sample-data/protein_values.csv",
+          "sample-data/proteins.csv",
+          "sample-data/sample_phenotypes.csv",
+          "sample-data/samples.csv",
+          "sample-data/tissues.csv",
+          "human_description.md",
+          "QUERIES.md",
+          "TESTS.md"
+        ],
+        "markdown": "SKILL.md"
+      }
     }
   ]
 }

@@ -1,0 +1,844 @@
+{
+  "schema": "https://neo4j.com/docs/ontology-graph-spec/1.0.0/schema.json",
+  "id": "multi-omics",
+  "version": "1",
+  "name": "Multi-Omics Data Integration",
+  "description": "Relates research samples, the transcriptomics and proteomics experiments that assay them and the case-control comparisons that analyse them to the genes and proteins those comparisons find changed, and to diseases, phenotypes, Gene Ontology terms, pathways and protein interactions, so transcript and protein evidence can be read side by side for target discovery and pathway analysis.",
+  "nodes": {
+    "Project": {
+      "label": "Project",
+      "description": "A research study or programme that groups the samples collected under one protocol, such as a biopsy cohort or an organ-donor islet collection.",
+      "aliases": ["Study", "Cohort"],
+      "properties": {
+        "projectId": {
+          "type": "STRING",
+          "description": "Identifier of the project, unique within the database. e.g. `PRJ-ADIPOSE`.",
+          "key": true
+        },
+        "name": {"type": "STRING", "description": "Human-readable title of the project."}
+      },
+      "extensions": {"display": {"x": -750, "y": -450}}
+    },
+    "Sample": {
+      "label": "Sample",
+      "description": "A biological specimen taken from one donor, at one time, from one tissue. One or more omics experiments assay it, and comparisons place it in a case or control group.",
+      "aliases": ["Specimen", "Biosample"],
+      "properties": {
+        "sampleId": {
+          "type": "STRING",
+          "description": "Identifier of the sample, unique within the database. e.g. `S-ADI-020`.",
+          "key": true
+        },
+        "donorId": {
+          "type": "STRING",
+          "description": "Pseudonymous identifier of the donor (patient, volunteer or organ donor) the sample came from. One donor may give samples from several tissues, which share this value. Never a name or medical record number. e.g. `D040`."
+        }
+      },
+      "extensions": {"display": {"x": -400, "y": -450}}
+    },
+    "Tissue": {
+      "label": "Tissue",
+      "description": "The anatomical tissue or structure a sample is taken from, identified by its UBERON (Uber-anatomy Ontology) term.",
+      "aliases": ["Anatomical site"],
+      "properties": {
+        "uberonId": {
+          "type": "STRING",
+          "description": "UBERON term CURIE for the tissue: `UBERON:` followed by seven digits. e.g. `UBERON:0002107`.",
+          "key": true,
+          "pattern": "^UBERON:[0-9]{7}$"
+        },
+        "name": {"type": "STRING", "description": "UBERON label of the tissue."}
+      },
+      "extensions": {"display": {"x": -400, "y": -750}}
+    },
+    "Phenotype": {
+      "label": "Phenotype",
+      "description": "A clinical trait or phenotypic abnormality observed in a sample's donor, as a term from the Experimental Factor Ontology (EFO) or from the ontologies EFO draws its traits from (the Human Phenotype Ontology, HP, and MONDO).",
+      "aliases": ["Trait", "Clinical feature", "EFO trait"],
+      "properties": {
+        "phenotypeId": {
+          "type": "STRING",
+          "description": "CURIE of the phenotype term: an EFO, HP or MONDO prefix, a colon and seven digits. e.g. `HP:0001513`.",
+          "key": true,
+          "pattern": "^(EFO|HP|MONDO):[0-9]{7}$"
+        },
+        "name": {"type": "STRING", "description": "Label of the phenotype term."}
+      },
+      "extensions": {"display": {"x": -750, "y": -750}}
+    },
+    "Experiment": {
+      "label": "Experiment",
+      "description": "One omics profiling run: a set of samples assayed together on one platform with one method, producing a quantity for every gene (transcriptomics) or protein (proteomics) it detects.",
+      "aliases": ["Assay", "Omics dataset"],
+      "properties": {
+        "experimentId": {
+          "type": "STRING",
+          "description": "Identifier of the experiment, unique within the database. e.g. `EXP-ADI-RNA`.",
+          "key": true
+        },
+        "name": {"type": "STRING", "description": "Human-readable title of the experiment."},
+        "omicsLayer": {
+          "type": "STRING",
+          "description": "Molecular layer the experiment measures: `transcriptomics` (mRNA abundance, recorded on genes) or `proteomics` (protein abundance, recorded on proteins). e.g. `transcriptomics`.",
+          "must_exist": true,
+          "one_of": ["transcriptomics", "proteomics"]
+        },
+        "platform": {
+          "type": "STRING",
+          "description": "Instrument the experiment ran on, as the manufacturer's model name. e.g. `Illumina NovaSeq 6000`."
+        },
+        "method": {
+          "type": "STRING",
+          "description": "Library preparation or acquisition method, such as poly(A) RNA-seq, TMT labelling, label-free data-dependent acquisition (DDA) or DIA-PASEF. Quantities from different methods are not directly comparable. e.g. `poly(A) RNA-seq`."
+        }
+      },
+      "extensions": {"display": {"x": 100, "y": -450}}
+    },
+    "Comparison": {
+      "label": "Comparison",
+      "description": "A statistical contrast between case and control samples: a differential expression or differential abundance analysis, whose results are the genes and proteins it finds changed.",
+      "aliases": ["Contrast", "Differential analysis"],
+      "properties": {
+        "comparisonId": {
+          "type": "STRING",
+          "description": "Identifier of the comparison, unique within the database. e.g. `CMP-ADI-METS`.",
+          "key": true
+        },
+        "name": {"type": "STRING", "description": "Human-readable description of the contrast, cases first."},
+        "comparisonType": {
+          "type": "STRING",
+          "description": "Design of the contrast, in snake case: for example `disease_vs_control`, `disease_severity` (more against less severe disease) or `phenotype_stratified` (donors with against without a phenotype). e.g. `disease_vs_control`."
+        }
+      },
+      "extensions": {"display": {"x": -150, "y": -150}}
+    },
+    "Gene": {
+      "label": "Gene",
+      "description": "A protein-coding gene, identified by its Ensembl stable gene ID: the unit transcriptomics measures and the unit disease associations attach to.",
+      "properties": {
+        "ensemblId": {
+          "type": "STRING",
+          "description": "Ensembl stable gene ID for the human gene, without a version suffix. e.g. `ENSG00000075624`.",
+          "key": true,
+          "pattern": "^ENSG[0-9]{11}$"
+        },
+        "symbol": {"type": "STRING", "description": "HGNC-approved gene symbol. e.g. `ACTB`.", "must_exist": true},
+        "name": {"type": "STRING", "description": "HGNC-approved gene name."},
+        "hgncId": {
+          "type": "STRING",
+          "description": "HGNC identifier: `HGNC:` followed by digits. e.g. `HGNC:132`.",
+          "pattern": "^HGNC:[0-9]+$"
+        },
+        "ncbiGeneId": {
+          "type": "STRING",
+          "description": "NCBI Gene (Entrez Gene) identifier, digits only. Held as text, since it is an identifier rather than a number. e.g. `60`.",
+          "pattern": "^[0-9]+$"
+        }
+      },
+      "extensions": {"display": {"x": -150, "y": 200}}
+    },
+    "Protein": {
+      "label": "Protein",
+      "description": "A protein, identified by its UniProtKB accession for the reviewed, canonical entry of the gene that encodes it: the unit proteomics measures, annotates and connects in interaction networks.",
+      "aliases": ["Gene product", "Protein group"],
+      "properties": {
+        "uniprotId": {
+          "type": "STRING",
+          "description": "UniProtKB accession, without an isoform suffix. e.g. `P60709`.",
+          "key": true,
+          "pattern": "^([OPQ][0-9][A-Z0-9]{3}[0-9]|[A-NR-Z][0-9]([A-Z][A-Z0-9]{2}[0-9]){1,2})$"
+        },
+        "name": {"type": "STRING", "description": "UniProt recommended protein name."}
+      },
+      "extensions": {"display": {"x": 300, "y": 200}}
+    },
+    "Disease": {
+      "label": "Disease",
+      "description": "A disease or disorder, identified by its MONDO (Mondo Disease Ontology) term, that comparisons study and genes are associated with.",
+      "aliases": ["Condition", "Indication"],
+      "properties": {
+        "mondoId": {
+          "type": "STRING",
+          "description": "MONDO term CURIE: `MONDO:` followed by seven digits. e.g. `MONDO:0005311`.",
+          "key": true,
+          "pattern": "^MONDO:[0-9]{7}$"
+        },
+        "name": {
+          "type": "STRING",
+          "description": "MONDO label of the disease. MONDO follows current nomenclature: metabolic dysfunction-associated steatotic liver disease (MASLD) is the term for what was called non-alcoholic fatty liver disease (NAFLD), and MASH for non-alcoholic steatohepatitis (NASH)."
+        }
+      },
+      "extensions": {"display": {"x": -600, "y": 200}}
+    },
+    "GOTerm": {
+      "label": "GOTerm",
+      "description": "A Gene Ontology (GO) term: a biological process, molecular function or cellular component that proteins are annotated with.",
+      "aliases": ["GO term", "Gene Ontology term"],
+      "properties": {
+        "goId": {
+          "type": "STRING",
+          "description": "GO term CURIE: `GO:` followed by seven digits. e.g. `GO:0006412`.",
+          "key": true,
+          "pattern": "^GO:[0-9]{7}$"
+        },
+        "name": {"type": "STRING", "description": "GO label of the term."},
+        "aspect": {
+          "type": "STRING",
+          "description": "The GO aspect, or sub-ontology, the term belongs to. e.g. `biological_process`.",
+          "must_exist": true,
+          "one_of": ["biological_process", "molecular_function", "cellular_component"]
+        }
+      },
+      "extensions": {"display": {"x": 650, "y": 450}}
+    },
+    "Pathway": {
+      "label": "Pathway",
+      "description": "A curated biological pathway, a connected set of reactions and interactions, that proteins participate in.",
+      "properties": {
+        "pathwayId": {
+          "type": "STRING",
+          "description": "Stable identifier of the pathway in its source database, such as a Reactome stable ID (`R-HSA-` and digits for a human pathway). e.g. `R-HSA-70171`.",
+          "key": true
+        },
+        "name": {"type": "STRING", "description": "Name of the pathway in its source database."},
+        "source": {
+          "type": "STRING",
+          "description": "Pathway database the pathway comes from, such as Reactome, WikiPathways or KEGG. e.g. `Reactome`."
+        }
+      },
+      "extensions": {"display": {"x": -150, "y": 550}}
+    }
+  },
+  "relationships": {
+    "projectHasSample": {
+      "type": "HAS_SAMPLE",
+      "description": "The project collected the sample. Every sample belongs to exactly one project; a project has one or more samples.",
+      "from": {"node": "Project", "min_count": 1},
+      "to": {"node": "Sample", "count": 1}
+    },
+    "sampleTakenFrom": {
+      "type": "TAKEN_FROM",
+      "description": "The sample was taken from the tissue. Every sample comes from exactly one tissue; a tissue may be the source of many samples, or of none.",
+      "from": {"node": "Sample", "count": 1},
+      "to": {"node": "Tissue"}
+    },
+    "sampleHasPhenotype": {
+      "type": "HAS_PHENOTYPE",
+      "description": "The sample's donor showed the phenotype when the sample was taken. A sample may carry several phenotypes or none; a phenotype may be carried by many samples, or by none.",
+      "from": {"node": "Sample"},
+      "to": {"node": "Phenotype"}
+    },
+    "sampleHasExperiment": {
+      "type": "HAS_EXPERIMENT",
+      "description": "The sample was assayed in the experiment. A sample may be assayed in several experiments, typically one per omics layer or platform, or in none; every experiment assays at least one sample.",
+      "aliases": ["Assayed in"],
+      "from": {"node": "Sample"},
+      "to": {"node": "Experiment", "min_count": 1}
+    },
+    "comparisonCompares": {
+      "type": "COMPARES",
+      "description": "The comparison analysed data from the experiment: its gene results come from its transcriptomics experiment and its protein results from its proteomics experiment, normally one experiment per omics layer. Every comparison compares at least one experiment; an experiment may feed several comparisons.",
+      "from": {"node": "Comparison", "min_count": 1},
+      "to": {"node": "Experiment"}
+    },
+    "comparisonIncludes": {
+      "type": "INCLUDES",
+      "description": "The comparison included the sample, in its case or its control group. Every comparison includes at least two samples, at least one in each group; a sample may be included in several comparisons, in a different group in each, or in none.",
+      "from": {"node": "Comparison", "min_count": 2},
+      "to": {"node": "Sample"},
+      "properties": {
+        "group": {
+          "type": "STRING",
+          "description": "The group the sample belongs to in this comparison: `case` (the condition of interest) or `control` (the reference). Fold changes are cases over controls. e.g. `control`.",
+          "must_exist": true,
+          "one_of": ["case", "control"]
+        }
+      }
+    },
+    "comparisonStudiesDisease": {
+      "type": "STUDIES_DISEASE",
+      "description": "The comparison studies the disease: its cases have the disease, or a more severe form of it, and its controls do not. A comparison usually studies one disease and may study none (one stratified by a phenotype instead); a disease may be studied by many comparisons, or by none.",
+      "from": {"node": "Comparison"},
+      "to": {"node": "Disease"}
+    },
+    "experimentMeasuresGene": {
+      "type": "HAS_VALUE",
+      "description": "The transcriptomics experiment detected and quantified the gene's transcripts. It exists only for genes the experiment detected, so its absence means not measured rather than unchanged. An experiment measures many genes; a gene may be measured by many experiments. The same type links proteomics experiments to proteins, with different properties.",
+      "aliases": ["Measurement", "Expression value"],
+      "from": {"node": "Experiment"},
+      "to": {"node": "Gene"},
+      "properties": {
+        "baseMean": {
+          "type": "FLOAT",
+          "description": "Mean of the normalised read counts (DESeq2 size-factor normalised) for the gene across all of the experiment's samples: how strongly the gene is expressed, not how much it changed. Only on transcriptomics measurements. e.g. `13719.8`."
+        }
+      }
+    },
+    "experimentMeasuresProtein": {
+      "type": "HAS_VALUE",
+      "description": "The proteomics experiment detected and quantified the protein. It exists only for proteins the experiment detected, so its absence means not measured rather than unchanged. An experiment measures many proteins; a protein may be measured by many experiments. The same type links transcriptomics experiments to genes, with different properties.",
+      "aliases": ["Measurement", "Abundance value"],
+      "from": {"node": "Experiment"},
+      "to": {"node": "Protein"},
+      "properties": {
+        "intensity": {
+          "type": "FLOAT",
+          "description": "Mean normalised protein intensity across the experiment's samples, on a linear scale in arbitrary units. Comparable within one experiment only, not across platforms or methods. Only on proteomics measurements. e.g. `4798627`."
+        },
+        "peptides": {
+          "type": "INTEGER",
+          "description": "Number of unique peptides identified for the protein in the experiment. Only on proteomics measurements. e.g. `15`."
+        },
+        "coverage": {
+          "type": "FLOAT",
+          "description": "Percentage of the protein's sequence covered by the identified peptides, from 0 to 100. Only on proteomics measurements. e.g. `45.4`."
+        }
+      }
+    },
+    "comparisonFoundGene": {
+      "type": "FOUND_DIFFERENTIAL",
+      "description": "The comparison found the gene's transcript abundance different between cases and controls at a nominal p-value below 0.05. Absence of the relationship means the gene was not tested (no HAS_VALUE from the comparison's transcriptomics experiment) or did not reach that cutoff; stricter cutoffs on adjPValue and logFC are the reader's to apply. A comparison may find many genes and a gene may be found by many comparisons, at most once each. The same type links comparisons to proteins, for the proteomics layer, with the same properties.",
+      "aliases": ["Differential expression result", "DE result"],
+      "from": {"node": "Comparison"},
+      "to": {"node": "Gene"},
+      "properties": {
+        "logFC": {
+          "type": "FLOAT",
+          "description": "Log2 fold change in abundance, cases over controls: positive means higher in cases, and 1 means twofold. e.g. `-0.855`.",
+          "must_exist": true
+        },
+        "pValue": {
+          "type": "FLOAT",
+          "description": "Nominal p-value of the comparison's test for this feature; below 0.05 on every stored result. e.g. `4.18e-07`.",
+          "must_exist": true
+        },
+        "adjPValue": {
+          "type": "FLOAT",
+          "description": "Benjamini-Hochberg adjusted p-value (false discovery rate), corrected across every feature the comparison tested in this omics layer. e.g. `1.95e-05`.",
+          "must_exist": true
+        }
+      }
+    },
+    "comparisonFoundProtein": {
+      "type": "FOUND_DIFFERENTIAL",
+      "description": "The comparison found the protein's abundance different between cases and controls at a nominal p-value below 0.05. Absence of the relationship means the protein was not tested (no HAS_VALUE from the comparison's proteomics experiment) or did not reach that cutoff; stricter cutoffs on adjPValue and logFC are the reader's to apply. A comparison may find many proteins and a protein may be found by many comparisons, at most once each. The same type links comparisons to genes, for the transcriptomics layer, with the same properties.",
+      "aliases": ["Differential abundance result", "DA result"],
+      "from": {"node": "Comparison"},
+      "to": {"node": "Protein"},
+      "properties": {
+        "logFC": {
+          "type": "FLOAT",
+          "description": "Log2 fold change in abundance, cases over controls: positive means higher in cases, and 1 means twofold. Expected on every FOUND_DIFFERENTIAL relationship. e.g. `-0.524`."
+        },
+        "pValue": {
+          "type": "FLOAT",
+          "description": "Nominal p-value of the comparison's test for this feature; below 0.05 on every stored result. Expected on every FOUND_DIFFERENTIAL relationship. e.g. `0.0263`."
+        },
+        "adjPValue": {
+          "type": "FLOAT",
+          "description": "Benjamini-Hochberg adjusted p-value (false discovery rate), corrected across every feature the comparison tested in this omics layer. Expected on every FOUND_DIFFERENTIAL relationship. e.g. `0.204`."
+        }
+      }
+    },
+    "geneCodesProtein": {
+      "type": "CODES",
+      "description": "The gene encodes the protein. Every protein is encoded by exactly one gene; a gene encodes one or more proteins, or none in the database.",
+      "aliases": ["Encodes"],
+      "from": {"node": "Gene"},
+      "to": {"node": "Protein", "count": 1}
+    },
+    "geneRelatedToDisease": {
+      "type": "RELATED_TO",
+      "description": "The gene is associated with the disease in curated knowledge (genetic association, a drug target, animal models, the literature), as integrated by resources such as Open Targets or DisGeNET. A gene may be associated with many diseases and a disease with many genes, at most once per pair. No relationship means no recorded association, not evidence against one.",
+      "aliases": ["Gene-disease association"],
+      "from": {"node": "Gene"},
+      "to": {"node": "Disease"},
+      "properties": {
+        "score": {
+          "type": "FLOAT",
+          "description": "Overall association score from 0 to 1; higher means stronger evidence. Scores from different resources are not on one scale. e.g. `0.80`.",
+          "must_exist": true
+        },
+        "evidenceType": {
+          "type": "STRING",
+          "description": "Strongest type of evidence behind the association, in Open Targets' data-type names: for example `genetic_association`, `known_drug`, `literature`, `animal_model`, `rna_expression`, `affected_pathway` or `somatic_mutation`. e.g. `genetic_association`."
+        }
+      }
+    },
+    "proteinAssociatedWithGO": {
+      "type": "ASSOCIATED_WITH",
+      "description": "The protein is annotated with the Gene Ontology term. A protein may carry many terms, or none; a term may annotate many proteins.",
+      "aliases": ["GO annotation"],
+      "from": {"node": "Protein"},
+      "to": {"node": "GOTerm"}
+    },
+    "proteinInteractsWith": {
+      "type": "INTERACTS_WITH",
+      "description": "The two proteins interact, physically or functionally, as a protein-protein interaction network such as STRING records. Interaction is symmetric: each pair is stored once, in an arbitrary direction, so read it in both directions. A protein may have many partners, or none.",
+      "aliases": ["Protein-protein interaction", "PPI"],
+      "from": {"node": "Protein"},
+      "to": {"node": "Protein"},
+      "properties": {
+        "score": {
+          "type": "FLOAT",
+          "description": "Combined confidence score of the interaction from 0 to 1 (STRING's combined score divided by 1000). STRING calls 0.7 and above high confidence and 0.4 and above medium. e.g. `0.763`.",
+          "must_exist": true
+        }
+      }
+    },
+    "proteinParticipatesIn": {
+      "type": "PARTICIPATES_IN",
+      "description": "The protein takes part in the pathway. A protein may take part in many pathways, or none; a pathway has many participants.",
+      "aliases": ["Pathway membership"],
+      "from": {"node": "Protein"},
+      "to": {"node": "Pathway"}
+    },
+    "diseaseInvolvesPathway": {
+      "type": "INVOLVES_PATHWAY",
+      "description": "Curated knowledge implicates the pathway in the disease's mechanism. A disease may involve many pathways and a pathway may be implicated in many diseases.",
+      "from": {"node": "Disease"},
+      "to": {"node": "Pathway"}
+    }
+  },
+  "extensions": {
+    "data_source_tables": {
+      "projects.csv": {
+        "source": "local",
+        "columns": [{"name": "projectId", "type": "string"}, {"name": "name", "type": "string"}]
+      },
+      "samples.csv": {
+        "source": "local",
+        "columns": [
+          {"name": "sampleId", "type": "string"},
+          {"name": "donorId", "type": "string"},
+          {"name": "projectId", "type": "string"},
+          {"name": "uberonId", "type": "string"}
+        ]
+      },
+      "tissues.csv": {
+        "source": "local",
+        "columns": [{"name": "uberonId", "type": "string"}, {"name": "name", "type": "string"}]
+      },
+      "phenotypes.csv": {
+        "source": "local",
+        "columns": [{"name": "phenotypeId", "type": "string"}, {"name": "name", "type": "string"}]
+      },
+      "experiments.csv": {
+        "source": "local",
+        "columns": [
+          {"name": "experimentId", "type": "string"},
+          {"name": "name", "type": "string"},
+          {"name": "omicsLayer", "type": "string"},
+          {"name": "platform", "type": "string"},
+          {"name": "method", "type": "string"}
+        ]
+      },
+      "comparisons.csv": {
+        "source": "local",
+        "columns": [
+          {"name": "comparisonId", "type": "string"},
+          {"name": "name", "type": "string"},
+          {"name": "comparisonType", "type": "string"}
+        ]
+      },
+      "genes.csv": {
+        "source": "local",
+        "columns": [
+          {"name": "ensemblId", "type": "string"},
+          {"name": "symbol", "type": "string"},
+          {"name": "name", "type": "string"},
+          {"name": "hgncId", "type": "string"},
+          {"name": "ncbiGeneId", "type": "string"}
+        ]
+      },
+      "proteins.csv": {
+        "source": "local",
+        "columns": [
+          {"name": "uniprotId", "type": "string"},
+          {"name": "name", "type": "string"},
+          {"name": "ensemblId", "type": "string"}
+        ]
+      },
+      "diseases.csv": {"source": "local", "columns": [{"name": "mondoId", "type": "string"}, {"name": "name", "type": "string"}]},
+      "go_terms.csv": {
+        "source": "local",
+        "columns": [
+          {"name": "goId", "type": "string"},
+          {"name": "name", "type": "string"},
+          {"name": "aspect", "type": "string"}
+        ]
+      },
+      "pathways.csv": {
+        "source": "local",
+        "columns": [
+          {"name": "pathwayId", "type": "string"},
+          {"name": "name", "type": "string"},
+          {"name": "source", "type": "string"}
+        ]
+      },
+      "sample_phenotypes.csv": {
+        "source": "local",
+        "columns": [{"name": "sampleId", "type": "string"}, {"name": "phenotypeId", "type": "string"}]
+      },
+      "experiment_samples.csv": {
+        "source": "local",
+        "columns": [{"name": "sampleId", "type": "string"}, {"name": "experimentId", "type": "string"}]
+      },
+      "comparison_experiments.csv": {
+        "source": "local",
+        "columns": [{"name": "comparisonId", "type": "string"}, {"name": "experimentId", "type": "string"}]
+      },
+      "comparison_samples.csv": {
+        "source": "local",
+        "columns": [
+          {"name": "comparisonId", "type": "string"},
+          {"name": "sampleId", "type": "string"},
+          {"name": "group", "type": "string"}
+        ]
+      },
+      "comparison_diseases.csv": {
+        "source": "local",
+        "columns": [{"name": "comparisonId", "type": "string"}, {"name": "mondoId", "type": "string"}]
+      },
+      "gene_values.csv": {
+        "source": "local",
+        "columns": [
+          {"name": "experimentId", "type": "string"},
+          {"name": "ensemblId", "type": "string"},
+          {"name": "baseMean", "type": "string"}
+        ]
+      },
+      "protein_values.csv": {
+        "source": "local",
+        "columns": [
+          {"name": "experimentId", "type": "string"},
+          {"name": "uniprotId", "type": "string"},
+          {"name": "intensity", "type": "string"},
+          {"name": "peptides", "type": "string"},
+          {"name": "coverage", "type": "string"}
+        ]
+      },
+      "gene_differentials.csv": {
+        "source": "local",
+        "columns": [
+          {"name": "comparisonId", "type": "string"},
+          {"name": "ensemblId", "type": "string"},
+          {"name": "logFC", "type": "string"},
+          {"name": "pValue", "type": "string"},
+          {"name": "adjPValue", "type": "string"}
+        ]
+      },
+      "protein_differentials.csv": {
+        "source": "local",
+        "columns": [
+          {"name": "comparisonId", "type": "string"},
+          {"name": "uniprotId", "type": "string"},
+          {"name": "logFC", "type": "string"},
+          {"name": "pValue", "type": "string"},
+          {"name": "adjPValue", "type": "string"}
+        ]
+      },
+      "gene_diseases.csv": {
+        "source": "local",
+        "columns": [
+          {"name": "ensemblId", "type": "string"},
+          {"name": "mondoId", "type": "string"},
+          {"name": "score", "type": "string"},
+          {"name": "evidenceType", "type": "string"}
+        ]
+      },
+      "protein_go.csv": {
+        "source": "local",
+        "columns": [{"name": "uniprotId", "type": "string"}, {"name": "goId", "type": "string"}]
+      },
+      "protein_interactions.csv": {
+        "source": "local",
+        "columns": [
+          {"name": "uniprotIdA", "type": "string"},
+          {"name": "uniprotIdB", "type": "string"},
+          {"name": "score", "type": "string"}
+        ]
+      },
+      "protein_pathways.csv": {
+        "source": "local",
+        "columns": [{"name": "uniprotId", "type": "string"}, {"name": "pathwayId", "type": "string"}]
+      },
+      "disease_pathways.csv": {
+        "source": "local",
+        "columns": [{"name": "mondoId", "type": "string"}, {"name": "pathwayId", "type": "string"}]
+      }
+    },
+    "data_source_mappings": {
+      "mapping0": [
+        {
+          "type": "NODE",
+          "node": "Project",
+          "table": "projects.csv",
+          "mode": "MERGE",
+          "key": ["projectId"],
+          "properties": {"projectId": {"column": "projectId"}, "name": {"column": "name"}}
+        },
+        {
+          "type": "NODE",
+          "node": "Sample",
+          "table": "samples.csv",
+          "mode": "MERGE",
+          "key": ["sampleId"],
+          "properties": {"sampleId": {"column": "sampleId"}, "donorId": {"column": "donorId"}}
+        },
+        {
+          "type": "NODE",
+          "node": "Tissue",
+          "table": "tissues.csv",
+          "mode": "MERGE",
+          "key": ["uberonId"],
+          "properties": {"uberonId": {"column": "uberonId"}, "name": {"column": "name"}}
+        },
+        {
+          "type": "NODE",
+          "node": "Phenotype",
+          "table": "phenotypes.csv",
+          "mode": "MERGE",
+          "key": ["phenotypeId"],
+          "properties": {"phenotypeId": {"column": "phenotypeId"}, "name": {"column": "name"}}
+        },
+        {
+          "type": "NODE",
+          "node": "Experiment",
+          "table": "experiments.csv",
+          "mode": "MERGE",
+          "key": ["experimentId"],
+          "properties": {
+            "experimentId": {"column": "experimentId"},
+            "name": {"column": "name"},
+            "omicsLayer": {"column": "omicsLayer"},
+            "platform": {"column": "platform"},
+            "method": {"column": "method"}
+          }
+        },
+        {
+          "type": "NODE",
+          "node": "Comparison",
+          "table": "comparisons.csv",
+          "mode": "MERGE",
+          "key": ["comparisonId"],
+          "properties": {
+            "comparisonId": {"column": "comparisonId"},
+            "name": {"column": "name"},
+            "comparisonType": {"column": "comparisonType"}
+          }
+        },
+        {
+          "type": "NODE",
+          "node": "Gene",
+          "table": "genes.csv",
+          "mode": "MERGE",
+          "key": ["ensemblId"],
+          "properties": {
+            "ensemblId": {"column": "ensemblId"},
+            "symbol": {"column": "symbol"},
+            "name": {"column": "name"},
+            "hgncId": {"column": "hgncId"},
+            "ncbiGeneId": {"column": "ncbiGeneId"}
+          }
+        },
+        {
+          "type": "NODE",
+          "node": "Protein",
+          "table": "proteins.csv",
+          "mode": "MERGE",
+          "key": ["uniprotId"],
+          "properties": {"uniprotId": {"column": "uniprotId"}, "name": {"column": "name"}}
+        },
+        {
+          "type": "NODE",
+          "node": "Disease",
+          "table": "diseases.csv",
+          "mode": "MERGE",
+          "key": ["mondoId"],
+          "properties": {"mondoId": {"column": "mondoId"}, "name": {"column": "name"}}
+        },
+        {
+          "type": "NODE",
+          "node": "GOTerm",
+          "table": "go_terms.csv",
+          "mode": "MERGE",
+          "key": ["goId"],
+          "properties": {"goId": {"column": "goId"}, "name": {"column": "name"}, "aspect": {"column": "aspect"}}
+        },
+        {
+          "type": "NODE",
+          "node": "Pathway",
+          "table": "pathways.csv",
+          "mode": "MERGE",
+          "key": ["pathwayId"],
+          "properties": {"pathwayId": {"column": "pathwayId"}, "name": {"column": "name"}, "source": {"column": "source"}}
+        },
+        {
+          "type": "RELATIONSHIP",
+          "relationship": "projectHasSample",
+          "table": "samples.csv",
+          "mode": "MERGE",
+          "key": [],
+          "from_node": {"label": "Project", "properties": {"projectId": {"column": "projectId"}}},
+          "to_node": {"label": "Sample", "properties": {"sampleId": {"column": "sampleId"}}}
+        },
+        {
+          "type": "RELATIONSHIP",
+          "relationship": "sampleTakenFrom",
+          "table": "samples.csv",
+          "mode": "MERGE",
+          "key": [],
+          "from_node": {"label": "Sample", "properties": {"sampleId": {"column": "sampleId"}}},
+          "to_node": {"label": "Tissue", "properties": {"uberonId": {"column": "uberonId"}}}
+        },
+        {
+          "type": "RELATIONSHIP",
+          "relationship": "sampleHasPhenotype",
+          "table": "sample_phenotypes.csv",
+          "mode": "MERGE",
+          "key": [],
+          "from_node": {"label": "Sample", "properties": {"sampleId": {"column": "sampleId"}}},
+          "to_node": {"label": "Phenotype", "properties": {"phenotypeId": {"column": "phenotypeId"}}}
+        },
+        {
+          "type": "RELATIONSHIP",
+          "relationship": "sampleHasExperiment",
+          "table": "experiment_samples.csv",
+          "mode": "MERGE",
+          "key": [],
+          "from_node": {"label": "Sample", "properties": {"sampleId": {"column": "sampleId"}}},
+          "to_node": {"label": "Experiment", "properties": {"experimentId": {"column": "experimentId"}}}
+        },
+        {
+          "type": "RELATIONSHIP",
+          "relationship": "comparisonCompares",
+          "table": "comparison_experiments.csv",
+          "mode": "MERGE",
+          "key": [],
+          "from_node": {"label": "Comparison", "properties": {"comparisonId": {"column": "comparisonId"}}},
+          "to_node": {"label": "Experiment", "properties": {"experimentId": {"column": "experimentId"}}}
+        },
+        {
+          "type": "RELATIONSHIP",
+          "relationship": "comparisonIncludes",
+          "table": "comparison_samples.csv",
+          "mode": "MERGE",
+          "key": [],
+          "from_node": {"label": "Comparison", "properties": {"comparisonId": {"column": "comparisonId"}}},
+          "to_node": {"label": "Sample", "properties": {"sampleId": {"column": "sampleId"}}},
+          "properties": {"group": {"column": "group"}}
+        },
+        {
+          "type": "RELATIONSHIP",
+          "relationship": "comparisonStudiesDisease",
+          "table": "comparison_diseases.csv",
+          "mode": "MERGE",
+          "key": [],
+          "from_node": {"label": "Comparison", "properties": {"comparisonId": {"column": "comparisonId"}}},
+          "to_node": {"label": "Disease", "properties": {"mondoId": {"column": "mondoId"}}}
+        },
+        {
+          "type": "RELATIONSHIP",
+          "relationship": "experimentMeasuresGene",
+          "table": "gene_values.csv",
+          "mode": "MERGE",
+          "key": [],
+          "from_node": {"label": "Experiment", "properties": {"experimentId": {"column": "experimentId"}}},
+          "to_node": {"label": "Gene", "properties": {"ensemblId": {"column": "ensemblId"}}},
+          "properties": {"baseMean": {"column": "baseMean"}}
+        },
+        {
+          "type": "RELATIONSHIP",
+          "relationship": "experimentMeasuresProtein",
+          "table": "protein_values.csv",
+          "mode": "MERGE",
+          "key": [],
+          "from_node": {"label": "Experiment", "properties": {"experimentId": {"column": "experimentId"}}},
+          "to_node": {"label": "Protein", "properties": {"uniprotId": {"column": "uniprotId"}}},
+          "properties": {
+            "intensity": {"column": "intensity"},
+            "peptides": {"column": "peptides"},
+            "coverage": {"column": "coverage"}
+          }
+        },
+        {
+          "type": "RELATIONSHIP",
+          "relationship": "comparisonFoundGene",
+          "table": "gene_differentials.csv",
+          "mode": "MERGE",
+          "key": [],
+          "from_node": {"label": "Comparison", "properties": {"comparisonId": {"column": "comparisonId"}}},
+          "to_node": {"label": "Gene", "properties": {"ensemblId": {"column": "ensemblId"}}},
+          "properties": {"logFC": {"column": "logFC"}, "pValue": {"column": "pValue"}, "adjPValue": {"column": "adjPValue"}}
+        },
+        {
+          "type": "RELATIONSHIP",
+          "relationship": "comparisonFoundProtein",
+          "table": "protein_differentials.csv",
+          "mode": "MERGE",
+          "key": [],
+          "from_node": {"label": "Comparison", "properties": {"comparisonId": {"column": "comparisonId"}}},
+          "to_node": {"label": "Protein", "properties": {"uniprotId": {"column": "uniprotId"}}},
+          "properties": {"logFC": {"column": "logFC"}, "pValue": {"column": "pValue"}, "adjPValue": {"column": "adjPValue"}}
+        },
+        {
+          "type": "RELATIONSHIP",
+          "relationship": "geneCodesProtein",
+          "table": "proteins.csv",
+          "mode": "MERGE",
+          "key": [],
+          "from_node": {"label": "Gene", "properties": {"ensemblId": {"column": "ensemblId"}}},
+          "to_node": {"label": "Protein", "properties": {"uniprotId": {"column": "uniprotId"}}}
+        },
+        {
+          "type": "RELATIONSHIP",
+          "relationship": "geneRelatedToDisease",
+          "table": "gene_diseases.csv",
+          "mode": "MERGE",
+          "key": [],
+          "from_node": {"label": "Gene", "properties": {"ensemblId": {"column": "ensemblId"}}},
+          "to_node": {"label": "Disease", "properties": {"mondoId": {"column": "mondoId"}}},
+          "properties": {"score": {"column": "score"}, "evidenceType": {"column": "evidenceType"}}
+        },
+        {
+          "type": "RELATIONSHIP",
+          "relationship": "proteinAssociatedWithGO",
+          "table": "protein_go.csv",
+          "mode": "MERGE",
+          "key": [],
+          "from_node": {"label": "Protein", "properties": {"uniprotId": {"column": "uniprotId"}}},
+          "to_node": {"label": "GOTerm", "properties": {"goId": {"column": "goId"}}}
+        },
+        {
+          "type": "RELATIONSHIP",
+          "relationship": "proteinInteractsWith",
+          "table": "protein_interactions.csv",
+          "mode": "MERGE",
+          "key": [],
+          "from_node": {"label": "Protein", "properties": {"uniprotId": {"column": "uniprotIdA"}}},
+          "to_node": {"label": "Protein", "properties": {"uniprotId": {"column": "uniprotIdB"}}},
+          "properties": {"score": {"column": "score"}}
+        },
+        {
+          "type": "RELATIONSHIP",
+          "relationship": "proteinParticipatesIn",
+          "table": "protein_pathways.csv",
+          "mode": "MERGE",
+          "key": [],
+          "from_node": {"label": "Protein", "properties": {"uniprotId": {"column": "uniprotId"}}},
+          "to_node": {"label": "Pathway", "properties": {"pathwayId": {"column": "pathwayId"}}}
+        },
+        {
+          "type": "RELATIONSHIP",
+          "relationship": "diseaseInvolvesPathway",
+          "table": "disease_pathways.csv",
+          "mode": "MERGE",
+          "key": [],
+          "from_node": {"label": "Disease", "properties": {"mondoId": {"column": "mondoId"}}},
+          "to_node": {"label": "Pathway", "properties": {"pathwayId": {"column": "pathwayId"}}}
+        }
+      ]
+    }
+  }
+}

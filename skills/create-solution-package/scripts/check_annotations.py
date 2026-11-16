@@ -16,11 +16,8 @@ SAMPLE = re.compile(r"e\.g\. `([^`]+)`\.?\s*$")
 NUMERIC_OR_CODED = re.compile(r"^(INTEGER|FLOAT|DATE|ZONED |LOCAL |DURATION|BOOLEAN)")
 
 # Blocker: extensions anywhere except root data_source_tables/data_source_mappings and node display.
-RENAMED = {"tables": "data_source_tables", "mappings": "data_source_mappings"}
 for key, val in (m.get("extensions") or {}).items():
-    if key in RENAMED:
-        out("BLOCKER", f"root extensions.{key} is the pre-release name; rename it to extensions.{RENAMED[key]}")
-    elif key not in ("data_source_tables", "data_source_mappings"):
+    if key not in ("data_source_tables", "data_source_mappings"):
         out("BLOCKER", f"root extensions.{key} is not permitted")
 def scan(o, path):
     if isinstance(o, dict):
@@ -45,6 +42,12 @@ for k, n in m.get("nodes", {}).items():
         out("BLOCKER", f"node {k} has no extensions.display x/y")
     if set(d) - {"x", "y"}:
         out("WARN", f"node {k} display carries {sorted(set(d) - {'x', 'y'})}; packages set x/y only")
+
+# Layout compactness. Relayed as WARN so test mode still runs the queries; check_layout.py run on its
+# own (VALIDATION.md 3b) keeps its BLOCKER level, which blocks the handoff.
+from check_layout import findings as layout_findings  # noqa: E402
+for level, msg in layout_findings(m):
+    out("WARN", msg if level == "WARN" else f"{msg} (BLOCKER in check_layout.py)")
 
 # Root identity.
 if m.get("id") != p.resolve().name:

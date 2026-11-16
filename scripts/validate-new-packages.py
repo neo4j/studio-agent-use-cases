@@ -47,7 +47,7 @@ ALLOWED_CATEGORIES = (
 
 ONTOLOGY_FILE = "ONTOLOGY.json"
 LEGACY_GRAPH_MODEL_FILE = "GRAPH_MODEL.json"
-# Must match the pin in skills/solution-package-builder/ONTOLOGY_SPEC_FORMAT.md.
+# Must match the pin in skills/create-solution-package/ONTOLOGY_SPEC_FORMAT.md.
 ONTOLOGY_SCHEMA_URI = "https://neo4j.com/docs/ontology-graph-spec/1.0.0/schema.json"
 # Pre-release names of the root extension keys, renamed in the spec.
 RENAMED_EXTENSION_KEYS = {

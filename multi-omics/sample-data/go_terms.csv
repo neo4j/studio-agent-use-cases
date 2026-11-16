@@ -1,0 +1,36 @@
+goId,name,aspect
+GO:0008286,insulin receptor signaling pathway,biological_process
+GO:0032869,cellular response to insulin stimulus,biological_process
+GO:0042593,glucose homeostasis,biological_process
+GO:0030073,insulin secretion,biological_process
+GO:0006094,gluconeogenesis,biological_process
+GO:0006096,glycolysis,biological_process
+GO:0006099,tricarboxylic acid cycle,biological_process
+GO:0006633,fatty acid biosynthetic process,biological_process
+GO:0019432,triglyceride biosynthetic process,biological_process
+GO:0019915,lipid storage,biological_process
+GO:0006635,fatty acid beta-oxidation,biological_process
+GO:0006695,cholesterol biosynthetic process,biological_process
+GO:0042632,cholesterol homeostasis,biological_process
+GO:0008203,cholesterol metabolic process,biological_process
+GO:0006954,inflammatory response,biological_process
+GO:0019221,cytokine-mediated signaling pathway,biological_process
+GO:0007249,canonical NF-kappaB signal transduction,biological_process
+GO:0030198,extracellular matrix organization,biological_process
+GO:0030199,collagen fibril organization,biological_process
+GO:0031929,TOR signaling,biological_process
+GO:0010506,regulation of autophagy,biological_process
+GO:0006914,autophagy,biological_process
+GO:0006979,response to oxidative stress,biological_process
+GO:0034976,response to endoplasmic reticulum stress,biological_process
+GO:0045444,fat cell differentiation,biological_process
+GO:0001525,angiogenesis,biological_process
+GO:0007155,cell adhesion,biological_process
+GO:0006412,translation,biological_process
+GO:0006511,ubiquitin-dependent protein catabolic process,biological_process
+GO:0004672,protein kinase activity,molecular_function
+GO:0004879,nuclear receptor activity,molecular_function
+GO:0005125,cytokine activity,molecular_function
+GO:0005576,extracellular region,cellular_component
+GO:0005739,mitochondrion,cellular_component
+GO:0005788,endoplasmic reticulum lumen,cellular_component

@@ -30,7 +30,6 @@ files = sorted(
     key=lambda f: (not f.startswith("sample-data/"), f.lower()))
 if "ONTOLOGY.json" not in files: sys.exit("package has no ONTOLOGY.json")
 if "SKILL.md" not in files: sys.exit("package has no SKILL.md")
-if "GRAPH_MODEL.json" in files: sys.exit("package still has GRAPH_MODEL.json; remove it first")
 entry = {"skillId": skill_id, "files": {
     "graph": "ONTOLOGY.json",
     "skill": [f for f in files if f not in ("ONTOLOGY.json", "SKILL.md")],
