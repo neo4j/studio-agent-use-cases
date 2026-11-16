@@ -1,0 +1,280 @@
+uniprotId,name,ensemblId
+P01308,Insulin,ENSG00000254647
+P06213,Insulin receptor,ENSG00000171105
+P35568,Insulin receptor substrate 1,ENSG00000169047
+Q9Y4H2,Insulin receptor substrate 2,ENSG00000185950
+P42336,"Phosphatidylinositol 4,5-bisphosphate 3-kinase catalytic subunit alpha isoform",ENSG00000121879
+P48736,"Phosphatidylinositol 4,5-bisphosphate 3-kinase catalytic subunit gamma isoform",ENSG00000105851
+P27986,Phosphatidylinositol 3-kinase regulatory subunit alpha,ENSG00000145675
+P31749,RAC-alpha serine/threonine-protein kinase,ENSG00000142208
+P31751,RAC-beta serine/threonine-protein kinase,ENSG00000105221
+O15530,3-phosphoinositide-dependent protein kinase 1,ENSG00000140992
+P60484,"Phosphatidylinositol 3,4,5-trisphosphate 3-phosphatase and dual-specificity protein phosphatase PTEN",ENSG00000171862
+Q12778,Forkhead box protein O1,ENSG00000150907
+P49841,Glycogen synthase kinase-3 beta,ENSG00000082701
+P14672,"Solute carrier family 2, facilitated glucose transporter member 4",ENSG00000181856
+P18031,Tyrosine-protein phosphatase non-receptor type 1,ENSG00000196396
+O14543,Suppressor of cytokine signaling 3,ENSG00000184557
+P62993,Growth factor receptor-bound protein 2,ENSG00000177885
+P29353,SHC-transforming protein 1,ENSG00000160691
+P28482,Mitogen-activated protein kinase 1,ENSG00000100030
+P27361,Mitogen-activated protein kinase 3,ENSG00000102882
+P16671,Platelet glycoprotein 4,ENSG00000135218
+P07148,"Fatty acid-binding protein, liver",ENSG00000163586
+P15090,"Fatty acid-binding protein, adipocyte",ENSG00000170323
+P06858,Lipoprotein lipase,ENSG00000175445
+P36956,Sterol regulatory element-binding protein 1,ENSG00000072310
+P49327,Fatty acid synthase,ENSG00000169710
+Q13085,Acetyl-CoA carboxylase 1,ENSG00000278540
+O00767,Stearoyl-CoA desaturase,ENSG00000099194
+Q9H5J4,Very long chain fatty acid elongase 6,ENSG00000170522
+O75907,Diacylglycerol O-acyltransferase 1,ENSG00000185000
+Q96PD7,Diacylglycerol O-acyltransferase 2,ENSG00000062282
+Q9NP71,Carbohydrate-responsive element-binding protein,ENSG00000009950
+Q9NST1,1-acylglycerol-3-phosphate O-acyltransferase PNPLA3,ENSG00000100344
+Q9BZW4,Transmembrane 6 superfamily member 2,ENSG00000213996
+P04114,Apolipoprotein B-100,ENSG00000084674
+P02656,Apolipoprotein C-III,ENSG00000110245
+P53396,ATP-citrate synthase,ENSG00000131473
+Q9HCL2,"Glycerol-3-phosphate acyltransferase 1, mitochondrial",ENSG00000119927
+Q14693,Phosphatidate phosphatase LPIN1,ENSG00000134324
+Q3SYC2,2-acylglycerol O-acyltransferase 2,ENSG00000166391
+Q99541,Perilipin-2,ENSG00000147872
+Q07869,Peroxisome proliferator-activated receptor alpha,ENSG00000186951
+P37231,Peroxisome proliferator-activated receptor gamma,ENSG00000132170
+Q03181,Peroxisome proliferator-activated receptor delta,ENSG00000112033
+P50416,"Carnitine O-palmitoyltransferase 1, liver isoform",ENSG00000110090
+P23786,"Carnitine O-palmitoyltransferase 2, mitochondrial",ENSG00000157184
+P11310,"Medium-chain specific acyl-CoA dehydrogenase, mitochondrial",ENSG00000117054
+P28330,"Long-chain specific acyl-CoA dehydrogenase, mitochondrial",ENSG00000115361
+P40939,"Trifunctional enzyme subunit alpha, mitochondrial",ENSG00000084754
+Q15067,Peroxisomal acyl-coenzyme A oxidase 1,ENSG00000161533
+Q9UBK2,Peroxisome proliferator-activated receptor gamma coactivator 1-alpha,ENSG00000109819
+P19793,Retinoic acid receptor RXR-alpha,ENSG00000186350
+P33121,Long-chain-fatty-acid--CoA ligase 1,ENSG00000151726
+Q08426,Peroxisomal bifunctional enzyme,ENSG00000113790
+P09110,"3-ketoacyl-CoA thiolase, peroxisomal",ENSG00000060971
+P13804,"Electron transfer flavoprotein subunit alpha, mitochondrial",ENSG00000140374
+P01375,Tumor necrosis factor,ENSG00000232810
+P05231,Interleukin-6,ENSG00000136244
+P01584,Interleukin-1 beta,ENSG00000125538
+P10145,Interleukin-8,ENSG00000169429
+P02778,C-X-C motif chemokine 10,ENSG00000169245
+P13500,C-C motif chemokine 2,ENSG00000108691
+P41597,C-C chemokine receptor type 2,ENSG00000121807
+P19838,Nuclear factor NF-kappa-B p105 subunit,ENSG00000109320
+Q04206,Transcription factor p65,ENSG00000173039
+O14920,Inhibitor of nuclear factor kappa-B kinase subunit beta,ENSG00000104365
+O00206,Toll-like receptor 4,ENSG00000136869
+Q99836,Myeloid differentiation primary response protein MyD88,ENSG00000172936
+Q96P20,"NACHT, LRR and PYD domains-containing protein 3",ENSG00000162711
+P35354,Prostaglandin G/H synthase 2,ENSG00000073756
+P40763,Signal transducer and activator of transcription 3,ENSG00000168610
+O60674,Tyrosine-protein kinase JAK2,ENSG00000096968
+P22301,Interleukin-10,ENSG00000136634
+P34810,Macrosialin,ENSG00000129226
+P11215,Integrin alpha-M,ENSG00000169896
+P61626,Lysozyme C,ENSG00000090382
+P02452,Collagen alpha-1(I) chain,ENSG00000108821
+P08123,Collagen alpha-2(I) chain,ENSG00000164692
+P02461,Collagen alpha-1(III) chain,ENSG00000168542
+P01137,Transforming growth factor beta-1 proprotein,ENSG00000105329
+P62736,"Actin, aortic smooth muscle",ENSG00000107796
+P01033,Metalloproteinase inhibitor 1,ENSG00000102265
+P08253,72 kDa type IV collagenase,ENSG00000087245
+P14780,Matrix metalloproteinase-9,ENSG00000100985
+P28300,Protein-lysine 6-oxidase,ENSG00000113083
+Q9Y4K0,Lysyl oxidase homolog 2,ENSG00000134013
+P09619,Platelet-derived growth factor receptor beta,ENSG00000113721
+P10451,Osteopontin,ENSG00000118785
+P02751,Fibronectin,ENSG00000115414
+P07996,Thrombospondin-1,ENSG00000137801
+P29279,CCN family member 2,ENSG00000118523
+P84022,SMAD family member 3,ENSG00000166949
+Q15796,SMAD family member 2,ENSG00000175387
+P08670,Vimentin,ENSG00000026025
+P42345,Serine/threonine-protein kinase mTOR,ENSG00000198793
+Q8N122,Regulatory-associated protein of mTOR,ENSG00000141564
+Q6R327,Rapamycin-insensitive companion of mTOR,ENSG00000164327
+P23443,Ribosomal protein S6 kinase beta-1,ENSG00000108443
+Q13541,Eukaryotic translation initiation factor 4E-binding protein 1,ENSG00000187840
+Q92574,Hamartin,ENSG00000165699
+P49815,Tuberin,ENSG00000103197
+Q15382,GTP-binding protein Rheb,ENSG00000106615
+Q13131,5'-AMP-activated protein kinase catalytic subunit alpha-1,ENSG00000132356
+P54646,5'-AMP-activated protein kinase catalytic subunit alpha-2,ENSG00000162409
+Q15831,Serine/threonine-protein kinase STK11,ENSG00000118046
+O75385,Serine/threonine-protein kinase ULK1,ENSG00000177169
+P35557,Hexokinase-4,ENSG00000106633
+P35575,Glucose-6-phosphatase catalytic subunit 1,ENSG00000131482
+P35558,"Phosphoenolpyruvate carboxykinase, cytosolic",ENSG00000124253
+P09467,"Fructose-1,6-bisphosphatase 1",ENSG00000165140
+P30613,Pyruvate kinase PKLR,ENSG00000143627
+P01275,Pro-glucagon,ENSG00000115263
+P43220,Glucagon-like peptide 1 receptor,ENSG00000112164
+P11168,"Solute carrier family 2, facilitated glucose transporter member 2",ENSG00000163581
+P52945,Pancreas/duodenum homeobox protein 1,ENSG00000139515
+P78426,Homeobox protein Nkx-6.1,ENSG00000163623
+Q8NHW3,Transcription factor MafA,ENSG00000182759
+Q14654,ATP-sensitive inward rectifier potassium channel 11,ENSG00000187486
+Q09428,ATP-binding cassette sub-family C member 8,ENSG00000006071
+P20823,Hepatocyte nuclear factor 1-alpha,ENSG00000135100
+P41235,Hepatocyte nuclear factor 4-alpha,ENSG00000101076
+P10997,Islet amyloid polypeptide,ENSG00000121351
+Q13562,Neurogenic differentiation factor 1,ENSG00000162992
+P48546,Gastric inhibitory polypeptide receptor,ENSG00000010310
+Q15848,Adiponectin,ENSG00000181092
+P41159,Leptin,ENSG00000174697
+P48357,Leptin receptor,ENSG00000116678
+Q9HD89,Resistin,ENSG00000104918
+P43490,Nicotinamide phosphoribosyltransferase,ENSG00000105835
+P02753,Retinol-binding protein 4,ENSG00000138207
+Q96A54,Adiponectin receptor protein 1,ENSG00000159346
+Q86V24,Adiponectin receptor protein 2,ENSG00000006831
+O60543,Lipid transferase CIDEA,ENSG00000176194
+P25874,Mitochondrial brown fat uncoupling protein 1,ENSG00000109424
+O60240,Perilipin-1,ENSG00000166819
+Q05469,Hormone-sensitive lipase,ENSG00000079435
+Q96AD5,Patatin-like phospholipase domain-containing protein 2,ENSG00000177666
+P04035,3-hydroxy-3-methylglutaryl-coenzyme A reductase,ENSG00000113161
+Q01581,"Hydroxymethylglutaryl-CoA synthase, cytoplasmic",ENSG00000112972
+P01130,Low-density lipoprotein receptor,ENSG00000130164
+Q8NBP7,Proprotein convertase subtilisin/kexin type 9,ENSG00000169174
+Q12772,Sterol regulatory element-binding protein 2,ENSG00000198911
+Q14534,Squalene monooxygenase,ENSG00000104549
+P22680,Cytochrome P450 7A1,ENSG00000167910
+Q96RI1,Bile acid receptor,ENSG00000012504
+Q13133,Oxysterols receptor LXR-alpha,ENSG00000025434
+O95477,Phospholipid-transporting ATPase ABCA1,ENSG00000165029
+Q9H222,ATP-binding cassette sub-family G member 5,ENSG00000138075
+Q9H221,ATP-binding cassette sub-family G member 8,ENSG00000143921
+O15503,Insulin-induced gene 1 protein,ENSG00000186480
+Q12770,Sterol regulatory element-binding protein cleavage-activating protein,ENSG00000114650
+P04179,Superoxide dismutase,ENSG00000291237
+P04040,Catalase,ENSG00000121691
+P07203,Glutathione peroxidase 1,ENSG00000233276
+Q16236,Nuclear factor erythroid 2-related factor 2,ENSG00000116044
+P09601,Heme oxygenase 1,ENSG00000100292
+P18848,Cyclic AMP-dependent transcription factor ATF-4,ENSG00000128272
+P35638,DNA damage-inducible transcript 3 protein,ENSG00000175197
+P17861,X-box-binding protein 1,ENSG00000100219
+O75460,Serine/threonine-protein kinase/endoribonuclease IRE1,ENSG00000178607
+P11021,Endoplasmic reticulum chaperone BiP,ENSG00000044574
+P18850,Cyclic AMP-dependent transcription factor ATF-6 alpha,ENSG00000118217
+Q9NZJ5,Eukaryotic translation initiation factor 2-alpha kinase 3,ENSG00000172071
+Q9H3M7,Thioredoxin-interacting protein,ENSG00000265972
+Q13501,Sequestosome-1,ENSG00000161011
+Q9GZQ8,Microtubule-associated protein 1 light chain 3 beta,ENSG00000140941
+Q14457,Beclin-1,ENSG00000126581
+Q9H1Y0,Autophagy protein 5,ENSG00000057663
+P02768,Albumin,ENSG00000163631
+P02647,Apolipoprotein A-I,ENSG00000118137
+P02766,Transthyretin,ENSG00000118271
+P01009,Alpha-1-antitrypsin,ENSG00000197249
+P02675,Fibrinogen beta chain,ENSG00000171564
+P02741,C-reactive protein,ENSG00000132693
+P00738,Haptoglobin,ENSG00000257017
+P02787,Serotransferrin,ENSG00000091513
+P05181,Cytochrome P450 2E1,ENSG00000130649
+P08684,Cytochrome P450 3A4,ENSG00000160868
+P02771,Alpha-fetoprotein,ENSG00000081051
+P05067,Amyloid-beta precursor protein,ENSG00000142192
+P10636,Microtubule-associated protein tau,ENSG00000186868
+P49768,Presenilin-1,ENSG00000080815
+P38398,Breast cancer type 1 susceptibility protein,ENSG00000012048
+P04637,Cellular tumor antigen p53,ENSG00000141510
+P00533,Epidermal growth factor receptor,ENSG00000146648
+P01116,GTPase KRas,ENSG00000133703
+P01106,Myc proto-oncogene protein,ENSG00000136997
+P42771,Cyclin-dependent kinase inhibitor 2A,ENSG00000147889
+P15692,"Vascular endothelial growth factor A, long form",ENSG00000112715
+P03372,Estrogen receptor,ENSG00000091831
+P10275,Androgen receptor,ENSG00000169083
+P60709,"Actin, cytoplasmic 1",ENSG00000075624
+P04406,Glyceraldehyde-3-phosphate dehydrogenase,ENSG00000111640
+P07437,Tubulin beta chain,ENSG00000196230
+P05388,Large ribosomal subunit protein uL10,ENSG00000089157
+P61769,Beta-2-microglobulin,ENSG00000166710
+P00492,Hypoxanthine-guanine phosphoribosyltransferase,ENSG00000165704
+P62937,Peptidyl-prolyl cis-trans isomerase A,ENSG00000196262
+P20226,TATA-box-binding protein,ENSG00000112592
+P63104,14-3-3 protein zeta/delta,ENSG00000164924
+P0CG48,Polyubiquitin-C,ENSG00000150991
+P68104,Elongation factor 1-alpha 1,ENSG00000156508
+P07900,Heat shock protein HSP 90-alpha,ENSG00000080824
+P00558,Phosphoglycerate kinase 1,ENSG00000102144
+P00338,L-lactate dehydrogenase A chain,ENSG00000134333
+P06733,Alpha-enolase,ENSG00000074800
+P04075,Fructose-bisphosphate aldolase A,ENSG00000149925
+P14618,Pyruvate kinase PKM,ENSG00000067225
+P60174,Triosephosphate isomerase,ENSG00000111669
+P06744,Glucose-6-phosphate isomerase,ENSG00000105220
+P18669,Phosphoglycerate mutase 1,ENSG00000171314
+P31040,Succinate dehydrogenase,ENSG00000073578
+O75390,"Citrate synthase, mitochondrial",ENSG00000062485
+O75874,Isocitrate dehydrogenase,ENSG00000138413
+P40926,"Malate dehydrogenase, mitochondrial",ENSG00000146701
+P07954,"Fumarate hydratase, mitochondrial",ENSG00000091483
+Q02218,2-oxoglutarate dehydrogenase complex component E1,ENSG00000105953
+P13073,"Cytochrome c oxidase subunit 4 isoform 1, mitochondrial",ENSG00000131143
+P25705,"ATP synthase F(1) complex subunit alpha, mitochondrial",ENSG00000152234
+P99999,Cytochrome c,ENSG00000172115
+P21796,Non-selective voltage-gated ion channel VDAC1,ENSG00000213585
+Q06830,Peroxiredoxin-1,ENSG00000117450
+P10599,Thioredoxin,ENSG00000136810
+P0DP23,Calmodulin-1,ENSG00000198668
+P63000,Ras-related C3 botulinum toxin substrate 1,ENSG00000136238
+P60953,Cell division control protein 42 homolog,ENSG00000070831
+P61586,Transforming protein RhoA,ENSG00000067560
+P07737,Profilin-1,ENSG00000108518
+P23528,Cofilin-1,ENSG00000172757
+P26038,Moesin,ENSG00000147065
+P15311,Ezrin,ENSG00000092820
+P35222,Catenin beta-1,ENSG00000168036
+P12830,Cadherin-1,ENSG00000039068
+P16422,Epithelial cell adhesion molecule,ENSG00000119888
+P05787,"Keratin, type II cytoskeletal 8",ENSG00000170421
+P05783,"Keratin, type I cytoskeletal 18",ENSG00000111057
+P08727,"Keratin, type I cytoskeletal 19",ENSG00000171345
+P35579,Myosin-9,ENSG00000100345
+P21333,Filamin-A,ENSG00000196924
+Q9Y490,Talin-1,ENSG00000137076
+P18206,Vinculin,ENSG00000035403
+P05556,Integrin beta-1,ENSG00000150093
+P16070,CD44 antigen,ENSG00000026508
+P17931,Galectin-3,ENSG00000131981
+P07355,Annexin A2,ENSG00000182718
+P06703,Protein S100-A6,ENSG00000197956
+P60903,Protein S100-A10,ENSG00000197747
+Q03135,Caveolin-1,ENSG00000105974
+P02545,Prelamin-A/C,ENSG00000160789
+P06748,Nucleophosmin,ENSG00000181163
+P09651,Heterogeneous nuclear ribonucleoprotein A1,ENSG00000135486
+Q07955,Serine/arginine-rich splicing factor 1,ENSG00000136450
+P11940,Polyadenylate-binding protein 1,ENSG00000070756
+P60842,Eukaryotic initiation factor 4A-I,ENSG00000161960
+P62753,Small ribosomal subunit protein eS6,ENSG00000137154
+P40429,Large ribosomal subunit protein uL13,ENSG00000142541
+P25786,Proteasome subunit alpha type-1,ENSG00000129084
+P28074,Proteasome subunit beta type-5,ENSG00000100804
+P11279,Lysosome-associated membrane glycoprotein 1,ENSG00000185896
+P07858,Cathepsin B,ENSG00000164733
+P07339,Cathepsin D,ENSG00000117984
+P04062,Lysosomal acid glucosylceramidase,ENSG00000177628
+P07686,Beta-hexosaminidase subunit beta,ENSG00000049860
+O15118,NPC intracellular cholesterol transporter 1,ENSG00000141458
+P15104,Glutamine synthetase,ENSG00000135821
+P00966,Argininosuccinate synthase,ENSG00000130707
+P05089,Arginase-1,ENSG00000118520
+P00480,"Ornithine transcarbamylase, mitochondrial",ENSG00000036473
+P31327,Carbamoyl-phosphate synthase,ENSG00000021826
+Q93088,Betaine--homocysteine S-methyltransferase 1,ENSG00000145692
+Q00266,S-adenosylmethionine synthase isoform type-1,ENSG00000151224
+Q14749,Glycine N-methyltransferase,ENSG00000124713
+P35520,Cystathionine beta-synthase,ENSG00000160200
+P23526,Adenosylhomocysteinase,ENSG00000101444
+P05091,"Aldehyde dehydrogenase, mitochondrial",ENSG00000111275
+P00325,Alcohol dehydrogenase 1B,ENSG00000196616
+P08319,All-trans-retinol dehydrogenase,ENSG00000198099
+P42330,Aldo-keto reductase family 1 member C3,ENSG00000196139
+Q06520,Sulfotransferase 2A1,ENSG00000105398

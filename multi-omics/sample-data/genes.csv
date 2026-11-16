@@ -1,0 +1,280 @@
+ensemblId,symbol,name,hgncId,ncbiGeneId
+ENSG00000254647,INS,insulin,HGNC:6081,3630
+ENSG00000171105,INSR,insulin receptor,HGNC:6091,3643
+ENSG00000169047,IRS1,insulin receptor substrate 1,HGNC:6125,3667
+ENSG00000185950,IRS2,insulin receptor substrate 2,HGNC:6126,8660
+ENSG00000121879,PIK3CA,"phosphatidylinositol-4,5-bisphosphate 3-kinase catalytic subunit alpha",HGNC:8975,5290
+ENSG00000105851,PIK3CG,"phosphatidylinositol-4,5-bisphosphate 3-kinase catalytic subunit gamma",HGNC:8978,5294
+ENSG00000145675,PIK3R1,phosphoinositide-3-kinase regulatory subunit 1,HGNC:8979,5295
+ENSG00000142208,AKT1,AKT serine/threonine kinase 1,HGNC:391,207
+ENSG00000105221,AKT2,AKT serine/threonine kinase 2,HGNC:392,208
+ENSG00000140992,PDPK1,3-phosphoinositide dependent protein kinase 1,HGNC:8816,5170
+ENSG00000171862,PTEN,phosphatase and tensin homolog,HGNC:9588,5728
+ENSG00000150907,FOXO1,forkhead box O1,HGNC:3819,2308
+ENSG00000082701,GSK3B,glycogen synthase kinase 3 beta,HGNC:4617,2932
+ENSG00000181856,SLC2A4,solute carrier family 2 member 4,HGNC:11009,6517
+ENSG00000196396,PTPN1,protein tyrosine phosphatase non-receptor type 1,HGNC:9642,5770
+ENSG00000184557,SOCS3,suppressor of cytokine signaling 3,HGNC:19391,9021
+ENSG00000177885,GRB2,growth factor receptor bound protein 2,HGNC:4566,2885
+ENSG00000160691,SHC1,SHC adaptor protein 1,HGNC:10840,6464
+ENSG00000100030,MAPK1,mitogen-activated protein kinase 1,HGNC:6871,5594
+ENSG00000102882,MAPK3,mitogen-activated protein kinase 3,HGNC:6877,5595
+ENSG00000135218,CD36,CD36 molecule (CD36 blood group),HGNC:1663,948
+ENSG00000163586,FABP1,fatty acid binding protein 1,HGNC:3555,2168
+ENSG00000170323,FABP4,fatty acid binding protein 4,HGNC:3559,2167
+ENSG00000175445,LPL,lipoprotein lipase,HGNC:6677,4023
+ENSG00000072310,SREBF1,sterol regulatory element binding transcription factor 1,HGNC:11289,6720
+ENSG00000169710,FASN,fatty acid synthase,HGNC:3594,2194
+ENSG00000278540,ACACA,acetyl-CoA carboxylase alpha,HGNC:84,31
+ENSG00000099194,SCD,stearoyl-CoA desaturase,HGNC:10571,6319
+ENSG00000170522,ELOVL6,ELOVL fatty acid elongase 6,HGNC:15829,79071
+ENSG00000185000,DGAT1,diacylglycerol O-acyltransferase 1,HGNC:2843,8694
+ENSG00000062282,DGAT2,diacylglycerol O-acyltransferase 2,HGNC:16940,84649
+ENSG00000009950,MLXIPL,MLX interacting protein like,HGNC:12744,51085
+ENSG00000100344,PNPLA3,"patatin like domain 3, 1-acylglycerol-3-phosphate O-acyltransferase ",HGNC:18590,80339
+ENSG00000213996,TM6SF2,transmembrane 6 superfamily member 2,HGNC:11861,53345
+ENSG00000084674,APOB,apolipoprotein B,HGNC:603,338
+ENSG00000110245,APOC3,apolipoprotein C3,HGNC:610,345
+ENSG00000131473,ACLY,ATP citrate lyase,HGNC:115,47
+ENSG00000119927,GPAM,"glycerol-3-phosphate acyltransferase, mitochondrial",HGNC:24865,57678
+ENSG00000134324,LPIN1,lipin 1,HGNC:13345,23175
+ENSG00000166391,MOGAT2,monoacylglycerol O-acyltransferase 2,HGNC:23248,80168
+ENSG00000147872,PLIN2,perilipin 2,HGNC:248,123
+ENSG00000186951,PPARA,peroxisome proliferator activated receptor alpha,HGNC:9232,5465
+ENSG00000132170,PPARG,peroxisome proliferator activated receptor gamma,HGNC:9236,5468
+ENSG00000112033,PPARD,peroxisome proliferator activated receptor delta,HGNC:9235,5467
+ENSG00000110090,CPT1A,carnitine palmitoyltransferase 1A,HGNC:2328,1374
+ENSG00000157184,CPT2,carnitine palmitoyltransferase 2,HGNC:2330,1376
+ENSG00000117054,ACADM,acyl-CoA dehydrogenase medium chain,HGNC:89,34
+ENSG00000115361,ACADL,acyl-CoA dehydrogenase long chain,HGNC:88,33
+ENSG00000084754,HADHA,hydroxyacyl-CoA dehydrogenase trifunctional multienzyme complex subunit alpha,HGNC:4801,3030
+ENSG00000161533,ACOX1,acyl-CoA oxidase 1,HGNC:119,51
+ENSG00000109819,PPARGC1A,PPARG coactivator 1 alpha,HGNC:9237,10891
+ENSG00000186350,RXRA,retinoid X receptor alpha,HGNC:10477,6256
+ENSG00000151726,ACSL1,acyl-CoA synthetase long chain family member 1,HGNC:3569,2180
+ENSG00000113790,EHHADH,enoyl-CoA hydratase and 3-hydroxyacyl CoA dehydrogenase,HGNC:3247,1962
+ENSG00000060971,ACAA1,acetyl-CoA acyltransferase 1,HGNC:82,30
+ENSG00000140374,ETFA,electron transfer flavoprotein subunit alpha,HGNC:3481,2108
+ENSG00000232810,TNF,tumor necrosis factor,HGNC:11892,7124
+ENSG00000136244,IL6,interleukin 6,HGNC:6018,3569
+ENSG00000125538,IL1B,interleukin 1 beta,HGNC:5992,3553
+ENSG00000169429,CXCL8,C-X-C motif chemokine ligand 8,HGNC:6025,3576
+ENSG00000169245,CXCL10,C-X-C motif chemokine ligand 10,HGNC:10637,3627
+ENSG00000108691,CCL2,C-C motif chemokine ligand 2,HGNC:10618,6347
+ENSG00000121807,CCR2,C-C motif chemokine receptor 2,HGNC:1603,729230
+ENSG00000109320,NFKB1,nuclear factor kappa B subunit 1,HGNC:7794,4790
+ENSG00000173039,RELA,"RELA proto-oncogene, NF-kB subunit",HGNC:9955,5970
+ENSG00000104365,IKBKB,inhibitor of nuclear factor kappa B kinase subunit beta,HGNC:5960,3551
+ENSG00000136869,TLR4,toll like receptor 4,HGNC:11850,7099
+ENSG00000172936,MYD88,MYD88 innate immune signal transduction adaptor,HGNC:7562,4615
+ENSG00000162711,NLRP3,NLR family pyrin domain containing 3,HGNC:16400,114548
+ENSG00000073756,PTGS2,prostaglandin-endoperoxide synthase 2,HGNC:9605,5743
+ENSG00000168610,STAT3,signal transducer and activator of transcription 3,HGNC:11364,6774
+ENSG00000096968,JAK2,Janus kinase 2,HGNC:6192,3717
+ENSG00000136634,IL10,interleukin 10,HGNC:5962,3586
+ENSG00000129226,CD68,CD68 molecule,HGNC:1693,968
+ENSG00000169896,ITGAM,integrin subunit alpha M,HGNC:6149,3684
+ENSG00000090382,LYZ,lysozyme,HGNC:6740,4069
+ENSG00000108821,COL1A1,collagen type I alpha 1 chain,HGNC:2197,1277
+ENSG00000164692,COL1A2,collagen type I alpha 2 chain,HGNC:2198,1278
+ENSG00000168542,COL3A1,collagen type III alpha 1 chain,HGNC:2201,1281
+ENSG00000105329,TGFB1,transforming growth factor beta 1,HGNC:11766,7040
+ENSG00000107796,ACTA2,"actin alpha 2, smooth muscle",HGNC:130,59
+ENSG00000102265,TIMP1,TIMP metallopeptidase inhibitor 1,HGNC:11820,7076
+ENSG00000087245,MMP2,matrix metallopeptidase 2,HGNC:7166,4313
+ENSG00000100985,MMP9,matrix metallopeptidase 9,HGNC:7176,4318
+ENSG00000113083,LOX,lysyl oxidase,HGNC:6664,4015
+ENSG00000134013,LOXL2,lysyl oxidase like 2,HGNC:6666,4017
+ENSG00000113721,PDGFRB,platelet derived growth factor receptor beta,HGNC:8804,5159
+ENSG00000118785,SPP1,secreted phosphoprotein 1,HGNC:11255,6696
+ENSG00000115414,FN1,fibronectin 1,HGNC:3778,2335
+ENSG00000137801,THBS1,thrombospondin 1,HGNC:11785,7057
+ENSG00000118523,CCN2,cellular communication network factor 2,HGNC:2500,1490
+ENSG00000166949,SMAD3,SMAD family member 3,HGNC:6769,4088
+ENSG00000175387,SMAD2,SMAD family member 2,HGNC:6768,4087
+ENSG00000026025,VIM,vimentin,HGNC:12692,7431
+ENSG00000198793,MTOR,mechanistic target of rapamycin kinase,HGNC:3942,2475
+ENSG00000141564,RPTOR,regulatory associated protein of MTOR complex 1,HGNC:30287,57521
+ENSG00000164327,RICTOR,RPTOR independent companion of MTOR complex 2,HGNC:28611,253260
+ENSG00000108443,RPS6KB1,ribosomal protein S6 kinase B1,HGNC:10436,6198
+ENSG00000187840,EIF4EBP1,eukaryotic translation initiation factor 4E binding protein 1,HGNC:3288,1978
+ENSG00000165699,TSC1,TSC complex subunit 1,HGNC:12362,7248
+ENSG00000103197,TSC2,TSC complex subunit 2,HGNC:12363,7249
+ENSG00000106615,RHEB,"Ras homolog, mTORC1 binding",HGNC:10011,6009
+ENSG00000132356,PRKAA1,protein kinase AMP-activated catalytic subunit alpha 1,HGNC:9376,5562
+ENSG00000162409,PRKAA2,protein kinase AMP-activated catalytic subunit alpha 2,HGNC:9377,5563
+ENSG00000118046,STK11,serine/threonine kinase 11,HGNC:11389,6794
+ENSG00000177169,ULK1,unc-51 like autophagy activating kinase 1,HGNC:12558,8408
+ENSG00000106633,GCK,glucokinase,HGNC:4195,2645
+ENSG00000131482,G6PC1,glucose-6-phosphatase catalytic subunit 1,HGNC:4056,2538
+ENSG00000124253,PCK1,phosphoenolpyruvate carboxykinase 1,HGNC:8724,5105
+ENSG00000165140,FBP1,fructose-bisphosphatase 1,HGNC:3606,2203
+ENSG00000143627,PKLR,pyruvate kinase L/R,HGNC:9020,5313
+ENSG00000115263,GCG,glucagon,HGNC:4191,2641
+ENSG00000112164,GLP1R,glucagon like peptide 1 receptor,HGNC:4324,2740
+ENSG00000163581,SLC2A2,solute carrier family 2 member 2,HGNC:11006,6514
+ENSG00000139515,PDX1,pancreatic and duodenal homeobox 1,HGNC:6107,3651
+ENSG00000163623,NKX6-1,NK6 homeobox 1,HGNC:7839,4825
+ENSG00000182759,MAFA,MAF bZIP transcription factor A,HGNC:23145,389692
+ENSG00000187486,KCNJ11,potassium inwardly rectifying channel subfamily J member 11,HGNC:6257,3767
+ENSG00000006071,ABCC8,ATP binding cassette subfamily C member 8,HGNC:59,6833
+ENSG00000135100,HNF1A,HNF1 homeobox A,HGNC:11621,6927
+ENSG00000101076,HNF4A,hepatocyte nuclear factor 4 alpha,HGNC:5024,3172
+ENSG00000121351,IAPP,islet amyloid polypeptide,HGNC:5329,3375
+ENSG00000162992,NEUROD1,neuronal differentiation 1,HGNC:7762,4760
+ENSG00000010310,GIPR,gastric inhibitory polypeptide receptor,HGNC:4271,2696
+ENSG00000181092,ADIPOQ,"adiponectin, C1Q and collagen domain containing",HGNC:13633,9370
+ENSG00000174697,LEP,leptin,HGNC:6553,3952
+ENSG00000116678,LEPR,leptin receptor,HGNC:6554,3953
+ENSG00000104918,RETN,resistin,HGNC:20389,56729
+ENSG00000105835,NAMPT,nicotinamide phosphoribosyltransferase,HGNC:30092,10135
+ENSG00000138207,RBP4,retinol binding protein 4,HGNC:9922,5950
+ENSG00000159346,ADIPOR1,adiponectin receptor 1,HGNC:24040,51094
+ENSG00000006831,ADIPOR2,adiponectin receptor 2,HGNC:24041,79602
+ENSG00000176194,CIDEA,cell death inducing DFFA like effector a,HGNC:1976,1149
+ENSG00000109424,UCP1,uncoupling protein 1,HGNC:12517,7350
+ENSG00000166819,PLIN1,perilipin 1,HGNC:9076,5346
+ENSG00000079435,LIPE,"lipase E, hormone sensitive type",HGNC:6621,3991
+ENSG00000177666,PNPLA2,"patatin like domain 2, triacylglycerol lipase",HGNC:30802,57104
+ENSG00000113161,HMGCR,3-hydroxy-3-methylglutaryl-CoA reductase,HGNC:5006,3156
+ENSG00000112972,HMGCS1,3-hydroxy-3-methylglutaryl-CoA synthase 1,HGNC:5007,3157
+ENSG00000130164,LDLR,low density lipoprotein receptor,HGNC:6547,3949
+ENSG00000169174,PCSK9,proprotein convertase subtilisin/kexin type 9,HGNC:20001,255738
+ENSG00000198911,SREBF2,sterol regulatory element binding transcription factor 2,HGNC:11290,6721
+ENSG00000104549,SQLE,squalene epoxidase,HGNC:11279,6713
+ENSG00000167910,CYP7A1,cytochrome P450 family 7 subfamily A member 1,HGNC:2651,1581
+ENSG00000012504,NR1H4,nuclear receptor subfamily 1 group H member 4,HGNC:7967,9971
+ENSG00000025434,NR1H3,nuclear receptor subfamily 1 group H member 3,HGNC:7966,10062
+ENSG00000165029,ABCA1,ATP binding cassette subfamily A member 1,HGNC:29,19
+ENSG00000138075,ABCG5,ATP binding cassette subfamily G member 5,HGNC:13886,64240
+ENSG00000143921,ABCG8,ATP binding cassette subfamily G member 8,HGNC:13887,64241
+ENSG00000186480,INSIG1,insulin induced gene 1,HGNC:6083,3638
+ENSG00000114650,SCAP,SREBF chaperone,HGNC:30634,22937
+ENSG00000291237,SOD2,superoxide dismutase 2,HGNC:11180,6648
+ENSG00000121691,CAT,catalase,HGNC:1516,847
+ENSG00000233276,GPX1,glutathione peroxidase 1,HGNC:4553,2876
+ENSG00000116044,NFE2L2,NFE2 like bZIP transcription factor 2,HGNC:7782,4780
+ENSG00000100292,HMOX1,heme oxygenase 1,HGNC:5013,3162
+ENSG00000128272,ATF4,activating transcription factor 4,HGNC:786,468
+ENSG00000175197,DDIT3,DNA damage inducible transcript 3,HGNC:2726,1649
+ENSG00000100219,XBP1,X-box binding protein 1,HGNC:12801,7494
+ENSG00000178607,ERN1,endoplasmic reticulum to nucleus signaling 1,HGNC:3449,2081
+ENSG00000044574,HSPA5,heat shock protein family A (Hsp70) member 5,HGNC:5238,3309
+ENSG00000118217,ATF6,activating transcription factor 6,HGNC:791,22926
+ENSG00000172071,EIF2AK3,eukaryotic translation initiation factor 2 alpha kinase 3,HGNC:3255,9451
+ENSG00000265972,TXNIP,thioredoxin interacting protein,HGNC:16952,10628
+ENSG00000161011,SQSTM1,sequestosome 1,HGNC:11280,8878
+ENSG00000140941,MAP1LC3B,microtubule associated protein 1 light chain 3 beta,HGNC:13352,81631
+ENSG00000126581,BECN1,beclin 1,HGNC:1034,8678
+ENSG00000057663,ATG5,autophagy related 5,HGNC:589,9474
+ENSG00000163631,ALB,albumin,HGNC:399,213
+ENSG00000118137,APOA1,apolipoprotein A1,HGNC:600,335
+ENSG00000118271,TTR,transthyretin,HGNC:12405,7276
+ENSG00000197249,SERPINA1,serpin family A member 1,HGNC:8941,5265
+ENSG00000171564,FGB,fibrinogen beta chain,HGNC:3662,2244
+ENSG00000132693,CRP,C-reactive protein,HGNC:2367,1401
+ENSG00000257017,HP,haptoglobin,HGNC:5141,3240
+ENSG00000091513,TF,transferrin,HGNC:11740,7018
+ENSG00000130649,CYP2E1,cytochrome P450 family 2 subfamily E member 1,HGNC:2631,1571
+ENSG00000160868,CYP3A4,cytochrome P450 family 3 subfamily A member 4,HGNC:2637,1576
+ENSG00000081051,AFP,alpha fetoprotein,HGNC:317,174
+ENSG00000142192,APP,amyloid beta precursor protein,HGNC:620,351
+ENSG00000186868,MAPT,microtubule associated protein tau,HGNC:6893,4137
+ENSG00000080815,PSEN1,presenilin 1,HGNC:9508,5663
+ENSG00000012048,BRCA1,BRCA1 DNA repair associated,HGNC:1100,672
+ENSG00000141510,TP53,tumor protein p53,HGNC:11998,7157
+ENSG00000146648,EGFR,epidermal growth factor receptor,HGNC:3236,1956
+ENSG00000133703,KRAS,"KRas proto-oncogene, GTPase",HGNC:6407,3845
+ENSG00000136997,MYC,"MYC proto-oncogene, bHLH transcription factor",HGNC:7553,4609
+ENSG00000147889,CDKN2A,cyclin dependent kinase inhibitor 2A,HGNC:1787,1029
+ENSG00000112715,VEGFA,vascular endothelial growth factor A,HGNC:12680,7422
+ENSG00000091831,ESR1,estrogen receptor 1,HGNC:3467,2099
+ENSG00000169083,AR,androgen receptor,HGNC:644,367
+ENSG00000075624,ACTB,actin beta,HGNC:132,60
+ENSG00000111640,GAPDH,glyceraldehyde-3-phosphate dehydrogenase,HGNC:4141,2597
+ENSG00000196230,TUBB,tubulin beta class I,HGNC:20778,203068
+ENSG00000089157,RPLP0,ribosomal protein lateral stalk subunit P0,HGNC:10371,6175
+ENSG00000166710,B2M,beta-2-microglobulin,HGNC:914,567
+ENSG00000165704,HPRT1,hypoxanthine phosphoribosyltransferase 1,HGNC:5157,3251
+ENSG00000196262,PPIA,peptidylprolyl isomerase A,HGNC:9253,5478
+ENSG00000112592,TBP,TATA-box binding protein,HGNC:11588,6908
+ENSG00000164924,YWHAZ,tyrosine 3-monooxygenase/tryptophan 5-monooxygenase activation protein zeta,HGNC:12855,7534
+ENSG00000150991,UBC,ubiquitin C,HGNC:12468,7316
+ENSG00000156508,EEF1A1,eukaryotic translation elongation factor 1 alpha 1,HGNC:3189,1915
+ENSG00000080824,HSP90AA1,heat shock protein 90 alpha family class A member 1,HGNC:5253,3320
+ENSG00000102144,PGK1,phosphoglycerate kinase 1,HGNC:8896,5230
+ENSG00000134333,LDHA,lactate dehydrogenase A,HGNC:6535,3939
+ENSG00000074800,ENO1,enolase 1,HGNC:3350,2023
+ENSG00000149925,ALDOA,"aldolase, fructose-bisphosphate A",HGNC:414,226
+ENSG00000067225,PKM,pyruvate kinase M1/2,HGNC:9021,5315
+ENSG00000111669,TPI1,triosephosphate isomerase 1,HGNC:12009,7167
+ENSG00000105220,GPI,glucose-6-phosphate isomerase,HGNC:4458,2821
+ENSG00000171314,PGAM1,phosphoglycerate mutase 1,HGNC:8888,5223
+ENSG00000073578,SDHA,succinate dehydrogenase complex flavoprotein subunit A,HGNC:10680,6389
+ENSG00000062485,CS,citrate synthase,HGNC:2422,1431
+ENSG00000138413,IDH1,isocitrate dehydrogenase (NADP(+)) 1,HGNC:5382,3417
+ENSG00000146701,MDH2,malate dehydrogenase 2,HGNC:6971,4191
+ENSG00000091483,FH,fumarate hydratase,HGNC:3700,2271
+ENSG00000105953,OGDH,oxoglutarate dehydrogenase,HGNC:8124,4967
+ENSG00000131143,COX4I1,cytochrome c oxidase subunit 4I1,HGNC:2265,1327
+ENSG00000152234,ATP5F1A,ATP synthase F1 subunit alpha,HGNC:823,498
+ENSG00000172115,CYCS,"cytochrome c, somatic",HGNC:19986,54205
+ENSG00000213585,VDAC1,voltage dependent anion channel 1,HGNC:12669,7416
+ENSG00000117450,PRDX1,peroxiredoxin 1,HGNC:9352,5052
+ENSG00000136810,TXN,thioredoxin,HGNC:12435,7295
+ENSG00000198668,CALM1,calmodulin 1,HGNC:1442,801
+ENSG00000136238,RAC1,Rac family small GTPase 1,HGNC:9801,5879
+ENSG00000070831,CDC42,cell division cycle 42,HGNC:1736,998
+ENSG00000067560,RHOA,ras homolog family member A,HGNC:667,387
+ENSG00000108518,PFN1,profilin 1,HGNC:8881,5216
+ENSG00000172757,CFL1,cofilin 1,HGNC:1874,1072
+ENSG00000147065,MSN,moesin,HGNC:7373,4478
+ENSG00000092820,EZR,ezrin,HGNC:12691,7430
+ENSG00000168036,CTNNB1,catenin beta 1,HGNC:2514,1499
+ENSG00000039068,CDH1,cadherin 1,HGNC:1748,999
+ENSG00000119888,EPCAM,epithelial cell adhesion molecule,HGNC:11529,4072
+ENSG00000170421,KRT8,keratin 8,HGNC:6446,3856
+ENSG00000111057,KRT18,keratin 18,HGNC:6430,3875
+ENSG00000171345,KRT19,keratin 19,HGNC:6436,3880
+ENSG00000100345,MYH9,myosin heavy chain 9,HGNC:7579,4627
+ENSG00000196924,FLNA,filamin A,HGNC:3754,2316
+ENSG00000137076,TLN1,talin 1,HGNC:11845,7094
+ENSG00000035403,VCL,vinculin,HGNC:12665,7414
+ENSG00000150093,ITGB1,integrin subunit beta 1,HGNC:6153,3688
+ENSG00000026508,CD44,CD44 molecule (IN blood group),HGNC:1681,960
+ENSG00000131981,LGALS3,galectin 3,HGNC:6563,3958
+ENSG00000182718,ANXA2,annexin A2,HGNC:537,302
+ENSG00000197956,S100A6,S100 calcium binding protein A6,HGNC:10496,6277
+ENSG00000197747,S100A10,S100 calcium binding protein A10,HGNC:10487,6281
+ENSG00000105974,CAV1,caveolin 1,HGNC:1527,857
+ENSG00000160789,LMNA,lamin A/C,HGNC:6636,4000
+ENSG00000181163,NPM1,nucleophosmin 1,HGNC:7910,4869
+ENSG00000135486,HNRNPA1,heterogeneous nuclear ribonucleoprotein A1,HGNC:5031,3178
+ENSG00000136450,SRSF1,serine and arginine rich splicing factor 1,HGNC:10780,6426
+ENSG00000070756,PABPC1,poly(A) binding protein cytoplasmic 1,HGNC:8554,26986
+ENSG00000161960,EIF4A1,eukaryotic translation initiation factor 4A1,HGNC:3282,1973
+ENSG00000137154,RPS6,ribosomal protein S6,HGNC:10429,6194
+ENSG00000142541,RPL13A,ribosomal protein L13a,HGNC:10304,23521
+ENSG00000129084,PSMA1,proteasome 20S subunit alpha 1,HGNC:9530,5682
+ENSG00000100804,PSMB5,proteasome 20S subunit beta 5,HGNC:9542,5693
+ENSG00000185896,LAMP1,lysosome associated membrane protein 1,HGNC:6499,3916
+ENSG00000164733,CTSB,cathepsin B,HGNC:2527,1508
+ENSG00000117984,CTSD,cathepsin D,HGNC:2529,1509
+ENSG00000177628,GBA1,glucosylceramidase beta 1,HGNC:4177,2629
+ENSG00000049860,HEXB,hexosaminidase subunit beta,HGNC:4879,3074
+ENSG00000141458,NPC1,NPC intracellular cholesterol transporter 1,HGNC:7897,4864
+ENSG00000135821,GLUL,glutamate-ammonia ligase,HGNC:4341,2752
+ENSG00000130707,ASS1,argininosuccinate synthase 1,HGNC:758,445
+ENSG00000118520,ARG1,arginase 1,HGNC:663,383
+ENSG00000036473,OTC,ornithine transcarbamylase,HGNC:8512,5009
+ENSG00000021826,CPS1,carbamoyl-phosphate synthase 1,HGNC:2323,1373
+ENSG00000145692,BHMT,betaine--homocysteine S-methyltransferase,HGNC:1047,635
+ENSG00000151224,MAT1A,methionine adenosyltransferase 1A,HGNC:6903,4143
+ENSG00000124713,GNMT,glycine N-methyltransferase,HGNC:4415,27232
+ENSG00000160200,CBS,cystathionine beta-synthase,HGNC:1550,875
+ENSG00000101444,AHCY,adenosylhomocysteinase,HGNC:343,191
+ENSG00000111275,ALDH2,aldehyde dehydrogenase 2 family member,HGNC:404,217
+ENSG00000196616,ADH1B,"alcohol dehydrogenase 1B (class I), beta polypeptide",HGNC:250,125
+ENSG00000198099,ADH4,"alcohol dehydrogenase 4 (class II), pi polypeptide",HGNC:252,127
+ENSG00000196139,AKR1C3,aldo-keto reductase family 1 member C3,HGNC:386,8644
+ENSG00000105398,SULT2A1,sulfotransferase family 2A member 1,HGNC:11458,6822

@@ -1,0 +1,8 @@
+experimentId,name,omicsLayer,platform,method
+EXP-LIV-RNA,Liver RNA-seq,transcriptomics,Illumina NovaSeq 6000,poly(A) RNA-seq
+EXP-LIV-TMT,Liver TMT proteomics,proteomics,Orbitrap Fusion Lumos,TMTpro 16-plex
+EXP-LIV-DIA,Liver DIA-PASEF proteomics,proteomics,timsTOF Pro,DIA-PASEF
+EXP-ISL-RNA,Islet RNA-seq,transcriptomics,Illumina NovaSeq 6000,poly(A) RNA-seq
+EXP-ISL-LFQ,Islet label-free proteomics,proteomics,Q Exactive HF,label-free DDA
+EXP-ADI-RNA,Visceral adipose RNA-seq,transcriptomics,Illumina NovaSeq 6000,poly(A) RNA-seq
+EXP-ADI-TMT,Visceral adipose TMT proteomics,proteomics,Orbitrap Exploris 480,TMTpro 16-plex
