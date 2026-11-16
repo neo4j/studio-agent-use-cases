@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Test mode for create-solution-package-v2: import a package into a throwaway Relate store, check the
+"""Test mode for create-solution-package: import a package into a throwaway Relate store, check the
 landing, run SETUP.md and every query, and write the reports (TESTING.md).
 
 Usage:

@@ -3,11 +3,11 @@
 Test mode imports a package's sample data into a throwaway Relate database and checks the data landed as the reference ontology says. It then runs every query and judges each result against TESTS.md.
 
 It runs in two situations:
-- on its own, as `/create-solution-package-v2 test [package]`;
+- on its own, as `/create-solution-package test [package]`;
 - inside create mode, on the draft (SKILL.md steps 2 and 4).
 
 Test mode **reports problems; it does not fix them**:
-- It never edits a package, never edits v1 (`skills/solution-package-builder/`), and never rewrites a query to make it pass.
+- It never edits a package, and never rewrites a query to make it pass.
 - Proposed fixes go in the report.
 - A workaround you try goes in a scratch copy, and never counts as a PASS.
 

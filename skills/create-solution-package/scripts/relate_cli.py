@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Thin wrapper over the relate CLI, shared by the create-solution-package-v2 test-mode scripts.
+"""Thin wrapper over the relate CLI, shared by the create-solution-package test-mode scripts.
 
 Every call sets RELATE_TELEMETRY=0 (telemetry defaults to on), uses --mode envelope, passes
 --max-rows 0 unless told otherwise (the CLI caps rows at 100 under an agent harness), and binds

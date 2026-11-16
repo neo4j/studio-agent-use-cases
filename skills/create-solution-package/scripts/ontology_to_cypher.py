@@ -3,7 +3,7 @@
 
 Usage: python3 ontology_to_cypher.py <package-dir> [out.cypher]
 Prints the statement count, any fidelity notes, and fails loudly (exit 2) on any mapping shape,
-binding or property type it does not recognise. Hardened from the prototype in the v2 brief.
+binding or property type it does not recognise. Hardened from an early prototype.
 
 What it mirrors (upx apps/import/src/cypher-runner and the @neo4j/ontology-graph-spec decoder; see
 RELATE.md "Import fidelity"):

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Cold-start check for create-solution-package-v2: is Relate ready for test mode, and if not, what is missing?
+"""Cold-start check for create-solution-package: is Relate ready for test mode, and if not, what is missing?
 
 Usage: python3 check_relate.py [--json]
 

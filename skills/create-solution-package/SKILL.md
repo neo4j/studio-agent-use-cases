@@ -1,9 +1,9 @@
 ---
-name: create-solution-package-v2
-description: Experimental v2 of create-solution-package. Use only when the user names create-solution-package-v2. Two modes. `create <source>` builds a new Neo4j industry solution package for Aura's onboarding agent — reference ontology (ONTOLOGY.json), sample CSVs with import mappings, Cypher queries, agent guidance and a human description — and tests it on Relate as it goes. `test [package]` imports a package's sample data into a throwaway Relate database, checks the data landed as the reference ontology says, and runs every query against TESTS.md; with no package named it tests every package in the repo. Without Relate installed, create still builds the package and flags every query for manual testing on Aura. Updating or migrating an existing package stays in v1.
+name: create-solution-package
+description: Build a Neo4j industry solution package — a reference ontology (ONTOLOGY.json), sample CSV data with import mappings, proven Cypher queries, agent guidance and a human-readable description — for Aura's onboarding agent, testing it on Relate as it goes. Use whenever a user wants to create, draft, scaffold, rebuild or review a solution package, industry use case or vertical quick start, e.g. "make a package like insurance-claims-fraud for telecoms"; and to test a package: `test [package]` imports its sample data into a throwaway Relate database, checks the data landed as the reference ontology says, and runs every query against TESTS.md. Without Relate installed, create still builds the package and flags every query for manual testing on Aura. The output is a starting point for human curation, not a finished product.
 ---
 
-# Create a Solution Package (v2, experimental)
+# Create a Solution Package
 
 A solution package is an agent skill that Aura's onboarding agent loads to help a user get started with Neo4j in a specific industry. It bundles a reference ontology, sample data matching it, proven Cypher queries, and guidance that steers the agent. The same reference ontology doubles as a template for the user to map and import their own data via Neo4j's Import tool.
 
@@ -11,18 +11,19 @@ Your job: take the user's raw inputs and produce a complete, consistent draft pa
 
 ## Modes
 
-This is v2 of create-solution-package, an experiment in testing packages on Relate, an embedded openCypher engine. It has two modes. Decide which from the request before doing anything else.
+This skill tests packages on Relate, an embedded openCypher engine, as it builds them. It has two modes. Decide which from the request before doing anything else.
 
 | Mode | When | What to do |
 | ---- | ---- | ---------- |
-| **create** | The request names `create`, or gives a source to build a package from (industry links, a reference ontology, sample Cypher). | Follow the build order below. It is v1's, except that the draft is tested on Relate as it is built (steps 2 and 4). Without Relate, build it anyway: see "Without Relate". |
+| **create** | The request names `create`, or gives a source to build a package from (industry links, a reference ontology, sample Cypher). | Follow the build order below. The draft is tested on Relate as it is built (steps 2 and 4). Without Relate, build it anyway: see "Without Relate". |
 | **test** | The request names `test`. | Needs Relate (see "Before you start: Relate"). Follow [TESTING.md](TESTING.md). With no package named, test every package in `catalog.json` plus any root folder holding an `ONTOLOGY.json` that the catalogue does not list. With one named, test only that package. |
 
-If the request is neither — it asks to update, migrate or clean up an existing package — say that v2 does not do that and that v1 (`create-solution-package`) does. Do not improvise a migration here.
 
-Test mode reports problems; it never fixes them. It never edits a package, never edits v1, and never rewrites a query to make it pass. Proposed fixes go in the report.
+If the request is neither (for example, it asks to update an existing package), say this skill does not do that.
 
-Companion skills: [ONTOLOGY_SPEC_FORMAT.md](ONTOLOGY_SPEC_FORMAT.md) is the contract for `ONTOLOGY.json` — follow it exactly; its authority is `ontology-graph-spec.schema.json`, bundled here. [VALIDATION.md](VALIDATION.md) is the check suite to run before handing off. [TESTING.md](TESTING.md) is the test-mode procedure, and [RELATE.md](RELATE.md) records the pinned Relate version, what it can and cannot run, and the workaround for each gap. `scripts/` holds the tools VALIDATION.md and TESTING.md use. ONTOLOGY_SPEC_FORMAT.md and PACKAGE_FORMAT.md are v1's, unchanged except for the layout rule and thresholds in ONTOLOGY_SPEC_FORMAT.md's Display section, which v1 does not yet have: where they mention MIGRATION.md, that procedure lives in v1; and where PACKAGE_FORMAT.md says testing against a database is manual and outside package creation, this file's step 4 replaces it — the package format itself is unchanged.
+Test mode reports problems; it never fixes them. It never edits a package and never rewrites a query to make it pass. Proposed fixes go in the report.
+
+Companion skills: [ONTOLOGY_SPEC_FORMAT.md](ONTOLOGY_SPEC_FORMAT.md) is the contract for `ONTOLOGY.json` — follow it exactly; its authority is `ontology-graph-spec.schema.json`, bundled here. [VALIDATION.md](VALIDATION.md) is the check suite to run before handing off. [TESTING.md](TESTING.md) is the test-mode procedure, and [RELATE.md](RELATE.md) records the pinned Relate version, what it can and cannot run, and the workaround for each gap. `scripts/` holds the tools VALIDATION.md and TESTING.md use. Where PACKAGE_FORMAT.md says testing against a database is manual and outside package creation, this file's step 4 replaces it — the package format itself is unchanged.
 
 ## Before you start: Relate
 
@@ -121,16 +122,12 @@ Complex packages may add supporting files (`.md` or `.cypher` only) when they ar
 
 Parser contract for SKILL.md: begins with YAML frontmatter delimited by `---`; `name` is 1–64 chars matching `^[a-z0-9]+(?:-[a-z0-9]+)*$`; `description` is non-empty, specific, and at most 1024 characters (it is the trigger text — state the industry, the use cases, and the capabilities); all `metadata` values are strings and the `neo4j-card-*` fields are non-empty; there is no `neo4j-graph-spec-version` key (retired — the spec version lives in `ONTOLOGY.json`); the Markdown body after frontmatter is non-empty.
 
-## Updating an existing package
-
-Not in v2. Updating, migrating, upgrading or cleaning up an existing package is v1's job (`create-solution-package` and its MIGRATION.md). v2 can test an existing package (test mode) but never changes one.
-
 ## Inputs to gather
 
 Ask for whatever is missing, but don't block — draft and flag instead:
 
 1. **Industry links** — pages explaining the industry and use cases (neo4j.com/developer/industry-use-cases/ pages are ideal). Fetch and read them; they drive the use cases, terminology, and caveats.
-2. **Reference ontology** — ideally ontology graph spec JSON; the user may call it a model or graph model. From a description or diagram, build it yourself and mark it `TODO(review)`. From a legacy package's `GRAPH_MODEL.json`, convert it using ONTOLOGY_SPEC_FORMAT.md's "Converting a legacy graph model".
+2. **Reference ontology** — ideally ontology graph spec JSON; the user may call it a model or graph model. From a description or diagram, build it yourself and mark it `TODO(review)`.
 3. **Sample Cypher** — proven queries. If none provided, draft a small set from the use cases.
 
 Also confirm: package name (kebab-case), a one-line industry qualifier, and the primary use cases (3–5).
@@ -263,7 +260,7 @@ When Relate is available, package creation runs test mode ([TESTING.md](TESTING.
 - **Never write a result into TESTS.md that was not either observed in a run or derived from the CSVs.** A count you computed from the CSVs and a count test mode observed are both fine, and they should agree; say which a figure is when it matters. A figure that is neither is invented.
 - **ENGINE-GAP is not a package fault**, but say so in the handoff with the RELATE.md entry it rests on. **UNSURE** goes to the user with the evidence. **NEEDS-PARAMS** means TESTS.md's Parameters field is missing a value — add it.
 - **SKIPPED queries (APOC, GDS, fulltext) are untested.** They still need manual testing on Aura, and the handoff says so, naming each one.
-- **Test results live in `output/relate-tests/`, never in the package.** Do not add a results file, a status column or a "tested on" note to any package file; a v2 package is indistinguishable from a v1 package.
+- **Test results live in `output/relate-tests/`, never in the package.** Do not add a results file, a status column or a "tested on" note to any package file; a tested package is indistinguishable from an untested one.
 
 Structure:
 
