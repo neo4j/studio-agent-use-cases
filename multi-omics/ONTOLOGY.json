@@ -17,7 +17,7 @@
         },
         "name": {"type": "STRING", "description": "Human-readable title of the project."}
       },
-      "extensions": {"display": {"x": -750, "y": -450}}
+      "extensions": {"display": {"x": -215, "y": -130}}
     },
     "Sample": {
       "label": "Sample",
@@ -34,7 +34,7 @@
           "description": "Pseudonymous identifier of the donor (patient, volunteer or organ donor) the sample came from. One donor may give samples from several tissues, which share this value. Never a name or medical record number. e.g. `D040`."
         }
       },
-      "extensions": {"display": {"x": -400, "y": -450}}
+      "extensions": {"display": {"x": -115, "y": -130}}
     },
     "Tissue": {
       "label": "Tissue",
@@ -49,7 +49,7 @@
         },
         "name": {"type": "STRING", "description": "UBERON label of the tissue."}
       },
-      "extensions": {"display": {"x": -400, "y": -750}}
+      "extensions": {"display": {"x": -115, "y": -215}}
     },
     "Phenotype": {
       "label": "Phenotype",
@@ -64,7 +64,7 @@
         },
         "name": {"type": "STRING", "description": "Label of the phenotype term."}
       },
-      "extensions": {"display": {"x": -750, "y": -750}}
+      "extensions": {"display": {"x": -215, "y": -215}}
     },
     "Experiment": {
       "label": "Experiment",
@@ -92,7 +92,7 @@
           "description": "Library preparation or acquisition method, such as poly(A) RNA-seq, TMT labelling, label-free data-dependent acquisition (DDA) or DIA-PASEF. Quantities from different methods are not directly comparable. e.g. `poly(A) RNA-seq`."
         }
       },
-      "extensions": {"display": {"x": 100, "y": -450}}
+      "extensions": {"display": {"x": 30, "y": -130}}
     },
     "Comparison": {
       "label": "Comparison",
@@ -110,7 +110,7 @@
           "description": "Design of the contrast, in snake case: for example `disease_vs_control`, `disease_severity` (more against less severe disease) or `phenotype_stratified` (donors with against without a phenotype). e.g. `disease_vs_control`."
         }
       },
-      "extensions": {"display": {"x": -150, "y": -150}}
+      "extensions": {"display": {"x": -45, "y": -45}}
     },
     "Gene": {
       "label": "Gene",
@@ -135,7 +135,7 @@
           "pattern": "^[0-9]+$"
         }
       },
-      "extensions": {"display": {"x": -150, "y": 200}}
+      "extensions": {"display": {"x": -45, "y": 55}}
     },
     "Protein": {
       "label": "Protein",
@@ -150,7 +150,7 @@
         },
         "name": {"type": "STRING", "description": "UniProt recommended protein name."}
       },
-      "extensions": {"display": {"x": 300, "y": 200}}
+      "extensions": {"display": {"x": 85, "y": 55}}
     },
     "Disease": {
       "label": "Disease",
@@ -168,7 +168,7 @@
           "description": "MONDO label of the disease. MONDO follows current nomenclature: metabolic dysfunction-associated steatotic liver disease (MASLD) is the term for what was called non-alcoholic fatty liver disease (NAFLD), and MASH for non-alcoholic steatohepatitis (NASH)."
         }
       },
-      "extensions": {"display": {"x": -600, "y": 200}}
+      "extensions": {"display": {"x": -170, "y": 55}}
     },
     "GOTerm": {
       "label": "GOTerm",
@@ -189,7 +189,7 @@
           "one_of": ["biological_process", "molecular_function", "cellular_component"]
         }
       },
-      "extensions": {"display": {"x": 650, "y": 450}}
+      "extensions": {"display": {"x": 185, "y": 130}}
     },
     "Pathway": {
       "label": "Pathway",
@@ -206,7 +206,7 @@
           "description": "Pathway database the pathway comes from, such as Reactome, WikiPathways or KEGG. e.g. `Reactome`."
         }
       },
-      "extensions": {"display": {"x": -150, "y": 550}}
+      "extensions": {"display": {"x": -45, "y": 155}}
     }
   },
   "relationships": {
